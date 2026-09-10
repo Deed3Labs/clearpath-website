@@ -512,6 +512,19 @@ button, input, select, textarea { font: inherit; color: inherit; }
 }
 .fs-button:hover { border-color: var(--color-ink); }
 .fs-button[aria-expanded='true'] { border-color: var(--color-ink); }
+/* Truncate rather than wrap. Half-width now that the property type shares a
+   row with the ZIP, the longest option ("Commercial building") is a pixel
+   wider than the button at a 1000px viewport — and a wrapped label makes the
+   control taller than the 49px field beside it, so the row stops lining up.
+   A native select truncates here; so does this. min-width:0 because a flex
+   item will not shrink below its content without it. */
+.fs-button { min-width: 0; }
+.fs-value {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 .fs-value[data-empty] { color: var(--color-ink-50); }
 /* Drawn, not a glyph: a character would carry the font's own metrics and sit
    off-centre at this size. */

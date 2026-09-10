@@ -177,7 +177,6 @@ export const MODES: {
           'Mixed-use building',
           'Something else',
         ],
-        wide: true,
       },
       { kind: 'text', name: 'zip', label: 'ZIP', autoComplete: 'postal-code', numeric: true },
       /* Two handles for the same reason the ticket has two: nobody knows what
