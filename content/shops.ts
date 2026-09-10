@@ -80,7 +80,7 @@ export const COUNTER = {
     },
     {
       title: 'There is no hardware to buy.',
-      body: 'The merchant app runs at merchants.useclear.org and installs from a browser — a tablet, a phone or the shop PC will do.',
+      body: 'The merchant app runs at merchant.useclear.org and installs from a browser — a tablet, a phone or the shop PC will do.',
     },
   ],
 } as const;
