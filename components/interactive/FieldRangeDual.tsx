@@ -23,6 +23,7 @@ type Props = {
   step: number;
   startLow: number;
   startHigh: number;
+  format: 'usd' | 'usdCompact';
   topLabel: string;
   wide?: boolean;
 };
@@ -31,6 +32,16 @@ const usd = new Intl.NumberFormat('en-US', {
   style: 'currency',
   currency: 'USD',
   maximumFractionDigits: 0,
+});
+
+/* $400K, $1.3M. Seven-figure numbers written out put nineteen characters
+   next to their own label, which on a phone is a line break in the middle of
+   an answer. */
+const usdCompact = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  notation: 'compact',
+  maximumFractionDigits: 1,
 });
 
 export function FieldRangeDual({
@@ -42,6 +53,7 @@ export function FieldRangeDual({
   step,
   startLow,
   startHigh,
+  format,
   topLabel,
   wide,
 }: Props) {
@@ -55,7 +67,7 @@ export function FieldRangeDual({
   const setHigh = (v: number) => setHi(Math.max(v, lo + step));
 
   const pct = (v: number) => ((v - min) / (max - min)) * 100;
-  const money = (v: number) => usd.format(v);
+  const money = (v: number) => (format === 'usdCompact' ? usdCompact : usd).format(v);
   const highRead = hi >= max ? topLabel : money(hi);
   const read = `${money(lo)} – ${highRead}`;
 
