@@ -190,9 +190,13 @@ export const MODES: {
         nameMin: 'valueLow',
         nameMax: 'valueHigh',
         label: 'Estimated value',
-        min: 50000,
+        /* Land runs cheap — a small parcel is four figures, not six. The step
+           comes down with the floor: at $25,000 a $1,000 minimum would put
+           the next stop at $26,000, and every value on the scale would be a
+           thousand off a round number. */
+        min: 1000,
         max: 2000000,
-        step: 25000,
+        step: 1000,
         startLow: 400000,
         startHigh: 750000,
         format: 'usdCompact',
