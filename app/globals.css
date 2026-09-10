@@ -464,7 +464,11 @@ button, input, select, textarea { font: inherit; color: inherit; }
   border: 0; margin: 0; padding: 0;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--spacing-3) var(--hx-gap);
+  /* One gap, both directions. The column gap was --hx-gap, which is the
+     page's gutter — 49px at 1440, the distance between two SECTIONS. Between
+     two fields of the same question it read as a gulf. 24px both ways gives
+     the grid one rhythm. */
+  gap: var(--spacing-3);
 }
 .join-field { display: grid; gap: 6px; align-content: start; }
 .join-field.is-wide, .join-submit.is-wide { grid-column: 1 / -1; }
