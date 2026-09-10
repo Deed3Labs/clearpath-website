@@ -48,6 +48,9 @@ export type Field =
       step: number;
       startLow: number;
       startHigh: number;
+      /* A ticket reads in whole dollars; a house does not. "$400,000 –
+         $750,000" is nineteen characters beside its own label on a phone. */
+      format: 'usd' | 'usdCompact';
       topLabel: string;
       wide?: boolean;
     }
@@ -133,6 +136,7 @@ export const MODES: {
         step: 50,
         startLow: 350,
         startHigh: 1500,
+        format: 'usd',
         topLabel: '$5,000+',
         wide: true,
       },
@@ -176,9 +180,33 @@ export const MODES: {
         wide: true,
       },
       { kind: 'text', name: 'zip', label: 'ZIP', autoComplete: 'postal-code', numeric: true },
+      /* Two handles for the same reason the ticket has two: nobody knows what
+         their property is worth to the dollar, and asked for one number they
+         either guess or leave it blank. A range is the honest answer and it
+         is the one we can work with. Compact notation because these run to
+         seven figures. */
+      {
+        kind: 'range2',
+        nameMin: 'valueLow',
+        nameMax: 'valueHigh',
+        label: 'Estimated value',
+        /* Land runs cheap — a small parcel is four figures, not six. The step
+           comes down with the floor: at $25,000 a $1,000 minimum would put
+           the next stop at $26,000, and every value on the scale would be a
+           thousand off a round number. */
+        min: 1000,
+        max: 2000000,
+        step: 1000,
+        startLow: 400000,
+        startHigh: 750000,
+        format: 'usdCompact',
+        topLabel: '$2M+',
+        wide: true,
+      },
     ],
     button: 'Send the details',
-    noteLabel: 'Where is it, roughly what is it worth, and is there a mortgage on it?',
+    /* The value question left this line when it got a control of its own. */
+    noteLabel: 'Where is it, and is there a mortgage on it?',
     next: 'We will walk through what a contribution would look like and what it would not.',
     caveatLabel: 'Bring your CPA',
     caveat: 'To the second conversation, not the first. We will send them the documents.',

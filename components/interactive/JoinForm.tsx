@@ -141,6 +141,7 @@ export function JoinForm() {
                     step={f.step}
                     startLow={f.startLow}
                     startHigh={f.startHigh}
+                    format={f.format}
                     topLabel={f.topLabel}
                     wide={f.wide}
                   />
