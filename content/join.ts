@@ -164,6 +164,7 @@ export const MODES: {
     tab: 'I own property',
     nameLabel: 'Your name',
     fields: [
+      { kind: 'text', name: 'zip', label: 'ZIP', autoComplete: 'postal-code', numeric: true },
       {
         kind: 'select',
         name: 'propertyType',
@@ -178,7 +179,6 @@ export const MODES: {
           'Something else',
         ],
       },
-      { kind: 'text', name: 'zip', label: 'ZIP', autoComplete: 'postal-code', numeric: true },
       /* Two handles for the same reason the ticket has two: nobody knows what
          their property is worth to the dollar, and asked for one number they
          either guess or leave it blank. A range is the honest answer and it
