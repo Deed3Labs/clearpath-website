@@ -36,13 +36,20 @@ const usd = new Intl.NumberFormat('en-US', {
 
 /* $400K, $1.3M. Seven-figure numbers written out put nineteen characters
    next to their own label, which on a phone is a line break in the middle of
-   an answer. */
-const usdCompact = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-  notation: 'compact',
-  maximumFractionDigits: 1,
-});
+   an answer.
+
+   Written out by hand rather than with Intl's compact notation, which is not
+   the same function on both sides of hydration: given maximumFractionDigits
+   1, Node pins the MINIMUM to 1 as well and returns "$400.0K" where the
+   browser returns "$400K". The server HTML and the client render disagreed
+   and React threw. Arithmetic has no ICU version. */
+function usdCompact(v: number): string {
+  const unit = v >= 1_000_000 ? { d: 1_000_000, s: 'M' } : v >= 1_000 ? { d: 1_000, s: 'K' } : null;
+  if (!unit) return `$${v}`;
+  /* One decimal, and never a trailing ".0" — $1.3M, but $2M. */
+  const n = Math.round((v / unit.d) * 10) / 10;
+  return `$${n}${unit.s}`;
+}
 
 export function FieldRangeDual({
   nameMin,
@@ -67,7 +74,7 @@ export function FieldRangeDual({
   const setHigh = (v: number) => setHi(Math.max(v, lo + step));
 
   const pct = (v: number) => ((v - min) / (max - min)) * 100;
-  const money = (v: number) => (format === 'usdCompact' ? usdCompact : usd).format(v);
+  const money = (v: number) => (format === 'usdCompact' ? usdCompact(v) : usd.format(v));
   const highRead = hi >= max ? topLabel : money(hi);
   const read = `${money(lo)} – ${highRead}`;
 
