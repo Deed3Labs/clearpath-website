@@ -30,6 +30,31 @@ const isMode = (v: string | null): v is ModeKey => !!v && MODES.some((m) => m.ke
 
 type Status = 'idle' | 'sending' | 'ok' | 'error';
 
+/* Which fields have to span the row.
+ *
+ * The grid is two columns of half-width fields with full-width ones mixed in,
+ * so a half-width field can end up alone on its row with a hole beside it —
+ * the ZIP on the property form does exactly that. CSS cannot see this: it
+ * would need to count runs of narrow items between the wide ones, and
+ * :nth-child() counts every child regardless of span.
+ *
+ * So it is computed here. Name and email are always the first two, then the
+ * mode's own fields; any unbroken run of narrow fields with an odd length
+ * leaves its last one alone, and that one goes full width.
+ */
+function widenLoneFields(narrow: boolean[]): boolean[] {
+  const wide = narrow.map((n) => !n);
+  let runStart = 0;
+  for (let i = 0; i <= narrow.length; i++) {
+    if (i === narrow.length || !narrow[i]) {
+      const len = i - runStart;
+      if (len % 2 === 1) wide[i - 1] = true;
+      runStart = i + 1;
+    }
+  }
+  return wide;
+}
+
 export function JoinForm() {
   const params = useSearchParams();
   const fromUrl = params.get('as');
@@ -37,6 +62,12 @@ export function JoinForm() {
   const [status, setStatus] = useState<Status>('idle');
 
   const active = MODES.find((m) => m.key === mode) ?? MODES[0];
+
+  /* Name and email lead, then the mode's fields. A field is narrow unless it
+     asked to be wide. */
+  const isNarrow = [true, true, ...active.fields.map((f) => !f.wide)];
+  const spans = widenLoneFields(isNarrow);
+  const [nameWide, emailWide, ...fieldWide] = spans;
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -100,17 +131,18 @@ export function JoinForm() {
             {/* Name and email are on every mode, so they are rendered here
                 rather than repeated four times in the content. Only the name's
                 wording changes — a shop is giving us a person to call. */}
-            <div className="join-field">
+            <div className={`join-field${nameWide ? ' is-wide' : ''}`}>
               <label htmlFor="join-name">{active.nameLabel}</label>
               <input id="join-name" name="name" type="text" autoComplete="name" required />
             </div>
 
-            <div className="join-field">
+            <div className={`join-field${emailWide ? ' is-wide' : ''}`}>
               <label htmlFor="join-email">Email</label>
               <input id="join-email" name="email" type="email" autoComplete="email" required />
             </div>
 
-            {active.fields.map((f) => {
+            {active.fields.map((f, i) => {
+              const wide = fieldWide[i];
               /* Keyed by mode as well as name so switching modes remounts the
                  controls. Without it a select or a range that appears in two
                  modes would keep the previous mode's answer. */
@@ -124,7 +156,7 @@ export function JoinForm() {
                     label={f.label}
                     placeholder={f.placeholder}
                     options={[...f.options]}
-                    wide={f.wide}
+                    wide={wide}
                   />
                 );
               }
@@ -143,7 +175,7 @@ export function JoinForm() {
                     startHigh={f.startHigh}
                     format={f.format}
                     topLabel={f.topLabel}
-                    wide={f.wide}
+                    wide={wide}
                   />
                 );
               }
@@ -160,13 +192,13 @@ export function JoinForm() {
                     start={f.start}
                     format={f.format}
                     topLabel={f.topLabel}
-                    wide={f.wide}
+                    wide={wide}
                   />
                 );
               }
 
               return (
-                <div className={`join-field${f.wide ? ' is-wide' : ''}`} key={key}>
+                <div className={`join-field${wide ? ' is-wide' : ''}`} key={key}>
                   <label htmlFor={`join-${f.name}`}>{f.label}</label>
                   <input
                     id={`join-${f.name}`}
