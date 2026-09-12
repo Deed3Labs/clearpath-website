@@ -28,5 +28,9 @@ tsconfig.tsbuildinfo
 # copy we had changed days earlier, and they poisoned every grep of this repo.
 # Nothing imports them and Next does not route "page 2.tsx", so they are
 # invisible until you search for a string and find the wrong one.
-*\ 2.*
-*\ 3.*
+#
+# Both forms: iCloud duplicates DIRECTORIES too ("components/interactive 2/"),
+# and a pattern that only matched "name 2.ext" let those through. Next also
+# compiles "app/shops 2/" as a route, which is what hung the dev server.
+*\ [2-9]
+*\ [2-9].*
