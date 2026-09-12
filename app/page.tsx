@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Ledger, Note, TextLink } from '@/components/primitives';
+import { LiveDot } from '@/components/primitives/Button';
 import { HERO, GAP, PHASES, WAYS_IN, STATUS, UNDERNEATH } from '@/content/home';
 
 /* The home page. Built on the .hx layout system, not converted from the old
@@ -37,6 +38,7 @@ export default function Home() {
 
           <div className="hero-actions" data-rise style={{ ['--i' as string]: 2 }}>
             <Link href={HERO.primary.href} className="btn" data-variant="primary">
+              <LiveDot />
               {HERO.primary.label}
             </Link>
             <Link href={HERO.ghost.href} className="btn" data-variant="ghost">

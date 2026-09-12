@@ -14,15 +14,26 @@ export function Button({
   children,
   variant = 'primary',
   className,
+  live = false,
 }: {
   href: string;
   children: React.ReactNode;
   variant?: Variant;
   className?: string;
+  /* A pulsing dot for "this is open now". Kept to the Join entry points on
+     purpose: a signal on every button is a signal on none. */
+  live?: boolean;
 }) {
   return (
     <Link href={href} data-variant={variant} className={['btn', className].filter(Boolean).join(' ')}>
+      {live && <LiveDot />}
       {children}
     </Link>
   );
+}
+
+/* Decorative, so hidden from assistive tech — the button's label already says
+   what it does, and "pulsing green circle" is not information. */
+export function LiveDot() {
+  return <span className="live-dot" aria-hidden="true" />;
 }
