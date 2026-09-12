@@ -91,8 +91,18 @@ export { Button } from './Button';
    palette change, "amber" does not. */
 export type ChipTone = 'live' | 'underway' | 'absent';
 
+/* A status carries a dot in its own colour. Only "live" pulses: a ping on
+   "not yet" or "in beta" would imply activity that is not happening, and the
+   pulse means something only if it is kept for what is actually live. An
+   untoned chip is a label, not a status, so it gets no dot. The word still
+   carries the state; the dot is decoration, hence aria-hidden. */
 export function Chip({ children, tone }: { children: React.ReactNode; tone?: ChipTone }) {
-  return <span className="chip" data-tone={tone}>{children}</span>;
+  return (
+    <span className="chip" data-tone={tone}>
+      {tone && <span className="live-dot chip-dot" data-still={tone === 'live' ? undefined : ''} aria-hidden="true" />}
+      {children}
+    </span>
+  );
 }
 
 export function Note({ children }: { children: React.ReactNode }) {

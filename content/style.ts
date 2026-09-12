@@ -14,6 +14,7 @@ export const SECTIONS = [
   { id: 'type', label: 'Type' },
   { id: 'space', label: 'Space and shape' },
   { id: 'components', label: 'Components' },
+  { id: 'dot', label: 'The dot' },
   { id: 'voice', label: 'Voice' },
   { id: 'applications', label: 'Social and print' },
   { id: 'downloads', label: 'Downloads' },
@@ -174,14 +175,46 @@ export const COMPONENTS = {
   kicker: 'Components',
   heading: 'The pieces every page is built from.',
   lede: 'These are the live components from the site, not pictures of them.',
-  liveDot: {
-    label: 'Live dot',
-    note: 'A pulsing dot that says "open now". It goes on Join and on each page’s main button, and nowhere else, because a signal on every button is a signal on none.',
-    rules: [
-      'Deep green on a light button, light green on a dark one.',
-      'A slow ping every two seconds, never a blink.',
-      'Reduced motion keeps the dot and stops the pulse.',
-    ],
+} as const;
+
+/* ── The dot ──────────────────────────────────────────────────────────── */
+export const DOT = {
+  kicker: 'The dot',
+  heading: 'One dot, two jobs.',
+  lede: 'It says something is open now, or it tags a status. Same element, same build. Only the first job moves.',
+  behaviours: [
+    {
+      label: 'Pulsing',
+      line: 'Open now.',
+      note: 'On Join, on each page’s main button and on a live status. The ping runs.',
+    },
+    {
+      label: 'Still',
+      line: 'A status.',
+      note: 'In beta, in build, signing, not yet. The core and the glow, and no ping.',
+    },
+  ],
+  anatomy: [
+    { part: 'Core', what: 'A solid circle in the dot colour.' },
+    { part: 'Glow', what: 'A soft blur of the same colour around the core.' },
+    { part: 'Ping', what: 'A copy of the core that grows and fades, then waits.' },
+  ],
+  colourRules: [
+    { where: 'On a light button', token: 'color-signal-deep', ground: 'paper' },
+    { where: 'On a dark button', token: 'color-signal-light', ground: 'ink' },
+  ],
+  pillRule: 'In a status pill, the dot takes the pill’s own status colour.',
+  rules: [
+    'Pulse only what is actually live or open.',
+    'Never on every button, and never as a bullet point.',
+    'Always beside a word that says the same thing. The dot is never the only signal.',
+    'With reduced motion, keep the dot and stop the ping.',
+  ],
+  recreate: {
+    devTitle: 'For developers',
+    devNote: 'Plain CSS with hex values, so it works outside this codebase.',
+    designTitle: 'For designers',
+    designNote: 'The same motion for Figma, After Effects or a video export.',
   },
 } as const;
 

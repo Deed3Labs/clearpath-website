@@ -190,7 +190,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
    border and fill derive from the text colour instead of being maintained as
    three more values each. */
 .chip {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   font-family: var(--font-mono);
   font-size: 10.5px;
   letter-spacing: 0.09em;
@@ -209,6 +210,21 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .chip[data-tone='live']     { --chip: var(--color-settled); }
 .chip[data-tone='underway'] { --chip: var(--color-underway); }
 .chip[data-tone='absent']   { --chip: var(--color-absent); }
+
+/* The chip's dot is the live dot, sized to 10.5px caps and coloured by the
+   chip's own tone, so it follows the ink band's rebinds like the text does.
+   These win over the base .live-dot rule, which sits further down, on
+   specificity (two classes to one), not on order. */
+.chip .chip-dot {
+  --dot: var(--chip);
+  width: 6px;
+  height: 6px;
+  margin-right: 7px;
+  /* The glow reads as a halo at 7px on a button; inside a tinted pill it
+     muddies the edge, so it is kept faint. */
+  box-shadow: 0 0 4px color-mix(in srgb, var(--dot) 45%, transparent);
+}
+.chip .chip-dot[data-still]::after { animation: none; opacity: 0; }
 .note-block { margin-top: var(--spacing-2); }
 /* A note that opens its container has nothing above it to be spaced from, and
    the 16px pushed it out of line with whatever sits beside it. */
@@ -1680,7 +1696,8 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
 
 .sg-contents ol {
   list-style: none; margin: var(--spacing-3) 0 0; padding: 0;
-  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  /* Nine entries: three columns closes three even rows. */
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: var(--hx-gap);
   border-top: 1px solid var(--color-ink-28);
 }
 .sg-contents li { border-bottom: 1px solid var(--color-ink-13); }
@@ -1695,7 +1712,11 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
   color: var(--color-live); font-weight: 400;
 }
 .sg-contents a:hover { color: var(--color-live); }
-@media (max-width: 900px) { .sg-contents ol { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--hx-gap); } }
+@media (max-width: 900px) {
+  .sg-contents ol { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* Two columns and an odd count would strand the last entry; it takes the row. */
+  .sg-contents li:last-child:nth-child(odd) { grid-column: 1 / -1; }
+}
 
 .sg-after-plates { margin-top: var(--spacing-5); row-gap: var(--spacing-5); }
 
@@ -1812,9 +1833,6 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
 }
 .sg-component { display: grid; gap: var(--spacing-2); align-content: start; border-top: 1px solid var(--color-ink-28); padding-top: var(--spacing-3); }
 .sg-component .side-label { margin: 0; }
-/* Five cards in two columns would strand the last one; the dot takes the row. */
-.sg-component-wide { grid-column: 1 / -1; }
-.sg-component .crit { margin-top: 0; }
 .sg-button-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--spacing-2); }
 .sg-label-demo { margin: 0; }
 .sg-figure-demo { margin: 0; font-size: clamp(32px, 3.6vw, 52px); line-height: 1; letter-spacing: -0.03em; color: var(--color-live); }
@@ -1845,3 +1863,41 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
 .sg-file-use { grid-column: 1; grid-row: 2; font-size: 14px; color: var(--color-ink-70); }
 .sg-file-format { grid-column: 2; grid-row: 1 / span 2; align-self: center; font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.06em; color: var(--color-ink-50); }
 .sg-files a:hover .sg-file-name { color: var(--color-live); text-decoration: underline; text-underline-offset: 4px; }
+
+/* The dot, drawn large. These are the real .live-dot element scaled up, so
+   the glow and the ping are the production ones, not an illustration. */
+.sg-dot-plates {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px; margin-top: clamp(32px, 4vw, 64px);
+  background: var(--color-ink-13); border-block: 1px solid var(--color-ink-13);
+}
+.sg-dot-plate {
+  margin: 0; background: var(--color-paper);
+  display: grid; gap: var(--spacing-4); align-content: start;
+  padding: var(--spacing-4);
+}
+.sg-dot-stage { display: grid; place-items: center; height: 260px; }
+.sg-dot-big { margin: 0; transform: scale(9); }
+.live-dot.sg-dot-still::after { animation: none; opacity: 0; }
+.sg-dot-context { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--spacing-2); }
+.sg-dot-plate figcaption { display: grid; gap: var(--spacing-1); border-top: 1px solid var(--color-ink-13); padding-top: var(--spacing-3); }
+.sg-dot-plate figcaption .side-label { margin: 0; }
+.sg-dot-plate figcaption .side-line,
+.sg-dot-plate figcaption .side-note { display: block; }
+@media (max-width: 900px) {
+  .sg-dot-plates { grid-template-columns: minmax(0, 1fr); }
+  .sg-dot-stage { height: 220px; }
+  .sg-dot-big { transform: scale(7); }
+}
+
+.sg-recreate-note { margin: 0 0 var(--spacing-2); }
+/* Code is content to copy, so it gets a ground; it scrolls inside itself
+   rather than widening the page. */
+.sg-code {
+  margin: 0; padding: var(--spacing-3);
+  background: var(--color-paper-2); border: 1px solid var(--color-ink-13);
+  overflow-x: auto; max-width: 100%;
+  font-family: var(--font-mono); font-size: 12.5px; line-height: 1.6;
+  white-space: pre; tab-size: 2;
+}
+.sg-code code { font: inherit; }
