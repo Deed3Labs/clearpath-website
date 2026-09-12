@@ -146,7 +146,7 @@ export default function Contribute() {
           <div className="c-two-thirds">
             <p className="t-body hx-prose">{CLOSE.body}</p>
             <div style={{ marginTop: 'clamp(28px, 3.4vw, 48px)' }}>
-              <Button href={CLOSE.cta.href}>{CLOSE.cta.label}</Button>
+              <Button href={CLOSE.cta.href} live>{CLOSE.cta.label}</Button>
             </div>
           </div>
           <div className="c-third">

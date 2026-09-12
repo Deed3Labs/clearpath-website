@@ -24,6 +24,15 @@
   --color-underway: #8A5512;  /* in flight, not finished                    */
   --color-absent:   #9B2C22;  /* does not exist yet                         */
 
+  /* The live dot. Two greens because a 7px mark has to clear the 3:1 graphic
+     bar (§8.7) on whichever button it sits in, and no single green does both:
+     the deep one measures 5.0:1 on paper but vanishes on ink, the light one
+     is 7.5:1 on ink and 1.7:1 on paper. Deliberately NOT the --color-settled
+     token, which the ink band rebinds — the dot's ground is the BUTTON, not
+     the band, so it needs values that stay put. */
+  --color-signal-deep:  #0E6B4E;
+  --color-signal-light: #6FCB9F;
+
   /* Land as TEXT.  --land is a fill colour: 3.36:1 on paper, which clears
      the 3:1 bar for a graphic but fails the 4.5:1 text bar (§8.7).  The
      deed's "Land" label is 11px type, so it takes this darker value at

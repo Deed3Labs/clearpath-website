@@ -177,7 +177,7 @@ export default function Housing() {
           <div className="c-two-thirds">
             <p className="hx-stage-line">{GATE.statement}</p>
             <div style={{ marginTop: 'clamp(28px, 3.4vw, 56px)' }}>
-              <Button href={GATE.cta.href}>{GATE.cta.label}</Button>
+              <Button href={GATE.cta.href} live>{GATE.cta.label}</Button>
             </div>
           </div>
           <div className="c-third">

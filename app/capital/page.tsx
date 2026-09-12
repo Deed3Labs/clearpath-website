@@ -188,7 +188,7 @@ export default function Capital() {
           <div className="c-third">
             <p className="t-sm hx-prose">{NEXT.body}</p>
             <div style={{ marginTop: 'clamp(24px, 2.6vw, 36px)' }}>
-              <Button href={NEXT.cta.href}>{NEXT.cta.label}</Button>
+              <Button href={NEXT.cta.href} live>{NEXT.cta.label}</Button>
             </div>
           </div>
 

@@ -23,7 +23,7 @@ export function Header() {
             </li>
           ))}
         </ul>
-        <Button href={JOIN.href} variant="ghost">{JOIN.label}</Button>
+        <Button href={JOIN.href} variant="ghost" live>{JOIN.label}</Button>
       </nav>
 
       <div className="header-mobile">

@@ -47,7 +47,7 @@ export default function Shops() {
           </div>
 
           <div className="c-full">
-            <Button href={OPENING.cta.href}>{OPENING.cta.label}</Button>
+            <Button href={OPENING.cta.href} live>{OPENING.cta.label}</Button>
           </div>
         </div>
       </section>
@@ -215,7 +215,7 @@ export default function Shops() {
           <div className="c-third">
             <p className="t-sm hx-prose">{MEMBERSHIP.body}</p>
             <div style={{ marginTop: 'var(--spacing-4)' }}>
-              <Button href={MEMBERSHIP.cta.href}>{MEMBERSHIP.cta.label}</Button>
+              <Button href={MEMBERSHIP.cta.href} live>{MEMBERSHIP.cta.label}</Button>
             </div>
           </div>
         </div>
