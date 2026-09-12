@@ -123,3 +123,70 @@ export function scale(prefix: 'spacing' | 'radius'): { token: string; value: str
     .filter((m) => !m[1].endsWith('*'))
     .map((m) => ({ token: `--${m[1]}`, value: m[2].trim() }));
 }
+
+/* ── The live dot ──────────────────────────────────────────────────────────
+   Its construction, read from globals.css the same way the colours are read
+   from tokens.css. If the dot's CSS changes shape, a value goes missing and
+   the build fails rather than the guide describing a dot that no longer
+   exists. */
+
+function block(selector: string): string {
+  const esc = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const m = globalsCss.match(new RegExp(`(?:^|\\n)${esc}\\s*\\{([\\s\\S]*?)\\n\\}`));
+  if (!m) throw new Error(`brandTokens: ${selector} not found in app/globals.css`);
+  return m[1];
+}
+
+function prop(css: string, name: string, where: string): string {
+  const m = css.match(new RegExp(`(?:^|\\n)\\s*${name}:\\s*([^;]+);`));
+  if (!m) throw new Error(`brandTokens: ${name} missing from ${where}`);
+  return m[1].trim();
+}
+
+function glow(shadow: string, where: string) {
+  const m = shadow.match(/0 0 (\d+)px(?: (\d+)px)? color-mix\(in srgb, var\(--dot\) (\d+)%/);
+  if (!m) throw new Error(`brandTokens: unexpected glow in ${where}: ${shadow}`);
+  return { blur: `${m[1]}px`, spread: m[2] ? `${m[2]}px` : '0', strength: `${m[3]}%` };
+}
+
+export type DotSpec = {
+  button: { size: string; gap: string; glow: { blur: string; spread: string; strength: string } };
+  chip: { size: string; gap: string; glow: { blur: string; spread: string; strength: string } };
+  ping: { duration: string; easing: string; from: { scale: string; opacity: string }; to: { scale: string; opacity: string }; settlesAt: string };
+};
+
+export function dotSpec(): DotSpec {
+  const base = block('.live-dot');
+  const chip = block('.chip .chip-dot');
+  const after = block('.live-dot::after');
+  const anim = prop(after, 'animation', '.live-dot::after');
+  const am = anim.match(/live-ping\s+([\d.]+s)\s+(cubic-bezier\([^)]*\)|[\w-]+)/);
+  if (!am) throw new Error(`brandTokens: unexpected animation: ${anim}`);
+
+  const kf = globalsCss.match(/@keyframes live-ping\s*\{([\s\S]*?)\n\}/)?.[1];
+  if (!kf) throw new Error('brandTokens: @keyframes live-ping not found');
+  const start = kf.match(/0%\s*\{\s*transform:\s*scale\(([\d.]+)\);\s*opacity:\s*([\d.]+)/);
+  const end = kf.match(/(\d+)%,\s*100%\s*\{\s*transform:\s*scale\(([\d.]+)\);\s*opacity:\s*([\d.]+)/);
+  if (!start || !end) throw new Error('brandTokens: live-ping keyframes changed shape');
+
+  const pct = (n: string) => `${Math.round(Number(n) * 100)}%`;
+  return {
+    button: {
+      size: prop(base, 'width', '.live-dot'),
+      gap: prop(base, 'margin-right', '.live-dot'),
+      glow: glow(prop(base, 'box-shadow', '.live-dot'), '.live-dot'),
+    },
+    chip: {
+      size: prop(chip, 'width', '.chip .chip-dot'),
+      gap: prop(chip, 'margin-right', '.chip .chip-dot'),
+      glow: glow(prop(chip, 'box-shadow', '.chip .chip-dot'), '.chip .chip-dot'),
+    },
+    ping: {
+      duration: am[1],
+      easing: am[2],
+      from: { scale: pct(start[1]), opacity: pct(start[2]) },
+      to: { scale: pct(end[2]), opacity: pct(end[3]) },
+      settlesAt: `${end[1]}%`,
+    },
+  };
+}

@@ -27,7 +27,7 @@
   /* The live dot. Two greens because a 7px mark has to clear the 3:1 graphic
      bar (§8.7) on whichever button it sits in, and no single green does both:
      the deep one measures 5.0:1 on paper but vanishes on ink, the light one
-     is 7.5:1 on ink and 1.7:1 on paper. Deliberately NOT the --color-settled
+     is 8.4:1 on ink and 1.7:1 on paper. Deliberately NOT the --color-settled
      token, which the ink band rebinds — the dot's ground is the BUTTON, not
      the band, so it needs values that stay put. */
   --color-signal-deep:  #0E6B4E;

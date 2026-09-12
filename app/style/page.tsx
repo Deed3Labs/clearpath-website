@@ -1,11 +1,13 @@
 import { Chip, Ledger, Note, TextLink } from '@/components/primitives';
 import { Button } from '@/components/primitives/Button';
 import { Logo, LogoMark } from '@/components/marks/Logo';
-import { inkSwatch, scale, swatch } from '@/lib/brandTokens';
+import { CodeBlock } from '@/components/interactive/CodeBlock';
+import { dotSpec, inkSwatch, scale, swatch } from '@/lib/brandTokens';
 import {
   APPLICATIONS,
   COLOUR,
   COMPONENTS,
+  DOT,
   DOWNLOADS,
   LOGO,
   OPENING,
@@ -48,6 +50,44 @@ function Rating({ n, bar }: { n: number; bar: number | null }) {
 
 export default function Style() {
   const spacing = scale('spacing');
+  /* Computed, like every other value here: the dot's two greens and the
+     contrast each one has against the button ground it is used on. */
+  const signalDeep = swatch('color-signal-deep');
+  const signalLight = swatch('color-signal-light');
+  const underway = swatch('color-underway');
+  const dot = dotSpec();
+
+  /* A copy-and-paste version with literal values, generated from the same
+     spec the page shows, so the snippet cannot disagree with the site. */
+  const alpha = (pct: string) => (Number(pct.replace('%', '')) / 100).toString().replace(/^0/, '');
+  const scaleNum = (pct: string) => (Number(pct.replace('%', '')) / 100).toString();
+  const snippet = `.live-dot {
+  position: relative;
+  display: inline-block;
+  width: ${dot.button.size};
+  height: ${dot.button.size};
+  border-radius: 50%;
+  background: ${signalDeep.hex};
+  box-shadow: 0 0 ${dot.button.glow.blur} ${dot.button.glow.spread} rgb(${signalDeep.rgb} / ${alpha(dot.button.glow.strength)});
+}
+.live-dot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: inherit;
+  animation: live-ping ${dot.ping.duration} ${dot.ping.easing} infinite;
+}
+@keyframes live-ping {
+  0% { transform: scale(${scaleNum(dot.ping.from.scale)}); opacity: ${alpha(dot.ping.from.opacity)}; }
+  ${dot.ping.settlesAt}, 100% { transform: scale(${scaleNum(dot.ping.to.scale)}); opacity: 0; }
+}
+/* On a dark ground, use ${signalLight.hex}. */
+@media (prefers-reduced-motion: reduce) {
+  .live-dot::after { animation: none; opacity: 0; }
+}`;
+  const seconds = Number(dot.ping.duration.replace('s', ''));
+  const settleSec = (seconds * Number(dot.ping.settlesAt.replace('%', ''))) / 100;
 
   return (
     <div className="hx">
@@ -301,7 +341,10 @@ export default function Style() {
                 <Chip tone="absent">not yet</Chip>
                 <Chip>neutral</Chip>
               </div>
-              <p className="side-note">Mono caps inside a pill. Colour carries the state, the word confirms it.</p>
+              <p className="side-note">
+                Mono caps inside a pill, with a dot in the same colour. Only live pulses; the others hold still,
+                because a pulse on “not yet” would imply something is happening.
+              </p>
             </div>
 
             <div className="sg-component">
@@ -321,10 +364,142 @@ export default function Style() {
         </div>
       </section>
 
+      {/* S7 - The dot, as an element in its own right: two behaviours drawn
+             large, its anatomy and colour logic, and how to rebuild it. */}
+      <section className="hx-band hx-wrap" data-pad="tight" id="dot">
+        <p className="hx-label">
+          <b>07</b> {DOT.kicker}
+        </p>
+        <div className="hx-grid">
+          <h2 className="hx-h2 c-two-thirds">{DOT.heading}</h2>
+          <p className="hx-lede c-third">{DOT.lede}</p>
+        </div>
+
+        <div className="sg-dot-plates">
+          <figure className="sg-dot-plate">
+            <div className="sg-dot-stage" aria-hidden="true">
+              {/* The real element, scaled up — not a drawing of it. */}
+              <span className="live-dot sg-dot-big" style={{ ['--dot' as string]: signalDeep.hex }} />
+            </div>
+            <div className="sg-dot-context">
+              <Button href="/join" live>
+                Join as a member
+              </Button>
+              <Chip tone="live">live</Chip>
+            </div>
+            <figcaption>
+              <span className="side-label">{DOT.behaviours[0].label}</span>
+              <span className="side-line">{DOT.behaviours[0].line}</span>
+              <span className="side-note">{DOT.behaviours[0].note}</span>
+            </figcaption>
+          </figure>
+
+          <figure className="sg-dot-plate">
+            <div className="sg-dot-stage" aria-hidden="true">
+              <span className="live-dot sg-dot-big sg-dot-still" style={{ ['--dot' as string]: underway.hex }} />
+            </div>
+            <div className="sg-dot-context">
+              <Chip tone="underway">in beta</Chip>
+              <Chip tone="absent">not yet</Chip>
+            </div>
+            <figcaption>
+              <span className="side-label">{DOT.behaviours[1].label}</span>
+              <span className="side-line">{DOT.behaviours[1].line}</span>
+              <span className="side-note">{DOT.behaviours[1].note}</span>
+            </figcaption>
+          </figure>
+        </div>
+
+        <div className="hx-grid sg-after-plates">
+          <div className="c-half">
+            <p className="side-label">Anatomy</p>
+            <Ledger
+              items={[
+                {
+                  label: DOT.anatomy[0].part,
+                  value: `${dot.button.size} · ${dot.chip.size} in a pill`,
+                  description: DOT.anatomy[0].what,
+                },
+                {
+                  label: DOT.anatomy[1].part,
+                  value: `${dot.button.glow.blur} blur · ${dot.button.glow.strength}`,
+                  description: `${DOT.anatomy[1].what} In a pill it softens to ${dot.chip.glow.blur} at ${dot.chip.glow.strength}.`,
+                },
+                {
+                  label: DOT.anatomy[2].part,
+                  value: `${dot.ping.to.scale} · ${dot.ping.duration}`,
+                  description: DOT.anatomy[2].what,
+                },
+                {
+                  label: 'Gap to the word',
+                  value: `${dot.button.gap} · ${dot.chip.gap} in a pill`,
+                },
+              ]}
+            />
+          </div>
+          <div className="c-half">
+            <p className="side-label">Colour</p>
+            <Ledger
+              items={[
+                {
+                  label: DOT.colourRules[0].where,
+                  value: signalDeep.hex,
+                  description: `--${DOT.colourRules[0].token} · ${ratio(signalDeep.onPaper)} on light`,
+                },
+                {
+                  label: DOT.colourRules[1].where,
+                  value: signalLight.hex,
+                  description: `--${DOT.colourRules[1].token} · ${ratio(signalLight.onInk)} on dark`,
+                },
+                { label: 'In a status pill', value: 'its status', description: DOT.pillRule },
+              ]}
+            />
+            <ul className="crit">
+              {DOT.rules.map((r) => (
+                <li key={r}>{r}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <div className="hx-grid sg-after-plates">
+          <div className="c-half">
+            <p className="side-label">{DOT.recreate.devTitle}</p>
+            <p className="side-note sg-recreate-note">{DOT.recreate.devNote}</p>
+            <CodeBlock code={snippet} language="CSS" />
+          </div>
+          <div className="c-half">
+            <p className="side-label">{DOT.recreate.designTitle}</p>
+            <p className="side-note sg-recreate-note">{DOT.recreate.designNote}</p>
+            <Ledger
+              items={[
+                { label: 'Core layer', value: `${dot.button.size} circle`, description: 'Dot colour, 100% opacity.' },
+                {
+                  label: 'Glow',
+                  value: `${dot.button.glow.blur} blur`,
+                  description: `Drop shadow, no offset, ${dot.button.glow.spread} spread, dot colour at ${dot.button.glow.strength}.`,
+                },
+                {
+                  label: 'Ping at 0s',
+                  value: `${dot.ping.from.scale} · ${dot.ping.from.opacity}`,
+                  description: 'A duplicate of the core, above it.',
+                },
+                {
+                  label: `Ping at ${settleSec}s`,
+                  value: `${dot.ping.to.scale} · ${dot.ping.to.opacity}`,
+                  description: `Ease out. Then hold, invisible, until ${seconds}s.`,
+                },
+                { label: 'Loop', value: `every ${seconds}s`, description: 'Seamless. Nothing on the core moves.' },
+              ]}
+            />
+          </div>
+        </div>
+      </section>
+
       {/* S7 - Voice. Pairs, then the short rules. */}
       <section className="hx-band hx-wrap" data-pad="tight" id="voice">
         <p className="hx-label">
-          <b>07</b> {VOICE.kicker}
+          <b>08</b> {VOICE.kicker}
         </p>
         <div className="hx-grid">
           <h2 className="hx-h2 c-two-thirds">{VOICE.heading}</h2>
@@ -359,7 +534,7 @@ export default function Style() {
       {/* S8 - Social and print. */}
       <section className="hx-band hx-wrap" data-pad="tight" id="applications">
         <p className="hx-label">
-          <b>08</b> {APPLICATIONS.kicker}
+          <b>09</b> {APPLICATIONS.kicker}
         </p>
         <div className="hx-grid">
           <h2 className="hx-h2 c-two-thirds">{APPLICATIONS.heading}</h2>
@@ -391,7 +566,7 @@ export default function Style() {
       {/* S9 - Files. */}
       <section className="hx-band hx-wrap" data-pad="tight" id="downloads">
         <p className="hx-label">
-          <b>09</b> {DOWNLOADS.kicker}
+          <b>10</b> {DOWNLOADS.kicker}
         </p>
         <div className="hx-grid">
           <h2 className="hx-h2 c-two-thirds">{DOWNLOADS.heading}</h2>
