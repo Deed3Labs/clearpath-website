@@ -1868,12 +1868,18 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
    the glow and the ping are the production ones, not an illustration. */
 .sg-dot-plates {
   display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  /* Stage, examples, caption. The plates borrow these rows through subgrid
+     so each row is as tall as the taller plate's content: a 44px button on
+     the left and 24px pills on the right no longer push the caption rules to
+     different heights. The same fix the bento cells use. */
+  grid-template-rows: auto auto auto;
   gap: 1px; margin-top: clamp(32px, 4vw, 64px);
   background: var(--color-ink-13); border-block: 1px solid var(--color-ink-13);
 }
 .sg-dot-plate {
   margin: 0; background: var(--color-paper);
-  display: grid; gap: var(--spacing-4); align-content: start;
+  display: grid; grid-row: span 3; grid-template-rows: subgrid;
+  row-gap: var(--spacing-4); align-content: start;
   padding: var(--spacing-4);
 }
 .sg-dot-stage { display: grid; place-items: center; height: 260px; }
@@ -1885,17 +1891,50 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
 .sg-dot-plate figcaption .side-line,
 .sg-dot-plate figcaption .side-note { display: block; }
 @media (max-width: 900px) {
-  .sg-dot-plates { grid-template-columns: minmax(0, 1fr); }
+  /* Stacked, there is nothing beside a plate to align with. */
+  .sg-dot-plates { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
+  .sg-dot-plate { grid-row: auto; grid-template-rows: none; }
   .sg-dot-stage { height: 220px; }
   .sg-dot-big { transform: scale(7); }
 }
 
 .sg-recreate-note { margin: 0 0 var(--spacing-2); }
-/* Code is content to copy, so it gets a ground; it scrolls inside itself
-   rather than widening the page. */
+/* A box, because it is something you take away. Header carries the language
+   and the action; the code scrolls inside itself rather than widening the
+   page. */
+.sg-codebox {
+  background: var(--color-paper-2);
+  border: 1px solid var(--color-ink-28);
+  border-radius: var(--radius-none);
+  min-width: 0;
+}
+.sg-codebox-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--spacing-2); padding: 8px 8px 8px var(--spacing-3);
+  border-bottom: 1px solid var(--color-ink-13);
+}
+.sg-codebox-lang {
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--color-ink-50);
+}
+/* Pressable, so a pill. Drawn 32px tall so the header stays a slim bar, with
+   an invisible 6px of hit area above and below — 44px to a thumb, per §8.4. */
+.sg-copy {
+  position: relative;
+  display: inline-flex; align-items: center; min-height: 32px;
+  padding-inline: 14px; border: 1px solid var(--color-ink-28);
+  border-radius: var(--radius-pill); background: var(--color-paper);
+  color: var(--color-ink); font: inherit; font-size: 13px; font-weight: 500;
+  cursor: pointer;
+  transition: border-color var(--hover) var(--ease), color var(--hover) var(--ease), background-color var(--hover) var(--ease);
+}
+.sg-copy::before { content: ''; position: absolute; inset: -6px 0; }
+.sg-copy:hover { border-color: var(--color-ink); }
+.sg-copy[data-state='copied'] { border-color: var(--color-settled); color: var(--color-settled); }
+.sg-copy[data-state='failed'] { border-color: var(--color-absent); color: var(--color-absent); }
 .sg-code {
   margin: 0; padding: var(--spacing-3);
-  background: var(--color-paper-2); border: 1px solid var(--color-ink-13);
+  background: none; border: 0;
   overflow-x: auto; max-width: 100%;
   font-family: var(--font-mono); font-size: 12.5px; line-height: 1.6;
   white-space: pre; tab-size: 2;

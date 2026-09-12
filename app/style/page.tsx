@@ -1,6 +1,7 @@
 import { Chip, Ledger, Note, TextLink } from '@/components/primitives';
 import { Button } from '@/components/primitives/Button';
 import { Logo, LogoMark } from '@/components/marks/Logo';
+import { CodeBlock } from '@/components/interactive/CodeBlock';
 import { dotSpec, inkSwatch, scale, swatch } from '@/lib/brandTokens';
 import {
   APPLICATIONS,
@@ -465,9 +466,7 @@ export default function Style() {
           <div className="c-half">
             <p className="side-label">{DOT.recreate.devTitle}</p>
             <p className="side-note sg-recreate-note">{DOT.recreate.devNote}</p>
-            <pre className="sg-code">
-              <code>{snippet}</code>
-            </pre>
+            <CodeBlock code={snippet} language="CSS" />
           </div>
           <div className="c-half">
             <p className="side-label">{DOT.recreate.designTitle}</p>
