@@ -29,5 +29,11 @@ export const HOME: Route = { href: '/', label: 'Home' };
 
 export const JOIN: Route = { href: '/join', label: 'Join' };
 
+/* The brand guide. Linked from the footer, not the header or the mobile
+   sheet: its readers are designers, partners and press, and a member looking
+   for how the co-op works should not trip over it. It is in ROUTES so the
+   sitemap lists it — it is meant to be found. */
+export const STYLE: Route = { href: '/style', label: 'Brand and style guide' };
+
 /* Everything with a URL — sitemap, QA sweeps, the ?debug=grid pass. */
-export const ROUTES: readonly Route[] = [...NAV, ...CONTEXTUAL, JOIN];
+export const ROUTES: readonly Route[] = [...NAV, ...CONTEXTUAL, JOIN, STYLE];
