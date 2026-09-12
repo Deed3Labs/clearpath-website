@@ -174,6 +174,15 @@ export const COMPONENTS = {
   kicker: 'Components',
   heading: 'The pieces every page is built from.',
   lede: 'These are the live components from the site, not pictures of them.',
+  liveDot: {
+    label: 'Live dot',
+    note: 'A pulsing dot that says "open now". It goes on Join and on each page’s main button, and nowhere else, because a signal on every button is a signal on none.',
+    rules: [
+      'Deep green on a light button, light green on a dark one.',
+      'A slow ping every two seconds, never a blink.',
+      'Reduced motion keeps the dot and stops the pulse.',
+    ],
+  },
 } as const;
 
 /* ── Voice ────────────────────────────────────────────────────────────── */

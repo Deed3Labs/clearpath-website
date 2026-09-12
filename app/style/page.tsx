@@ -48,6 +48,10 @@ function Rating({ n, bar }: { n: number; bar: number | null }) {
 
 export default function Style() {
   const spacing = scale('spacing');
+  /* Computed, like every other value here: the dot's two greens and the
+     contrast each one has against the button ground it is used on. */
+  const signalDeep = swatch('color-signal-deep');
+  const signalLight = swatch('color-signal-light');
 
   return (
     <div className="hx">
@@ -316,6 +320,28 @@ export default function Style() {
               <p className="side-label">Figure</p>
               <p className="fig sg-figure-demo">$90,000</p>
               <p className="side-note">Instrument Sans 600 with tabular numerals. Never mono.</p>
+            </div>
+
+            <div className="sg-component sg-component-wide">
+              <p className="side-label">{COMPONENTS.liveDot.label}</p>
+              <div className="sg-button-row">
+                <Button href="/join" live>
+                  Join as a member
+                </Button>
+                <Button href="/join" variant="ghost" live>
+                  Join
+                </Button>
+              </div>
+              <p className="side-note">{COMPONENTS.liveDot.note}</p>
+              <ul className="crit">
+                {COMPONENTS.liveDot.rules.map((r) => (
+                  <li key={r}>{r}</li>
+                ))}
+              </ul>
+              <p className="sg-token">
+                --color-signal-deep {signalDeep.hex} · {ratio(signalDeep.onPaper)} on light · --color-signal-light{' '}
+                {signalLight.hex} · {ratio(signalLight.onInk)} on dark
+              </p>
             </div>
           </div>
         </div>
