@@ -2266,19 +2266,25 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
 
 .ev-row {
   position: relative;
-  display: grid; grid-template-columns: 72px minmax(0, 1fr) auto; align-items: center;
-  gap: var(--spacing-3); padding-block: var(--spacing-2);
+  display: grid; grid-template-columns: 80px minmax(0, 1fr) auto; align-items: center;
+  gap: var(--spacing-3); padding-block: 20px;
   border-bottom: 1px solid var(--color-ink-13);
 }
 .ev-row:hover .ev-title { color: var(--color-live); }
 .ev-row[data-cancelled] .ev-title, .ev-row[data-cancelled] .ev-date { color: var(--color-ink-50); }
 .ev-row[data-cancelled] .ev-title { text-decoration: line-through; text-decoration-thickness: 1px; }
 
-.ev-date { display: grid; justify-items: center; margin: 0; line-height: 1; }
+/* The date owns its column: it fills the row's height and sits dead centre,
+   with a hairline separating it from the event. */
+.ev-date {
+  align-self: stretch; display: grid; place-content: center; justify-items: center;
+  margin: 0; border-right: 1px solid var(--color-ink-13); line-height: 1;
+}
 .ev-date-wk, .ev-date-mo { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-ink-50); }
 .ev-date-day { font-family: var(--font-display); font-weight: 800; font-size: 38px; letter-spacing: -0.04em; margin-block: 4px 3px; font-variant-numeric: tabular-nums; }
 
-.ev-main { display: grid; gap: 6px; min-width: 0; }
+.ev-main { display: grid; gap: 4px; min-width: 0; }
+.ev-main .ev-chips { margin-bottom: 4px; }
 .ev-chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .ev-title { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(18px, 1.6vw, 22px); line-height: 1.2; letter-spacing: -0.018em; transition: color var(--hover) var(--ease); }
 /* The title's link covers the row; Register is lifted above it. */
@@ -2321,9 +2327,14 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
   .ev-filter { flex-wrap: nowrap; overflow-x: auto; margin-inline: calc(var(--hx-inset) * -1); padding-inline: var(--hx-inset); scrollbar-width: none; }
   .ev-filter::-webkit-scrollbar { display: none; }
   .ev-filter-chip { flex: none; }
-  .ev-row { grid-template-columns: 56px minmax(0, 1fr); align-items: start; gap: var(--spacing-2); }
+  /* The date spans both rows (event, then Register) so it centres on the
+     whole entry, not just the title. */
+  .ev-row { grid-template-columns: 64px minmax(0, 1fr); align-items: start; column-gap: var(--spacing-2); row-gap: 12px; padding-block: var(--spacing-2); }
+  .ev-date { grid-row: 1 / span 2; }
   .ev-date-day { font-size: 30px; }
   .ev-aside { grid-column: 2; }
+  .ev-aside:empty { display: none; }
+  .ev-row:has(.ev-aside:empty) .ev-date { grid-row: 1; }
   .ev-empty { grid-template-columns: minmax(0, 1fr); }
 }
 

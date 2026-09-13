@@ -82,7 +82,7 @@ export const EVENTS: ClearEventInput[] = [
     endsAt: '2026-10-08T18:30:00-07:00',
     format: 'online',
     location: 'Online. The link comes with your registration.',
-    summary: 'A walk through the co-op in plain words, then as many questions as there is time for.',
+    summary: 'How the co-op works in plain words, then your questions.',
     description: [
       'Half an hour on how membership, savings and shop plans fit together, and half an hour of questions.',
       'Bring anything. Nobody will ask you to sign up for something on the call.',
@@ -100,7 +100,7 @@ export const EVENTS: ClearEventInput[] = [
     endsAt: '2026-10-22T19:30:00-07:00',
     format: 'hybrid',
     location: 'Inland Empire, and online',
-    summary: 'Where the first homes stand, what members decide next, and how to have a say.',
+    summary: 'Where the first homes stand and what members decide next.',
     description: ['An open meeting for members and anyone thinking of joining.'],
     host: 'Clear',
     registerUrl: 'https://lu.ma/',
@@ -114,7 +114,7 @@ export const EVENTS: ClearEventInput[] = [
     endsAt: '2026-11-05T11:00:00-08:00',
     format: 'online',
     location: 'Online. Registration required.',
-    summary: 'An update for people considering capital in the co-op. Introductions only.',
+    summary: 'An update for people considering capital in the co-op.',
     description: ['A progress update and open questions.'],
     host: 'Clear Capital',
     registerUrl: 'https://lu.ma/',
@@ -151,14 +151,14 @@ export const LOCAL_HORIZON_DAYS = 60;
 export const OPENING = {
   kicker: 'Events',
   heading: 'Come to the meeting.',
-  lede: 'Community calls, investor calls and co-op governance, most of them free and online. Plus the local meetings that decide what gets built here.',
+  lede: 'Co-op calls and town halls, plus the local meetings that decide what gets built here.',
   subscribe: 'Add Clear events to your calendar',
 } as const;
 
 export const LISTING = {
   clearHeading: 'Clear events',
   localHeading: 'Local government',
-  localNote: 'Pulled from each city and county calendar and checked hourly. Times and agendas can change; the official listing is the source.',
+  localNote: 'Pulled from city and county calendars every hour. The official listing has the final word.',
   register: 'Register',
   details: 'Details',
   free: 'Free',
@@ -170,7 +170,7 @@ export const LISTING = {
    beneath it, so the page is rarely bare. */
 export const EMPTY = {
   heading: 'Nothing on the calendar right now.',
-  lede: 'Calls and town halls are posted here a few weeks ahead. Leave an email and we will tell you when the next one is scheduled.',
+  lede: 'Calls go up a few weeks ahead. Leave an email and we will tell you when one is posted.',
   notify: {
     label: 'Email',
     button: 'Email me when one is posted',
@@ -184,10 +184,10 @@ export const EMPTY = {
 export const KINDS = {
   kicker: 'What goes on this calendar',
   sides: [
-    { label: 'Community', line: 'Community calls.', note: 'How the co-op works, in plain words, with time for questions. Free and online.' },
-    { label: 'Investors', line: 'Investor calls.', note: 'Updates for people considering capital in the co-op. Registration required.' },
-    { label: 'Governance', line: 'Town halls and hearings.', note: 'Where members hear proposals, argue them out and have a say before a vote.' },
-    { label: 'Local government', line: 'The meetings next door.', note: 'Council and planning meetings decide what can be built. They are public, and you can speak.' },
+    { label: 'Community', line: 'Community calls.', note: 'How the co-op works, in plain words. Free and online.' },
+    { label: 'Investors', line: 'Investor calls.', note: 'Updates for people considering capital in the co-op.' },
+    { label: 'Governance', line: 'Town halls and hearings.', note: 'Where members hear proposals and have a say before a vote.' },
+    { label: 'Local government', line: 'The meetings next door.', note: 'Council and planning meetings decide what gets built. Anyone can speak.' },
   ],
 } as const;
 
@@ -209,8 +209,7 @@ export const DETAIL = {
   online: 'Online',
   inPerson: 'In person',
   hybrid: 'In person and online',
-  localAbout:
-    'A public meeting. Anyone can attend, and most allow public comment in person or in writing. The agenda is usually posted a few days before.',
+  localAbout: 'A public meeting. Anyone can attend, and most take public comment. The agenda goes up a few days before.',
   officialListing: 'Official listing and agenda',
   investorLegal:
     'Nothing on this call or this page is an offer to sell or a solicitation to buy any security.',
