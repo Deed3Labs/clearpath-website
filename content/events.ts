@@ -131,64 +131,91 @@ export const EVENTS: ClearEventInput[] = [
 
 /* Public meeting calendars pulled automatically. Each was checked against
    its live API. Riverside County publishes on a system with no public feed,
-   so it is not here yet. `bodies` keeps a source to the
-   meetings that decide land, housing and money — a city publishes dozens of
-   committees a month. */
+   so it is not here yet.
+
+   No meeting-type filters: every public meeting a government source lists is
+   shown — councils, commissions, committees, boards. The one exception is
+   `only`, for a source that mixes meetings with other things (Redlands' city
+   calendar also carries story times and film nights). */
 export type LocalSource =
-  | { kind: 'legistar'; client: string; place: string; bodies: RegExp }
-  | { kind: 'primegov'; client: string; place: string; bodies: RegExp }
+  | { kind: 'legistar'; client: string; place: string; only?: RegExp }
+  | { kind: 'primegov'; client: string; place: string; only?: RegExp }
+  /* A city's public iCal feed (CivicPlus sites publish one per calendar
+     category). A published schedule rather than an agenda. */
+  | { kind: 'ics'; client: string; place: string; only?: RegExp; url: string; agendasUrl: string }
   /* A city's community calendar on withapps.io. Redlands publishes agendas
      on AgendaLink, whose API needs a login, so its meetings come from the
      city's own public calendar instead — which carries the REGULAR schedule,
      not the agenda. Times can differ from the posted agenda and a cancelled
      meeting can still appear, so these rows say so and link the agendas. */
-  /* A city's public iCal feed (CivicPlus sites publish one per calendar
-     category). Like withapps, a published schedule rather than an agenda. */
-  | { kind: 'ics'; client: string; place: string; bodies: RegExp; url: string; agendasUrl: string }
   | {
       kind: 'withapps';
       client: string;
       place: string;
-      bodies: RegExp;
+      only?: RegExp;
       organizationId: number;
       communityId: number;
       agendasUrl: string;
     };
 
-const KEY_BODIES = /council|supervisors|planning|housing/i;
+/* What a government meeting is called, for a calendar that also lists
+   everything else happening in town. */
+const PUBLIC_MEETING = /council|commission|committee|board|corporation|authority|hearing/i;
 
 export const LOCAL_SOURCES: LocalSource[] = [
-  { kind: 'legistar', client: 'sanbernardino', place: 'San Bernardino County', bodies: /supervisors/i },
-  /* Every meeting, not just KEY_BODIES: PrimeGov lists a meeting only once its
-     agenda is posted, so this is a couple at a time rather than a flood, and
-     commissions like Public Safety and Human Relations were being dropped. */
-  { kind: 'primegov', client: 'sanbernardino', place: 'City of San Bernardino', bodies: /./ },
+  { kind: 'legistar', client: 'sanbernardino', place: 'San Bernardino County' },
+  { kind: 'primegov', client: 'sanbernardino', place: 'City of San Bernardino' },
   /* PrimeGov only lists a meeting once its agenda is posted, about a week
-     out. The city calendar has the council schedule months ahead; where both
-     have the same meeting, the agenda wins (see dedupe in lib/events). */
+     out. The city calendar (its Council Meetings category) has the schedule
+     months ahead; where both have the same meeting, the agenda wins (see
+     dedupe in lib/events). */
   {
     kind: 'ics',
     client: 'sanbernardino-calendar',
     place: 'City of San Bernardino',
-    bodies: KEY_BODIES,
     url: 'https://www.sanbernardino.gov/common/modules/iCalendar/iCalendar.aspx?catID=50&feed=calendar',
     agendasUrl: 'https://sanbernardino.primegov.com/public/portal',
   },
-  { kind: 'primegov', client: 'ranchocucamonga', place: 'Rancho Cucamonga', bodies: KEY_BODIES },
-  { kind: 'legistar', client: 'fontana', place: 'Fontana', bodies: KEY_BODIES },
-  { kind: 'legistar', client: 'rialto', place: 'Rialto', bodies: KEY_BODIES },
-  { kind: 'legistar', client: 'chino', place: 'Chino', bodies: KEY_BODIES },
-  { kind: 'legistar', client: 'hesperia', place: 'Hesperia', bodies: KEY_BODIES },
-  { kind: 'legistar', client: 'murrieta', place: 'Murrieta', bodies: KEY_BODIES },
+  { kind: 'primegov', client: 'ranchocucamonga', place: 'Rancho Cucamonga' },
+  { kind: 'legistar', client: 'fontana', place: 'Fontana' },
+  { kind: 'legistar', client: 'rialto', place: 'Rialto' },
+  { kind: 'legistar', client: 'chino', place: 'Chino' },
+  { kind: 'legistar', client: 'hesperia', place: 'Hesperia' },
+  { kind: 'legistar', client: 'murrieta', place: 'Murrieta' },
   {
     kind: 'withapps',
     client: 'redlands',
     place: 'Redlands',
-    // Not KEY_BODIES: the city calendar also carries a "Disaster Council".
-    bodies: /city council|planning|housing/i,
+    only: PUBLIC_MEETING,
     organizationId: 39,
     communityId: 158,
     agendasUrl: 'https://horizon.agendalink.app/engage-v2/redlandsca/agendas',
+  },
+];
+
+/* Local meetings no feed carries, added by hand. Redlands posts some meetings
+   only on AgendaLink (no public feed) — the Redlands Housing Corporation is
+   not on the city calendar at all. Past entries drop off the page on their
+   own; delete them whenever. Slugs must start with "local-". */
+export type LocalMeetingInput = {
+  slug: string;
+  place: string;
+  title: string;
+  /* ISO with offset. */
+  startsAt: string;
+  location?: string;
+  officialUrl: string;
+  cancelled?: boolean;
+};
+
+export const LOCAL_MEETINGS: LocalMeetingInput[] = [
+  {
+    slug: 'local-redlands-housing-corporation-2026-09-15',
+    place: 'Redlands',
+    title: 'Redlands Housing Corporation',
+    startsAt: '2026-09-15T18:00:00-07:00',
+    location: 'City Council Chambers, 35 Cajon Street, Redlands, CA',
+    officialUrl: 'https://horizon.agendalink.app/engage-v2/redlandsca/6aa05143f25a87d76c66fdb9',
   },
 ];
 
