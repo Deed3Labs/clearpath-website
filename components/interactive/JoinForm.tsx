@@ -6,6 +6,7 @@ import { MODES, OPENING, SUBMIT, type ModeKey } from '@/content/join';
 import { FieldSelect } from './FieldSelect';
 import { FieldRange } from './FieldRange';
 import { FieldRangeDual } from './FieldRangeDual';
+import { LiveDot } from '@/components/primitives/Button';
 
 /* §6.8 — four modes, deep-linkable, and built to submit for real.
  *
@@ -223,6 +224,7 @@ export function JoinForm() {
                 data-variant="primary"
                 disabled={status === 'sending'}
               >
+                <LiveDot />
                 {status === 'sending' ? SUBMIT.sending : active.button}
               </button>
               <p className="t-sm join-status" role="status" aria-live="polite">
