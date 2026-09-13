@@ -2,8 +2,10 @@ import Link from 'next/link';
 import { Logo } from '@/components/marks/Logo';
 import { BRAND_LINE, FOOTER_COLUMNS, LEGAL } from '@/content/footer';
 
-/* §7 — Footer, every page. Four columns, then the legal block, which §8
-   requires on every route without exception. */
+/* §7 — Footer, every page. The brand, the link columns, then the legal block,
+   which §8 requires on every route without exception. The link columns sit in
+   their own grid so a fourth one splits the space evenly instead of squeezing
+   into two of the page's twelve tracks. */
 
 export function Footer() {
   return (
@@ -18,24 +20,26 @@ export function Footer() {
           </p>
         </div>
 
-        {FOOTER_COLUMNS.map((col) => (
-          <nav key={col.heading} className="footer-col" aria-label={col.heading}>
-            <p className="footer-heading">{col.heading}</p>
-            <ul className="t-sm">
-              {col.links.map((l) => (
-                <li key={l.href}>
-                  {l.external ? (
-                    <a href={l.href} className="tlink" rel="noreferrer noopener">
-                      {l.label}
-                    </a>
-                  ) : (
-                    <Link href={l.href} className="tlink">{l.label}</Link>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </nav>
-        ))}
+        <div className="footer-cols">
+          {FOOTER_COLUMNS.map((col) => (
+            <nav key={col.heading} className="footer-col" aria-label={col.heading}>
+              <p className="footer-heading">{col.heading}</p>
+              <ul className="t-sm">
+                {col.links.map((l) => (
+                  <li key={l.href}>
+                    {l.external ? (
+                      <a href={l.href} className="tlink" rel="noreferrer noopener">
+                        {l.label}
+                      </a>
+                    ) : (
+                      <Link href={l.href} className="tlink">{l.label}</Link>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))}
+        </div>
       </div>
 
       <div className="footer-legal">
