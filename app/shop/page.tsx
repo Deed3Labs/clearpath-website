@@ -1,11 +1,10 @@
 import Link from 'next/link';
 import { Button } from '@/components/primitives/Button';
 import { Ledger } from '@/components/primitives';
-import { Parcel } from '@/components/shop/Parcel';
 import { ProductPlate } from '@/components/shop/ProductPlate';
 import { ShopNotify } from '@/components/shop/ShopNotify';
-import { CLOSED, OPENING, WHY, type PlateTone } from '@/content/shop';
-import { visibleProducts } from '@/lib/shop/catalog';
+import { CLOSED, CLOSED_REASONS, OPENING, SHOP_STATUS, WHY } from '@/content/shop';
+import { isShopOpen, visibleProducts } from '@/lib/shop/catalog';
 import { usd } from '@/lib/shop/money';
 
 export const metadata = {
@@ -15,16 +14,16 @@ export const metadata = {
 
 /* Two states from one page: open (the shelf) and closed.
  *
- * Closed is not "coming soon". It is a shop with its doors shut: the lights
- * are off (the ink band), there is a sign on the door, and a status board
- * beside it that anyone checking back reads first. Under that, the goods are
- * wrapped. The page asks for one thing, an email, and asks twice: once at the
- * door and once after the parcels, for whoever scrolled to look.
+ * Closed is an ordinary state the shop goes into and comes out of — sold out,
+ * restocking, packing a big batch of orders, a break, or not open yet. So it
+ * is built like a shop door, not a launch page: the sign, a status board that
+ * says why and when, and what someone arriving needs to know (their order
+ * still ships, how to hear when it reopens, who to ask). The words come from
+ * SHOP_STATUS.reason in content/shop.ts.
  */
 
 export default function Shop() {
-  const products = visibleProducts();
-  return products.length ? <OpenShop products={products} /> : <ClosedShop />;
+  return isShopOpen() ? <OpenShop products={visibleProducts()} /> : <ClosedShop />;
 }
 
 function OpenShop({ products }: { products: ReturnType<typeof visibleProducts> }) {
@@ -65,44 +64,47 @@ function longDate(iso: string): string {
   return `${MONTHS[m - 1]} ${d}, ${y}`;
 }
 
-const WRAP_TONES: PlateTone[] = ['ink', 'land', 'paper'];
-const WRAP_TILT = [-4, 3, -2];
-
 function ClosedShop() {
+  const why = CLOSED_REASONS[SHOP_STATUS.reason];
+  const m = CLOSED.meanwhile;
+  const cards = [...(why.ordersShipping ? [m.ordered] : []), m.list, m.question];
+
   return (
     <div className="hx">
-      {/* Lights off. */}
       <section className="hx-band shop-closed" data-tone="ink">
         <div className="hx-wrap">
           <div className="hx-grid shop-closed-grid">
             <div className="c-half shop-door">
-              <div className="shop-sign" role="img" aria-label={`${CLOSED.sign.top} ${CLOSED.sign.word}. ${CLOSED.sign.foot}.`}>
+              <div className="shop-sign" role="img" aria-label={`${CLOSED.signTop} ${CLOSED.signWord}. ${why.sign}.`}>
                 <svg className="shop-sign-string" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
                   <path d="M50 3 L16 100 M50 3 L84 100" vectorEffect="non-scaling-stroke" />
                 </svg>
                 <span className="shop-sign-nail" aria-hidden="true" />
                 <span className="shop-sign-board" aria-hidden="true">
-                  <span className="shop-sign-top">{CLOSED.sign.top}</span>
-                  <span className="shop-sign-word">{CLOSED.sign.word}</span>
-                  <span className="shop-sign-foot">{CLOSED.sign.foot}</span>
+                  <span className="shop-sign-top">{CLOSED.signTop}</span>
+                  <span className="shop-sign-word">{CLOSED.signWord}</span>
+                  <span className="shop-sign-foot">{why.sign}</span>
                 </span>
               </div>
             </div>
 
             <div className="c-half shop-closed-copy">
-              <h1 className="shop-closed-h">{CLOSED.heading}</h1>
-              <p className="hx-lede">{CLOSED.lede}</p>
+              <h1 className="shop-closed-h">{why.heading}</h1>
+              <p className="hx-lede">{why.lede}</p>
               <ShopNotify />
 
               <Ledger
                 items={[
                   { label: CLOSED.board.doors, value: CLOSED.status, chip: CLOSED.status, chipTone: 'absent' },
+                  { label: CLOSED.board.reason, value: why.label },
                   {
-                    label: CLOSED.board.opening,
-                    value: CLOSED.opensAt ? longDate(CLOSED.opensAt) : CLOSED.board.openingUnset,
-                    muted: !CLOSED.opensAt,
+                    label: CLOSED.board.back,
+                    value: SHOP_STATUS.reopensAt ? longDate(SHOP_STATUS.reopensAt) : CLOSED.board.backUnset,
+                    muted: !SHOP_STATUS.reopensAt,
                   },
-                  { label: CLOSED.board.first, value: CLOSED.board.firstValue },
+                  ...(why.ordersShipping
+                    ? [{ label: CLOSED.board.orders, value: CLOSED.board.ordersValue, chip: CLOSED.board.ordersValue, chipTone: 'live' as const }]
+                    : []),
                 ]}
               />
             </div>
@@ -110,24 +112,17 @@ function ClosedShop() {
         </div>
       </section>
 
-      {/* The goods, wrapped. */}
-      <section className="hx-band hx-wrap">
+      <section className="hx-band hx-wrap" data-pad="tight">
         <p className="hx-label">
-          <b>01</b> {CLOSED.wraps.kicker}
+          <b>01</b> {m.kicker}
         </p>
         <div className="hx-grid">
-          <h2 className="hx-h2 c-two-thirds">{CLOSED.wraps.heading}</h2>
-          <p className="hx-lede c-third shop-lede">{CLOSED.wraps.lede}</p>
-
-          <div className="c-full hx-cols shop-wraps" data-n="3" data-rows="4">
-            {WHY.sides.map((s, i) => (
-              <div className="shop-wrap" key={s.label}>
-                <Parcel tone={WRAP_TONES[i]} tilt={WRAP_TILT[i]} />
-                <p className="side-label">
-                  No. {String(i + 1).padStart(2, '0')} · {s.label}
-                </p>
-                <p className="side-line">{s.line}</p>
-                <p className="t-sm side-note">{s.note}</p>
+          <div className="c-full hx-cols" data-n={cards.length} data-rows="3">
+            {cards.map((c) => (
+              <div className="side" key={c.label}>
+                <p className="side-label">{c.label}</p>
+                <p className="side-line shop-meanwhile-line">{c.line}</p>
+                <p className="t-sm side-note">{c.note}</p>
               </div>
             ))}
           </div>

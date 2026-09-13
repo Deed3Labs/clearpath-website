@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
-import { BAG, MAX_PER_LINE, type Product } from '@/content/shop';
+import { BAG, CLOSED, MAX_PER_LINE, type Product } from '@/content/shop';
+import { Chip } from '@/components/primitives';
 import { usd, usdExact } from '@/lib/shop/money';
 import { LiveDot } from '@/components/primitives/Button';
 import { useBag } from './BagProvider';
@@ -25,7 +26,7 @@ type Phase = 'idle' | 'rating' | 'paying';
 
 const EMPTY = { name: '', email: '', street1: '', street2: '', city: '', state: '', zip: '' };
 
-export function BagView({ products }: { products: Product[] }) {
+export function BagView({ products, open }: { products: Product[]; open: boolean }) {
   const { lines, ready, setQty, remove } = useBag();
   const [addr, setAddr] = useState(EMPTY);
   const [rates, setRates] = useState<Quote[] | null>(null);
@@ -198,6 +199,17 @@ export function BagView({ products }: { products: Product[] }) {
       </div>
 
       <div className="c-half">
+        {!open && (
+          <p className="shop-closed-note shop-bag-closed">
+            <Chip tone="absent">{CLOSED.status}</Chip>
+            <span>
+              {CLOSED.bagNote}{' '}
+              <Link href="/shop" className="shop-inline-link">
+                {CLOSED.seeWhy}
+              </Link>
+            </span>
+          </p>
+        )}
         <form className="join-form shop-address" onSubmit={getRates}>
           <fieldset>
             <legend className="shop-legend">
@@ -250,7 +262,7 @@ export function BagView({ products }: { products: Product[] }) {
 
             {!rates && (
               <div className="join-submit is-wide">
-                <button type="submit" className="btn" data-variant="primary" disabled={phase !== 'idle' || unavailable}>
+                <button type="submit" className="btn" data-variant="primary" disabled={!open || phase !== 'idle' || unavailable}>
                   <LiveDot />
                   {phase === 'rating' ? BAG.gettingRates : BAG.getRates}
                 </button>

@@ -1,6 +1,6 @@
 import { BagView } from '@/components/shop/BagView';
 import { BAG } from '@/content/shop';
-import { visibleProducts } from '@/lib/shop/catalog';
+import { isShopOpen, visibleProducts } from '@/lib/shop/catalog';
 
 export const metadata = {
   title: 'Bag · Shop',
@@ -15,7 +15,7 @@ export default function Bag() {
           <h1 className="hx-h2 c-full">{BAG.heading}</h1>
           {/* The catalog is handed down for display only. What gets charged is
               priced again on the server. */}
-          <BagView products={visibleProducts()} />
+          <BagView products={visibleProducts()} open={isShopOpen()} />
         </div>
       </section>
     </div>

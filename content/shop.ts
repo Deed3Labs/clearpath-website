@@ -104,39 +104,113 @@ export const OPENING = {
   lede: 'A small run of well-made goods with the Clear name on them. Wear it and people ask what it is.',
 } as const;
 
-/* The closed state. Framed as a shop with its doors shut rather than a page
-   that is not finished: a sign on the door, a status board, and the goods
-   under wraps. Its one job is the email field, and its second job is to be
-   worth checking again. */
+/* Open or closed. The shop closes for ordinary reasons — it sold out, it is
+   restocking, it is packing a big batch of orders, it is on a break — and the
+   closed page is one page whose words follow the reason. Closing is real, not
+   cosmetic: product pages swap the buy button for a notice, the bag cannot
+   get rates or pay, and the checkout API refuses.
+
+   Change `open`/`reason` here and redeploy. SHOP_OPEN=true|false in the
+   environment overrides `open` without a code change (still needs a
+   redeploy, because the pages are static). The shop is also closed whenever
+   no product is live, whatever this says. */
+export type ClosedReason = 'not-open-yet' | 'sold-out' | 'restocking' | 'packing-orders' | 'break';
+
+export const SHOP_STATUS: {
+  open: boolean;
+  reason: ClosedReason;
+  /* ISO date (YYYY-MM-DD) or null. Only set a date you will keep. */
+  reopensAt: string | null;
+} = {
+  open: false,
+  reason: 'not-open-yet',
+  reopensAt: null,
+};
+
+export const CLOSED_REASONS: Record<
+  ClosedReason,
+  { label: string; sign: string; heading: string; lede: string; ordersShipping: boolean }
+> = {
+  'not-open-yet': {
+    label: 'Not open yet',
+    sign: 'Opening soon',
+    heading: 'Not open yet.',
+    lede: 'The first run is still being made. Leave an email and we will tell you the day the doors open.',
+    ordersShipping: false,
+  },
+  'sold-out': {
+    label: 'Sold out',
+    sign: 'Sold out',
+    heading: 'Sold out, for now.',
+    lede: 'Everything from this run has gone. Leave an email and we will tell you when the next one is in.',
+    ordersShipping: true,
+  },
+  restocking: {
+    label: 'Restocking',
+    sign: 'Restocking',
+    heading: 'Restocking the shelves.',
+    lede: 'New stock is on its way. Leave an email and we will tell you the day the doors reopen.',
+    ordersShipping: true,
+  },
+  'packing-orders': {
+    label: 'Packing orders',
+    sign: 'Packing orders',
+    heading: 'Packing your orders.',
+    lede: 'We closed the doors for a few days to get every order out properly. Leave an email and we will tell you when we reopen.',
+    ordersShipping: true,
+  },
+  break: {
+    label: 'Short break',
+    sign: 'Back soon',
+    heading: 'Closed for a short break.',
+    lede: 'The shop is taking a few days off. Leave an email and we will tell you when it reopens.',
+    ordersShipping: true,
+  },
+};
+
 export const CLOSED = {
-  sign: { top: 'Sorry, we are', word: 'Closed', foot: 'Back soon' },
+  signTop: 'Sorry, we are',
+  signWord: 'Closed',
   status: 'Closed',
-  heading: 'Stocking the shelves.',
-  lede: 'Well-made Clear goods, in small runs. Leave an email and you hear the day the doors open, before we post it anywhere.',
   notifyLabel: 'Email',
-  notifyButton: 'Put me on the list',
+  notifyButton: 'Email me when it opens',
   sending: 'Adding you…',
-  ok: 'You are on the list. We will email you once, the day the doors open.',
+  ok: 'Done. We will email you once, when the shop opens.',
   error: 'That did not send, and nothing was stored. Try again in a minute.',
-  /* The status board. `opensAt` is an ISO date (YYYY-MM-DD) or null; set it
-     when the date is real and the board shows it. Never set a date to look
-     busy — a missed date is worse than no date. */
-  opensAt: null as string | null,
   board: {
     doors: 'Doors',
-    opening: 'Opening day',
-    openingUnset: 'Not set yet',
-    first: 'Who hears first',
-    firstValue: 'The list',
+    reason: 'Why',
+    back: 'Back',
+    backUnset: 'When it is ready',
+    orders: 'Orders already placed',
+    ordersValue: 'Still shipping',
   },
-  wraps: {
-    kicker: 'Under wraps',
-    heading: 'No peeking.',
-    lede: 'What is in the first run stays wrapped until the doors open. Here is what we can tell you.',
+  /* The second band: what someone arriving at a closed shop actually needs. */
+  meanwhile: {
+    kicker: 'While we are closed',
+    ordered: {
+      label: 'Already ordered?',
+      line: 'It still ships.',
+      note: 'Orders placed before we closed go out as normal. Tracking comes by email.',
+    },
+    list: {
+      label: 'Want to know first?',
+      line: 'Join the list.',
+      note: 'One email the day the doors open. Nothing else.',
+    },
+    question: {
+      label: 'Question about an order?',
+      line: 'Reply to your receipt.',
+      note: 'Your order confirmation email comes to us. Reply to it and we will sort it out.',
+    },
   },
+  /* Product pages and the bag, while closed. */
+  productNote: 'The shop is closed right now, so this cannot be ordered.',
+  bagNote: 'The shop is closed right now. Your bag is saved on this device for when it reopens.',
+  seeWhy: 'See why',
   closing: {
     line: 'Doors closed. List open.',
-    button: 'Put me on the list',
+    button: 'Email me when it opens',
   },
 } as const;
 

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { priceBag } from '@/lib/shop/catalog';
+import { isShopOpen, priceBag } from '@/lib/shop/catalog';
 import { CheckoutBody } from '@/lib/shop/schema';
 import { getRate, isShippoConfigured } from '@/lib/shop/shippo';
 import { getStripe, isStripeConfigured } from '@/lib/shop/stripe';
@@ -7,6 +7,9 @@ import { getStripe, isStripeConfigured } from '@/lib/shop/stripe';
 export const runtime = 'nodejs';
 
 export async function POST(request: Request) {
+  if (!isShopOpen()) {
+    return NextResponse.json({ error: 'The shop is closed right now. Nothing was charged.' }, { status: 503 });
+  }
   if (!isStripeConfigured() || !isShippoConfigured()) {
     return NextResponse.json(
       { error: 'Checkout is not switched on yet. Nothing was charged.' },

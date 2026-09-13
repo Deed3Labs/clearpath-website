@@ -1,4 +1,4 @@
-import { PRODUCTS, type Product } from '@/content/shop';
+import { PRODUCTS, SHOP_STATUS, type Product } from '@/content/shop';
 
 /* Which products exist, as far as this build is concerned.
  *
@@ -24,9 +24,11 @@ export function getProduct(slug: string): Product | undefined {
   return visibleProducts().find((p) => p.slug === slug);
 }
 
-/* The shop is open when there is anything to buy. */
+/* Open means the switch is on AND there is something to buy. */
 export function isShopOpen(): boolean {
-  return visibleProducts().length > 0;
+  const env = process.env.SHOP_OPEN;
+  const open = env === 'true' ? true : env === 'false' ? false : SHOP_STATUS.open;
+  return open && visibleProducts().length > 0;
 }
 
 export type BagLine = { slug: string; variant: string; qty: number };

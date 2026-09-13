@@ -1993,8 +1993,8 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
 .shop-plate-body { fill: var(--plate-fill); stroke: currentColor; stroke-width: 2.5; stroke-linejoin: round; }
 .shop-plate-line { fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; }
 
-/* Closed. The lights are off (an ink band), there is a sign on the door and
-   a status board beside it. The sign is a drawing, so square corners; it
+/* Closed — sold out, restocking, packing orders, a break. The lights are off
+   (an ink band), there is a sign on the door and a status board beside it. The sign is a drawing, so square corners; it
    swings once as the page loads and settles crooked, the way a sign on a
    door does. That swing is the page's only motion besides the live dot, and
    reduced motion skips it. */
@@ -2062,15 +2062,13 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
   .shop-door { min-height: 0; padding-block: var(--spacing-3) var(--spacing-4); }
 }
 
-/* Under wraps: one parcel per column, its note under it. */
-.shop-wrap .shop-plate { margin-bottom: var(--spacing-1); }
-/* Stacked, three full squares is three screens of parcel. A wide plate keeps the drawing and loses the scroll. */
-@media (max-width: 900px) { .shop-wrap .shop-plate { aspect-ratio: 16 / 10; } }
-.shop-parcel-tag { fill: var(--plate-ground); }
-.shop-wraps .side-line { font-size: clamp(22px, 2.2vw, 32px); }
+.shop-meanwhile-line { font-size: clamp(22px, 2.2vw, 32px); }
+/* The buy button's stand-in on a product page, and the bag's notice. */
+.shop-closed-note { display: grid; justify-items: start; gap: var(--spacing-1); margin: 0; padding-block: var(--spacing-2); border-block: 1px solid var(--color-ink-13); color: var(--color-ink-70); }
+.shop-bag-closed { margin-bottom: var(--spacing-4); }
 .shop-closing {
   display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
-  gap: var(--spacing-3); border-top: 2px solid var(--color-ink); padding-top: var(--spacing-3);
+  gap: var(--spacing-3); border-top: 2px solid var(--color-ink); padding-top: var(--spacing-3); margin-top: var(--spacing-4);
 }
 .shop-closing-line {
   margin: 0; font-family: var(--font-display); font-weight: 800;

@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { AddToBag } from '@/components/shop/AddToBag';
+import { Chip } from '@/components/primitives';
 import { ProductPlate } from '@/components/shop/ProductPlate';
-import { PRODUCT_COPY } from '@/content/shop';
-import { getProduct, visibleProducts } from '@/lib/shop/catalog';
+import Link from 'next/link';
+import { CLOSED, PRODUCT_COPY } from '@/content/shop';
+import { getProduct, isShopOpen, visibleProducts } from '@/lib/shop/catalog';
 import { usd } from '@/lib/shop/money';
 
 /* Only what this build sells gets a page. A draft's URL 404s in production
@@ -48,7 +50,19 @@ export default async function ProductPage({ params }: Props) {
             </div>
             <p className="hx-lede">{product.description}</p>
 
-            <AddToBag slug={product.slug} variants={product.variants} variantLabel={product.variantLabel} />
+            {isShopOpen() ? (
+              <AddToBag slug={product.slug} variants={product.variants} variantLabel={product.variantLabel} />
+            ) : (
+              <p className="shop-closed-note">
+                <Chip tone="absent">{CLOSED.status}</Chip>
+                <span>
+                  {CLOSED.productNote}{' '}
+                  <Link href="/shop" className="shop-inline-link">
+                    {CLOSED.seeWhy}
+                  </Link>
+                </span>
+              </p>
+            )}
 
             <div className="shop-details">
               <p className="side-label">{PRODUCT_COPY.details}</p>
