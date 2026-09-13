@@ -92,6 +92,7 @@ export default async function EventPage({ params }: Props) {
                   {longDate(e.start)}
                   <br />
                   {e.timeUnknown ? 'Time to be posted' : timeRange(e.start, e.end)}
+                  {e.provisional && <span className="ev-caveat">{DETAIL.scheduleCaveat}</span>}
                 </dd>
               </div>
               <div>

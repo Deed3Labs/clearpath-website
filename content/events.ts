@@ -48,6 +48,13 @@ export const GROUPS: { key: EventGroup | 'all'; label: string }[] = [
 
 export type EventFormat = 'online' | 'in-person' | 'hybrid';
 
+/* iCal feeds Clear's own events are pulled from, re-read hourly. The Luma
+   calendar is here rather than only in the environment because the link is
+   public and belongs in the repo's history; EVENTS_ICS_URLS adds more. */
+export const CLEAR_FEEDS: string[] = [
+  'https://api.luma.com/ics/get?entity=calendar&id=cal-C0qVwa9vlyBMSAp',
+];
+
 /* A Clear event, written by hand. */
 export type ClearEventInput = {
   slug: string;
@@ -123,25 +130,63 @@ export const EVENTS: ClearEventInput[] = [
 ];
 
 /* Public meeting calendars pulled automatically. Each was checked against
-   its live API; Redlands and Riverside County publish on systems with no
-   public feed, so they are not here yet. `bodies` keeps a source to the
+   its live API. Riverside County publishes on a system with no public feed,
+   so it is not here yet. `bodies` keeps a source to the
    meetings that decide land, housing and money — a city publishes dozens of
    committees a month. */
 export type LocalSource =
   | { kind: 'legistar'; client: string; place: string; bodies: RegExp }
-  | { kind: 'primegov'; client: string; place: string; bodies: RegExp };
+  | { kind: 'primegov'; client: string; place: string; bodies: RegExp }
+  /* A city's community calendar on withapps.io. Redlands publishes agendas
+     on AgendaLink, whose API needs a login, so its meetings come from the
+     city's own public calendar instead — which carries the REGULAR schedule,
+     not the agenda. Times can differ from the posted agenda and a cancelled
+     meeting can still appear, so these rows say so and link the agendas. */
+  /* A city's public iCal feed (CivicPlus sites publish one per calendar
+     category). Like withapps, a published schedule rather than an agenda. */
+  | { kind: 'ics'; client: string; place: string; bodies: RegExp; url: string; agendasUrl: string }
+  | {
+      kind: 'withapps';
+      client: string;
+      place: string;
+      bodies: RegExp;
+      organizationId: number;
+      communityId: number;
+      agendasUrl: string;
+    };
 
 const KEY_BODIES = /council|supervisors|planning|housing/i;
 
 export const LOCAL_SOURCES: LocalSource[] = [
   { kind: 'legistar', client: 'sanbernardino', place: 'San Bernardino County', bodies: /supervisors/i },
   { kind: 'primegov', client: 'sanbernardino', place: 'City of San Bernardino', bodies: KEY_BODIES },
+  /* PrimeGov only lists a meeting once its agenda is posted, about a week
+     out. The city calendar has the council schedule months ahead; where both
+     have the same meeting, the agenda wins (see dedupe in lib/events). */
+  {
+    kind: 'ics',
+    client: 'sanbernardino-calendar',
+    place: 'City of San Bernardino',
+    bodies: KEY_BODIES,
+    url: 'https://www.sanbernardino.gov/common/modules/iCalendar/iCalendar.aspx?catID=50&feed=calendar',
+    agendasUrl: 'https://sanbernardino.primegov.com/public/portal',
+  },
   { kind: 'primegov', client: 'ranchocucamonga', place: 'Rancho Cucamonga', bodies: KEY_BODIES },
   { kind: 'legistar', client: 'fontana', place: 'Fontana', bodies: KEY_BODIES },
   { kind: 'legistar', client: 'rialto', place: 'Rialto', bodies: KEY_BODIES },
   { kind: 'legistar', client: 'chino', place: 'Chino', bodies: KEY_BODIES },
   { kind: 'legistar', client: 'hesperia', place: 'Hesperia', bodies: KEY_BODIES },
   { kind: 'legistar', client: 'murrieta', place: 'Murrieta', bodies: KEY_BODIES },
+  {
+    kind: 'withapps',
+    client: 'redlands',
+    place: 'Redlands',
+    // Not KEY_BODIES: the city calendar also carries a "Disaster Council".
+    bodies: /city council|planning|housing/i,
+    organizationId: 39,
+    communityId: 158,
+    agendasUrl: 'https://horizon.agendalink.app/engage-v2/redlandsca/agendas',
+  },
 ];
 
 /* How far ahead to list pulled meetings. Some calendars carry placeholder
@@ -211,6 +256,7 @@ export const DETAIL = {
   hybrid: 'In person and online',
   localAbout: 'A public meeting. Anyone can attend, and most take public comment. The agenda goes up a few days before.',
   officialListing: 'Official listing and agenda',
+  scheduleCaveat: 'From the city calendar. Check the agenda for the final time.',
   investorLegal:
     'Nothing on this call or this page is an offer to sell or a solicitation to buy any security.',
 } as const;

@@ -1,4 +1,5 @@
 import {
+  CLEAR_FEEDS,
   EVENTS,
   LOCAL_HORIZON_DAYS,
   LOCAL_SOURCES,
@@ -30,6 +31,8 @@ export type CalEvent = {
   officialUrl?: string;
   price?: string;
   cancelled: boolean;
+  /* Set when the time comes from a regular schedule rather than an agenda. */
+  provisional?: boolean;
 };
 
 /* How long a pulled calendar is trusted before it is fetched again. */
@@ -164,24 +167,21 @@ export function parseIcs(text: string): CalEvent[] {
   return out;
 }
 
+async function getIcs(url: string): Promise<CalEvent[]> {
+  try {
+    const res = await fetch(url, { signal: AbortSignal.timeout(TIMEOUT_MS), next: { revalidate: REVALIDATE_SECONDS } });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return parseIcs(await res.text());
+  } catch (err) {
+    console.error('[events] feed failed', url, (err as Error).message);
+    return [];
+  }
+}
+
 async function feedEvents(): Promise<CalEvent[]> {
-  const urls = (process.env.EVENTS_ICS_URLS ?? '')
-    .split(',')
-    .map((u) => u.trim())
-    .filter(Boolean);
-  const all = await Promise.all(
-    urls.map(async (url) => {
-      try {
-        const res = await fetch(url, { signal: AbortSignal.timeout(TIMEOUT_MS), next: { revalidate: REVALIDATE_SECONDS } });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return parseIcs(await res.text());
-      } catch (err) {
-        console.error('[events] feed failed', url, (err as Error).message);
-        return [];
-      }
-    }),
-  );
-  return all.flat();
+  const extra = (process.env.EVENTS_ICS_URLS ?? '').split(',').map((u) => u.trim());
+  const urls = [...new Set([...CLEAR_FEEDS, ...extra].filter(Boolean))];
+  return (await Promise.all(urls.map(getIcs))).flat();
 }
 
 /* ── Local government ───────────────────────────────────────────────────── */
@@ -194,6 +194,20 @@ type LegistarEvent = {
   EventLocation: string | null;
   EventComment: string | null;
   EventInSiteURL: string | null;
+};
+
+type WithAppsPage = {
+  data: {
+    pagination: { totalPages: number };
+    records: {
+      resourceId: number;
+      name: string;
+      startsAtUtc: string;
+      endsAtUtc: string | null;
+      location: string | null;
+      closed: boolean;
+    }[];
+  };
 };
 
 type PrimeGovMeeting = {
@@ -275,6 +289,54 @@ async function fromSource(src: LocalSource): Promise<CalEvent[]> {
       });
   }
 
+  if (src.kind === 'ics') {
+    return (await getIcs(src.url))
+      .filter((e) => src.bodies.test(e.title) && e.start >= now && e.start <= horizon)
+      .map((e) => ({
+        ...e,
+        slug: `ics-${src.client}-${e.slug.replace(/^cal-/, '')}`,
+        source: 'local' as const,
+        type: 'local-government' as const,
+        title: `${src.place}: ${e.title.replace(/\s+meeting$/i, '').trim()}`,
+        // CivicPlus ends every meeting at 23:59, which is not a real end time.
+        end: null,
+        format: 'in-person' as const,
+        // "Library > Auditorium - 555 West 6th Street  San Bernardino CA 92410"
+        location: tidyPlace(e.location?.replace(/\s+[>-]\s+/g, ', ') ?? null),
+        description: [],
+        registerUrl: undefined,
+        place: src.place,
+        officialUrl: src.agendasUrl,
+        provisional: true,
+      }));
+  }
+
+  if (src.kind === 'withapps') {
+    const base = `https://api.withapps.io/api/v2/organizations/${src.organizationId}/calendar/resources`;
+    const range =
+      `filterBy%5BstartsAt%5D=${Math.floor(now.getTime() / 1000)}` +
+      `&filterBy%5BendsAt%5D=${Math.floor(horizon.getTime() / 1000)}` +
+      `&communityIds%5B0%5D=${src.communityId}&variant=full`;
+    const records: WithAppsPage['data']['records'] = [];
+    // Ten per page; a city calendar runs to a few pages over sixty days.
+    for (let page = 1; page <= 10; page++) {
+      const res = await getJson<WithAppsPage>(`${base}?${range}&page=${page}`);
+      if (!res) break;
+      records.push(...res.data.records);
+      if (page >= res.data.pagination.totalPages) break;
+    }
+    return records
+      .filter((r) => src.bodies.test(r.name))
+      .map((r) =>
+        localEvent(src, r.resourceId, `${src.place}: ${r.name.replace(/\s+meeting$/i, '').trim()}`, new Date(r.startsAtUtc), {
+          location: tidyPlace(r.location?.replace(/,\s*USA$/, '') ?? null),
+          officialUrl: src.agendasUrl,
+          cancelled: r.closed || /cancel/i.test(r.name),
+          provisional: true,
+        }),
+      );
+  }
+
   const rows = await getJson<PrimeGovMeeting[]>(
     `https://${src.client}.primegov.com/api/v2/PublicPortal/ListUpcomingMeetings`,
   );
@@ -296,9 +358,30 @@ async function fromSource(src: LocalSource): Promise<CalEvent[]> {
     .filter((e) => e.start <= horizon);
 }
 
+/* One meeting, two listings: a city's calendar has the schedule months out
+   and its agenda system adds the same meeting once the agenda is posted. The
+   agenda is the better record, so a scheduled entry is dropped when an
+   agenda listing exists for the same place, day and kind of body. */
+const BODY_KIND = /council|planning|supervisors|housing/i;
+
+function pacificDay(d: Date): string {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Los_Angeles' }).format(d);
+}
+
+function dedupe(events: CalEvent[]): CalEvent[] {
+  const posted = new Set(
+    events
+      .filter((e) => !e.provisional)
+      .map((e) => `${e.place}|${pacificDay(e.start)}|${e.title.match(BODY_KIND)?.[0].toLowerCase()}`),
+  );
+  return events.filter(
+    (e) => !e.provisional || !posted.has(`${e.place}|${pacificDay(e.start)}|${e.title.match(BODY_KIND)?.[0].toLowerCase()}`),
+  );
+}
+
 async function localEvents(): Promise<CalEvent[]> {
   if (process.env.EVENTS_LOCAL === 'false') return [];
-  return (await Promise.all(LOCAL_SOURCES.map(fromSource))).flat();
+  return dedupe((await Promise.all(LOCAL_SOURCES.map(fromSource))).flat());
 }
 
 /* ── Together ───────────────────────────────────────────────────────────── */
