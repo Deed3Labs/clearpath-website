@@ -2,6 +2,7 @@ import {
   CLEAR_FEEDS,
   EVENTS,
   LOCAL_MEETINGS,
+  NOT_PUBLIC,
   LOCAL_HORIZON_DAYS,
   LOCAL_SOURCES,
   type EventFormat,
@@ -443,9 +444,14 @@ function manualLocalEvents(): CalEvent[] {
   }));
 }
 
+/* Strip the "Place: " prefix before testing, so the closed-session rule can
+   anchor on the meeting name itself. */
+const isPublic = (e: CalEvent) => !NOT_PUBLIC.test(e.title.replace(/^[^:]+:\s*/, ''));
+
 async function localEvents(): Promise<CalEvent[]> {
   if (process.env.EVENTS_LOCAL === 'false') return [];
-  return dedupe([...manualLocalEvents(), ...(await settled(LOCAL_SOURCES.map(fromSource)))]);
+  const pulled = (await settled(LOCAL_SOURCES.map(fromSource))).filter(isPublic);
+  return dedupe([...manualLocalEvents(), ...pulled]);
 }
 
 /* ── Together ───────────────────────────────────────────────────────────── */
@@ -473,7 +479,7 @@ export async function getEvent(slug: string): Promise<CalEvent | undefined> {
   if (slug.startsWith('local-')) return find(manualLocalEvents());
 
   const local = LOCAL_SOURCES.find((src) => slug.startsWith(`${src.kind}-${src.client}-`));
-  if (local) return find(await fromSource(local));
+  if (local) return find((await fromSource(local)).filter(isPublic));
 
   if (slug.startsWith('cal-')) {
     for (const url of feedUrls()) {

@@ -133,10 +133,19 @@ export const EVENTS: ClearEventInput[] = [
    its live API. Riverside County publishes on a system with no public feed,
    so it is not here yet.
 
-   No meeting-type filters: every public meeting a government source lists is
-   shown — councils, commissions, committees, boards. The one exception is
-   `only`, for a source that mixes meetings with other things (Redlands' city
-   calendar also carries story times and film nights). */
+   The rule is "can the public attend or watch it". In California the Brown
+   Act makes meetings of councils, commissions, committees and boards open,
+   and these systems are where their public agendas are posted — so every
+   meeting a source lists is shown, except:
+
+   NOT_PUBLIC — staff-level reviews that post no public agenda (Hesperia's
+   Development Review Committee meets in a conference room and has never
+   posted one), and meetings that are closed session and nothing else.
+   A council meeting that STARTS in closed session is still public: the
+   session is called, and public comment taken, in open session.
+
+   `only` — for a source that mixes meetings with other things (Redlands'
+   city calendar also carries story times and film nights). */
 export type LocalSource =
   | { kind: 'legistar'; client: string; place: string; only?: RegExp }
   | { kind: 'primegov'; client: string; place: string; only?: RegExp }
@@ -157,6 +166,8 @@ export type LocalSource =
       communityId: number;
       agendasUrl: string;
     };
+
+export const NOT_PUBLIC = /development review|staff review|^\s*(special\s+)?closed session( only)?\s*$/i;
 
 /* What a government meeting is called, for a calendar that also lists
    everything else happening in town. */
