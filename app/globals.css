@@ -897,7 +897,7 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
 .site-footer { padding-block: var(--spacing-5) var(--spacing-4); }
 .site-footer .hx-grid { row-gap: var(--spacing-4); }
 .footer-brand { grid-column: 1 / 4; }
-.footer-col   { grid-column: span 3; }
+.footer-cols  { grid-column: 4 / 13; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--spacing-4) var(--hx-gap); }
 /* The column headings and the links under them were the same 17px regular
    ink, and the links are underlined — so the heading was the quietest thing
    in its own column. Heading takes the weight and keeps full ink; the links
@@ -935,10 +935,10 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
 
 @media (max-width: 1080px) {
   .footer-brand { grid-column: 1 / 13; }
-  .footer-col   { grid-column: span 4; }
+  .footer-cols  { grid-column: 1 / 13; }
 }
 @media (max-width: 640px) {
-  .footer-col { grid-column: 1 / 13; }
+  .footer-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 /* ─── Controls (§4) — two states, both 200ms. Nothing else moves. ─────── */
