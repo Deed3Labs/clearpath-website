@@ -575,7 +575,7 @@ export default function Style() {
 
         <div className="hx-grid sg-after-plates">
           {DOWNLOADS.groups.map((g) => (
-            <div className="c-half" key={g.title}>
+            <div className="c-third" key={g.title}>
               <p className="side-label">{g.title}</p>
               <ul className="sg-files">
                 {g.files.map((f) => (
@@ -591,7 +591,7 @@ export default function Style() {
             </div>
           ))}
           <div className="c-full">
-            <Note>{DOWNLOADS.pending}</Note>
+            <Note>{DOWNLOADS.lockupNote}</Note>
           </div>
         </div>
       </section>
