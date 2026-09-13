@@ -159,7 +159,10 @@ const KEY_BODIES = /council|supervisors|planning|housing/i;
 
 export const LOCAL_SOURCES: LocalSource[] = [
   { kind: 'legistar', client: 'sanbernardino', place: 'San Bernardino County', bodies: /supervisors/i },
-  { kind: 'primegov', client: 'sanbernardino', place: 'City of San Bernardino', bodies: KEY_BODIES },
+  /* Every meeting, not just KEY_BODIES: PrimeGov lists a meeting only once its
+     agenda is posted, so this is a couple at a time rather than a flood, and
+     commissions like Public Safety and Human Relations were being dropped. */
+  { kind: 'primegov', client: 'sanbernardino', place: 'City of San Bernardino', bodies: /./ },
   /* PrimeGov only lists a meeting once its agenda is posted, about a week
      out. The city calendar has the council schedule months ahead; where both
      have the same meeting, the agenda wins (see dedupe in lib/events). */

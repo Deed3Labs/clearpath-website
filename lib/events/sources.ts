@@ -38,10 +38,13 @@ export type CalEvent = {
 /* How long a pulled calendar is trusted before it is fetched again. */
 export const REVALIDATE_SECONDS = 3600;
 
-/* Some city sites answer Vercel's servers far slower than a home connection:
-   San Bernardino's feed took over 8s from Vercel while answering locally in
-   300ms. 15s rides that out without holding a page render forever. */
-const TIMEOUT_MS = 15_000;
+/* Some city sites answer Vercel's servers far slower than a home connection,
+   and some connections never open at all: San Bernardino's feed answers
+   locally in 300ms but from Vercel has taken over 8s, and once failed to
+   connect in 10s. A dropped connection usually succeeds on the next try, so
+   each fetch gets a second attempt rather than one long wait. */
+const TIMEOUT_MS = 10_000;
+const ATTEMPTS = 2;
 
 export function showDrafts(): boolean {
   if (process.env.EVENTS_SHOW_DRAFTS === 'true') return true;
@@ -53,18 +56,29 @@ export function showDrafts(): boolean {
    being down costs only its own rows. An event page does not catch: a
    calendar that failed is not the same as a meeting that does not exist, and
    answering "not found" there got cached as a 404 for an hour. */
+class HttpError extends Error {}
+
 async function getText(url: string, accept: string): Promise<string> {
-  try {
-    const res = await fetch(url, {
-      headers: { Accept: accept },
-      signal: AbortSignal.timeout(TIMEOUT_MS),
-      next: { revalidate: REVALIDATE_SECONDS },
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return await res.text();
-  } catch (err) {
-    console.error('[events] fetch failed', url, (err as Error).message);
-    throw err;
+  for (let attempt = 1; ; attempt++) {
+    try {
+      const res = await fetch(url, {
+        headers: { Accept: accept },
+        signal: AbortSignal.timeout(TIMEOUT_MS),
+        next: { revalidate: REVALIDATE_SECONDS },
+      });
+      if (!res.ok) throw new HttpError(`HTTP ${res.status}`);
+      return await res.text();
+    } catch (err) {
+      /* Retry a timeout or a dropped connection; a server that answered with
+         an error status has answered, and asking again will not change it. */
+      const retry = attempt < ATTEMPTS && !(err instanceof HttpError);
+      console.error(
+        `[events] fetch failed (attempt ${attempt}/${ATTEMPTS}${retry ? ', retrying' : ''})`,
+        url,
+        (err as Error).message,
+      );
+      if (!retry) throw err;
+    }
   }
 }
 
