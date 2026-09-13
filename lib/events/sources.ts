@@ -38,7 +38,10 @@ export type CalEvent = {
 /* How long a pulled calendar is trusted before it is fetched again. */
 export const REVALIDATE_SECONDS = 3600;
 
-const TIMEOUT_MS = 8000;
+/* Some city sites answer Vercel's servers far slower than a home connection:
+   San Bernardino's feed took over 8s from Vercel while answering locally in
+   300ms. 15s rides that out without holding a page render forever. */
+const TIMEOUT_MS = 15_000;
 
 export function showDrafts(): boolean {
   if (process.env.EVENTS_SHOW_DRAFTS === 'true') return true;
@@ -46,21 +49,32 @@ export function showDrafts(): boolean {
   return process.env.NODE_ENV === 'development';
 }
 
-/* A calendar that is down must not take the page with it: every fetch is
-   time-boxed, and a failure is logged and contributes nothing. */
-async function getJson<T>(url: string): Promise<T | null> {
+/* Fetchers THROW on failure. The listing catches per source, so one calendar
+   being down costs only its own rows. An event page does not catch: a
+   calendar that failed is not the same as a meeting that does not exist, and
+   answering "not found" there got cached as a 404 for an hour. */
+async function getText(url: string, accept: string): Promise<string> {
   try {
     const res = await fetch(url, {
-      headers: { Accept: 'application/json' },
+      headers: { Accept: accept },
       signal: AbortSignal.timeout(TIMEOUT_MS),
       next: { revalidate: REVALIDATE_SECONDS },
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return (await res.json()) as T;
+    return await res.text();
   } catch (err) {
     console.error('[events] fetch failed', url, (err as Error).message);
-    return null;
+    throw err;
   }
+}
+
+async function getJson<T>(url: string): Promise<T> {
+  return JSON.parse(await getText(url, 'application/json')) as T;
+}
+
+/* Run every source; keep what succeeded. */
+async function settled(jobs: Promise<CalEvent[]>[]): Promise<CalEvent[]> {
+  return (await Promise.allSettled(jobs)).flatMap((r) => (r.status === 'fulfilled' ? r.value : []));
 }
 
 /* ── Clear, by hand ─────────────────────────────────────────────────────── */
@@ -168,20 +182,16 @@ export function parseIcs(text: string): CalEvent[] {
 }
 
 async function getIcs(url: string): Promise<CalEvent[]> {
-  try {
-    const res = await fetch(url, { signal: AbortSignal.timeout(TIMEOUT_MS), next: { revalidate: REVALIDATE_SECONDS } });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return parseIcs(await res.text());
-  } catch (err) {
-    console.error('[events] feed failed', url, (err as Error).message);
-    return [];
-  }
+  return parseIcs(await getText(url, 'text/calendar'));
+}
+
+function feedUrls(): string[] {
+  const extra = (process.env.EVENTS_ICS_URLS ?? '').split(',').map((u) => u.trim());
+  return [...new Set([...CLEAR_FEEDS, ...extra].filter(Boolean))];
 }
 
 async function feedEvents(): Promise<CalEvent[]> {
-  const extra = (process.env.EVENTS_ICS_URLS ?? '').split(',').map((u) => u.trim());
-  const urls = [...new Set([...CLEAR_FEEDS, ...extra].filter(Boolean))];
-  return (await Promise.all(urls.map(getIcs))).flat();
+  return settled(feedUrls().map(getIcs));
 }
 
 /* ── Local government ───────────────────────────────────────────────────── */
@@ -270,12 +280,14 @@ function ymd(d: Date): string {
 async function fromSource(src: LocalSource): Promise<CalEvent[]> {
   const now = new Date();
   const horizon = new Date(now.getTime() + LOCAL_HORIZON_DAYS * 86_400_000);
+  /* A month back as well as ahead, so an event page still resolves the day
+     after the meeting. The listing drops what is over. */
+  const since = new Date(now.getTime() - 30 * 86_400_000);
 
   if (src.kind === 'legistar') {
-    const since = new Date(now.getTime() - 30 * 86_400_000);
     const q = `$filter=EventDate ge datetime'${ymd(since)}' and EventDate le datetime'${ymd(horizon)}'&$orderby=EventDate`;
     const rows = await getJson<LegistarEvent[]>(`https://webapi.legistar.com/v1/${src.client}/events?${encodeURI(q)}`);
-    return (rows ?? [])
+    return rows
       .filter((r) => src.bodies.test(r.EventBodyName))
       .map((r) => {
         const time = parseClock(r.EventTime);
@@ -291,7 +303,7 @@ async function fromSource(src: LocalSource): Promise<CalEvent[]> {
 
   if (src.kind === 'ics') {
     return (await getIcs(src.url))
-      .filter((e) => src.bodies.test(e.title) && e.start >= now && e.start <= horizon)
+      .filter((e) => src.bodies.test(e.title) && e.start >= since && e.start <= horizon)
       .map((e) => ({
         ...e,
         slug: `ics-${src.client}-${e.slug.replace(/^cal-/, '')}`,
@@ -314,14 +326,13 @@ async function fromSource(src: LocalSource): Promise<CalEvent[]> {
   if (src.kind === 'withapps') {
     const base = `https://api.withapps.io/api/v2/organizations/${src.organizationId}/calendar/resources`;
     const range =
-      `filterBy%5BstartsAt%5D=${Math.floor(now.getTime() / 1000)}` +
+      `filterBy%5BstartsAt%5D=${Math.floor(since.getTime() / 1000)}` +
       `&filterBy%5BendsAt%5D=${Math.floor(horizon.getTime() / 1000)}` +
       `&communityIds%5B0%5D=${src.communityId}&variant=full`;
     const records: WithAppsPage['data']['records'] = [];
     // Ten per page; a city calendar runs to a few pages over sixty days.
     for (let page = 1; page <= 10; page++) {
       const res = await getJson<WithAppsPage>(`${base}?${range}&page=${page}`);
-      if (!res) break;
       records.push(...res.data.records);
       if (page >= res.data.pagination.totalPages) break;
     }
@@ -340,7 +351,7 @@ async function fromSource(src: LocalSource): Promise<CalEvent[]> {
   const rows = await getJson<PrimeGovMeeting[]>(
     `https://${src.client}.primegov.com/api/v2/PublicPortal/ListUpcomingMeetings`,
   );
-  return (rows ?? [])
+  return rows
     .filter((r) => src.bodies.test(r.title))
     .map((r) => {
       const [date, clockPart = '00:00'] = r.dateTime.split('T');
@@ -381,7 +392,7 @@ function dedupe(events: CalEvent[]): CalEvent[] {
 
 async function localEvents(): Promise<CalEvent[]> {
   if (process.env.EVENTS_LOCAL === 'false') return [];
-  return dedupe((await Promise.all(LOCAL_SOURCES.map(fromSource))).flat());
+  return dedupe(await settled(LOCAL_SOURCES.map(fromSource)));
 }
 
 /* ── Together ───────────────────────────────────────────────────────────── */
@@ -398,8 +409,26 @@ export function isUpcoming(e: CalEvent, now = new Date()): boolean {
   return end.getTime() > now.getTime();
 }
 
+/* An event page asks only the calendar its slug came from. Asking every
+   source made a page depend on eight city servers at once, and a timeout in
+   any one of them — even an unrelated city — could lose the meeting.
+   Failures propagate (see getText); only a calendar that answered and does
+   not list the slug is "not found". */
 export async function getEvent(slug: string): Promise<CalEvent | undefined> {
-  return (await allEvents()).find((e) => e.slug === slug);
+  const find = (events: CalEvent[]) => events.find((e) => e.slug === slug);
+
+  const local = LOCAL_SOURCES.find((src) => slug.startsWith(`${src.kind}-${src.client}-`));
+  if (local) return find(await fromSource(local));
+
+  if (slug.startsWith('cal-')) {
+    for (const url of feedUrls()) {
+      const hit = find(await getIcs(url));
+      if (hit) return hit;
+    }
+    return undefined;
+  }
+
+  return find(clearEvents());
 }
 
 export function clearEventSlugs(): string[] {
