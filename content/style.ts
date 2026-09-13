@@ -294,6 +294,17 @@ export const DOWNLOADS = {
   lede: 'Vector for anything that scales, PNG for anywhere a file upload is all you get.',
   groups: [
     {
+      title: 'Lockup',
+      files: [
+        { label: 'Lockup, ink', format: 'SVG', href: '/brand/clear-lockup-ink.svg', use: 'Light grounds' },
+        { label: 'Lockup, paper', format: 'SVG', href: '/brand/clear-lockup-paper.svg', use: 'Dark grounds' },
+        { label: 'Solid lockup, ink', format: 'SVG', href: '/brand/clear-lockup-solid-ink.svg', use: 'Small sizes, light' },
+        { label: 'Solid lockup, paper', format: 'SVG', href: '/brand/clear-lockup-solid-paper.svg', use: 'Small sizes, dark' },
+        { label: 'Lockup, ink', format: 'PNG 2400', href: '/brand/clear-lockup-ink.png', use: 'Transparent' },
+        { label: 'Lockup, paper', format: 'PNG 2400', href: '/brand/clear-lockup-paper.png', use: 'Transparent' },
+      ],
+    },
+    {
       title: 'Mark',
       files: [
         { label: 'Mark, ink', format: 'SVG', href: '/brand/clear-mark-ink.svg', use: 'Light grounds' },
@@ -314,6 +325,6 @@ export const DOWNLOADS = {
       ],
     },
   ],
-  pending:
-    'Not here yet: the lockup of mark and wordmark as outlined vector. The wordmark needs converting to shapes so it prints without the font installed. Until then, set it from the rules in the Logo section.',
+  lockupNote:
+    'The wordmark in the lockup files is outlined, so it prints and imports without the font installed. It is set in Bricolage Grotesque at its 96pt optical size, which is what browsers use at display sizes, and it matches the live wordmark to within a fraction of a pixel. Use the outline lockup where the mark is 96px or 15mm tall and up, and the solid lockup below that.',
 } as const;

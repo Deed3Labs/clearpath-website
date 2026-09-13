@@ -34,3 +34,6 @@ tsconfig.tsbuildinfo
 # compiles "app/shops 2/" as a route, which is what hung the dev server.
 *\ [2-9]
 *\ [2-9].*
+
+# Local tooling for scripts/brand/generate-lockup.py
+.venv-brand/
