@@ -48,6 +48,13 @@ export const GROUPS: { key: EventGroup | 'all'; label: string }[] = [
 
 export type EventFormat = 'online' | 'in-person' | 'hybrid';
 
+/* iCal feeds Clear's own events are pulled from, re-read hourly. The Luma
+   calendar is here rather than only in the environment because the link is
+   public and belongs in the repo's history; EVENTS_ICS_URLS adds more. */
+export const CLEAR_FEEDS: string[] = [
+  'https://api.luma.com/ics/get?entity=calendar&id=cal-C0qVwa9vlyBMSAp',
+];
+
 /* A Clear event, written by hand. */
 export type ClearEventInput = {
   slug: string;
@@ -135,6 +142,9 @@ export type LocalSource =
      city's own public calendar instead — which carries the REGULAR schedule,
      not the agenda. Times can differ from the posted agenda and a cancelled
      meeting can still appear, so these rows say so and link the agendas. */
+  /* A city's public iCal feed (CivicPlus sites publish one per calendar
+     category). Like withapps, a published schedule rather than an agenda. */
+  | { kind: 'ics'; client: string; place: string; bodies: RegExp; url: string; agendasUrl: string }
   | {
       kind: 'withapps';
       client: string;
@@ -150,6 +160,17 @@ const KEY_BODIES = /council|supervisors|planning|housing/i;
 export const LOCAL_SOURCES: LocalSource[] = [
   { kind: 'legistar', client: 'sanbernardino', place: 'San Bernardino County', bodies: /supervisors/i },
   { kind: 'primegov', client: 'sanbernardino', place: 'City of San Bernardino', bodies: KEY_BODIES },
+  /* PrimeGov only lists a meeting once its agenda is posted, about a week
+     out. The city calendar has the council schedule months ahead; where both
+     have the same meeting, the agenda wins (see dedupe in lib/events). */
+  {
+    kind: 'ics',
+    client: 'sanbernardino-calendar',
+    place: 'City of San Bernardino',
+    bodies: KEY_BODIES,
+    url: 'https://www.sanbernardino.gov/common/modules/iCalendar/iCalendar.aspx?catID=50&feed=calendar',
+    agendasUrl: 'https://sanbernardino.primegov.com/public/portal',
+  },
   { kind: 'primegov', client: 'ranchocucamonga', place: 'Rancho Cucamonga', bodies: KEY_BODIES },
   { kind: 'legistar', client: 'fontana', place: 'Fontana', bodies: KEY_BODIES },
   { kind: 'legistar', client: 'rialto', place: 'Rialto', bodies: KEY_BODIES },
