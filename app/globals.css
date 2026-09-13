@@ -2340,6 +2340,13 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
 
 /* An event. */
 .ev-detail { align-items: start; }
+/* Seven and five rather than eight and four: at a third of the page the
+   facts column set a street address in three or four lines. Five columns
+   keeps most of them to two. */
+@media (min-width: 901px) {
+  .ev-detail > .ev-body { grid-column: span 7; }
+  .ev-detail > .ev-ticket { grid-column: span 5; }
+}
 .ev-body { display: grid; gap: var(--spacing-3); justify-items: start; }
 .ev-body .hx-prose { margin: 0; }
 .ev-detail-title { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: clamp(38px, 5vw, 76px); line-height: 0.98; letter-spacing: -0.036em; text-wrap: balance; }

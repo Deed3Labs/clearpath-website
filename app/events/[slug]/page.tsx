@@ -96,14 +96,14 @@ export default async function EventPage({ params }: Props) {
               </div>
               <div>
                 <dt>{DETAIL.where}</dt>
+                {/* An address already says "in person", so it stands alone; the
+                    format is only spelled out when it adds something. */}
                 <dd>
-                  {FORMAT[e.format]}
-                  {e.location && e.location !== DETAIL.online && (
-                    <>
-                      <br />
-                      {e.location}
-                    </>
-                  )}
+                  {!e.location || e.location === DETAIL.online
+                    ? FORMAT[e.format]
+                    : e.format === 'in-person'
+                      ? e.location
+                      : `${FORMAT[e.format]}. ${e.location}`}
                 </dd>
               </div>
               {(e.host || e.place) && (
