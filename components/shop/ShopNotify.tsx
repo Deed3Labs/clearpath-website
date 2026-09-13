@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { SOON } from '@/content/shop';
+import { CLOSED } from '@/content/shop';
+import { LiveDot } from '@/components/primitives/Button';
 
 /* One field: tell me when the shop opens. Posts to the same endpoint as the
    join form, tagged as=merch so the list can be pulled out later. Same rule
@@ -35,23 +36,24 @@ export function ShopNotify() {
 
   if (status === 'ok') {
     return (
-      <p className="shop-notify-done" role="status">
-        {SOON.ok}
+      <p className="shop-notify-done" id="notify" role="status">
+        {CLOSED.ok}
       </p>
     );
   }
 
   return (
-    <form className="shop-notify" onSubmit={onSubmit}>
+    <form className="shop-notify" id="notify" onSubmit={onSubmit}>
       <div className="join-field">
-        <label htmlFor="shop-notify-email">{SOON.notifyLabel}</label>
+        <label htmlFor="shop-notify-email">{CLOSED.notifyLabel}</label>
         <input id="shop-notify-email" name="email" type="email" autoComplete="email" required />
       </div>
       <button type="submit" className="btn" data-variant="primary" disabled={status === 'sending'}>
-        {status === 'sending' ? SOON.sending : SOON.notifyButton}
+        <LiveDot />
+        {status === 'sending' ? CLOSED.sending : CLOSED.notifyButton}
       </button>
       <p className="t-sm join-status" role="status" aria-live="polite">
-        {status === 'error' ? SOON.error : ''}
+        {status === 'error' ? CLOSED.error : ''}
       </p>
     </form>
   );

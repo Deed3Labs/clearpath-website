@@ -1993,28 +1993,97 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
 .shop-plate-body { fill: var(--plate-fill); stroke: currentColor; stroke-width: 2.5; stroke-linejoin: round; }
 .shop-plate-line { fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; }
 
-/* Coming soon. */
+/* Closed. The lights are off (an ink band), there is a sign on the door and
+   a status board beside it. The sign is a drawing, so square corners; it
+   swings once as the page loads and settles crooked, the way a sign on a
+   door does. That swing is the page's only motion besides the live dot, and
+   reduced motion skips it. */
 .shop-soon-side { display: grid; align-content: start; gap: var(--spacing-3); }
-.shop-notify { display: grid; gap: var(--spacing-2); justify-items: start; }
+.shop-notify { display: grid; gap: var(--spacing-2); justify-items: start; width: 100%; scroll-margin-top: var(--spacing-5); }
 .shop-notify .join-field { width: 100%; }
 .shop-notify .join-status:empty { display: none; }
-.shop-notify-done { margin: 0; padding-top: var(--spacing-2); border-top: 2px solid var(--color-settled); color: var(--color-ink); }
+.shop-notify-done { margin: 0; padding-top: var(--spacing-2); border-top: 2px solid var(--color-settled); color: var(--color-ink); scroll-margin-top: var(--spacing-5); }
 
-.shop-shelf, .shop-grid {
+.shop-closed-grid { align-items: center; }
+.shop-door { display: grid; place-items: center; min-height: clamp(340px, 42vw, 600px); }
+.shop-sign {
+  position: relative;
+  display: grid; justify-items: center;
+  padding-top: clamp(64px, 7vw, 110px);
+  transform-origin: 50% 0;
+  transform: rotate(-2deg);
+  animation: shop-sign-settle 2.6s var(--ease) both;
+}
+.shop-sign-string {
+  position: absolute; top: 0; left: 50%; translate: -50% 0;
+  width: 62%; height: clamp(64px, 7vw, 110px);
+  overflow: visible; fill: none; stroke: var(--color-ink-50); stroke-width: 1.5;
+}
+.shop-sign-nail {
+  position: absolute; top: 0; left: 50%; translate: -50% -50%;
+  width: 14px; height: 14px; border-radius: var(--radius-pill);
+  background: var(--color-ink); box-shadow: 0 0 0 4px var(--color-ink-13);
+}
+/* Light board on a dark band: --color-ink is the light value in here, and
+   the ground token is the one a band never rebinds, so it is the text. */
+.shop-sign-board {
+  display: grid; justify-items: center; gap: 6px;
+  width: clamp(260px, 32vw, 460px);
+  padding: clamp(22px, 2.4vw, 34px) clamp(20px, 2.6vw, 40px);
+  background: var(--color-ink); color: var(--color-ink-ground);
+  outline: 1.5px solid color-mix(in srgb, var(--color-ink-ground) 40%, transparent);
+  outline-offset: -10px;
+  box-shadow: 0 30px 60px rgb(0 0 0 / .35);
+}
+.shop-sign-top, .shop-sign-foot {
+  font-family: var(--font-mono); font-size: clamp(11px, 1vw, 13px);
+  letter-spacing: 0.16em; text-transform: uppercase;
+}
+.shop-sign-word {
+  font-family: var(--font-display); font-weight: 800;
+  font-size: clamp(64px, 8.2vw, 128px); line-height: 0.9; letter-spacing: -0.045em;
+}
+@keyframes shop-sign-settle {
+  0%   { transform: rotate(9deg); }
+  28%  { transform: rotate(-6deg); }
+  52%  { transform: rotate(3.5deg); }
+  74%  { transform: rotate(-3deg); }
+  100% { transform: rotate(-2deg); }
+}
+@media (prefers-reduced-motion: reduce) { .shop-sign { animation: none; } }
+
+.shop-closed-copy { display: grid; justify-items: start; gap: var(--spacing-3); }
+.shop-closed-h {
+  margin: 0; font-family: var(--font-display); font-weight: 800;
+  font-size: clamp(40px, 5vw, 80px); line-height: 0.96; letter-spacing: -0.038em; text-wrap: balance;
+}
+.shop-closed-copy .ledger { width: 100%; margin-top: var(--spacing-2); }
+@media (max-width: 900px) {
+  .shop-door { min-height: 0; padding-block: var(--spacing-3) var(--spacing-4); }
+}
+
+/* Under wraps: one parcel per column, its note under it. */
+.shop-wrap .shop-plate { margin-bottom: var(--spacing-1); }
+/* Stacked, three full squares is three screens of parcel. A wide plate keeps the drawing and loses the scroll. */
+@media (max-width: 900px) { .shop-wrap .shop-plate { aspect-ratio: 16 / 10; } }
+.shop-parcel-tag { fill: var(--plate-ground); }
+.shop-wraps .side-line { font-size: clamp(22px, 2.2vw, 32px); }
+.shop-closing {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: var(--spacing-3); border-top: 2px solid var(--color-ink); padding-top: var(--spacing-3);
+}
+.shop-closing-line {
+  margin: 0; font-family: var(--font-display); font-weight: 800;
+  font-size: clamp(28px, 3.4vw, 52px); line-height: 1; letter-spacing: -0.03em;
+}
+
+.shop-why .side-line { font-size: clamp(22px, 2.2vw, 32px); }
+
+.shop-grid {
   list-style: none; margin: 0; padding: 0;
   display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--spacing-3);
 }
-.shop-slot { display: grid; gap: var(--spacing-2); }
-/* A dashed rule is the site's "not yet" — the absent side of every diagram. */
-.shop-slot-ground {
-  display: grid; place-items: center; aspect-ratio: 1;
-  border: 1px dashed var(--color-ink-28); color: var(--color-ink-13);
-}
-.shop-slot-ground svg { width: 38%; height: auto; }
-.shop-slot-cap, .shop-card-row { display: flex; justify-content: space-between; gap: var(--spacing-2); }
-.shop-slot-cap { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-ink-50); }
-
-.shop-why .side-line { font-size: clamp(22px, 2.2vw, 32px); }
+.shop-card-row { display: flex; justify-content: space-between; gap: var(--spacing-2); }
 
 /* The shelf, with things on it. */
 .shop-lede { align-self: end; }
@@ -2026,14 +2095,8 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
 .shop-card-price { font-size: 17px; }
 .shop-card-line { color: var(--color-ink-70); }
 
-@media (max-width: 900px) {
-  .shop-shelf, .shop-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .shop-shelf li:nth-child(3) { display: none; }
-}
-@media (max-width: 560px) {
-  .shop-grid { grid-template-columns: minmax(0, 1fr); }
-  .shop-shelf { gap: var(--spacing-2); }
-}
+@media (max-width: 900px) { .shop-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .shop-grid { grid-template-columns: minmax(0, 1fr); } }
 
 /* A product. */
 .shop-product { align-items: start; }

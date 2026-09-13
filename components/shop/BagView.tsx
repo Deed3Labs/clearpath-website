@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { BAG, MAX_PER_LINE, type Product } from '@/content/shop';
 import { usd, usdExact } from '@/lib/shop/money';
+import { LiveDot } from '@/components/primitives/Button';
 import { useBag } from './BagProvider';
 import { ProductPlate } from './ProductPlate';
 
@@ -249,7 +250,8 @@ export function BagView({ products }: { products: Product[] }) {
 
             {!rates && (
               <div className="join-submit is-wide">
-                <button type="submit" className="btn" data-variant="ghost" disabled={phase !== 'idle' || unavailable}>
+                <button type="submit" className="btn" data-variant="primary" disabled={phase !== 'idle' || unavailable}>
+                  <LiveDot />
                   {phase === 'rating' ? BAG.gettingRates : BAG.getRates}
                 </button>
               </div>
@@ -282,6 +284,7 @@ export function BagView({ products }: { products: Product[] }) {
             ))}
             <div className="join-submit">
               <button type="button" className="btn" data-variant="primary" onClick={pay} disabled={!rateId || phase !== 'idle'}>
+                <LiveDot />
                 {phase === 'paying' ? BAG.paying : `${BAG.pay} · ${usdExact(subtotal + (rate?.amountCents ?? 0))}`}
               </button>
             </div>

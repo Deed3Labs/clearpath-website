@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { MAX_PER_LINE, PRODUCT_COPY, type Variant } from '@/content/shop';
+import { LiveDot } from '@/components/primitives/Button';
 import { useBag } from './BagProvider';
 
 export function AddToBag({
@@ -80,6 +81,7 @@ export function AddToBag({
             setAdded(true);
           }}
         >
+          {chosen && !chosen.soldOut && <LiveDot />}
           {allSoldOut
             ? PRODUCT_COPY.soldOut
             : !chosen

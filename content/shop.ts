@@ -6,7 +6,7 @@
  *
  * Nothing is on sale yet. Every product below is status 'draft', and drafts
  * only render in development or when SHOP_SHOW_DRAFTS=true (see
- * lib/shop/catalog.ts). In production the shop shows its coming-soon state
+ * lib/shop/catalog.ts). In production the shop shows its closed state
  * until at least one product is 'live' — flip a status and redeploy.
  *
  * TODO(owner): the three drafts are layout stand-ins. Names, prices, sizes,
@@ -104,14 +104,40 @@ export const OPENING = {
   lede: 'A small run of well-made goods with the Clear name on them. Wear it and people ask what it is.',
 } as const;
 
-export const SOON = {
-  heading: 'The shop opens soon.',
-  lede: 'A small run of well-made goods with the Clear name on them. Leave an email and we will tell you when it opens.',
+/* The closed state. Framed as a shop with its doors shut rather than a page
+   that is not finished: a sign on the door, a status board, and the goods
+   under wraps. Its one job is the email field, and its second job is to be
+   worth checking again. */
+export const CLOSED = {
+  sign: { top: 'Sorry, we are', word: 'Closed', foot: 'Back soon' },
+  status: 'Closed',
+  heading: 'Stocking the shelves.',
+  lede: 'Well-made Clear goods, in small runs. Leave an email and you hear the day the doors open, before we post it anywhere.',
   notifyLabel: 'Email',
-  notifyButton: 'Tell me when it opens',
-  sending: 'Sending…',
-  ok: 'Done. We will email you once, when the shop opens.',
+  notifyButton: 'Put me on the list',
+  sending: 'Adding you…',
+  ok: 'You are on the list. We will email you once, the day the doors open.',
   error: 'That did not send, and nothing was stored. Try again in a minute.',
+  /* The status board. `opensAt` is an ISO date (YYYY-MM-DD) or null; set it
+     when the date is real and the board shows it. Never set a date to look
+     busy — a missed date is worse than no date. */
+  opensAt: null as string | null,
+  board: {
+    doors: 'Doors',
+    opening: 'Opening day',
+    openingUnset: 'Not set yet',
+    first: 'Who hears first',
+    firstValue: 'The list',
+  },
+  wraps: {
+    kicker: 'Under wraps',
+    heading: 'No peeking.',
+    lede: 'What is in the first run stays wrapped until the doors open. Here is what we can tell you.',
+  },
+  closing: {
+    line: 'Doors closed. List open.',
+    button: 'Put me on the list',
+  },
 } as const;
 
 export const WHY = {

@@ -9,7 +9,7 @@ import { PRODUCTS, type Product } from '@/content/shop';
  * production by someone who guessed its URL.
  */
 export function showDrafts(): boolean {
-  // An explicit value wins either way, so the coming-soon state can be seen in dev too.
+  // An explicit value wins either way, so the closed state can be seen in dev too.
   if (process.env.SHOP_SHOW_DRAFTS === 'true') return true;
   if (process.env.SHOP_SHOW_DRAFTS === 'false') return false;
   return process.env.NODE_ENV === 'development';
