@@ -2375,3 +2375,4 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
 .ev-add .side-label { margin-bottom: var(--spacing-1); }
 .ev-add-row { display: flex; flex-wrap: wrap; gap: var(--spacing-1) var(--spacing-3); }
 .ev-add-row a { min-height: 44px; display: inline-flex; align-items: center; }
+.ev-error-actions { display: flex; flex-wrap: wrap; gap: var(--spacing-2); }
