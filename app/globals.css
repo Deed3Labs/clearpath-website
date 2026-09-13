@@ -836,6 +836,11 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
 @media (max-width: 860px) {
   .header-nav   { display: none; }
   .header-mobile { display: block; }
+  /* On a phone the 24px pad above and below stacked on the logo link's own
+     12px hit-area padding, for a 93px bar holding one line of 21px type. The
+     logo link and the Menu button already carry 44px targets, so the bar's
+     pad can come down to 8px without shrinking either. */
+  .site-header { padding-block: var(--spacing-1); }
 }
 
 /* The sheet. <dialog> gives focus trapping and Escape; everything below is
@@ -857,6 +862,10 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
   margin-inline: auto;
   padding-block: var(--spacing-3);
 }
+/* The close button sits where Menu was, so opening the sheet does not make
+   the control jump. It lined up at 24px before the phone header lost its
+   pad; it lines up at 8 now. After .sheet-inner so it wins on order. */
+@media (max-width: 860px) { .sheet-inner { padding-top: var(--spacing-1); } }
 .sheet-top {
   display: flex;
   align-items: center;
