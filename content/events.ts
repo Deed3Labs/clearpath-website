@@ -150,7 +150,7 @@ export const LOCAL_HORIZON_DAYS = 60;
 
 export const OPENING = {
   kicker: 'Events',
-  heading: 'Come to the meeting.',
+  heading: 'Come to the meetings.',
   lede: 'Co-op calls and town halls, plus the local meetings that decide what gets built here.',
   subscribe: 'Add Clear events to your calendar',
 } as const;
