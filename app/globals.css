@@ -1901,7 +1901,9 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
 @media (max-width: 900px) {
   /* Stacked, there is nothing beside a plate to align with. */
   .sg-dot-plates { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
-  .sg-dot-plate { grid-row: auto; grid-template-rows: none; }
+  /* No side padding: stacked, the plate is the column, so its content runs
+     the same width as the rest of the section. */
+  .sg-dot-plate { grid-row: auto; grid-template-rows: none; padding-inline: 0; }
   .sg-dot-stage { height: 220px; }
   .sg-dot-big { --k: 7; }
 }
