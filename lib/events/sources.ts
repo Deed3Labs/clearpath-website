@@ -1,6 +1,8 @@
 import {
   CLEAR_FEEDS,
   EVENTS,
+  LOCAL_MEETINGS,
+  NOT_PUBLIC,
   LOCAL_HORIZON_DAYS,
   LOCAL_SOURCES,
   type EventFormat,
@@ -38,10 +40,13 @@ export type CalEvent = {
 /* How long a pulled calendar is trusted before it is fetched again. */
 export const REVALIDATE_SECONDS = 3600;
 
-/* Some city sites answer Vercel's servers far slower than a home connection:
-   San Bernardino's feed took over 8s from Vercel while answering locally in
-   300ms. 15s rides that out without holding a page render forever. */
-const TIMEOUT_MS = 15_000;
+/* Some city sites answer Vercel's servers far slower than a home connection,
+   and some connections never open at all: San Bernardino's feed answers
+   locally in 300ms but from Vercel has taken over 8s, and once failed to
+   connect in 10s. A dropped connection usually succeeds on the next try, so
+   each fetch gets a second attempt rather than one long wait. */
+const TIMEOUT_MS = 10_000;
+const ATTEMPTS = 2;
 
 export function showDrafts(): boolean {
   if (process.env.EVENTS_SHOW_DRAFTS === 'true') return true;
@@ -53,18 +58,29 @@ export function showDrafts(): boolean {
    being down costs only its own rows. An event page does not catch: a
    calendar that failed is not the same as a meeting that does not exist, and
    answering "not found" there got cached as a 404 for an hour. */
+class HttpError extends Error {}
+
 async function getText(url: string, accept: string): Promise<string> {
-  try {
-    const res = await fetch(url, {
-      headers: { Accept: accept },
-      signal: AbortSignal.timeout(TIMEOUT_MS),
-      next: { revalidate: REVALIDATE_SECONDS },
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return await res.text();
-  } catch (err) {
-    console.error('[events] fetch failed', url, (err as Error).message);
-    throw err;
+  for (let attempt = 1; ; attempt++) {
+    try {
+      const res = await fetch(url, {
+        headers: { Accept: accept },
+        signal: AbortSignal.timeout(TIMEOUT_MS),
+        next: { revalidate: REVALIDATE_SECONDS },
+      });
+      if (!res.ok) throw new HttpError(`HTTP ${res.status}`);
+      return await res.text();
+    } catch (err) {
+      /* Retry a timeout or a dropped connection; a server that answered with
+         an error status has answered, and asking again will not change it. */
+      const retry = attempt < ATTEMPTS && !(err instanceof HttpError);
+      console.error(
+        `[events] fetch failed (attempt ${attempt}/${ATTEMPTS}${retry ? ', retrying' : ''})`,
+        url,
+        (err as Error).message,
+      );
+      if (!retry) throw err;
+    }
   }
 }
 
@@ -257,6 +273,12 @@ function tidyTitle(s: string): string {
   return t === t.toUpperCase() ? titleCase(t) : t;
 }
 
+/* "Redlands: City Council", but not "Redlands: Redlands Housing Corporation". */
+export function withPlace(place: string, title: string): string {
+  const town = place.replace(/^City of\s+/i, '').replace(/\s+County$/i, '');
+  return title.toLowerCase().includes(town.toLowerCase()) ? title : `${place}: ${title}`;
+}
+
 function localEvent(src: LocalSource, id: number, title: string, start: Date, extra: Partial<CalEvent>): CalEvent {
   return {
     slug: `${src.kind}-${src.client}-${id}`,
@@ -288,11 +310,11 @@ async function fromSource(src: LocalSource): Promise<CalEvent[]> {
     const q = `$filter=EventDate ge datetime'${ymd(since)}' and EventDate le datetime'${ymd(horizon)}'&$orderby=EventDate`;
     const rows = await getJson<LegistarEvent[]>(`https://webapi.legistar.com/v1/${src.client}/events?${encodeURI(q)}`);
     return rows
-      .filter((r) => src.bodies.test(r.EventBodyName))
+      .filter((r) => !src.only || src.only.test(r.EventBodyName))
       .map((r) => {
         const time = parseClock(r.EventTime);
         const start = pacificToDate(r.EventDate.slice(0, 10), time?.[0] ?? 0, time?.[1] ?? 0);
-        return localEvent(src, r.EventId, `${src.place}: ${r.EventBodyName.trim()}`, start, {
+        return localEvent(src, r.EventId, withPlace(src.place, r.EventBodyName.trim()), start, {
           timeUnknown: !time,
           location: tidyPlace(r.EventLocation),
           officialUrl: r.EventInSiteURL ?? `https://${src.client}.legistar.com/Calendar.aspx`,
@@ -303,13 +325,13 @@ async function fromSource(src: LocalSource): Promise<CalEvent[]> {
 
   if (src.kind === 'ics') {
     return (await getIcs(src.url))
-      .filter((e) => src.bodies.test(e.title) && e.start >= since && e.start <= horizon)
+      .filter((e) => (!src.only || src.only.test(e.title)) && e.start >= since && e.start <= horizon)
       .map((e) => ({
         ...e,
         slug: `ics-${src.client}-${e.slug.replace(/^cal-/, '')}`,
         source: 'local' as const,
         type: 'local-government' as const,
-        title: `${src.place}: ${e.title.replace(/\s+meeting$/i, '').trim()}`,
+        title: withPlace(src.place, e.title.replace(/\s+meeting$/i, '').trim()),
         // CivicPlus ends every meeting at 23:59, which is not a real end time.
         end: null,
         format: 'in-person' as const,
@@ -337,9 +359,9 @@ async function fromSource(src: LocalSource): Promise<CalEvent[]> {
       if (page >= res.data.pagination.totalPages) break;
     }
     return records
-      .filter((r) => src.bodies.test(r.name))
+      .filter((r) => !src.only || src.only.test(r.name))
       .map((r) =>
-        localEvent(src, r.resourceId, `${src.place}: ${r.name.replace(/\s+meeting$/i, '').trim()}`, new Date(r.startsAtUtc), {
+        localEvent(src, r.resourceId, withPlace(src.place, r.name.replace(/\s+meeting$/i, '').trim()), new Date(r.startsAtUtc), {
           location: tidyPlace(r.location?.replace(/,\s*USA$/, '') ?? null),
           officialUrl: src.agendasUrl,
           cancelled: r.closed || /cancel/i.test(r.name),
@@ -352,12 +374,12 @@ async function fromSource(src: LocalSource): Promise<CalEvent[]> {
     `https://${src.client}.primegov.com/api/v2/PublicPortal/ListUpcomingMeetings`,
   );
   return rows
-    .filter((r) => src.bodies.test(r.title))
+    .filter((r) => !src.only || src.only.test(r.title))
     .map((r) => {
       const [date, clockPart = '00:00'] = r.dateTime.split('T');
       const [h, m] = clockPart.split(':').map(Number);
       const title = tidyTitle(r.title);
-      return localEvent(src, r.id, `${src.place}: ${title}`, pacificToDate(date, h, m), {
+      return localEvent(src, r.id, withPlace(src.place, title), pacificToDate(date, h, m), {
         location: tidyPlace(r.location),
         format: r.zoomMeetingLink || r.meetingOnline ? 'hybrid' : 'in-person',
         // Agenda deep links on PrimeGov redirect to an error page for
@@ -379,20 +401,57 @@ function pacificDay(d: Date): string {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Los_Angeles' }).format(d);
 }
 
-function dedupe(events: CalEvent[]): CalEvent[] {
-  const posted = new Set(
-    events
-      .filter((e) => !e.provisional)
-      .map((e) => `${e.place}|${pacificDay(e.start)}|${e.title.match(BODY_KIND)?.[0].toLowerCase()}`),
-  );
-  return events.filter(
-    (e) => !e.provisional || !posted.has(`${e.place}|${pacificDay(e.start)}|${e.title.match(BODY_KIND)?.[0].toLowerCase()}`),
-  );
+/* Null when the title names no body we can match on; such a meeting is never
+   treated as a duplicate, so two different commissions on one day both show. */
+function meetingKey(e: CalEvent): string | null {
+  const body = e.title.match(BODY_KIND)?.[0].toLowerCase();
+  return body ? `${e.place}|${pacificDay(e.start)}|${body}` : null;
 }
+
+function dedupe(input: CalEvent[]): CalEvent[] {
+  /* A calendar can list the same meeting twice (Redlands has one Library
+     Board meeting with an address and one without). Same place, title and
+     start is one meeting; keep the entry that has a location. */
+  const seen = new Map<string, CalEvent>();
+  for (const e of input) {
+    const k = `${e.place}|${e.title}|${e.start.getTime()}`;
+    const prev = seen.get(k);
+    if (!prev || (!prev.location && e.location)) seen.set(k, e);
+  }
+  const events = [...seen.values()];
+  const posted = new Set(events.filter((e) => !e.provisional).map(meetingKey).filter(Boolean));
+  return events.filter((e) => {
+    const key = meetingKey(e);
+    return !e.provisional || !key || !posted.has(key);
+  });
+}
+
+/* Meetings added by hand in LOCAL_MEETINGS. */
+function manualLocalEvents(): CalEvent[] {
+  return LOCAL_MEETINGS.map((m) => ({
+    slug: m.slug,
+    source: 'local' as const,
+    title: withPlace(m.place, m.title),
+    type: 'local-government' as const,
+    start: new Date(m.startsAt),
+    end: null,
+    format: 'in-person' as const,
+    location: m.location,
+    description: [],
+    place: m.place,
+    officialUrl: m.officialUrl,
+    cancelled: Boolean(m.cancelled),
+  }));
+}
+
+/* Strip the "Place: " prefix before testing, so the closed-session rule can
+   anchor on the meeting name itself. */
+const isPublic = (e: CalEvent) => !NOT_PUBLIC.test(e.title.replace(/^[^:]+:\s*/, ''));
 
 async function localEvents(): Promise<CalEvent[]> {
   if (process.env.EVENTS_LOCAL === 'false') return [];
-  return dedupe(await settled(LOCAL_SOURCES.map(fromSource)));
+  const pulled = (await settled(LOCAL_SOURCES.map(fromSource))).filter(isPublic);
+  return dedupe([...manualLocalEvents(), ...pulled]);
 }
 
 /* ── Together ───────────────────────────────────────────────────────────── */
@@ -417,8 +476,10 @@ export function isUpcoming(e: CalEvent, now = new Date()): boolean {
 export async function getEvent(slug: string): Promise<CalEvent | undefined> {
   const find = (events: CalEvent[]) => events.find((e) => e.slug === slug);
 
+  if (slug.startsWith('local-')) return find(manualLocalEvents());
+
   const local = LOCAL_SOURCES.find((src) => slug.startsWith(`${src.kind}-${src.client}-`));
-  if (local) return find(await fromSource(local));
+  if (local) return find((await fromSource(local)).filter(isPublic));
 
   if (slug.startsWith('cal-')) {
     for (const url of feedUrls()) {
