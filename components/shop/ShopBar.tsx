@@ -51,7 +51,11 @@ export function ShopBar({ names }: { names: Record<string, string> }) {
       </nav>
 
       {segment !== 'bag' && (
-        <Link href="/shop/bag" className="shop-bar-link">
+        <Link href="/shop/bag" className="shop-bag-pill">
+          <svg className="shop-bag-icon" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round">
+            <path d="M2.5 5.5h11l-.9 8.5H3.4z" />
+            <path d="M5.5 5.5V4a2.5 2.5 0 0 1 5 0v1.5" />
+          </svg>
           Bag
           {/* Count only once storage has been read, so the server render and
               the first client render agree. An empty bag shows no badge. */}

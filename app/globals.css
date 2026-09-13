@@ -1959,6 +1959,7 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
    what it is: where you are, and one count. */
 .shop-bar {
   display: flex; align-items: center; justify-content: space-between;
+  min-height: 52px;
   border-block: 1px solid var(--color-ink-13);
   font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase;
 }
@@ -1967,6 +1968,22 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
 .shop-crumb-here { color: var(--color-ink); }
 .shop-bar-link { display: inline-flex; align-items: center; gap: var(--spacing-1); min-height: 44px; color: var(--color-ink-50); }
 .shop-bar-link:hover { color: var(--color-ink); }
+/* The bag as a pill: it is pressed, so it gets the pressable shape. Drawn
+   34px so the strip stays slim, with invisible hit area above and below for
+   44px to a thumb, the same trick as the style guide's copy button. */
+.shop-bag-pill {
+  position: relative;
+  display: inline-flex; align-items: center; gap: 7px;
+  min-height: 34px; padding: 0 5px 0 12px;
+  border: 1px solid var(--color-ink-28); border-radius: var(--radius-pill);
+  color: var(--color-ink);
+  transition: border-color var(--hover) var(--ease);
+}
+.shop-bag-pill::before { content: ''; position: absolute; inset: -5px 0; }
+.shop-bag-pill:hover { border-color: var(--color-ink); }
+/* Without a count the pill would end on its 5px count-side padding. */
+.shop-bag-pill:has(.shop-bar-count:empty) { padding-right: 12px; }
+.shop-bag-icon { width: 14px; height: 14px; flex: none; }
 .shop-bar-count {
   display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding-inline: 6px;
   border-radius: var(--radius-pill); background: var(--color-ink); color: var(--color-paper);
@@ -2147,6 +2164,7 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
 
 /* The bag. */
 .shop-bag-fallback { grid-column: 1 / 13; min-height: 320px; }
+.shop-thanks-help { margin: 0; color: var(--color-ink-70); }
 .shop-bag-empty { display: grid; justify-items: start; gap: var(--spacing-3); }
 .shop-bag-empty .d3 { margin: 0; color: var(--color-ink-70); }
 

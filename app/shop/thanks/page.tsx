@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { ClearBag } from '@/components/shop/ClearBag';
-import { THANKS } from '@/content/shop';
+import { SUPPORT_EMAIL, THANKS } from '@/content/shop';
 
 export const metadata = {
   title: 'Thank you · Shop',
@@ -18,6 +18,13 @@ export default function Thanks() {
           <h1 className="hx-h2 c-two-thirds">{THANKS.heading}</h1>
           <div className="c-third shop-soon-side">
             <p className="hx-lede">{THANKS.lede}</p>
+            <p className="t-sm shop-thanks-help">
+              {THANKS.questions}{' '}
+              <a href={`mailto:${SUPPORT_EMAIL}`} className="shop-inline-link">
+                {SUPPORT_EMAIL}
+              </a>
+              .
+            </p>
             <Link href="/shop" className="btn" data-variant="ghost">
               {THANKS.back}
             </Link>

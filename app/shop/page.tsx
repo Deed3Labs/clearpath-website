@@ -3,7 +3,7 @@ import { Button } from '@/components/primitives/Button';
 import { Ledger } from '@/components/primitives';
 import { ProductPlate } from '@/components/shop/ProductPlate';
 import { ShopNotify } from '@/components/shop/ShopNotify';
-import { CLOSED, CLOSED_REASONS, OPENING, SHOP_STATUS, WHY } from '@/content/shop';
+import { CLOSED, CLOSED_REASONS, OPENING, SHOP_STATUS, SUPPORT_EMAIL, WHY } from '@/content/shop';
 import { isShopOpen, visibleProducts } from '@/lib/shop/catalog';
 import { usd } from '@/lib/shop/money';
 
@@ -122,7 +122,18 @@ function ClosedShop() {
               <div className="side" key={c.label}>
                 <p className="side-label">{c.label}</p>
                 <p className="side-line shop-meanwhile-line">{c.line}</p>
-                <p className="t-sm side-note">{c.note}</p>
+                <p className="t-sm side-note">
+                  {c.note}
+                  {c === m.question && (
+                    <>
+                      {' '}
+                      <a href={`mailto:${SUPPORT_EMAIL}`} className="shop-inline-link">
+                        {SUPPORT_EMAIL}
+                      </a>
+                      .
+                    </>
+                  )}
+                </p>
               </div>
             ))}
           </div>

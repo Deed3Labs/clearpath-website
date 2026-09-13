@@ -114,6 +114,10 @@ export const OPENING = {
    environment overrides `open` without a code change (still needs a
    redeploy, because the pages are static). The shop is also closed whenever
    no product is live, whatever this says. */
+/* Where order questions go. Replies to the Stripe receipt should reach the
+   same inbox: set it as the support email in Stripe's public business details. */
+export const SUPPORT_EMAIL = 'support@useclear.org';
+
 export type ClosedReason = 'not-open-yet' | 'sold-out' | 'restocking' | 'packing-orders' | 'break';
 
 export const SHOP_STATUS: {
@@ -201,7 +205,7 @@ export const CLOSED = {
     question: {
       label: 'Question about an order?',
       line: 'Reply to your receipt.',
-      note: 'Your order confirmation email comes to us. Reply to it and we will sort it out.',
+      note: 'Reply to your order confirmation, or email us at',
     },
   },
   /* Product pages and the bag, while closed. */
@@ -265,5 +269,6 @@ export const BAG = {
 export const THANKS = {
   heading: 'Thank you.',
   lede: 'Your order is in. Stripe is emailing a receipt, and we will send tracking once it ships.',
+  questions: 'Questions about your order? Reply to the receipt, or email',
   back: 'Back to the shop',
 } as const;
