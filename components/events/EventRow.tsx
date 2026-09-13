@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Chip } from '@/components/primitives';
 import { LiveDot } from '@/components/primitives/Button';
-import { LISTING, TYPES } from '@/content/events';
+import { DETAIL, LISTING, TYPES } from '@/content/events';
 import type { CalEvent } from '@/lib/events/sources';
 import { dayNumber, monthShort, timeRange, weekdayShort } from '@/lib/events/time';
 
@@ -39,6 +39,7 @@ export function EventRow({ event: e }: { event: CalEvent }) {
         <p className="t-sm ev-meta">
           <time dateTime={e.start.toISOString()}>{e.timeUnknown ? 'Time to be posted' : timeRange(e.start, e.end)}</time>
           {where && <span> · {where}</span>}
+          {e.provisional && <span className="ev-caveat">{DETAIL.scheduleCaveat}</span>}
         </p>
       </div>
 

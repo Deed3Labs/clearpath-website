@@ -2297,6 +2297,8 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
 /* The title's link covers the row; Register is lifted above it. */
 .ev-link::after { content: ''; position: absolute; inset: 0; }
 .ev-meta { margin: 0; color: var(--color-ink-70); }
+/* A time taken from a regular schedule, not an agenda. Its own line, quieter. */
+.ev-caveat { display: block; margin-top: 2px; font-size: 13px; color: var(--color-ink-50); }
 
 .ev-aside { position: relative; z-index: 1; display: flex; align-items: center; gap: var(--spacing-2); }
 .ev-price { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-ink-50); }

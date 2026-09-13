@@ -30,6 +30,8 @@ export type CalEvent = {
   officialUrl?: string;
   price?: string;
   cancelled: boolean;
+  /* Set when the time comes from a regular schedule rather than an agenda. */
+  provisional?: boolean;
 };
 
 /* How long a pulled calendar is trusted before it is fetched again. */
@@ -196,6 +198,20 @@ type LegistarEvent = {
   EventInSiteURL: string | null;
 };
 
+type WithAppsPage = {
+  data: {
+    pagination: { totalPages: number };
+    records: {
+      resourceId: number;
+      name: string;
+      startsAtUtc: string;
+      endsAtUtc: string | null;
+      location: string | null;
+      closed: boolean;
+    }[];
+  };
+};
+
 type PrimeGovMeeting = {
   id: number;
   title: string;
@@ -273,6 +289,32 @@ async function fromSource(src: LocalSource): Promise<CalEvent[]> {
           cancelled: /cancel/i.test(r.EventComment ?? ''),
         });
       });
+  }
+
+  if (src.kind === 'withapps') {
+    const base = `https://api.withapps.io/api/v2/organizations/${src.organizationId}/calendar/resources`;
+    const range =
+      `filterBy%5BstartsAt%5D=${Math.floor(now.getTime() / 1000)}` +
+      `&filterBy%5BendsAt%5D=${Math.floor(horizon.getTime() / 1000)}` +
+      `&communityIds%5B0%5D=${src.communityId}&variant=full`;
+    const records: WithAppsPage['data']['records'] = [];
+    // Ten per page; a city calendar runs to a few pages over sixty days.
+    for (let page = 1; page <= 10; page++) {
+      const res = await getJson<WithAppsPage>(`${base}?${range}&page=${page}`);
+      if (!res) break;
+      records.push(...res.data.records);
+      if (page >= res.data.pagination.totalPages) break;
+    }
+    return records
+      .filter((r) => src.bodies.test(r.name))
+      .map((r) =>
+        localEvent(src, r.resourceId, `${src.place}: ${r.name.replace(/\s+meeting$/i, '').trim()}`, new Date(r.startsAtUtc), {
+          location: tidyPlace(r.location?.replace(/,\s*USA$/, '') ?? null),
+          officialUrl: src.agendasUrl,
+          cancelled: r.closed || /cancel/i.test(r.name),
+          provisional: true,
+        }),
+      );
   }
 
   const rows = await getJson<PrimeGovMeeting[]>(
