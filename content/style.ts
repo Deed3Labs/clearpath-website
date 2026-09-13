@@ -326,5 +326,5 @@ export const DOWNLOADS = {
     },
   ],
   lockupNote:
-    'The wordmark in the lockup files is outlined, so it prints and imports without the font installed. It is set in Bricolage Grotesque at its 96pt optical size, which is what browsers use at display sizes, and it matches the live wordmark to within a fraction of a pixel. Use the outline lockup where the mark is 96px or 15mm tall and up, and the solid lockup below that.',
+    'The wordmark is outlined, so it works without the font. Use the outline lockup from 96px or 15mm tall, and the solid one below that.',
 } as const;
