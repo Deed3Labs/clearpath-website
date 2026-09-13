@@ -2266,7 +2266,10 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
 
 .ev-row {
   position: relative;
-  display: grid; grid-template-columns: 80px minmax(0, 1fr) auto; align-items: center;
+  /* The date column is exactly as wide as its widest date ("22") plus the
+     space before the hairline, so the date starts on the section's left edge
+     instead of floating in the middle of a wider column. */
+  display: grid; grid-template-columns: calc(48px + var(--spacing-3)) minmax(0, 1fr) auto; align-items: center;
   gap: var(--spacing-3); padding-block: 20px;
   border-bottom: 1px solid var(--color-ink-13);
 }
@@ -2278,13 +2281,17 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
    with a hairline separating it from the event. */
 .ev-date {
   align-self: stretch; display: grid; place-content: center; justify-items: center;
-  margin: 0; border-right: 1px solid var(--color-ink-13); line-height: 1;
+  margin: 0; padding-right: var(--spacing-3); border-right: 1px solid var(--color-ink-13); line-height: 1;
 }
 .ev-date-wk, .ev-date-mo { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-ink-50); }
 .ev-date-day { font-family: var(--font-display); font-weight: 800; font-size: 38px; letter-spacing: -0.04em; margin-block: 4px 3px; font-variant-numeric: tabular-nums; }
 
-.ev-main { display: grid; gap: 4px; min-width: 0; }
+.ev-main { display: grid; gap: 8px; min-width: 0; }
 .ev-main .ev-chips { margin-bottom: 4px; }
+/* A meeting has nothing to register for, so its row has no third column and
+   no gap standing in for one on the right. */
+.ev-row:has(.ev-aside:empty) { grid-template-columns: calc(48px + var(--spacing-3)) minmax(0, 1fr); }
+.ev-aside:empty { display: none; }
 .ev-chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .ev-title { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(18px, 1.6vw, 22px); line-height: 1.2; letter-spacing: -0.018em; transition: color var(--hover) var(--ease); }
 /* The title's link covers the row; Register is lifted above it. */
@@ -2329,11 +2336,10 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
   .ev-filter-chip { flex: none; }
   /* The date spans both rows (event, then Register) so it centres on the
      whole entry, not just the title. */
-  .ev-row { grid-template-columns: 64px minmax(0, 1fr); align-items: start; column-gap: var(--spacing-2); row-gap: 12px; padding-block: var(--spacing-2); }
-  .ev-date { grid-row: 1 / span 2; }
+  .ev-row, .ev-row:has(.ev-aside:empty) { grid-template-columns: calc(40px + 14px) minmax(0, 1fr); align-items: start; column-gap: var(--spacing-2); row-gap: 12px; padding-block: var(--spacing-2); }
+  .ev-date { grid-row: 1 / span 2; padding-right: 14px; }
   .ev-date-day { font-size: 30px; }
   .ev-aside { grid-column: 2; }
-  .ev-aside:empty { display: none; }
   .ev-row:has(.ev-aside:empty) .ev-date { grid-row: 1; }
   .ev-empty { grid-template-columns: minmax(0, 1fr); }
 }
