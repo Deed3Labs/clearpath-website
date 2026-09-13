@@ -169,7 +169,7 @@ export const WHO = {
     list: [
       'A partnerships lead',
       'A protocol engineer',
-      'Two advisers who know development and banking',
+      'Two advisers who know real estate and banking',
     ],
     note: 'Equity-only at this stage, and we say that in the first conversation rather than the fourth.',
     link: { href: '/join?as=work', label: 'Get in touch' },
