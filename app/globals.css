@@ -1950,3 +1950,189 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
   white-space: pre; tab-size: 2;
 }
 .sg-code code { font: inherit; }
+
+/* ─── Shop ──────────────────────────────────────────────────────────────────
+   Merchandise, on the site's own terms: rules not cards, drawings not
+   renders, pills only where something is pressed. */
+
+/* The strip under the header. Mono like a section label, because that is
+   what it is: where you are, and one count. */
+.shop-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  border-block: 1px solid var(--color-ink-13);
+  font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase;
+}
+.shop-crumbs { display: flex; align-items: center; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.shop-crumb-sep { color: var(--color-ink-28); }
+.shop-crumb-here { color: var(--color-ink); }
+.shop-bar-link { display: inline-flex; align-items: center; gap: var(--spacing-1); min-height: 44px; color: var(--color-ink-50); }
+.shop-bar-link:hover { color: var(--color-ink); }
+.shop-bar-count {
+  display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding-inline: 6px;
+  border-radius: var(--radius-pill); background: var(--color-ink); color: var(--color-paper);
+  font-variant-numeric: tabular-nums; letter-spacing: 0;
+}
+.shop-bar-count:empty { display: none; }
+
+.shop-inline-link {
+  padding: 0; border: 0; background: none; font: inherit; color: inherit; cursor: pointer;
+  text-decoration: underline; text-decoration-color: var(--color-ink-28); text-underline-offset: 3px;
+}
+.shop-inline-link:hover { text-decoration-color: currentColor; }
+
+/* The drawn product. Square, flat ground, one line weight. */
+.shop-plate {
+  --plate-ground: var(--color-paper-2);
+  --plate-line: var(--color-ink-ground);
+  --plate-fill: rgb(22 33 29 / .05);
+  aspect-ratio: 1; background: var(--plate-ground); color: var(--plate-line);
+}
+.shop-plate[data-tone='ink']  { --plate-ground: var(--color-ink-ground); --plate-line: #DFE3DE; --plate-fill: rgb(223 227 222 / .06); }
+.shop-plate[data-tone='land'] { --plate-ground: var(--color-land); --plate-line: #E9ECE7; --plate-fill: rgb(233 236 231 / .10); }
+.shop-plate svg { display: block; width: 100%; height: 100%; }
+.shop-plate-body { fill: var(--plate-fill); stroke: currentColor; stroke-width: 2.5; stroke-linejoin: round; }
+.shop-plate-line { fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; }
+
+/* Coming soon. */
+.shop-soon-side { display: grid; align-content: start; gap: var(--spacing-3); }
+.shop-notify { display: grid; gap: var(--spacing-2); justify-items: start; }
+.shop-notify .join-field { width: 100%; }
+.shop-notify .join-status:empty { display: none; }
+.shop-notify-done { margin: 0; padding-top: var(--spacing-2); border-top: 2px solid var(--color-settled); color: var(--color-ink); }
+
+.shop-shelf, .shop-grid {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--spacing-3);
+}
+.shop-slot { display: grid; gap: var(--spacing-2); }
+/* A dashed rule is the site's "not yet" — the absent side of every diagram. */
+.shop-slot-ground {
+  display: grid; place-items: center; aspect-ratio: 1;
+  border: 1px dashed var(--color-ink-28); color: var(--color-ink-13);
+}
+.shop-slot-ground svg { width: 38%; height: auto; }
+.shop-slot-cap, .shop-card-row { display: flex; justify-content: space-between; gap: var(--spacing-2); }
+.shop-slot-cap { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-ink-50); }
+
+.shop-why .side-line { font-size: clamp(22px, 2.2vw, 32px); }
+
+/* The shelf, with things on it. */
+.shop-lede { align-self: end; }
+.shop-card { display: grid; gap: var(--spacing-1); }
+.shop-card .shop-plate { margin-bottom: var(--spacing-1); transition: opacity var(--hover) var(--ease); }
+.shop-card:hover .shop-plate { opacity: .88; }
+.shop-card-name { font-family: var(--font-display); font-weight: 700; font-size: 19px; letter-spacing: -0.016em; }
+.shop-card:hover .shop-card-name { color: var(--color-live); }
+.shop-card-price { font-size: 17px; }
+.shop-card-line { color: var(--color-ink-70); }
+
+@media (max-width: 900px) {
+  .shop-shelf, .shop-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .shop-shelf li:nth-child(3) { display: none; }
+}
+@media (max-width: 560px) {
+  .shop-grid { grid-template-columns: minmax(0, 1fr); }
+  .shop-shelf { gap: var(--spacing-2); }
+}
+
+/* A product. */
+.shop-product { align-items: start; }
+.shop-gallery { display: grid; gap: var(--spacing-2); }
+.shop-photo { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; }
+.shop-buy { display: grid; gap: var(--spacing-4); align-content: start; }
+@media (min-width: 901px) { .shop-buy { position: sticky; top: var(--spacing-3); } }
+.shop-buy-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--spacing-1) var(--spacing-3); border-bottom: 1px solid var(--color-ink); padding-bottom: var(--spacing-2); }
+.shop-name {
+  margin: 0; font-family: var(--font-display); font-weight: 800;
+  font-size: clamp(36px, 4.2vw, 64px); line-height: 0.98; letter-spacing: -0.035em;
+}
+.shop-price { margin: 0; font-size: clamp(22px, 2vw, 28px); }
+.shop-buy .hx-lede { max-width: 46ch; }
+
+.shop-add { display: grid; gap: var(--spacing-3); }
+.shop-variants .side-label { margin-bottom: var(--spacing-1); }
+.shop-variant-row { display: flex; flex-wrap: wrap; gap: var(--spacing-1); }
+.shop-variant {
+  min-width: 52px; min-height: 44px; padding-inline: var(--spacing-2);
+  border: 1px solid var(--color-ink-28); border-radius: var(--radius-pill);
+  background: none; font: inherit; font-size: 15px; font-weight: 500; color: var(--color-ink); cursor: pointer;
+  transition: border-color var(--hover) var(--ease), background-color var(--hover) var(--ease), color var(--hover) var(--ease);
+}
+.shop-variant:hover { border-color: var(--color-ink); }
+.shop-variant[aria-pressed='true'] { background: var(--color-ink); border-color: var(--color-ink); color: var(--color-paper); }
+.shop-variant:disabled { color: var(--color-ink-50); text-decoration: line-through; cursor: not-allowed; border-color: var(--color-ink-13); }
+
+.shop-add-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--spacing-2); }
+.shop-add-row .btn { flex: 1; }
+.shop-add .btn:disabled, .shop-address .btn:disabled, .shop-rates .btn:disabled { opacity: .5; pointer-events: none; }
+.shop-add-status { margin: 0; min-height: 1.4em; color: var(--color-ink-70); }
+
+.shop-qty {
+  display: inline-grid; grid-template-columns: 44px 32px 44px; align-items: center;
+  min-height: 44px; border: 1px solid var(--color-ink-28); border-radius: var(--radius-pill);
+}
+.shop-qty button {
+  height: 42px; border: 0; background: none; font: inherit; font-size: 18px; color: var(--color-ink);
+  border-radius: var(--radius-pill); cursor: pointer;
+}
+.shop-qty button:hover { background: var(--color-ink-13); }
+.shop-qty button:disabled { color: var(--color-ink-28); background: none; cursor: default; }
+.shop-qty output { text-align: center; font-variant-numeric: tabular-nums; }
+
+.shop-details ul { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--color-ink-13); }
+.shop-details li { padding-block: 10px; border-bottom: 1px solid var(--color-ink-13); }
+.shop-details .side-label { margin-bottom: var(--spacing-1); }
+.shop-ship-note { margin: var(--spacing-2) 0 0; color: var(--color-ink-70); }
+
+/* The bag. */
+.shop-bag-fallback { grid-column: 1 / 13; min-height: 320px; }
+.shop-bag-empty { display: grid; justify-items: start; gap: var(--spacing-3); }
+.shop-bag-empty .d3 { margin: 0; color: var(--color-ink-70); }
+
+.shop-lines { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--color-ink); }
+.shop-line {
+  display: grid; grid-template-columns: 96px minmax(0, 1fr) auto; gap: var(--spacing-2);
+  align-items: start; padding-block: var(--spacing-2); border-bottom: 1px solid var(--color-ink-13);
+}
+.shop-line-thumb { display: block; width: 96px; aspect-ratio: 1; background: var(--color-paper-2); }
+.shop-line-main { display: grid; gap: 4px; }
+.shop-line-name { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 19px; letter-spacing: -0.016em; }
+.shop-line-meta { margin: 0; color: var(--color-ink-70); }
+.shop-line-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--spacing-2); margin-top: var(--spacing-1); }
+.shop-line-actions .shop-inline-link { min-height: 44px; font-size: 15px; color: var(--color-ink-70); }
+.shop-line-price { margin: 0; font-size: 17px; }
+@media (max-width: 560px) {
+  .shop-line { grid-template-columns: 72px minmax(0, 1fr) auto; gap: 12px; }
+  .shop-line-thumb { width: 72px; }
+}
+
+.shop-totals { margin: var(--spacing-3) 0 0; display: grid; gap: var(--spacing-1); }
+.shop-totals div { display: flex; justify-content: space-between; gap: var(--spacing-2); }
+.shop-totals dt { color: var(--color-ink-70); }
+.shop-totals dd { margin: 0; }
+.shop-totals-total { border-top: 1px solid var(--color-ink); padding-top: var(--spacing-2); margin-top: var(--spacing-1); }
+.shop-totals-total dt { color: var(--color-ink); font-weight: 600; }
+.shop-totals-total dd { font-size: 22px; }
+
+/* A legend sits outside the fieldset's grid, so its spacing is padding: a
+   margin on it does not push the first row down. */
+.shop-legend { display: grid; gap: 4px; padding: 0 0 var(--spacing-3); }
+.shop-address #bag-state { text-transform: uppercase; }
+.shop-legend .d3 { display: block; }
+.shop-legend .t-sm { color: var(--color-ink-70); }
+@media (max-width: 900px) { .shop-address { margin-top: var(--spacing-4); } }
+
+.shop-rates { display: grid; margin-top: var(--spacing-4); }
+.shop-rates .side-label { margin-bottom: var(--spacing-1); }
+.shop-rate {
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--spacing-2);
+  min-height: 56px; padding-block: 10px; border-top: 1px solid var(--color-ink-13); cursor: pointer;
+}
+.shop-rate:last-of-type { border-bottom: 1px solid var(--color-ink-13); }
+.shop-rate input { width: 18px; height: 18px; margin: 0; accent-color: var(--color-ink); }
+.shop-rate-label { display: grid; gap: 2px; }
+.shop-rate-days { color: var(--color-ink-70); }
+.shop-rates .join-submit { margin-top: var(--spacing-3); }
+.shop-pay-note { margin: var(--spacing-2) 0 0; color: var(--color-ink-70); }
+.shop-error { margin-top: var(--spacing-2); color: var(--color-absent); }
+.shop-error:empty { display: none; }

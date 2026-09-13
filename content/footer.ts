@@ -32,6 +32,7 @@ export const FOOTER_COLUMNS: { heading: string; links: FooterLink[] }[] = [
         external: true,
       },
       { href: '/join?as=work', label: 'Work with us' },
+      { href: '/shop', label: 'Shop' },
       { href: '/style', label: 'Brand and style guide' },
     ],
   },
