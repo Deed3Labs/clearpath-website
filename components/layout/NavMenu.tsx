@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useId, useRef, useState } from 'react';
+import { NavIcon } from './NavIcon';
 
 type Item = { href: string; label: string; note: string };
 
@@ -22,12 +23,19 @@ export function NavMenu({ label, items }: { label: string; items: Item[] }) {
   const root = useRef<HTMLDivElement>(null);
   const button = useRef<HTMLButtonElement>(null);
   const hoverClose = useRef<ReturnType<typeof setTimeout> | null>(null);
+  /* True while the panel is open because a mouse is over it. A click then
+     must not toggle it shut — the person pointing at "Community" and
+     clicking it wants it open, which hover already did. */
+  const openedByHover = useRef(false);
   const id = useId();
   const path = usePathname();
 
   const current = items.some((i) => path === i.href || path.startsWith(`${i.href}/`));
 
   useEffect(() => setOpen(false), [path]);
+  useEffect(() => {
+    if (!open) openedByHover.current = false;
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -59,6 +67,7 @@ export function NavMenu({ label, items }: { label: string; items: Item[] }) {
       onPointerEnter={(e) => {
         if (e.pointerType !== 'mouse') return;
         cancelHoverClose();
+        if (!open) openedByHover.current = true;
         setOpen(true);
       }}
       onPointerLeave={(e) => {
@@ -77,7 +86,7 @@ export function NavMenu({ label, items }: { label: string; items: Item[] }) {
         aria-expanded={open}
         aria-controls={id}
         data-current={current ? '' : undefined}
-        onClick={() => setOpen((o) => !o)}
+        onClick={() => setOpen((o) => (openedByHover.current ? true : !o))}
       >
         {label}
         <svg className="navmenu-caret" width="10" height="10" viewBox="0 0 10 10" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -86,14 +95,19 @@ export function NavMenu({ label, items }: { label: string; items: Item[] }) {
       </button>
 
       <div id={id} className="navmenu-panel" hidden={!open}>
-        <ul>
+        <ul className="navmenu-list">
           {items.map((i) => {
             const here = path === i.href || path.startsWith(`${i.href}/`);
             return (
               <li key={i.href}>
                 <Link href={i.href} className="navmenu-link" aria-current={here ? 'page' : undefined}>
-                  <span className="navmenu-label">{i.label}</span>
-                  <span className="navmenu-note">{i.note}</span>
+                  <span className="navmenu-icon">
+                    <NavIcon href={i.href} />
+                  </span>
+                  <span className="navmenu-text">
+                    <span className="navmenu-label">{i.label}</span>
+                    <span className="navmenu-note">{i.note}</span>
+                  </span>
                 </Link>
               </li>
             );

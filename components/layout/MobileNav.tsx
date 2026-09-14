@@ -3,6 +3,8 @@
 import { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { NAV, CONTEXTUAL, HOME, JOIN, COMMUNITY } from '@/content/nav';
+import { Button } from '@/components/primitives/Button';
+import { NavIcon } from './NavIcon';
 import { NavLink } from './NavLink';
 
 /* Built on <dialog>.showModal() rather than a div and a focus-trap library.
@@ -87,33 +89,12 @@ export function MobileNav() {
             </button>
           </div>
 
-          <nav>
-            <ul>
-              {/* First, because the wordmark that goes home sits behind this
-                  dialog while it is open — without this the sheet is a room
-                  with no door back to the front page. */}
-              {[HOME, ...NAV].map((r) => (
-                <li key={r.href}>
-                  <NavLink href={r.href} className="d3 sheet-link">
-                    {r.label}
-                  </NavLink>
-                </li>
-              ))}
-              {/* The header's Community menu, laid open: a sheet has the room,
-                  and a menu inside a menu is one tap too many on a phone. */}
-              <li className="sheet-group">
-                <p className="sheet-group-label">{COMMUNITY.label}</p>
-                <ul>
-                  {COMMUNITY.links.map((r) => (
-                    <li key={r.href}>
-                      <NavLink href={r.href} className="d3 sheet-link">
-                        {r.label}
-                      </NavLink>
-                    </li>
-                  ))}
-                </ul>
-              </li>
-              {[...CONTEXTUAL, JOIN].map((r) => (
+          <nav className="sheet-nav">
+            <ul className="sheet-main">
+              {/* Home first, because the wordmark that goes home sits behind
+                  this dialog while it is open — without it the sheet is a
+                  room with no door back to the front page. */}
+              {[HOME, ...NAV, ...CONTEXTUAL].map((r) => (
                 <li key={r.href}>
                   <NavLink href={r.href} className="d3 sheet-link">
                     {r.label}
@@ -121,6 +102,32 @@ export function MobileNav() {
                 </li>
               ))}
             </ul>
+
+            {/* The header's Community menu, as its own section rather than an
+                indented sub-list: two destinations side by side, each with the
+                same icon and note it has on desktop. */}
+            <section className="sheet-community" aria-labelledby="sheet-community-label">
+              <p className="sheet-section-label" id="sheet-community-label">
+                {COMMUNITY.label}
+              </p>
+              <ul className="sheet-tiles">
+                {COMMUNITY.links.map((r) => (
+                  <li key={r.href}>
+                    <NavLink href={r.href} className="sheet-tile">
+                      <NavIcon href={r.href} size={20} />
+                      <span className="sheet-tile-label">{r.label}</span>
+                      <span className="sheet-tile-note">{r.note}</span>
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            {/* Join is the one thing the header makes a button, so the sheet
+                does too, at the bottom where a thumb already is. */}
+            <Button href={JOIN.href} live className="sheet-join">
+              {JOIN.label}
+            </Button>
           </nav>
         </div>
       </dialog>
