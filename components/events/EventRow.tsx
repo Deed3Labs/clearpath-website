@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { Chip } from '@/components/primitives';
 import { LiveDot } from '@/components/primitives/Button';
-import { DETAIL, LISTING, TYPES } from '@/content/events';
+import { DETAIL, LISTING } from '@/content/events';
+import { EventChips } from './EventChips';
 import type { CalEvent } from '@/lib/events/sources';
 import { dayNumber, monthShort, timeRange, weekdayShort } from '@/lib/events/time';
 
@@ -15,11 +16,11 @@ const FORMAT: Record<CalEvent['format'], string> = {
    stretches over the whole row; Register sits above that overlay so it is its
    own target, not a link nested inside a link. */
 export function EventRow({ event: e }: { event: CalEvent }) {
-  const group = TYPES[e.type].group;
+
   const where = e.source === 'local' ? e.location : e.format === 'online' ? FORMAT.online : e.location ?? FORMAT[e.format];
 
   return (
-    <article className="ev-row" data-group={group} data-cancelled={e.cancelled ? '' : undefined}>
+    <article className="ev-row" data-groups={e.groups.join(' ')} data-cancelled={e.cancelled ? '' : undefined}>
       <p className="ev-date" aria-hidden="true">
         <span className="ev-date-wk">{weekdayShort(e.start)}</span>
         <span className="ev-date-day">{dayNumber(e.start)}</span>
@@ -28,7 +29,7 @@ export function EventRow({ event: e }: { event: CalEvent }) {
 
       <div className="ev-main">
         <div className="ev-chips">
-          <Chip>{TYPES[e.type].label}</Chip>
+          <EventChips event={e} />
           {e.cancelled && <Chip tone="absent">{LISTING.cancelled}</Chip>}
         </div>
         <h3 className="ev-title">

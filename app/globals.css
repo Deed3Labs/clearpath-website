@@ -2384,9 +2384,9 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
 .ev-local-empty { margin: 0; padding-block: var(--spacing-3); color: var(--color-ink-70); }
 
 /* Filtering: hide rows, months and whole sections that do not match. */
-.ev-board[data-filter='community'] .ev-row:not([data-group='community']),
-.ev-board[data-filter='investors'] .ev-row:not([data-group='investors']),
-.ev-board[data-filter='governance'] .ev-row:not([data-group='governance']),
+.ev-board[data-filter='community'] .ev-row:not([data-groups~='community']),
+.ev-board[data-filter='investors'] .ev-row:not([data-groups~='investors']),
+.ev-board[data-filter='governance'] .ev-row:not([data-groups~='governance']),
 .ev-board[data-filter='community'] .ev-month:not([data-groups~='community']),
 .ev-board[data-filter='investors'] .ev-month:not([data-groups~='investors']),
 .ev-board[data-filter='governance'] .ev-month:not([data-groups~='governance']),
