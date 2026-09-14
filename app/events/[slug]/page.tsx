@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Chip } from '@/components/primitives';
 import { LiveDot } from '@/components/primitives/Button';
+import { EventChips } from '@/components/events/EventChips';
 import { DETAIL, TYPES } from '@/content/events';
 import { googleCalendarUrl } from '@/lib/events/ics';
 import { clearEventSlugs, getEvent, isUpcoming } from '@/lib/events/sources';
@@ -55,7 +56,7 @@ export default async function EventPage({ params }: Props) {
         <div className="hx-grid ev-detail">
           <div className="c-two-thirds ev-body">
             <div className="ev-chips">
-              <Chip>{TYPES[e.type].label}</Chip>
+              <EventChips event={e} />
               {e.cancelled ? (
                 <Chip tone="absent">{DETAIL.cancelled.replace(/\.$/, '')}</Chip>
               ) : over ? (

@@ -22,6 +22,7 @@
 export type EventType =
   | 'community-call'
   | 'investor-call'
+  | 'board-meeting'
   | 'town-hall'
   | 'public-hearing'
   | 'forum'
@@ -32,6 +33,7 @@ export type EventGroup = 'community' | 'investors' | 'governance' | 'local';
 export const TYPES: Record<EventType, { label: string; group: EventGroup }> = {
   'community-call': { label: 'Community call', group: 'community' },
   'investor-call': { label: 'Investor call', group: 'investors' },
+  'board-meeting': { label: 'Board meeting', group: 'governance' },
   'town-hall': { label: 'Town hall', group: 'governance' },
   'public-hearing': { label: 'Public hearing', group: 'governance' },
   forum: { label: 'Proposal forum', group: 'governance' },
@@ -60,6 +62,10 @@ export type ClearEventInput = {
   slug: string;
   title: string;
   type: Exclude<EventType, 'local-government'>;
+  /* Other categories it also belongs to, shown as extra tags and matched by
+     their filters. A Clear Capital board meeting is governance, and also for
+     investors. */
+  alsoIn?: EventGroup[];
   /* ISO with offset, e.g. 2026-10-08T17:00:00-07:00 */
   startsAt: string;
   endsAt?: string;

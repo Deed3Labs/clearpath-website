@@ -34,7 +34,7 @@ function byMonth(events: CalEvent[]) {
   return [...months.values()];
 }
 
-const groupsOf = (events: CalEvent[]) => [...new Set(events.map((e) => TYPES[e.type].group))].join(' ');
+const groupsOf = (events: CalEvent[]) => [...new Set(events.flatMap((e) => e.groups))].join(' ');
 
 function Months({ events }: { events: CalEvent[] }) {
   return (
@@ -61,7 +61,8 @@ export default async function Events() {
     EventGroup | 'all',
     number
   >;
-  for (const e of upcoming) counts[TYPES[e.type].group]++;
+  // An event in two categories counts in both; All counts it once.
+  for (const e of upcoming) for (const g of e.groups) counts[g]++;
 
   return (
     <div className="hx">

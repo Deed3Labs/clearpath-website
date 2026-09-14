@@ -5,7 +5,9 @@ import {
   NOT_PUBLIC,
   LOCAL_HORIZON_DAYS,
   LOCAL_SOURCES,
+  TYPES,
   type EventFormat,
+  type EventGroup,
   type EventType,
   type LocalSource,
 } from '@/content/events';
@@ -17,6 +19,10 @@ export type CalEvent = {
   source: 'clear' | 'feed' | 'local';
   title: string;
   type: EventType;
+  /* Every category the event belongs to; the type's own group comes first.
+     An event can sit in two (a Clear Capital board meeting is governance and
+     investors), and shows under both filters. */
+  groups: EventGroup[];
   start: Date;
   end: Date | null;
   /* True when a calendar gave a date but no time. */
@@ -107,6 +113,7 @@ function clearEvents(): CalEvent[] {
     source: 'clear',
     title: e.title,
     type: e.type,
+    groups: [...new Set([TYPES[e.type].group, ...(e.alsoIn ?? [])])],
     start: new Date(e.startsAt),
     end: e.endsAt ? new Date(e.endsAt) : null,
     format: e.format,
@@ -146,12 +153,30 @@ function shortHash(s: string): string {
   return h.toString(36);
 }
 
-export function classify(title: string): Exclude<EventType, 'local-government'> {
-  if (/investor|capital/i.test(title)) return 'investor-call';
-  if (/town ?hall/i.test(title)) return 'town-hall';
-  if (/hearing/i.test(title)) return 'public-hearing';
-  if (/forum|proposal/i.test(title)) return 'forum';
-  return 'community-call';
+/* Sort an event from a feed (Luma) by its title, since a feed carries no
+   category.
+
+   Governance first: a board meeting is governance whoever holds it. Then
+   investors is added when the title names Clear Capital or investors — as a
+   second category on a governance event, or the only one otherwise. "Capital"
+   alone is not enough: "Community & Capital" is a community event. */
+export function classify(title: string): { type: Exclude<EventType, 'local-government'>; groups: EventGroup[] } {
+  const investors = /investor|clear capital/i.test(title);
+  const type: Exclude<EventType, 'local-government'> =
+    /board meeting|annual meeting|members'? meeting|general meeting|assembly|election|\bvote\b/i.test(title)
+      ? 'board-meeting'
+      : /town ?hall/i.test(title)
+        ? 'town-hall'
+        : /hearing/i.test(title)
+          ? 'public-hearing'
+          : /forum|proposal/i.test(title)
+            ? 'forum'
+            : investors
+              ? 'investor-call'
+              : 'community-call';
+  const groups = new Set<EventGroup>([TYPES[type].group]);
+  if (investors) groups.add('investors');
+  return { type, groups: [...groups] };
 }
 
 export function parseIcs(text: string): CalEvent[] {
@@ -176,7 +201,7 @@ export function parseIcs(text: string): CalEvent[] {
           slug: `cal-${shortHash(cur.UID?.value ?? `${title}${cur.DTSTART.value}`)}`,
           source: 'feed',
           title,
-          type: classify(title),
+          ...classify(title),
           start: start.date,
           end: end ? end.date : null,
           timeUnknown: start.timeUnknown,
@@ -290,6 +315,7 @@ function localEvent(src: LocalSource, id: number, title: string, start: Date, ex
     source: 'local',
     title,
     type: 'local-government',
+    groups: ['local'],
     start,
     end: null,
     format: 'in-person',
@@ -336,6 +362,7 @@ async function fromSource(src: LocalSource): Promise<CalEvent[]> {
         slug: `ics-${src.client}-${e.slug.replace(/^cal-/, '')}`,
         source: 'local' as const,
         type: 'local-government' as const,
+        groups: ['local' as const],
         title: withPlace(src.place, e.title.replace(/\s+meeting$/i, '').trim()),
         // CivicPlus ends every meeting at 23:59, which is not a real end time.
         end: null,
@@ -438,6 +465,7 @@ function manualLocalEvents(): CalEvent[] {
     source: 'local' as const,
     title: withPlace(m.place, m.title),
     type: 'local-government' as const,
+    groups: ['local' as const],
     start: new Date(m.startsAt),
     end: null,
     format: 'in-person' as const,
