@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { BrokenMark } from '@/components/marks/BrokenMark';
+import { LostLink } from '@/components/marks/LostLink';
 import { Button } from '@/components/primitives/Button';
 import { NOT_FOUND } from '@/content/notFound';
 
@@ -31,7 +31,7 @@ export default function NotFound() {
           </div>
 
           <div className="c-half nf-art">
-            <BrokenMark className="nf-mark" />
+            <LostLink className="nf-mark" />
           </div>
 
           <nav className="c-full nf-links" aria-label={NOT_FOUND.linksLabel}>

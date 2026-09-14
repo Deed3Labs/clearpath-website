@@ -30,7 +30,7 @@ export const OUTLINE_FLOOR = 96;
 type Variant = 'outline' | 'solid';
 
 /* One closed path: outer arc the long way round, chord, inner arc back. */
-export const C_PATH =
+const C_PATH =
   'M 148.28 -64' +
   ' A 161.5 161.5 0 1 0 148.28 64' +
   ' L 74.22 64' +
