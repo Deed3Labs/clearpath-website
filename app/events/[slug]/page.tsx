@@ -102,9 +102,10 @@ export default async function EventPage({ params }: Props) {
                 <dd>
                   {!e.location || e.location === DETAIL.online
                     ? FORMAT[e.format]
-                    : e.format === 'in-person'
-                      ? e.location
-                      : `${FORMAT[e.format]}. ${e.location}`}
+                    : e.format === 'hybrid'
+                      ? `${FORMAT[e.format]}. ${e.location}`
+                      : // An in-person address, or an online note that already says "Online".
+                        e.location}
                 </dd>
               </div>
               {(e.host || e.place) && (

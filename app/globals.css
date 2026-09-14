@@ -822,18 +822,95 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
   align-items: center;
   gap: var(--spacing-4);
 }
-.header-nav ul {
+.header-nav > ul {
   display: flex;
   align-items: center;
   gap: var(--spacing-3);
 }
-/* The nav only appears above 860px, but a tablet in landscape is a touch
+/* The nav only appears above 1000px, but a tablet in landscape is a touch
    device at that width, so these get a real 44px target. Padding rather than
    height, so the hit area grows and the type does not move. */
-.header-nav ul a { display: inline-flex; align-items: center; min-height: 44px; }
+.header-nav > ul > li > a { display: inline-flex; align-items: center; min-height: 44px; white-space: nowrap; }
 .header-mobile { display: none; }
 
-@media (max-width: 860px) {
+/* ── The Community menu ─────────────────────────────────────────────────────
+   The trigger is a nav link that opens something: the link's type, its
+   current-page underline, and a caret that turns when open. */
+.navmenu { position: relative; }
+.navmenu-button {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 44px; white-space: nowrap;
+  padding: 0; border: 0; background: none; font: inherit; color: inherit; cursor: pointer;
+}
+.navmenu-caret { transition: transform var(--hover) var(--ease); }
+.navmenu-button[aria-expanded='true'] .navmenu-caret { transform: rotate(180deg); }
+.navmenu-button[data-current] { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 6px; }
+
+/* The panel is a sheet of paper laid over the page, not a box: the page's
+   own ground, a hairline edge, the site's 2px ink rule across the top, and
+   a soft shadow — the one kind of thing on the site that floats. Its right
+   edge lines up with the trigger so it never runs into Join. */
+.navmenu-panel {
+  position: absolute; z-index: 40; top: calc(100% + 10px); right: -12px;
+  width: 320px; padding: 0;
+  background: var(--color-paper); color: var(--color-ink);
+  border: 1px solid var(--color-ink-13); border-top: 2px solid var(--color-ink);
+  box-shadow: 0 18px 40px rgb(22 33 29 / 0.14);
+}
+/* Bridges the 10px gap, so moving the mouse down to the panel keeps it open. */
+.navmenu-panel::before { content: ''; position: absolute; left: 0; right: 0; top: -12px; height: 12px; }
+.navmenu-list { display: grid; margin: 0; padding: 0; list-style: none; }
+/* Rows run edge to edge, so a hover fills the panel's full width; the space
+   sits inside each row instead of as a margin around the highlight. */
+.navmenu-list li + li { border-top: 1px solid var(--color-ink-13); }
+.navmenu-link {
+  display: grid; grid-template-columns: 40px minmax(0, 1fr); align-items: center; gap: 14px;
+  padding: 14px 16px; color: var(--color-ink);
+  transition: background-color var(--hover) var(--ease);
+}
+.navmenu-icon {
+  display: grid; place-items: center; width: 40px; height: 40px;
+  border: 1px solid var(--color-ink-13);
+  transition: border-color var(--hover) var(--ease), color var(--hover) var(--ease);
+}
+.navmenu-text { display: grid; gap: 2px; }
+.navmenu-label { font-size: 15px; font-weight: 600; letter-spacing: -0.005em; }
+.navmenu-note { font-size: 13px; line-height: 1.35; color: var(--color-ink-70); }
+.navmenu-link:hover, .navmenu-link:focus-visible { background: var(--color-paper-2); }
+.navmenu-link:hover .navmenu-icon, .navmenu-link:focus-visible .navmenu-icon { border-color: var(--color-ink); }
+/* The page you are on: cobalt, the token for "current", on the icon too. */
+.navmenu-link[aria-current='page'] .navmenu-label,
+.navmenu-link[aria-current='page'] .navmenu-note,
+.navmenu-link[aria-current='page'] .navmenu-icon { color: var(--color-live); }
+.navmenu-link[aria-current='page'] .navmenu-icon { border-color: var(--color-live); }
+
+/* ── The sheet's Community section and Join ──────────────────────────────── */
+.sheet-nav { display: grid; gap: var(--spacing-4); }
+.sheet-community { display: grid; gap: var(--spacing-1); }
+.sheet-section-label {
+  margin: 0; font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-ink-50);
+}
+.sheet .sheet-tiles {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0;
+  margin: 0; padding: 0; list-style: none; border-block: 1px solid var(--color-ink-13);
+}
+.sheet .sheet-tiles li + li { border-left: 1px solid var(--color-ink-13); }
+.sheet .sheet-tile {
+  display: grid; justify-items: start; gap: 6px; height: 100%;
+  padding: var(--spacing-2) var(--spacing-2) var(--spacing-2) 0;
+}
+.sheet .sheet-tiles li + li .sheet-tile { padding-left: var(--spacing-2); }
+.sheet-tile-label { font-family: var(--font-display); font-weight: 700; font-size: 20px; letter-spacing: -0.02em; line-height: 1.1; margin-top: 4px; }
+.sheet-tile-note { font-size: 13px; line-height: 1.35; color: var(--color-ink-70); }
+.sheet-tile[aria-current='page'],
+.sheet-tile[aria-current='page'] .sheet-tile-note { color: var(--color-live); }
+.sheet-tile[aria-current='page'] .sheet-tile-label { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 5px; }
+/* .sheet nav a makes every link a padded block; the button keeps its own box. */
+.sheet .sheet-join { display: flex; width: 100%; padding-block: 0; }
+
+/* The swap to the Menu sheet happens where the full row stops fitting on one
+   line: five links, Community and Join need about 940px, so below 1000 the
+   header takes the sheet instead of wrapping "How it works" onto two lines. */
+@media (max-width: 1000px) {
   .header-nav   { display: none; }
   .header-mobile { display: block; }
   /* On a phone the 24px pad above and below stacked on the logo link's own
@@ -865,7 +942,7 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
 /* The close button sits where Menu was, so opening the sheet does not make
    the control jump. It lined up at 24px before the phone header lost its
    pad; it lines up at 8 now. After .sheet-inner so it wins on order. */
-@media (max-width: 860px) { .sheet-inner { padding-top: var(--spacing-1); } }
+@media (max-width: 1000px) { .sheet-inner { padding-top: var(--spacing-1); } }
 .sheet-top {
   display: flex;
   align-items: center;

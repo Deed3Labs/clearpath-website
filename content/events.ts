@@ -106,7 +106,7 @@ export const EVENTS: ClearEventInput[] = [
     startsAt: '2026-10-22T18:00:00-07:00',
     endsAt: '2026-10-22T19:30:00-07:00',
     format: 'hybrid',
-    location: 'Inland Empire, and online',
+    location: 'Inland Empire',
     summary: 'Where the first homes stand and what members decide next.',
     description: ['An open meeting for members and anyone thinking of joining.'],
     host: 'Clear',

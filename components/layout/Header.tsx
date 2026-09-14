@@ -1,9 +1,10 @@
 import Link from 'next/link';
-import { NAV, JOIN } from '@/content/nav';
+import { COMMUNITY, NAV, JOIN } from '@/content/nav';
 import { Logo } from '@/components/marks/Logo';
 import { Button } from '@/components/primitives/Button';
 import { MobileNav } from './MobileNav';
 import { NavLink } from './NavLink';
+import { NavMenu } from './NavMenu';
 
 /* Not sticky. The homepage spends its motion budget on two scroll-linked
    moments (§6); a header that also moves competes with them. */
@@ -22,6 +23,9 @@ export function Header() {
               <NavLink href={r.href}>{r.label}</NavLink>
             </li>
           ))}
+          <li>
+            <NavMenu label={COMMUNITY.label} items={COMMUNITY.links} />
+          </li>
         </ul>
         <Button href={JOIN.href} variant="ghost" live>{JOIN.label}</Button>
       </nav>
