@@ -2471,6 +2471,7 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
   margin: 0; padding: 0; list-style: none;
   display: grid; grid-template-columns: repeat(5, minmax(0, 1fr));
   border-top: 2px solid var(--color-ink);
+  border-bottom: 1px solid var(--color-ink-13);
 }
 .nf-link {
   display: grid; gap: 4px; align-content: start; height: 100%;
