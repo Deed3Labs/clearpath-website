@@ -37,8 +37,13 @@ export type CalEvent = {
   provisional?: boolean;
 };
 
-/* How long a pulled calendar is trusted before it is fetched again. */
+/* How long a pulled calendar is trusted before it is fetched again.
+   Government calendars change slowly and some of their servers are slow, so
+   an hour. Clear's own feeds (Luma) are where someone has just added an event
+   and wants to see it, so five minutes — and an event page reading an hour-old
+   copy of the feed is how a brand-new event's page got cached as a 404. */
 export const REVALIDATE_SECONDS = 3600;
+export const CLEAR_FEED_REVALIDATE_SECONDS = 300;
 
 /* Some city sites answer Vercel's servers far slower than a home connection,
    and some connections never open at all: San Bernardino's feed answers
@@ -60,13 +65,13 @@ export function showDrafts(): boolean {
    answering "not found" there got cached as a 404 for an hour. */
 class HttpError extends Error {}
 
-async function getText(url: string, accept: string): Promise<string> {
+async function getText(url: string, accept: string, revalidate = REVALIDATE_SECONDS): Promise<string> {
   for (let attempt = 1; ; attempt++) {
     try {
       const res = await fetch(url, {
         headers: { Accept: accept },
         signal: AbortSignal.timeout(TIMEOUT_MS),
-        next: { revalidate: REVALIDATE_SECONDS },
+        next: { revalidate },
       });
       if (!res.ok) throw new HttpError(`HTTP ${res.status}`);
       return await res.text();
@@ -197,8 +202,8 @@ export function parseIcs(text: string): CalEvent[] {
   return out;
 }
 
-async function getIcs(url: string): Promise<CalEvent[]> {
-  return parseIcs(await getText(url, 'text/calendar'));
+async function getIcs(url: string, revalidate = REVALIDATE_SECONDS): Promise<CalEvent[]> {
+  return parseIcs(await getText(url, 'text/calendar', revalidate));
 }
 
 function feedUrls(): string[] {
@@ -207,7 +212,7 @@ function feedUrls(): string[] {
 }
 
 async function feedEvents(): Promise<CalEvent[]> {
-  return settled(feedUrls().map(getIcs));
+  return settled(feedUrls().map((url) => getIcs(url, CLEAR_FEED_REVALIDATE_SECONDS)));
 }
 
 /* ── Local government ───────────────────────────────────────────────────── */
@@ -483,7 +488,7 @@ export async function getEvent(slug: string): Promise<CalEvent | undefined> {
 
   if (slug.startsWith('cal-')) {
     for (const url of feedUrls()) {
-      const hit = find(await getIcs(url));
+      const hit = find(await getIcs(url, CLEAR_FEED_REVALIDATE_SECONDS));
       if (hit) return hit;
     }
     return undefined;
