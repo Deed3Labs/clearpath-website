@@ -90,6 +90,15 @@ export default async function EventPage({ params }: Props) {
 
           <aside className="c-third ev-ticket">
             <dl className="ev-facts">
+              {/* The type lives here rather than in the tags, which name
+                  categories. A meeting's type is its category, so it is
+                  not repeated for those. */}
+              {!local && (
+                <div>
+                  <dt>{DETAIL.type}</dt>
+                  <dd>{TYPES[e.type].label}</dd>
+                </div>
+              )}
               <div>
                 <dt>{DETAIL.when}</dt>
                 <dd>

@@ -284,6 +284,7 @@ export const KINDS = {
 } as const;
 
 export const DETAIL = {
+  type: 'Type',
   when: 'When',
   where: 'Where',
   host: 'Host',
