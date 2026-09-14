@@ -851,7 +851,7 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
    edge lines up with the trigger so it never runs into Join. */
 .navmenu-panel {
   position: absolute; z-index: 40; top: calc(100% + 10px); right: -12px;
-  width: 320px; padding: 6px;
+  width: 320px; padding: 0;
   background: var(--color-paper); color: var(--color-ink);
   border: 1px solid var(--color-ink-13); border-top: 2px solid var(--color-ink);
   box-shadow: 0 18px 40px rgb(22 33 29 / 0.14);
@@ -859,9 +859,12 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
 /* Bridges the 10px gap, so moving the mouse down to the panel keeps it open. */
 .navmenu-panel::before { content: ''; position: absolute; left: 0; right: 0; top: -12px; height: 12px; }
 .navmenu-list { display: grid; margin: 0; padding: 0; list-style: none; }
+/* Rows run edge to edge, so a hover fills the panel's full width; the space
+   sits inside each row instead of as a margin around the highlight. */
+.navmenu-list li + li { border-top: 1px solid var(--color-ink-13); }
 .navmenu-link {
   display: grid; grid-template-columns: 40px minmax(0, 1fr); align-items: center; gap: 14px;
-  padding: 10px; color: var(--color-ink);
+  padding: 14px 16px; color: var(--color-ink);
   transition: background-color var(--hover) var(--ease);
 }
 .navmenu-icon {
