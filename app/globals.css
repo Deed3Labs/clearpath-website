@@ -2461,8 +2461,9 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
 .nf-copy { display: grid; gap: var(--spacing-3); justify-items: start; }
 .nf-actions { display: flex; flex-wrap: wrap; gap: var(--spacing-2); margin-top: var(--spacing-1); }
 .nf-art { display: grid; place-items: center; }
-.nf-mark { width: 100%; max-width: 520px; height: auto; color: var(--color-ink); }
-.broken-mark-gap { color: var(--color-ink-28); stroke: currentColor; }
+.nf-mark { width: 100%; max-width: 560px; height: auto; color: var(--color-ink); }
+.lost-link-trail { stroke: var(--color-ink-50); }
+.lost-link-end { stroke: var(--color-ink-28); }
 
 .nf-links { margin-top: var(--spacing-4); }
 .nf-links .side-label { margin-bottom: var(--spacing-1); }
@@ -2482,7 +2483,7 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
 
 @media (max-width: 900px) {
   .nf-art { order: -1; }
-  .nf-mark { max-width: 300px; }
+  .nf-mark { max-width: 340px; }
   .nf-links ul { grid-template-columns: minmax(0, 1fr); }
   .nf-link, .nf-links li + li .nf-link { padding: 14px 0; border-left: 0; }
   .nf-links li + li { border-top: 1px solid var(--color-ink-13); }
