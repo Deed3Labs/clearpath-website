@@ -8,7 +8,10 @@ import { googleCalendarUrl } from '@/lib/events/ics';
 import { clearEventSlugs, getEvent, isUpcoming } from '@/lib/events/sources';
 import { longDate, timeRange } from '@/lib/events/time';
 
-export const revalidate = 3600;
+/* Five minutes, to match Clear's feeds (see CLEAR_FEED_REVALIDATE_SECONDS).
+   City calendars inside are still fetched hourly: each fetch keeps its own
+   cache, so re-rendering sooner does not ask their servers more often. */
+export const revalidate = 300;
 
 /* Clear's own events are built ahead; pulled ones (feeds, council meetings)
    render on first request and are cached for the hour. */

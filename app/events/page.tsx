@@ -12,8 +12,10 @@ export const metadata = {
     'Community calls, investor calls, co-op town halls and the Inland Empire council and planning meetings that decide what gets built.',
 };
 
-/* Pulled calendars are re-read at most hourly. */
-export const revalidate = 3600;
+/* Five minutes, to match Clear's feeds (see CLEAR_FEED_REVALIDATE_SECONDS).
+   City calendars inside are still fetched hourly: each fetch keeps its own
+   cache, so re-rendering sooner does not ask their servers more often. */
+export const revalidate = 300;
 
 /* A calendar, not a feature page: the list is the content, so it starts on
  * the first screen. Two sections because they are two kinds of thing —
