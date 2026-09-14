@@ -39,8 +39,19 @@ export const STYLE: Route = { href: '/style', label: 'Brand and style guide' };
    header answers to how the co-op works. */
 export const SHOP: Route = { href: '/shop', label: 'Shop' };
 
-/* The calendar. Footer only for now, next to the shop. */
+/* The calendar. */
 export const EVENTS: Route = { href: '/events', label: 'Events' };
+
+/* A sixth header item, as a menu rather than two more links: the header was
+   kept to five because six crowded it at 1080px, and one "Community" label
+   holding both costs one slot, not two. */
+export const COMMUNITY: { label: string; links: (Route & { note: string })[] } = {
+  label: 'Community',
+  links: [
+    { ...EVENTS, note: 'Calls, town halls and local meetings' },
+    { ...SHOP, note: 'Goods with the Clear name on them' },
+  ],
+};
 
 /* Everything with a URL — sitemap, QA sweeps, the ?debug=grid pass. */
 export const ROUTES: readonly Route[] = [...NAV, ...CONTEXTUAL, JOIN, STYLE, SHOP, EVENTS];

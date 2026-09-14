@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
-import { NAV, CONTEXTUAL, HOME, JOIN } from '@/content/nav';
+import { NAV, CONTEXTUAL, HOME, JOIN, COMMUNITY } from '@/content/nav';
 import { NavLink } from './NavLink';
 
 /* Built on <dialog>.showModal() rather than a div and a focus-trap library.
@@ -92,7 +92,28 @@ export function MobileNav() {
               {/* First, because the wordmark that goes home sits behind this
                   dialog while it is open — without this the sheet is a room
                   with no door back to the front page. */}
-              {[HOME, ...NAV, ...CONTEXTUAL, JOIN].map((r) => (
+              {[HOME, ...NAV].map((r) => (
+                <li key={r.href}>
+                  <NavLink href={r.href} className="d3 sheet-link">
+                    {r.label}
+                  </NavLink>
+                </li>
+              ))}
+              {/* The header's Community menu, laid open: a sheet has the room,
+                  and a menu inside a menu is one tap too many on a phone. */}
+              <li className="sheet-group">
+                <p className="sheet-group-label">{COMMUNITY.label}</p>
+                <ul>
+                  {COMMUNITY.links.map((r) => (
+                    <li key={r.href}>
+                      <NavLink href={r.href} className="d3 sheet-link">
+                        {r.label}
+                      </NavLink>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+              {[...CONTEXTUAL, JOIN].map((r) => (
                 <li key={r.href}>
                   <NavLink href={r.href} className="d3 sheet-link">
                     {r.label}
