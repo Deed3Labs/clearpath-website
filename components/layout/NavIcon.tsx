@@ -22,6 +22,15 @@ export function NavIcon({ href, size = 18 }: { href: string; size?: number }) {
       </svg>
     );
   }
+  if (href === '/directory') {
+    return (
+      <svg {...common}>
+        <path d="M2.5 7.5l1.2-4h10.6l1.2 4" />
+        <path d="M2.5 7.5c0 1.1.9 2 2 2s2-.9 2-2c0 1.1.9 2 2 2s2-.9 2-2c0 1.1.9 2 2 2s2-.9 2-2" />
+        <path d="M3.5 9.3V15.5h11V9.3M7.5 15.5v-3.5h3v3.5" />
+      </svg>
+    );
+  }
   if (href === '/shop') {
     return (
       <svg {...common}>

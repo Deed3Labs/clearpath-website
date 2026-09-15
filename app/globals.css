@@ -889,20 +889,27 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
 .sheet-section-label {
   margin: 0; font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-ink-50);
 }
+/* Three destinations now, so rows rather than side-by-side tiles: an icon
+   in a square plate, the name, and its one-line note — the desktop menu's
+   layout, at thumb size. */
 .sheet .sheet-tiles {
-  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0;
-  margin: 0; padding: 0; list-style: none; border-block: 1px solid var(--color-ink-13);
+  display: grid; gap: 0; margin: 0; padding: 0; list-style: none;
+  border-top: 1px solid var(--color-ink-13);
 }
-.sheet .sheet-tiles li + li { border-left: 1px solid var(--color-ink-13); }
+.sheet .sheet-tiles li { border-bottom: 1px solid var(--color-ink-13); }
 .sheet .sheet-tile {
-  display: grid; justify-items: start; gap: 6px; height: 100%;
-  padding: var(--spacing-2) var(--spacing-2) var(--spacing-2) 0;
+  display: grid; grid-template-columns: 44px minmax(0, 1fr); align-items: center; column-gap: 14px;
+  padding: 12px 0;
 }
-.sheet .sheet-tiles li + li .sheet-tile { padding-left: var(--spacing-2); }
-.sheet-tile-label { font-family: var(--font-display); font-weight: 700; font-size: 20px; letter-spacing: -0.02em; line-height: 1.1; margin-top: 4px; }
+.sheet .sheet-tile svg {
+  grid-row: 1 / span 2; box-sizing: content-box; padding: 11px;
+  border: 1px solid var(--color-ink-13);
+}
+.sheet-tile-label { font-family: var(--font-display); font-weight: 700; font-size: 20px; letter-spacing: -0.02em; line-height: 1.1; }
 .sheet-tile-note { font-size: 13px; line-height: 1.35; color: var(--color-ink-70); }
 .sheet-tile[aria-current='page'],
 .sheet-tile[aria-current='page'] .sheet-tile-note { color: var(--color-live); }
+.sheet-tile[aria-current='page'] svg { border-color: var(--color-live); }
 .sheet-tile[aria-current='page'] .sheet-tile-label { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 5px; }
 /* .sheet nav a makes every link a padded block; the button keeps its own box. */
 .sheet .sheet-join { display: flex; width: 100%; padding-block: 0; }
@@ -2488,4 +2495,74 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
   .nf-links ul { grid-template-columns: minmax(0, 1fr); }
   .nf-link, .nf-links li + li .nf-link { padding: 14px 0; border-left: 0; }
   .nf-links li + li { border-top: 1px solid var(--color-ink-13); }
+}
+
+
+/* ─── Directory ──────────────────────────────────────────────────────────────
+   A ruled list like the events calendar: an initials plate in the margin,
+   name and "kind · city", and the tags a member scans for on the right. */
+.dir-lede { align-self: end; }
+.dir { display: grid; gap: var(--spacing-3); }
+.dir-controls { display: grid; gap: var(--spacing-2); }
+.dir-search {
+  display: flex; align-items: center; gap: 10px; max-width: 560px; min-height: 48px;
+  padding-inline: 14px; background: var(--color-paper-2); border: 1px solid var(--color-ink-28);
+  color: var(--color-ink-50);
+}
+.dir-search:focus-within { border-color: var(--color-ink); color: var(--color-ink); }
+.dir-search input {
+  flex: 1; min-width: 0; height: 46px; border: 0; background: none; outline: 0;
+  font: inherit; font-size: 16px; color: var(--color-ink);
+}
+.dir-search input::placeholder { color: var(--color-ink-50); }
+.dir-count { margin: 0; color: var(--color-ink-50); font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; }
+
+.dir-list { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--color-ink); }
+.dir-row {
+  position: relative;
+  display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; align-items: center; gap: var(--spacing-3);
+  padding-block: 18px; border-bottom: 1px solid var(--color-ink-13);
+}
+.dir-row:hover .dir-name { color: var(--color-live); }
+.dir-avatar {
+  display: grid; place-items: center; width: 52px; height: 52px;
+  border: 1px solid var(--color-ink-28); background: var(--color-paper-2);
+  font-family: var(--font-display); font-weight: 800; font-size: 17px; letter-spacing: -0.02em;
+}
+.dir-avatar-lg { width: 88px; height: 88px; font-size: 30px; flex: none; }
+.dir-main { display: grid; gap: 4px; min-width: 0; }
+.dir-name { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(18px, 1.6vw, 22px); letter-spacing: -0.018em; transition: color var(--hover) var(--ease); }
+.dir-link::after { content: ''; position: absolute; inset: 0; }
+.dir-meta { margin: 0; color: var(--color-ink-70); }
+.dir-tags { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+.dir-nomatch { margin: 0; padding-block: var(--spacing-3); color: var(--color-ink-70); }
+
+.dir-empty {
+  display: grid; justify-items: start; gap: var(--spacing-2);
+  padding-block: var(--spacing-4);
+  border-top: 2px solid var(--color-ink); border-bottom: 1px solid var(--color-ink-13);
+}
+.dir-empty-h { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: clamp(26px, 2.8vw, 40px); line-height: 1.05; letter-spacing: -0.03em; }
+.dir-empty-lede { margin: 0 0 var(--spacing-1); max-width: 52ch; color: var(--color-ink-70); }
+
+.dir-refer-band {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: var(--spacing-3) var(--hx-gap);
+  align-items: start; margin-top: var(--spacing-4); padding-top: var(--spacing-3); border-top: 1px solid var(--color-ink-13);
+  scroll-margin-top: var(--spacing-5);
+}
+.dir-refer-h { margin: 0 0 var(--spacing-1); font-family: var(--font-display); font-weight: 700; font-size: clamp(22px, 2vw, 28px); letter-spacing: -0.02em; line-height: 1.15; }
+.dir-refer-lede { margin: 0; color: var(--color-ink-70); max-width: 44ch; }
+.dir-why .side-line { font-size: clamp(22px, 2.2vw, 32px); }
+
+.dir-profile-head { display: flex; align-items: center; gap: var(--spacing-3); }
+.dir-profile-meta { margin: 6px 0 0; }
+.dir-split-note { margin: 0; color: var(--color-ink-70); }
+
+@media (max-width: 700px) {
+  .dir-row { grid-template-columns: 44px minmax(0, 1fr); gap: 4px var(--spacing-2); align-items: start; }
+  .dir-avatar { width: 44px; height: 44px; font-size: 15px; grid-row: 1 / span 2; }
+  .dir-tags { grid-column: 2; justify-content: flex-start; margin-top: 6px; }
+  .dir-refer-band { grid-template-columns: minmax(0, 1fr); }
+  .dir-profile-head { align-items: flex-start; }
+  .dir-avatar-lg { width: 64px; height: 64px; font-size: 22px; }
 }
