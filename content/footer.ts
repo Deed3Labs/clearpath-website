@@ -39,6 +39,7 @@ export const FOOTER_COLUMNS: { heading: string; links: FooterLink[] }[] = [
     heading: 'Community',
     links: [
       { href: '/events', label: 'Events' },
+      { href: '/directory', label: 'Directory' },
       { href: '/shop', label: 'Shop' },
     ],
   },
