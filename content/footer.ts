@@ -11,6 +11,8 @@ export const FOOTER_COLUMNS: { heading: string; links: FooterLink[] }[] = [
       { href: '/how', label: 'How it works' },
       { href: '/housing', label: 'Housing' },
       { href: '/join', label: 'Join the waitlist' },
+      /* TODO(owner): point at the live member app once it is up. */
+      { href: 'https://demo.useclear.org', label: 'Members app', external: true },
     ],
   },
   {
