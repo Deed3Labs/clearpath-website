@@ -27,7 +27,10 @@ export function Header() {
             <NavMenu label={COMMUNITY.label} items={COMMUNITY.links} />
           </li>
         </ul>
-        <Button href={JOIN.href} variant="ghost" live>{JOIN.label}</Button>
+        {/* Filled, like the hero's Join and the mobile sheet's. A ghost
+            button here read as a fifth nav link rather than as the one thing
+            the header asks for. */}
+        <Button href={JOIN.href} live>{JOIN.label}</Button>
       </nav>
 
       <div className="header-mobile">
