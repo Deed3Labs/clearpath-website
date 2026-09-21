@@ -29,7 +29,7 @@ export const HERO = {
      headline is arguing with. Everything else this line used to carry —
      title, land, the protocol — has its own section below. */
   lede: 'So we built the alternative. A cooperative where the rent you already pay builds equity toward a home of your own.',
-  primary: { href: '/join', label: 'Join as a member' },
+  primary: { href: '/join', label: 'Join the waitlist' },
   ghost: { href: '/shops', label: 'Bring Clear to your shop' },
   /* The place comes last. The two facts above it are the ones that say what
      is being built and that it can be checked; the location answers "where"
