@@ -86,8 +86,20 @@ export const DRAW_ORDER = {
    rung asks for was buried inside the row descriptions; it is a list now. */
 export const TERM_PLANS = {
   kicker: 'Term plans',
-  heading: 'A tire repair and a house sit on the same shelf.',
-  sub: 'One limit across every shop you use, so what you owe in total is a number you can always see.',
+  /* Positioning, not description. A reader arrives at this section holding
+     three products it is not — a BNPL plan, a store card or personal loan,
+     and a mortgage — and all three are somebody else's balance sheet. That
+     is the one thing none of them can answer, so the heading says it.
+
+     It also replaces a heading that contradicted the section: "A tire repair
+     and a house sit on the same shelf" put the house on the limit, and the
+     third row says the house is outside it. */
+  heading: 'Not three lenders. One co-op you own.',
+  /* The range the old heading carried, now that the heading carries the
+     claim instead. The ceiling is deliberately not here: the stacking block
+     below states it and then works an example, and this said it a third
+     time. */
+  sub: 'A repair at the shop, cash in your account, the house you buy. Three rungs, one membership.',
   ledger: [
     {
       label: 'Partner credit',
