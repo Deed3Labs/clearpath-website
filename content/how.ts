@@ -116,15 +116,16 @@ export const TERM_PLANS = {
         'Purchase and pay over time at a Clear partner shop. Needs a linked bank account. Paid by QR code, never a card swipe.',
     },
     {
-      /* Same rule as the rung above: the label is the thing a reader is
-         trying to do, and the trademark opens the description. Deliberately
-         not "cash advance" — that is the name of a card's worst line and of
-         the advance apps, and Clear Boost™ in section 02 is the rung that
-         answers those. Two rungs cannot both be the payday replacement. */
-      label: 'Borrow cash',
+      /* The label is what a reader is trying to do, as on the rung above.
+         Deliberately not "cash advance" — that is the name of a card's worst
+         line and of the advance apps, and Clear Boost™ in section 02 is the
+         rung that answers those. Two rungs cannot both be the payday
+         replacement, and the closing line below only works if the label is
+         not itself the name of a bad product. */
+      label: 'Borrowing money',
       value: '2.5% a cycle',
       description:
-        'Clear Cash™ sends it to your account rather than a spending line. Unlocks after six clean cycles. This is the personal loan, without the personal loan.',
+        'Cash to your account rather than a spending line. Unlocks after six clean cycles. This is the personal loan, without the personal loan.',
     },
     {
       label: 'Your home — outside this limit',
