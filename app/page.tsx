@@ -81,7 +81,12 @@ export default function Home() {
               ))}
             </div>
 
-            <p className="t-body c-half">{GAP.close}</p>
+            <div className="c-half">
+              <p className="t-body">{GAP.close}</p>
+              <p className="t-body" style={{ marginTop: 'var(--spacing-3)' }}>
+                <TextLink href={GAP.link.href}>{GAP.link.label}</TextLink>
+              </p>
+            </div>
             <div className="c-half">
               <Note>{GAP.note}</Note>
             </div>
