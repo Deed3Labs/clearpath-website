@@ -108,6 +108,28 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
 .hero-headline { max-width: 20ch; }
 .hero-headline span { display: block; }
+
+/* On a phone the headline stacks to three lines at every width, instead of
+   three on a small handset and two on a large one.
+
+   Measured in Bricolage 800 at the hero's -0.04em tracking, not estimated:
+     "neighborhood."      6.44em  — the longest line, so the floor on a measure
+     "Your money, kept"   7.60em  — must NOT fit, or line one swallows "kept"
+   Any measure inside [6.44em, 7.60em) breaks the sentence after "money," and
+   again after "the", and 7em sits in the middle of that window. The cap is in
+   em so it holds at any font-size, including the swap-in fallback face.
+   Re-measure if the headline changes: this is tuned to one sentence.
+
+   The font-size floor is the same arithmetic run backwards. Below ~355px the
+   46px minimum made "neighborhood." wider than the column and the word ran
+   out under the right inset, four pixels from the screen edge, so the type
+   steps down to keep the longest line inside the measure. */
+@media (max-width: 640px) {
+  .hero-headline {
+    max-width: 7em;
+    font-size: min(46px, calc((100vw - 2 * var(--hx-inset)) / 6.6));
+  }
+}
 .hero-actions { display: flex; flex-wrap: wrap; gap: var(--spacing-2); }
 .hero-meta {
   border-top: 1px solid var(--color-ink-13);
