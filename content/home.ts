@@ -11,24 +11,24 @@
 import type { LedgerItem } from '@/components/primitives';
 
 export const HERO = {
-  /* One sentence, no second line. It is the line that lands with everyone it
-     has been read to, and a payoff line after it only delays the hit.
-     The misregistration sits on the whole headline now rather than on a
-     second line, which is what it was there to do anyway. */
-  headline: 'Your rent is making someone else rich.',
-  /* Two beats. The first answers the headline directly — the headline states
-     the problem, so the lede has to be the reply to it, not a restatement in
-     calmer words. The second is the whole co-op in one clause: what it is,
-     and what the money does.
+  /* One sentence, no second line: a payoff line after it only delays the
+     hit, and the misregistration runs over the whole headline anyway.
+     States what the co-op is for rather than what is wrong — the accusing
+     version ('Your rent is making someone else rich.') read past the
+     shopkeepers and savers the page also has to speak to. */
+  headline: 'Your money, kept in the neighborhood.',
+  /* What Clear is, then the four things it does, in the order the page
+     covers them: save, borrow against it, pay local shops over time, and
+     put rent toward a home. Doubles as the meta and link-preview
+     description (app/layout.tsx), so it has to read on its own, away from
+     the headline.
 
-     Not "the home you live in": while you are renting you do not own that one
-     yet, and the equity is portable into another Clear home anyway, so tying
-     it to the current address is wrong twice over. "Toward a home of your
-     own" is the accurate direction — equity accrues to a gate, and title
-     comes after it. "Builds equity" is deliberate too: it is the phrase the
-     headline is arguing with. Everything else this line used to carry —
-     title, land, the protocol — has its own section below. */
-  lede: 'So we built the alternative. A cooperative where the rent you already pay builds equity toward a home of your own.',
+     Not "the home you live in": while you are renting you do not own that
+     one yet, and the equity is portable into another Clear home anyway, so
+     tying it to the current address is wrong twice over. "Toward a home of
+     your own" is the accurate direction — equity accrues to a gate, and
+     title comes after it. */
+  lede: 'Clear is a member-owned cooperative. Save with us, open a credit line, pay local shops over time, and put your rent toward a home of your own.',
   primary: { href: '/join', label: 'Join the waitlist' },
   ghost: { href: '/shops', label: 'Bring Clear to your shop' },
   /* The place comes last. The two facts above it are the ones that say what
@@ -41,15 +41,17 @@ export const HERO = {
   ],
 } as const;
 
-/* §6.1 alternates, already weighed. Kept here so the decision is visible in
-   the code rather than lost in a document, and so nobody writes a fourth.
+/* Alternates, already weighed. Kept here so the decision is visible in the
+   code rather than lost in a document, and so nobody writes a sixth.
+     · 'Your rent is making someone else rich.' — the line the page opened
+       with. It argues with renting, which is one of the three audiences,
+       and it names a beneficiary on a site where /contribute and /capital
+       ask landlords to bring their property in.
      · 'Rent builds equity. Just not yours.' — withholds the hook until the
        second line, which is a beat too long.
      · 'Your rent is making someone rich. Just not you.'
      · 'You are already buying a house. Someone else is keeping it.'
-     · 'You already pay for a house every month. It just isn\'t yours.'
-   The live line names no beneficiary, which matters on a site where
-   /contribute and /capital ask landlords to bring their property in. */
+     · 'You already pay for a house every month. It just isn\'t yours.' */
 
 /* ── 01 · The gap ─────────────────────────────────────────────────────────
    The page's big moment, on ink. Two figures at set-piece size and one line
@@ -69,7 +71,7 @@ type TallyColumn = {
 
 export const GAP = {
   rail: '01 / The gap',
-  kicker: 'Five years, either way',
+  kicker: 'If you rent today',
   heading: 'Same money. But you end up owning something.',
   columns: [
     {
@@ -94,6 +96,8 @@ export const GAP = {
   close:
     'The monthly total inside Clear is $2,350 against $2,520 in rent — lower, not higher. The difference is where it lands.',
   note: 'Illustration of how the model works, on a two-bedroom in the Inland Empire. Not a quote.',
+  /* The figures invite exactly one question, and /housing is the answer. */
+  link: { href: '/housing', label: 'How the housing math works' },
 } as const;
 
 /* ── 02 · Three phases ────────────────────────────────────────────────────
@@ -111,7 +115,7 @@ export type Phase = {
 
 export const PHASES = {
   rail: '02 / Three phases',
-  kicker: 'One membership',
+  kicker: 'Take the ClearPath',
   heading: 'Renter, owner, earner.',
   standfirst: 'Not three ways of describing the same payment. Three phases, each with a gate you can see from your first day.',
   steps: [
@@ -157,7 +161,7 @@ export const PHASES = {
    section that had nowhere to live. */
 export const WAYS_IN = {
   rail: '03 / Two ways in',
-  kicker: 'Two doors, one transaction',
+  kicker: 'If you run a shop, or shop at one',
   heading: 'Whichever side of the counter you are on.',
   columns: [
     {
@@ -195,7 +199,7 @@ export const WAYS_IN = {
    facts is what it is. */
 export const STATUS = {
   rail: '04 / Status',
-  kicker: 'Where this actually is',
+  kicker: 'Before you trust us with anything',
   heading: 'What exists today, plainly.',
   standfirst: 'A co-op that asks people to save with it should be straight about what it has built. This list is maintained, not marketing.',
   ledger: [
@@ -242,7 +246,7 @@ export const STATUS = {
    restating the sentence. */
 export const UNDERNEATH = {
   rail: '05 / Underneath',
-  kicker: 'The ledger',
+  kicker: 'The public ledger',
   statement: 'You should not have to take our word for the numbers.',
   body: 'Balances, credit lines, deeds and titles run on an open-source protocol held by an ownerless Wyoming foundation. The co-op is a user of it, not its owner.',
   source: 'github.com/Deed3Labs/Protocol-Contracts · AGPL-3.0',

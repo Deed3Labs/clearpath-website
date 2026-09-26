@@ -3,6 +3,7 @@ import { Bricolage_Grotesque, Instrument_Sans, IBM_Plex_Mono } from 'next/font/g
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { DebugGrid } from '@/components/dev/DebugGrid';
+import { HERO } from '@/content/home';
 import './globals.css';
 
 const display = Bricolage_Grotesque({
@@ -32,8 +33,9 @@ export const metadata: Metadata = {
     default: 'Clear — a member-owned cooperative',
     template: '%s · Clear',
   },
-  description:
-    'Clear is a member-owned cooperative. Point-of-sale financing at local shops, savings-backed credit, and housing where the land is held in common by members.',
+  /* The hero's own subline, so the page and every link preview say the same
+     thing. og:description and twitter:description fall back to this one. */
+  description: HERO.lede,
   /* opengraph-image.tsx and the icon files under app/ are picked up by
      convention; only the parts Next cannot infer are declared here. */
   openGraph: {
