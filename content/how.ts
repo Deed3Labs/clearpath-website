@@ -102,7 +102,7 @@ export const TERM_PLANS = {
      claim instead. The ceiling is deliberately not here: the stacking block
      below states it and then works an example, and this said it a third
      time. */
-  sub: 'A repair at the shop, cash in your account, the house you buy. Three rungs, one membership.',
+  sub: 'A repair at a shop, cash in your account, the house you buy. Three rungs, one membership.',
   ledger: [
     {
       /* The name a stranger already has for this. "Pay over time" is what the
