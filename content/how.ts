@@ -23,7 +23,7 @@ import type { LedgerItem, StepItem } from '@/components/primitives';
 export const OPENING = {
   kicker: 'Members',
   heading: 'Credit that gets cheaper the longer you hold it.',
-  lede: 'Every other lender writes you a loan and hopes you keep needing one. Clear is built so your third year costs less than your first, because by then you are borrowing against your own savings.',
+  lede: 'Every other lender writes you a loan and hopes you keep needing one. Clear is built so your third year costs less than your first.',
   membership: {
     title: 'Your deposit is your share.',
     criteria: [
