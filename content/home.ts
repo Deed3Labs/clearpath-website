@@ -31,12 +31,12 @@ export const HERO = {
   lede: 'Clear is a member-owned cooperative. Save with us, open a credit line, pay local shops over time, and put your rent toward a home of your own.',
   primary: { href: '/join', label: 'Join the waitlist' },
   ghost: { href: '/shops', label: 'Bring Clear to your shop' },
-  /* The place comes last. The two facts above it are the ones that say what
-     is being built and that it can be checked; the location answers "where"
-     once a reader already cares. */
+  /* The place comes last. The two lines above it are what the co-op is, not
+     what it has built — the status section answers "how far along" in full,
+     and a reader meeting the hero wants the terms first. */
   meta: [
-    'First cohort — 12 detached homes',
-    'Protocol source is public',
+    'Local money, local returns',
+    'One member, one vote',
     'Building in Inland Empire, California',
   ],
 } as const;
