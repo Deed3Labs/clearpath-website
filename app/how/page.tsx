@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { Ledger, Note, Stat, Tiles } from '@/components/primitives';
 import { SplitChooser } from '@/components/interactive/SplitChooser';
 import { OPENING, DRAW_ORDER, TERM_PLANS, SPLIT, SAVINGS, CYCLE, COMPARISON } from '@/content/how';
@@ -92,7 +93,16 @@ export default function How() {
           <b>03</b> {TERM_PLANS.kicker}
         </p>
         <div className="hx-grid">
-          <h2 className="hx-h2 c-two-thirds">{TERM_PLANS.heading}</h2>
+          <h2 className="hx-h2 c-two-thirds">
+            {TERM_PLANS.heading.lead}
+            {/* The one link the site sets in display type. The inner span is
+                what leans; the rule under it belongs to the anchor, so it
+                stays level while the word goes oblique. */}
+            <Link href={TERM_PLANS.heading.link.href} className="lean">
+              <span>{TERM_PLANS.heading.link.label}</span>
+            </Link>
+            {TERM_PLANS.heading.tail}
+          </h2>
           <p className="hx-lede c-third">{TERM_PLANS.sub}</p>
 
           <div className="c-full">

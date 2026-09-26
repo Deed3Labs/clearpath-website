@@ -1152,6 +1152,57 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
 }
 .tlink:hover { text-decoration-color: var(--color-ink); }
 
+/* A link set in display type — one word inside a heading, which the site does
+   in exactly one place (§03 on /how, where "co-op" points at the page that
+   proves the claim the heading makes).
+
+   It leans instead of changing face. Bricolage ships no italic, so a second
+   cut would mean loading another family and cross-fading two copies of the
+   word, and the two would never share a width — the line would twitch on
+   hover. A skew is one transform: it cannot reflow, it interpolates smoothly
+   at any size, and a slanted Bricolage is a shape the stack cannot otherwise
+   make, which is the whole appeal.
+
+   Everything — the skew and the rule — sits on the inner span, not on the
+   anchor. A transform needs a transformable box, so the span is an
+   inline-block, and CSS does not paint an ancestor's underline through an
+   atomic inline: put the decoration on the anchor and it simply never draws.
+   On the span it rides with the word, and because a skew shifts every point
+   on a given line by the same amount, the rule stays level while the letters
+   lean over it.
+
+   260ms — longer than the 200ms hover token, because the eye is tracking a
+   shape here rather than a colour. */
+.lean { display: inline-block; color: inherit; }
+.lean > span {
+  display: inline-block;
+  transform-origin: 0 100%;
+  text-decoration: underline;
+  /* Heavier at rest than a body link's ink-28 hairline: at display size the
+     rule has to read as "this word is a link" from across the page, before
+     anyone has a cursor near it. */
+  text-decoration-color: var(--color-ink-50);
+  text-decoration-thickness: 0.045em;
+  text-underline-offset: 0.08em;
+  transition:
+    transform 260ms var(--ease),
+    color var(--hover) var(--ease),
+    text-decoration-color var(--hover) var(--ease);
+}
+.lean:hover > span, .lean:focus-visible > span {
+  transform: skewX(-10deg);
+  color: var(--color-live);
+  text-decoration-color: var(--color-live);
+}
+/* Held down: the lean settles a fraction further, so a press reads as a
+   press on a touch screen, where there is no hover to precede it. */
+.lean:active > span { transform: skewX(-12deg) scaleX(0.99); }
+
+/* The lean is the signal, so it stays; only the travel goes. */
+@media (prefers-reduced-motion: reduce) {
+  .lean > span { transition: color var(--hover) var(--ease); }
+}
+
 /* Nav links get the underline on hover instead: in a row of six, six
    permanent underlines read as a paragraph rather than a menu. */
 .navlink { transition: color var(--hover) var(--ease); }

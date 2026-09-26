@@ -94,7 +94,10 @@ export const TERM_PLANS = {
      It also replaces a heading that contradicted the section: "A tire repair
      and a house sit on the same shelf" put the house on the limit, and the
      third row says the house is outside it. */
-  heading: 'Not three lenders. One co-op you own.',
+  /* Three parts, because "co-op" in it is a link to /coop: the section makes
+     a claim about who the lender is, and the page that proves it is one
+     word away. */
+  heading: { lead: 'Not three lenders. One ', link: { href: '/coop', label: 'co-op' }, tail: ' you own.' },
   /* The range the old heading carried, now that the heading carries the
      claim instead. The ceiling is deliberately not here: the stacking block
      below states it and then works an example, and this said it a third
@@ -102,10 +105,15 @@ export const TERM_PLANS = {
   sub: 'A repair at the shop, cash in your account, the house you buy. Three rungs, one membership.',
   ledger: [
     {
-      label: 'Partner credit',
+      /* The name a stranger already has for this. "Pay over time" is what the
+         member and merchant apps call it, and it stays in the first line of
+         the description so the two names meet in one place — but a marketing
+         page is where people arrive without the vocabulary, so the row leads
+         with the one they walked in with. */
+      label: 'Buy now, pay later',
       value: '2% a cycle',
       description:
-        'Financing at a Clear shop. Needs a linked bank account. Paid by QR code, never a card swipe.',
+        'Purchase and pay over time at a Clear partner shop. Needs a linked bank account. Paid by QR code, never a card swipe.',
     },
     {
       label: 'Clear Cash™',
