@@ -1,6 +1,6 @@
 export { Section, SectionHead, More } from './Section';
 export { Close } from './Close';
-export { PageHero, type Fact } from './PageHero';
+export { PageHero, HeroWords, type Fact } from './PageHero';
 export { Bento, Cell, Fig, Knob } from './Bento';
 export { Rail } from './Rail';
 export { Seg, type SegOption } from './Seg';

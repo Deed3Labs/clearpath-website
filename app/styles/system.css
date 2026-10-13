@@ -560,14 +560,14 @@ html.motion .hero:not([data-intro]) [data-stage] { opacity: 0; }
 
 /* The pill field: input and button in one pill, so their tops and bottoms
    line up; two pills on a phone. md is the events size, lg the shop's. */
-.pillf { display: grid; gap: 10px; align-content: end; }
-.nf { display: flex; align-items: center; gap: 8px; min-height: 54px; padding: 5px 5px 5px 20px; border: 1px solid var(--color-ink-28); border-radius: var(--radius-pill); transition: border-color 200ms var(--ease); }
+.pillf { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; align-content: end; min-width: 0; }
+.pillf .nf { display: flex; align-items: center; gap: 8px; min-height: 54px; padding: 5px 5px 5px 20px; border: 1px solid var(--color-ink-28); border-radius: var(--radius-pill); transition: border-color 200ms var(--ease); }
 .pillf[data-size='lg'] .nf { min-height: 58px; padding-left: 22px; }
-.nf:focus-within { border-color: var(--color-ink); }
+.pillf .nf:focus-within { border-color: var(--color-ink); }
 .pillf[data-invalid] .nf, .pillf[data-invalid] .nf input { border-color: var(--color-absent); }
-.nf input { flex: 1; min-width: 0; font: inherit; font-size: 16px; color: var(--color-ink); background: transparent; border: 0; outline: none; padding: 0; }
-.nf input::placeholder { color: var(--color-ink-50); }
-.nf .btn { flex: none; min-height: 42px; }
+.pillf .nf input { flex: 1; min-width: 0; font: inherit; font-size: 16px; color: var(--color-ink); background: transparent; border: 0; outline: none; padding: 0; }
+.pillf .nf input::placeholder { color: var(--color-ink-50); }
+.pillf .nf .btn { flex: none; min-height: 42px; }
 .pillf[data-size='lg'] .nf .btn { min-height: 46px; }
 .nnote { font-size: 13.5px; color: var(--color-ink-50); padding-left: 20px; }
 .pillf[data-size='lg'] .nnote { padding-left: 22px; }
@@ -576,10 +576,10 @@ html.motion .hero:not([data-intro]) [data-stage] { opacity: 0; }
 .done3[data-size='lg'] { min-height: 58px; padding: 0 22px; font-size: 15px; }
 .done3 svg { flex: none; width: 18px; height: 18px; color: var(--color-settled); }
 @media (max-width: 560px) {
-  .nf { display: grid; gap: 10px; padding: 0 !important; border: 0; }
-  .nf input { min-height: 52px; padding: 0 20px; border: 1px solid var(--color-ink-28); border-radius: var(--radius-pill); }
-  .nf input:focus { border-color: var(--color-ink); }
-  .nf .btn { width: 100%; min-height: 48px !important; }
+  .pillf .nf { display: grid; gap: 10px; padding: 0 !important; border: 0; }
+  .pillf .nf input { min-height: 52px; padding: 0 20px; border: 1px solid var(--color-ink-28); border-radius: var(--radius-pill); }
+  .pillf .nf input:focus { border-color: var(--color-ink); }
+  .pillf .nf .btn { width: 100%; min-height: 48px !important; }
   .pillf[data-size='lg'] .nf input { min-height: 54px; padding: 0 22px; }
   .done3 { border-radius: 16px; padding: 14px 18px; }
 }

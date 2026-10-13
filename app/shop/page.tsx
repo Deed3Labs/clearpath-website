@@ -1,5 +1,4 @@
-import { Fragment } from 'react';
-import { Bento, Chip, LiveDot, PageHero, Section, SectionHead } from '@/components/system';
+import { Bento, Chip, HeroWords, LiveDot, PageHero, Section, SectionHead } from '@/components/system';
 import { Arrow } from '@/components/system/icons';
 import { HeroScope } from '@/components/system/HeroScope';
 import { ShopNotify } from '@/components/shop/ShopNotify';
@@ -84,24 +83,11 @@ function longDate(iso: string): string {
   return `${MONTHS[m - 1]} ${d}, ${y}`;
 }
 
-/* The h1's words, pre-split into masks on the server (as PageHero does), so
-   the intro has nothing to rewrite and the h1 reads the same with JS off. */
+/* The closed band's h1: the shared word masks (HeroWords), wrapped on a phone. */
 function Lines({ lines }: { lines: readonly string[] }) {
   return (
     <h1 className="hero-h1" data-phone="wrap">
-      {lines.map((ln, i) => (
-        <span className="ln" key={i}>
-          {ln.split(' ').map((w, j, all) => (
-            <Fragment key={j}>
-              <span className="w">
-                <span>{w}</span>
-              </span>
-              {j < all.length - 1 ? ' ' : null}
-            </Fragment>
-          ))}
-          {i < lines.length - 1 ? ' ' : null}
-        </span>
-      ))}
+      <HeroWords lines={lines} />
     </h1>
   );
 }

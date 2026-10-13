@@ -41,7 +41,13 @@ export function EventRowBody({ event: e }: { event: CalEvent }) {
           {e.cancelled && <Chip tone="absent">{LISTING.cancelled}</Chip>}
         </div>
         <h3>
-          <Link href={`/events/${e.slug}`}>{shortTitle(e)}</Link>
+          {/* A local meeting's page is rendered on demand from its city's
+              calendar, so prefetching every row in view fired a burst of
+              requests at those servers and drew 429s. Clear events are
+              prerendered, so they still prefetch. */}
+          <Link href={`/events/${e.slug}`} prefetch={local ? false : undefined}>
+            {shortTitle(e)}
+          </Link>
         </h3>
         <p className="meta">
           <time dateTime={e.start.toISOString()}>{timeLabel(e)}</time>

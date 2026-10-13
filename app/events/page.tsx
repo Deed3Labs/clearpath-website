@@ -1,6 +1,5 @@
-import { Fragment } from 'react';
 import Link from 'next/link';
-import { DateBlock, LiveDot, Section, SectionHead } from '@/components/system';
+import { DateBlock, HeroWords, LiveDot, Section, SectionHead } from '@/components/system';
 import { HeroScope } from '@/components/system/HeroScope';
 import { NotifyForm } from '@/components/interactive/NotifyForm';
 import { Board, BoardState, SeeThem, type BoardRow } from '@/components/events/Board';
@@ -35,26 +34,6 @@ export const revalidate = 300;
  * Every date is formatted here on the server by lib/events/time.ts; the
  * board in the browser only compares day keys. */
 
-function Words({ lines }: { lines: readonly string[] }) {
-  return (
-    <>
-      {lines.map((ln, i) => (
-        <span className="ln" key={i}>
-          {ln.split(' ').map((w, j, all) => (
-            <Fragment key={j}>
-              <span className="w">
-                <span>{w}</span>
-              </span>
-              {j < all.length - 1 ? ' ' : null}
-            </Fragment>
-          ))}
-          {i < lines.length - 1 ? ' ' : null}
-        </span>
-      ))}
-    </>
-  );
-}
-
 /* The next Clear event, or with none posted the next public meeting. */
 function NextUp({ e }: { e: CalEvent }) {
   const local = isLocal(e);
@@ -66,7 +45,7 @@ function NextUp({ e }: { e: CalEvent }) {
         <span className="who">{NEXT.who}</span>
         <span className="chips">{local ? <span className="chip k">{NEXT.localChip}</span> : <EventChips event={e} />}</span>
       </div>
-      <Link className="nm" href={`/events/${e.slug}`}>
+      <Link className="nm" href={`/events/${e.slug}`} prefetch={local ? false : undefined}>
         <DateBlock date={e.start} />
         <span className="nt">
           {e.title}
@@ -154,7 +133,7 @@ export default async function Events() {
         <div className="hero-row">
           <div className="evl">
             <h1 className="hero-h1" data-phone="wrap">
-              <Words lines={OPENING.lines} />
+              <HeroWords lines={OPENING.lines} />
             </h1>
             <div data-in>
               <p className="hero-lede">{OPENING.lede}</p>
