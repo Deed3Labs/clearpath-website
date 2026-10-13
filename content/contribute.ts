@@ -1,157 +1,212 @@
-/* Contribute land. §6.5 — copy is final and lives here, never inline in JSX.
+/* Contribute land — copy is final and lives here, never inline in JSX.
  *
  * /contribute is THE ACTION, for an individual with one property. /capital is
  * the vehicle, for someone evaluating rather than acting. That division has to
- * stay clean or the two pages cannibalise each other (§6.6).
+ * stay clean or the two pages cannibalise each other.
  *
- * Rewritten for the layout system. The page was four sections of heading and
- * paragraph, and its whole argument — that contributing is not selling — was
- * a subordinate clause inside the lede. It is the opening pair now.
+ * Ported to the redesign mockup (reference/redesign/contribute.html): a hero
+ * set on three lines with the selling-against-contributing offer under it,
+ * four §721 steps on one rule, the downsides as a ruled list, three people,
+ * and seven years against seven months.
  *
- * The one figure on the page, "seven years, not seven months", was buried in
- * the middle of a 320-character closing paragraph. It closes the page. */
+ * Naming: the instrument is "yield-bearing shares", not "units". On a site
+ * where /housing calls a dwelling a unit, "units" read as housing rather than
+ * as the thing you receive for contributing property. The full term appears
+ * on first use and "shares" carries it thereafter. */
 
-import type { StepItem } from '@/components/primitives';
+export const META = {
+  title: 'Contribute land',
+  description:
+    'Contribute rental property or land to Clear Properties in exchange for yield-bearing shares under section 721, rather than selling it and paying tax on the whole gain this year.',
+} as const;
 
-/* Naming: the instrument is "yield-bearing shares", not "units". On a site
-   where /housing calls a dwelling a unit and the unit mix runs one-bed to
-   three-bed, "units" read as housing rather than as the thing you receive for
-   contributing property. The full term appears on first use on each page and
-   "shares" carries it thereafter.
-   "Share" also means a membership share elsewhere on the site — a portion of
-   the co-op, which every member holds by depositing. That is a different
-   sense, in a different register, for a different reader, and the pages that
-   use it are unchanged. */
+/* The one worked example on the page: a property of this value, contributed,
+   becomes this many shares (one per dollar). The offer bento and step 02 both
+   read it, so the two can never disagree. */
+export const PROPERTY_VALUE = 437000;
 
-/* ── 01 · The offer ──────────────────────────────────────────────────────
-   Two ways to stop being a landlord, set side by side. Both halves are drawn
-   from copy that was already on the page — the recapture list came out of the
-   "tired landlords" column, the §721 sentence out of step one. */
-export const OPENING = {
-  kicker: 'Contribute',
-  heading: 'Put the property in. Keep the income. Stop managing it.',
+/* ── Hero ────────────────────────────────────────────────────────────────
+   Three set lines from 700px up: what you do, what you keep, what you stop. */
+export const HERO = {
+  label: { kicker: 'Partners', title: 'Contribute land' },
+  lines: ['Put the property in.', 'Keep the income.', 'Stop managing it.'],
   lede: 'If you own rental property or land you have been sitting on, you can contribute it to Clear Properties in exchange for yield-bearing shares.',
-  sides: [
-    {
-      label: 'Selling it',
-      line: 'Tax on the whole gain, this year.',
-      note: 'Depreciation recapture, capital gains and state tax, all at once.',
-    },
-    {
-      label: 'Contributing it',
-      /* Full stop rather than "and": "Shares" is wider than "Units" was, and
-         the comma version measured 2 lines against 1 on the other side. */
-      line: 'Shares. The income keeps arriving.',
-      note: 'Under section 721, contributing property to a partnership in exchange for an interest in it is not a taxable event.',
-      live: true,
-    },
+  primary: { href: '/join?as=land', label: 'Send us the property details' },
+  ghost: { href: '#how', label: 'How it works' },
+  facts: [
+    { k: 'Tax when you contribute', v: 'None, §721', live: true },
+    { k: 'What you receive', v: 'Shares, 1:1' },
+    { k: 'The income', v: 'Keeps arriving' },
+    { k: 'Tenants and repairs', v: 'Not yours' },
   ],
+} as const;
+
+/* The offer: one property, two outcomes. Selling draws a solid bar of what
+   you keep beside a hatched bar of this year's tax; contributing draws the
+   whole bar as shares. */
+export const OFFER = {
+  propLabel: 'Your property',
+  sell: {
+    who: 'Selling it',
+    ck: 'A closing',
+    keep: 'What you keep',
+    tax: 'Tax, this year',
+    legend: { keep: 'Cash after tax', tax: 'Recapture, capital gains, state tax' },
+    big: 'Tax on the whole gain, this year.',
+    body: 'Depreciation recapture, capital gains and state tax, all at once.',
+  },
+  give: {
+    who: 'Contributing it',
+    ck: 'Section 721',
+    /* Follows the share count: "437,000 shares". */
+    unit: 'shares',
+    bar: 'All of it, as shares',
+    legend: 'Yield-bearing shares, one for each dollar of value',
+    big: 'Shares. The income keeps arriving.',
+    body: 'Under section 721, contributing property to a partnership in exchange for an interest in it is not a taxable event.',
+  },
   /* Stays near the top and stays plain. */
   note: 'We are not your tax adviser. Everything here is how the structure works, not advice about your situation. Bring your CPA to the second conversation and we will send them the documents.',
 } as const;
 
-/* ── 02 · How it works ───────────────────────────────────────────────────
-   Four equal cells on the page's one ink band. The mono line above each
-   carries the step number and the term that step turns on, which is the
-   pattern the draw order uses on /how. */
+/* ── 01 · How it works ───────────────────────────────────────────────────
+   Four steps on one rule. Each is a headline, one short sentence, and the
+   same three ruled rows, whose values arrive as the rule reaches the step.
+   Step 02's values 'value' and 'shares' are filled from PROPERTY_VALUE. */
 export const HOW = {
-  kicker: 'How it works',
-  heading: 'A contribution, not a sale.',
-  sub: 'Four steps, and none of them is a closing.',
+  n: '01',
+  label: 'How it works',
+  title: 'A contribution, not a sale.',
+  line: 'Four steps, and none of them is a closing.',
   steps: [
     {
-      title: 'You put the property in',
+      n: '01',
       meta: '§721',
-      body: 'Title moves to a nominee trust, with Clear Properties as the beneficiary. Not a taxable event.',
+      title: 'You put the property in.',
+      body: 'The deed goes into a nominee trust instead of to a buyer.',
+      rows: [
+        { k: 'Title', v: 'Nominee trust' },
+        { k: 'Beneficiary', v: 'Clear Properties' },
+        { k: 'Taxable event', v: 'None' },
+      ],
     },
     {
-      title: 'You receive shares',
+      n: '02',
       meta: '1:1 by value',
-      body: 'Contribute a $437,000 property, receive 437,000 shares. No boot and no balancing mechanism.',
+      title: 'You receive shares.',
+      body: 'One share for each dollar of value. No boot, no balancing mechanism.',
+      rows: [
+        { k: 'Property value', v: 'value' },
+        { k: 'Shares issued', v: 'shares', live: true },
+        { k: 'Boot', v: '$0' },
+      ],
     },
     {
-      title: 'The cash keeps arriving',
-      meta: 'pro rata',
-      body: 'Rent is earned at the project level, which pays taxes and management. The rest goes out to every holder.',
+      n: '03',
+      meta: 'Pro rata',
+      title: 'The cash keeps arriving.',
+      body: 'Rent is earned at the project, which pays its own costs first.',
+      rows: [
+        { k: 'Rent', v: 'At the project' },
+        { k: 'Taxes, upkeep', v: 'Paid first' },
+        { k: 'The rest', v: 'To every holder' },
+      ],
     },
     {
-      title: 'Nobody goes first',
-      meta: 'same terms',
-      body: 'Clear Capital holds shares on the terms you do — same pool, no priority, no preferred return.',
+      n: '04',
+      meta: 'Same terms',
+      title: 'Nobody goes first.',
+      body: 'Clear Capital holds shares on the terms you do.',
+      rows: [
+        { k: 'Pool', v: 'The same one' },
+        { k: 'Priority', v: 'None' },
+        { k: 'Preferred return', v: 'None' },
+      ],
     },
-  ] satisfies (StepItem & { meta: string })[],
-  note: 'The agreement requires mandatory tax distributions, so you are never handed a K-1 for income you did not receive in cash.',
-} as const;
-
-/* §6.6 S5 reuses this panel VERBATIM and says not to soften it for an
-   institutional reader. Exported from here and imported there, so "verbatim"
-   is enforced by the module system rather than by remembering.
-
-   The list itself is untouched. Only the framing around it is new, because a
-   section called "the honest downsides" that sits in a sidebar is not being
-   honest with the reader about how much it means it. */
-export const DOWNSIDES = {
-  title: 'The honest downsides.',
-  list: [
-    'Shares are illiquid compared with cash',
-    'You do not control the properties',
-    'You get a K-1, which arrives later than a 1099 and your accountant will charge you for it',
-    'The deferred gain still exists and comes due if you ever sell the shares',
-    'Concentration risk moves from your one building to a fund, which is usually better but is a change, not a removal',
   ],
+  foot: 'The agreement requires mandatory tax distributions, so you are never handed a K-1 for income you did not receive in cash.',
 } as const;
 
-export const DOWNSIDES_INTRO = {
-  kicker: 'The downsides',
-  /* Was "in the same type as everything else on this page", which is a note
-     about the typography, not something a reader wants. Same fault as the
-     one on /capital. */
-  sub: 'Five of them, and every one is a real cost of doing it this way.',
+/* ── 02 · The downsides ──────────────────────────────────────────────────
+   /capital reuses this list VERBATIM and must not soften it for an
+   institutional reader. It is exported from here and re-exported there, so
+   "verbatim" is enforced by the module system rather than by remembering. */
+export const DOWNSIDES = [
+  { k: 'Liquidity', v: 'Shares are illiquid compared with cash.' },
+  { k: 'Control', v: 'You do not control the properties.' },
+  { k: 'Paperwork', v: 'You get a K-1, which arrives later than a 1099, and your accountant will charge for it.' },
+  { k: 'Deferred tax', v: 'The deferred gain still exists, and comes due if you ever sell the shares.' },
+  { k: 'Concentration', v: 'Risk moves from your one building to a fund. Usually better, but a change, not a removal.' },
+] as const;
+
+export const DOWNSIDES_SECTION = {
+  n: '02',
+  label: 'The downsides',
+  title: 'The honest downsides.',
+  line: 'Every one is a real cost of doing it this way.',
+  who: 'Five costs',
+  ck: 'Read before you sign',
+  foot: 'We would rather you read these here than discover them after you sign.',
 } as const;
 
-/* ── 04 · Who this is for ────────────────────────────────────────────────
-   Three people, so three columns. Each was a heading over a long paragraph;
-   each now leads with the sentence that tells a reader whether they are the
-   person being described. */
+/* ── 03 · Who this is for ────────────────────────────────────────────────
+   Three people, three cells. Each leads with the sentence that tells a
+   reader whether they are the person being described; the paragraph under it
+   is held to three lines from 1100px up. */
 export const WHO = {
-  kicker: 'Who this is for',
-  heading: 'Three people this is built for.',
+  n: '03',
+  label: 'Who this is for',
+  title: 'Three people this is built for.',
+  line: 'Each one is giving up something different, and getting the same thing back.',
   columns: [
     {
-      key: 'landlords',
-      heading: 'Tired landlords',
+      who: 'Tired landlords',
+      n: '01',
       line: 'You are done with tenants.',
-      body: 'Rentals, ideally paid off, and no appetite left for three a.m. phone calls. Selling triggers everything at once. Contributing does not.',
+      body: 'Rentals, ideally paid off, and no appetite left for 3 a.m. calls. Selling triggers the tax all at once. Contributing does not.',
     },
     {
-      key: 'land',
-      heading: 'People holding raw land',
+      who: 'People holding raw land',
+      n: '02',
       line: 'Pooled, it becomes scale.',
-      body: 'A parcel you bought meaning to do something with. One of them is hard to sell into a thin market. Together they can be financed and developed.',
+      body: 'A parcel you meant to build on. Alone it is hard to sell in a thin market. Pooled, it can be financed and developed.',
     },
     {
-      key: 'backyards',
-      heading: 'Homeowners with a backyard',
-      line: 'A ground lease, and income.',
-      body: 'Extension options, a removable unit and monthly income. You approve or decline decisions and Clear handles permitting.',
+      who: 'Homeowners with a backyard',
+      n: '03',
+      line: 'Your yard, earning.',
+      body: 'A ground lease, a removable unit and monthly income. You approve decisions, and Clear handles permitting.',
     },
   ],
+  foot: 'Backyards are covered in full on the housing page.',
+  more: { href: '/housing', label: 'How backyards work' },
 } as const;
 
-/* ── 05 · The close ──────────────────────────────────────────────────────
-   The page's one figure, and the thing most likely to make someone walk away
-   before they waste a call. It was the middle clause of a 320-character
-   paragraph. */
-export const CLOSE = {
-  kicker: 'One thing worth saying out loud',
-  statement: 'A contribution is designed to be held.',
-  figure: '7 years',
-  figureCaption: 'not seven months — the window the anti-abuse rules turn on',
-  body: 'The rules that make the deferral work also make frequent swapping in and out unworkable. If you are looking to trade property every couple of years, this is the wrong vehicle, and we will tell you that on the first call.',
-  cta: { href: '/join?as=land', label: 'Send us the property details' },
-  onward: {
+/* ── 04 · Held ───────────────────────────────────────────────────────────
+   The thing most likely to save someone a wasted call, drawn as seven years
+   of months against seven. */
+export const HELD = {
+  n: '04',
+  label: 'One thing worth saying out loud',
+  title: 'A contribution is designed to be held.',
+  line: 'If you are looking to trade property every couple of years, this is the wrong vehicle, and we will tell you that on the first call.',
+  why: {
+    who: 'Why it has to be held',
+    ck: 'Anti-abuse rules',
+    body: 'The rules that make the deferral work also make swapping in and out every couple of years unworkable.',
+  },
+  win: { who: 'The window they turn on', ck: 'Not seven months', figure: '7 years' },
+  strip: {
+    short: { label: 'Seven months', months: 7 },
+    long: { label: 'Seven years', months: 84 },
+    unit: 'mo',
+    /* The axis reads "Year 1, 2 … 7"; "Year" drops on a phone. */
+    year: 'Year',
+  },
+  foot: {
     before: 'If you hold a portfolio rather than a property, or you are evaluating this on someone else’s behalf, ',
     link: { href: '/capital', label: 'Clear Capital' },
     after: ' sets out the structure.',
   },
+  cta: { href: '/join?as=land', label: 'Send us the property details' },
 } as const;

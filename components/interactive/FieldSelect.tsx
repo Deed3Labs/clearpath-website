@@ -5,11 +5,16 @@ import { useEffect, useId, useRef, useState } from 'react';
 /* A listbox, not a styled <select>.
  *
  * A native select cannot be drawn — the options render in the platform's own
- * menu, in the platform's own type, which on this page is the one control
+ * menu, in the platform's own type, which on the join form is the one control
  * that would not be in the site's voice. So this is the real pattern: a
  * button that owns the value, a listbox of options, and the keyboard
- * behaviour a select has, because a reader who tabs into it expects a select
- * and does not care why it is not one.
+ * behaviour a select has (arrows move a cursor without committing, Enter or
+ * Space chooses, Escape and Tab close), because a reader who tabs into it
+ * expects a select and does not care why it is not one.
+ *
+ * Drawn like the fields beside it — an underline, the value in ink and an
+ * unchosen placeholder at ink-50 — with its menu the one floating thing on
+ * the page.
  *
  * The value reaches the form through a hidden input, which is what keeps the
  * component honest: FormData reads it exactly as it reads every other field,
@@ -22,9 +27,15 @@ type Props = {
   placeholder: string;
   options: string[];
   wide?: boolean;
+  /* Marks the hidden input required, so the form's own check counts it. */
+  required?: boolean;
+  /* Told when a choice is made (the join form's progress bar listens). */
+  onChange?: (value: string) => void;
+  /* Set by the form when this field was left empty at submit. */
+  bad?: boolean;
 };
 
-export function FieldSelect({ name, label, placeholder, options, wide }: Props) {
+export function FieldSelect({ name, label, placeholder, options, wide, required, onChange, bad }: Props) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState('');
   /* Which option the keyboard is on, which is not the same as which one is
@@ -37,8 +48,7 @@ export function FieldSelect({ name, label, placeholder, options, wide }: Props) 
   const listId = `${id}-list`;
   const labelId = `${id}-label`;
 
-  /* Close on an outside click and on Escape. Both are the same intent, so
-     they are the same effect, and both are removed with the listener. */
+  /* Close on a click anywhere else. */
   useEffect(() => {
     if (!open) return;
     const onDown = (e: MouseEvent) => {
@@ -51,15 +61,14 @@ export function FieldSelect({ name, label, placeholder, options, wide }: Props) 
   /* Keep the cursor option in view when the list is taller than its box. */
   useEffect(() => {
     if (!open) return;
-    listRef.current?.querySelector<HTMLElement>('[data-cursor="true"]')?.scrollIntoView({
-      block: 'nearest',
-    });
+    listRef.current?.querySelector<HTMLElement>('[data-cursor]')?.scrollIntoView({ block: 'nearest' });
   }, [open, cursor]);
 
   function choose(i: number) {
     setValue(options[i]);
     setCursor(i);
     setOpen(false);
+    onChange?.(options[i]);
   }
 
   function onKeyDown(e: React.KeyboardEvent) {
@@ -107,18 +116,19 @@ export function FieldSelect({ name, label, placeholder, options, wide }: Props) 
     }
   }
 
+  const cls = ['f', 'fs', wide && 'wide', open && 'open'].filter(Boolean).join(' ');
   return (
-    <div className={`join-field fs${wide ? ' is-wide' : ''}`} ref={rootRef}>
-      <span className="fs-label" id={labelId}>
+    <div className={cls} ref={rootRef} data-bad={bad ? '' : undefined}>
+      <span className="lb" id={labelId}>
         {label}
       </span>
 
       {/* The value the form actually submits. */}
-      <input type="hidden" name={name} value={value} />
+      <input type="hidden" name={name} value={value} required={required} />
 
       <button
         type="button"
-        className="fs-button"
+        className="fs-btn"
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-labelledby={`${labelId} ${id}-value`}
@@ -126,7 +136,7 @@ export function FieldSelect({ name, label, placeholder, options, wide }: Props) 
         onClick={() => setOpen((o) => !o)}
         onKeyDown={onKeyDown}
       >
-        <span id={`${id}-value`} className="fs-value" data-empty={value ? undefined : ''}>
+        <span id={`${id}-value`} className="fs-v" data-empty={value ? undefined : ''}>
           {value || placeholder}
         </span>
         <span className="fs-caret" aria-hidden="true" />
@@ -139,8 +149,7 @@ export function FieldSelect({ name, label, placeholder, options, wide }: Props) 
               key={o}
               role="option"
               aria-selected={o === value}
-              data-cursor={i === cursor ? 'true' : undefined}
-              className="fs-option"
+              data-cursor={i === cursor ? '' : undefined}
               /* Mouse down rather than click: click fires after the outside
                  mousedown that closes the list, so the choice was lost. */
               onMouseDown={(e) => {
