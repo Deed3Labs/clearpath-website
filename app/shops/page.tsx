@@ -1,225 +1,196 @@
-import { Note, Stat, Tiles, Button } from '@/components/primitives';
-import { MerchantCalculator } from '@/components/interactive/MerchantCalculator';
-import { OPENING, DIFFERENCE, COUNTER, FIT, FOUNDING, MONEY, MEMBERSHIP } from '@/content/shops';
+import { PageHero, Device, Button, Section, SectionHead, Close, Rail, Knob, Check } from '@/components/system';
+import { CounterHero } from './_parts/CounterHero';
+import { FeeCalc } from './_parts/FeeCalc';
+import { CounterSteps } from './_parts/CounterSteps';
+import { RefundHandoff } from './_parts/RefundHandoff';
+import './page.css';
+import { META, HERO, DIFFERENCE, COUNTER, FIT, FOUNDING, MONEY, MEMBERSHIP } from '@/content/shops';
 
-export const metadata = {
-  title: 'For shops',
-  description:
-    'Clear finances the customers who cannot pay that day at 2.5% of the ticket, pays you on net-30, and carries the default itself. No exclusivity and no hardware to buy.',
-};
+export const metadata = { title: META.title, description: META.description };
 
-/* Migrated to the .hx layout system. The numbered rail is gone; the section
- * number is an inline label.
- *
- * Rhythm: the question and its four terms → the money argument on full-bleed
- * ink → the counter as four equal cells → who it is and is not for →
- * founding terms → payouts and refunds → the door. No two consecutive
- * sections share a shape.
- *
- * The ink band goes to the calculator, because "why are you cheaper than the
- * card on the wall" is the thing a shop owner is actually deciding on. */
+/* For shops, ported from reference/redesign/shops.html: the question every
+   service writer can answer and the counter app, then the fee calculator on
+   ink, the counter steps driving the tablet, fit, founding partners on ink,
+   the money (the clock to payout and the refund hand-off), and membership. */
 
 export default function Shops() {
   return (
-    <div className="hx">
-      {/* ── S1 · The question, and the four terms that answer it. ─────── */}
-      <section className="hx-band hx-wrap" data-pad="open">
-        <p className="hx-label">
-          <b>01</b> For shops
-        </p>
-        <div className="hx-grid">
-          <h1 className="hx-h2 c-two-thirds">{OPENING.heading}</h1>
-          <p className="hx-lede c-third">{OPENING.lede}</p>
+    <div className="pg-shops">
+      <PageHero
+        label={HERO.label}
+        lines={HERO.lines}
+        size="min(7.9vw, 110px)"
+        phoneSize="clamp(42px, 11.6vw, 64px)"
+        phone="wrap"
+        balance
+        lede={HERO.lede}
+        actions={
+          <>
+            <Button href={HERO.primary.href} live>
+              {HERO.primary.label}
+            </Button>
+            <Button href={HERO.ghost.href} variant="ghost">
+              {HERO.ghost.label}
+            </Button>
+          </>
+        }
+        facts={HERO.facts}
+        figs
+      >
+        <div className="stage">
+          <div className="stagebox" data-stage="device">
+            <Device trace="hero">
+              <CounterHero />
+            </Device>
+          </div>
+          <div className="stage-cap label">
+            <span>{HERO.stage.caption}</span>
+            <span>{HERO.stage.sample}</span>
+          </div>
+        </div>
+      </PageHero>
 
-          {/* The four terms were a ledger of label/value pairs. They are
-              four figures — the whole offer, before any prose. */}
-          <div className="c-full">
-            <div className="stat-row">
-              {OPENING.ledger.map((t) => (
-                <Stat
-                  key={t.label}
-                  figure={t.value}
-                  caption={t.label}
-                  live={'live' in t ? t.live : undefined}
-                />
+      <Section ink id="difference">
+        <SectionHead n={DIFFERENCE.n} label={DIFFERENCE.label} title={DIFFERENCE.title} line={DIFFERENCE.line} />
+        <FeeCalc />
+        <p className="note calc-note">{DIFFERENCE.note}</p>
+      </Section>
+
+      <Section id="counter">
+        <SectionHead n={COUNTER.n} label={COUNTER.label} title={COUNTER.title} line={COUNTER.line} />
+        <CounterSteps />
+        <div className="bx pan3">
+          {COUNTER.panels.map((p) => (
+            <div className="cell" key={p.title}>
+              <div className="c-m">
+                <h3>{p.title}</h3>
+                <p>{p.text}</p>
+              </div>
+              <div className="c-f">
+                <span className="ck">{p.k}</span>
+                {'href' in p ? (
+                  <a className="fig" href={p.href}>
+                    {p.v}
+                  </a>
+                ) : (
+                  <span className="fig">{p.v}</span>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <Section id="fit">
+        <SectionHead n={FIT.n} label={FIT.label} title={FIT.title} line={FIT.line} />
+        <div className="bx fit body-gap">
+          <div className="cell yes">
+            <div className="c-h">
+              <span className="mk y">
+                <Check />
+              </span>
+              <h3>{FIT.yes.title}</h3>
+            </div>
+            <ul className="fitlist">
+              {FIT.yes.items.map((t) => (
+                <li key={t}>
+                  <span className="y2">
+                    <Check />
+                  </span>
+                  {t}
+                </li>
               ))}
+            </ul>
+            <div className="c-f">{FIT.yes.foot}</div>
+          </div>
+          <div className="cell no">
+            <div className="c-h">
+              <span className="mk n">
+                <span className="x" />
+              </span>
+              <h3>{FIT.no.title}</h3>
             </div>
-          </div>
-
-          <div className="c-full">
-            <Button href={OPENING.cta.href} live>{OPENING.cta.label}</Button>
+            <ul className="fitlist">
+              {FIT.no.items.map((t) => (
+                <li key={t}>
+                  <span className="x" />
+                  {t}
+                </li>
+              ))}
+            </ul>
+            <div className="c-f">{FIT.no.foot}</div>
           </div>
         </div>
-      </section>
+      </Section>
 
-      {/* ── S2 · The money argument, on this page's one ink band. ─────── */}
-      <section className="hx-band" data-tone="ink" id="the-difference">
-        <div className="hx-wrap">
-          <p className="hx-label">
-            <b>02</b> The difference
-          </p>
-          <div className="hx-grid">
-            <h2 className="hx-h2 c-two-thirds">{DIFFERENCE.heading}</h2>
-            <p className="hx-lede c-third">{DIFFERENCE.standfirst}</p>
-            <div className="c-full">
-              <MerchantCalculator />
-              <Note>{DIFFERENCE.note}</Note>
+      <Section ink id="founding">
+        <SectionHead n={FOUNDING.n} label={FOUNDING.label} title={FOUNDING.title} line={FOUNDING.line} />
+        <div className="bx perk body-gap">
+          {FOUNDING.perks.map((p) => (
+            <div key={p.k} className={'live' in p ? 'live' : undefined}>
+              <span className="ck">{p.k}</span>
+              <span className="fig">{p.v}</span>
+              <span className="note">{p.note}</span>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── S3 · At the counter. Four equal cells: a sequence whose steps
-             carry the same weight. ─────────────────────────────────────── */}
-      <section className="hx-band" data-pad="tight">
-        <div className="hx-wrap">
-          <p className="hx-label">
-            <b>03</b> At the counter
-          </p>
-          <div className="hx-grid" style={{ marginBottom: 'clamp(32px, 4vw, 64px)' }}>
-            <h2 className="hx-h2 c-full">{COUNTER.heading}</h2>
-          </div>
-        </div>
-
-        <div className="hx-bento">
-          {COUNTER.steps.map((s, i) => (
-            <article className="cell" data-size="eq4" key={s.title}>
-              <p className="cell-n">{String(i + 1).padStart(2, '0')}</p>
-              <h3 className="cell-title">{s.title}</h3>
-              <p className="t-sm cell-body">{s.body}</p>
-            </article>
           ))}
         </div>
-
-        <div className="hx-wrap" style={{ marginTop: 'clamp(32px, 4vw, 64px)' }}>
-          <div className="hx-cols" data-n="3" data-rows="2">
-            {COUNTER.panels.map((p) => (
-              <div key={p.title}>
-                <p className="d4">{p.title}</p>
-                <p className="t-sm hx-prose">{p.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── S4 · Fit. The honest one, set as a pair. ───────────────────── */}
-      <section className="hx-band hx-wrap" data-pad="tight">
-        <p className="hx-label">
-          <b>04</b> Fit
-        </p>
-        <div className="hx-cols" data-n="2" data-rows="3">
-          {[
-            { ...FIT.works, ours: true },
-            { ...FIT.doesnt, ours: false },
-          ].map((side) => (
-            <div className={side.ours ? 'versus is-ours' : 'versus'} key={side.heading}>
-              <p className="versus-line">{side.heading}</p>
-              <ul className="crit">
-                {side.criteria.map((c) => (
-                  <li key={c}>{c}</li>
+        <div className="bx fnd2">
+          <div className="cell">
+            <div className="c-m">
+              <h3>{FOUNDING.setup.title}</h3>
+              <ol className="six">
+                {FOUNDING.setup.steps.map((s, i) => (
+                  <li key={s} className={i === FOUNDING.setup.steps.length - 1 ? 'last' : undefined}>
+                    <b>{i + 1}</b>
+                    {s}
+                  </li>
                 ))}
-              </ul>
-              <p className="t-sm hx-prose">{side.body}</p>
+              </ol>
+              <p>{FOUNDING.setup.text}</p>
+            </div>
+            <div className="c-f">
+              <span className="ck">{FOUNDING.setup.foot}</span>
+            </div>
+          </div>
+          <div className="cell">
+            <div className="c-m">
+              <h3>{FOUNDING.terms.title}</h3>
+              <dl className="terms6">
+                {FOUNDING.terms.rows.map((r) => (
+                  <div key={r.k}>
+                    <dt>{r.k}</dt>
+                    <dd>{r.v}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+            <div className="c-f">
+              <span className="ck">{FOUNDING.terms.foot}</span>
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      <Section id="money">
+        <SectionHead n={MONEY.n} label={MONEY.label} title={MONEY.title} line={MONEY.line} />
+        <Rail className="mtrack body-gap" vertical={860}>
+          {MONEY.track.map((t) => (
+            <div key={t.when} className={'reached' + ('live' in t ? ' day30' : '')}>
+              <Knob live={'live' in t} />
+              <span className="fig when">{t.when}</span>
+              <span className="what">{t.what}</span>
+              <p>{t.text}</p>
             </div>
           ))}
+        </Rail>
+        <div className="bx rf-h">
+          <h3>{MONEY.refundTitle}</h3>
+          <p>{MONEY.refundLine}</p>
         </div>
-      </section>
+        <RefundHandoff />
+      </Section>
 
-      {/* ── S5 · Founding partners. Four terse terms as tiles. ─────────── */}
-      <section className="hx-band hx-wrap" data-pad="open">
-        <p className="hx-label">
-          <b>05</b> Founding partners
-        </p>
-        <div className="hx-grid">
-          <h2 className="hx-h2 c-two-thirds">{FOUNDING.heading}</h2>
-          <p className="hx-lede c-third">{FOUNDING.standfirst}</p>
-
-          <div className="c-full">
-            <Tiles
-              items={FOUNDING.ledger.map((t) => ({
-                line: t.value,
-                note: t.label,
-              }))}
-            />
-          </div>
-
-          <div className="c-full hx-cols" data-n="2" data-rows="3">
-            {[FOUNDING.panel, FOUNDING.terms].map((col) => (
-              <div key={col.title}>
-                <p className="d4">{col.title}</p>
-                <p className="t-sm hx-prose">{col.body}</p>
-                <Note>{col.note}</Note>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── S6 · The money. A clock, then two people reading the same
-             refund differently. The one section here that had no shape. ─── */}
-      <section className="hx-band hx-wrap" data-pad="tight">
-        <p className="hx-label">
-          <b>06</b> The money
-        </p>
-        <div className="hx-grid">
-          <h2 className="hx-h2 c-two-thirds">{MONEY.heading}</h2>
-          <p className="hx-lede c-third">{MONEY.lede}</p>
-
-          <div className="c-full track">
-            {MONEY.track.map((t) => (
-              <div className="track-step" key={t.when} data-live={'live' in t && t.live ? '' : undefined}>
-                <p className="track-when">{t.when}</p>
-                <p className="track-what">{t.what}</p>
-                <p className="t-sm track-note">{t.note}</p>
-              </div>
-            ))}
-          </div>
-
-          <h3 className="d3 c-two-thirds" style={{ marginTop: 'clamp(24px, 3vw, 48px)' }}>
-            {MONEY.refunds.heading}
-          </h3>
-          <p className="t-sm hx-prose c-third" style={{ marginTop: 'clamp(24px, 3vw, 48px)' }}>
-            {MONEY.refunds.body}
-          </p>
-
-          <div className="c-full sides">
-            {MONEY.refunds.sides.map((side) => (
-              <div className="side" key={side.label} data-live={'live' in side && side.live ? '' : undefined}>
-                <p className="side-label">{side.label}</p>
-                <p className="side-line">{side.line}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="c-half">
-            <Note>{MONEY.refunds.note}</Note>
-          </div>
-          <div className="c-half">
-            <p className="track-when">{MONEY.refunds.carry.when}</p>
-            <p className="track-what" style={{ marginTop: 'var(--spacing-2)' }}>
-              {MONEY.refunds.carry.what}
-            </p>
-            <p className="t-sm hx-prose">{MONEY.refunds.carry.note}</p>
-          </div>
-        </div>
-      </section>
-
-      {/* ── S7 · The door. ─────────────────────────────────────────────── */}
-      <section className="hx-band hx-wrap" data-pad="tight">
-        <p className="hx-label">
-          <b>07</b> Membership
-        </p>
-        <div className="hx-grid">
-          <p className="hx-stage-line c-two-thirds">{MEMBERSHIP.heading}</p>
-          <div className="c-third">
-            <p className="t-sm hx-prose">{MEMBERSHIP.body}</p>
-            <div style={{ marginTop: 'var(--spacing-4)' }}>
-              <Button href={MEMBERSHIP.cta.href} live>{MEMBERSHIP.cta.label}</Button>
-            </div>
-          </div>
-        </div>
-      </section>
+      <Close n={MEMBERSHIP.n} label={MEMBERSHIP.label} title={MEMBERSHIP.title} line={MEMBERSHIP.line} primary={MEMBERSHIP.primary} />
     </div>
   );
 }

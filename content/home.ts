@@ -1,50 +1,28 @@
-/* Home. §7.1 — copy is final and lives here, never inline in JSX.
- *
- * Rewritten for the layout system: every section now declares which archetype
- * it is, and the copy is cut to what that archetype can hold. The old page was
- * six sections of heading-plus-two-paragraphs, which is why nothing on it had
- * hierarchy — a reader met the same shape six times and skimmed none of it.
- *
- * Prose survives only where a sentence does something a figure cannot: the
- * caveat, the mechanism, the thing that would be a lie if it were shortened. */
-
-import type { LedgerItem } from '@/components/primitives';
+/* Home. Copy lives here, never inline in JSX. The mockup
+   (reference/redesign/home.html) is the spec: a hero with the member app's
+   Home screen, then five sections, each one crafted figure — the renting
+   comparison paid in by scroll, the three-phase path on one rule, the
+   counter hand-off you can run, what exists today, and the public ledger. */
 
 export const HERO = {
   /* One sentence, set on two lines from 700px up and broken after "kept":
-     the second line is the place the money stays. States what the co-op is
-     for rather than what is wrong — the accusing version ('Your rent is making
-     someone else rich.') read past the shopkeepers and savers the page also
-     has to speak to. `headline` is the same sentence whole, for the metadata
-     and the link-preview image. */
+     the second line is the place the money stays. `headline` is the same
+     sentence whole, for the metadata and the link-preview image
+     (app/layout.tsx, app/opengraph-image.tsx). */
   headline: 'Your money, kept in the neighborhood.',
   lines: ['Your money, kept', 'in the neighborhood.'],
   /* What Clear is, then the four things it does, in the order the page
-     covers them: save, borrow against it, pay local shops over time, and
-     put rent toward a home. Doubles as the meta and link-preview
-     description (app/layout.tsx), so it has to read on its own, away from
-     the headline.
-
-     Not "the home you live in": while you are renting you do not own that
-     one yet, and the equity is portable into another Clear home anyway, so
-     tying it to the current address is wrong twice over. "Toward a home of
-     your own" is the accurate direction — equity accrues to a gate, and
-     title comes after it. */
+     covers them. Doubles as the meta and link-preview description, so it has
+     to read on its own. "Toward a home of your own", not "the home you live
+     in": equity is portable, and title comes after the gate. */
   lede: 'Clear is a member-owned cooperative. Save with us, open a credit line, pay local shops over time, and put your rent toward a home of your own.',
   primary: { href: '/join', label: 'Join the waitlist' },
   ghost: { href: '/shops', label: 'Bring Clear to your shop' },
-  /* Three facts, each with what kind of fact it is. The place comes last:
-     the status section answers "how far along" in full. */
+  /* Three facts, each with what kind of fact it is. */
   facts: [
     { k: 'Local money, local returns', v: 'Co-op' },
     { k: 'One member, one vote', v: 'Governance' },
     { k: 'Inland Empire, California', v: 'Building' },
-  ],
-  /* Old hero; read by the page until Phase 2 replaces it. */
-  meta: [
-    'Local money, local returns',
-    'One member, one vote',
-    'Building in Inland Empire, California',
   ],
   stage: { caption: 'The member app', sample: 'Sample account' },
 } as const;
@@ -125,214 +103,228 @@ export const MEMBER_APP = {
   },
 } as const;
 
-/* Alternates, already weighed. Kept here so the decision is visible in the
-   code rather than lost in a document, and so nobody writes a sixth.
-     · 'Your rent is making someone else rich.' — the line the page opened
-       with. It argues with renting, which is one of the three audiences,
-       and it names a beneficiary on a site where /contribute and /capital
-       ask landlords to bring their property in.
-     · 'Rent builds equity. Just not yours.' — withholds the hook until the
-       second line, which is a beat too long.
-     · 'Your rent is making someone rich. Just not you.'
-     · 'You are already buying a house. Someone else is keeping it.'
-     · 'You already pay for a house every month. It just isn\'t yours.' */
-
-/* ── 01 · The gap ─────────────────────────────────────────────────────────
-   The page's big moment, on ink. Two figures at set-piece size and one line
-   between them. It was two paragraphs and a ledger; the paragraphs said in
-   forty words what the two numbers say by sitting next to each other. */
-type TallyColumn = {
-  key: string;
-  label: string;
-  paid: string;
-  paidNote: string;
-  kept: string;
-  keptNote: string;
-  /* Optional, so `as const` does not narrow the union to two shapes where one
-     lacks the key — which makes c.live unreachable at the call site. */
-  live?: boolean;
-};
-
+/* ── 01 · If you rent today ───────────────────────────────────────────────
+   Two columns on one clock: renting on the left, inside Clear on the right,
+   and scrolling pays the months into both. The figures are an illustration
+   of the model on a two-bedroom, labelled as one under the bento. */
 export const GAP = {
-  rail: '01 / The gap',
-  kicker: 'If you rent today',
-  heading: 'Same money. But you end up owning something.',
-  columns: [
-    {
-      key: 'rent',
-      label: 'Renting',
-      paid: '$151,200',
-      paidNote: 'paid out over five years',
-      kept: '$0',
-      keptNote: 'no equity, no title, no claim',
-    },
-    {
-      key: 'clear',
-      label: 'Inside Clear',
-      paid: '$141,000',
-      paidNote: 'paid out over the same five years',
-      kept: '$90,000',
-      keptNote: 'credited to your equity balance',
-      live: true,
-    },
-  ] satisfies TallyColumn[],
-  /* The one thing the figures cannot say. */
-  close:
-    'The monthly total inside Clear is $2,350 against $2,520 in rent — lower, not higher. The difference is where it lands.',
-  note: 'Illustration of how the model works, on a two-bedroom in the Inland Empire. Not a quote.',
-  /* The figures invite exactly one question, and /housing is the answer. */
-  link: { href: '/housing', label: 'How the housing math works' },
+  n: '01',
+  label: 'If you rent today',
+  title: 'Same money. But you end up owning something.',
+  line: '$2,350 a month inside Clear, against $2,520 in rent. Most of it stays yours.',
+  more: { href: '/housing', label: 'How the housing math works' },
+  /* The bento's text alternative: the bars are aria-hidden. */
+  summary:
+    'Five years of payments. Renting at $2,520 a month: $151,200 paid out, $0 kept. Inside Clear at $2,350 a month: $141,000 paid in, $90,000 credited to your equity balance.',
+  months: 60,
+  keepLabel: 'Yours to keep',
+  axis: ['Year 1', '2', '3', '4', '5'],
+  rent: {
+    who: 'Renting',
+    monthly: 2520,
+    rate: '$2,520 a month',
+    legend: [{ key: 'gone', label: '$2,520 to the landlord' }],
+    paidLabel: 'Paid out',
+  },
+  clear: {
+    who: 'Inside Clear',
+    monthly: 2350,
+    /* Of each $2,350, the part credited to your equity. */
+    equity: 1500,
+    rate: '$2,350 a month',
+    legend: [
+      { key: 'keep', label: '$1,500 to your equity' },
+      { key: 'fee', label: '$850 community fee' },
+    ],
+    paidLabel: 'Paid in',
+  },
+  month: ['Month ', ' of '],
+  note: 'Two-bedroom, Inland Empire. Illustration, not a quote.',
 } as const;
 
-/* ── 02 · Three phases ────────────────────────────────────────────────────
-   A bento: three cells of unequal size, because the phases are of unequal
-   length and a three-up of identical cards said the opposite. Each carries a
-   gate rather than a paragraph — the gate is the thing a reader wants. */
-export type Phase = {
-  n: string;
-  title: string;
-  gate: string;
-  gateNote: string;
-  body: string;
-  size: 'lg' | 'md' | 'sm' | 'eq3';
-};
-
-export const PHASES = {
-  rail: '02 / Three phases',
-  kicker: 'Take the ClearPath',
-  heading: 'Renter, owner, earner.',
-  standfirst: 'Not three ways of describing the same payment. Three phases, each with a gate you can see from your first day.',
-  steps: [
-    {
-      n: '01',
-      title: 'You rent, and save at the same time.',
-      gate: '15,000',
-      gateNote: 'credits unlocks the home path',
-      body: 'Your deposit is your membership share. Saving earns matched credits and a credit line, at no cost.',
-      size: 'eq3',
-    },
-    {
-      n: '02',
-      title: 'You take title. The land stays common.',
-      /* Not "ELPA". It is our own acronym, and this is the first page a
-         stranger reads — a gate nobody can parse is not a gate. The two
-         documents, named plainly. /how carries the full definition. */
-      gate: 'Two signatures',
-      gateNote: 'a purchase agreement and your deed',
-      body: 'Your payment splits into equity and a community fee. The land underneath is never sold.',
-      size: 'eq3',
-    },
-    {
-      n: '03',
-      title: 'You redeem it, and the equity travels.',
-      gate: 'Portable',
-      gateNote: 'into another Clear home',
-      body: 'Once your contributions cover the structure you hold it outright.',
-      size: 'eq3',
-    },
-  ] satisfies Phase[],
+/* ── 02 · Take the ClearPath ──────────────────────────────────────────────
+   Three phases on one rule. Each shows the thing a member sees at that gate,
+   not a paragraph about it. */
+export const PATH = {
+  n: '02',
+  label: 'Take the ClearPath',
+  title: 'Renter, owner, earner.',
+  line: 'Three phases, each with a gate you can see from your first day.',
+  more: { href: '/housing', label: 'How ClearPath works' },
+  gateLabel: 'The gate',
+  renter: {
+    who: 'Renter',
+    n: '01',
+    title: 'You rent, and save at the same time.',
+    credits: 15000,
+    creditsLabel: 'credits',
+    /* Where the protections unlock on the way to the gate. */
+    marks: [1500, 4000, 8000],
+    caption: 'Every dollar saved is matched in credits. Protections unlock on the way.',
+    gate: '15,000 credits',
+  },
+  owner: {
+    who: 'Owner',
+    n: '02',
+    title: 'You own the house. The land is held in common.',
+    rows: [
+      { k: 'Your ELPA', v: 'Signed' },
+      { k: 'Your Clear Deed', v: 'Signed' },
+    ],
+    caption: 'The financing, then the title, recorded on the Deed Protocol.',
+    gate: 'Two signatures',
+  },
+  earner: {
+    who: 'Earner',
+    n: '03',
+    title: 'You redeem it, and the equity travels.',
+    rows: ['Move to another Clear home', 'Recontribute it to Clear Capital', 'Cash out at a fair, stable number'],
+    gate: 'Portable',
+  },
 } as const;
 
-/* ── 03 · Two ways in ─────────────────────────────────────────────────────
-   Three columns, not two: the shop's price, the mechanism that connects the
-   two sides, and the member's price. Two columns of ~660px left the section
-   both horizontally empty and vertically tall; three fill the measure and cut
-   the height without adding anything that was not already true.
-
-   The middle column is not new copy — it is the handoff already described on
-   /shops (the tablet shows a code, and the customer approves on their own
-   phone rather than on the shop's device). It was the one part of this
-   section that had nowhere to live. */
-export const WAYS_IN = {
-  rail: '03 / Two ways in',
-  kicker: 'If you run a shop, or shop at one',
-  heading: 'Whichever side of the counter you are on.',
-  columns: [
-    {
-      key: 'shop',
-      heading: 'You run the shop',
-      figure: '2.5%',
-      figureNote: 'of the ticket, and you are paid on net-30',
-      body: 'Jobs walk out every week because the customer cannot pay that day. The same job runs 6% to 12% on Klarna, Affirm or a store card.',
-      link: { href: '/shops', label: 'The merchant terms in full' },
-    },
-    {
-      key: 'between',
-      heading: 'Between you',
-      figure: '3 min',
-      figureNote: 'from the code on screen to an approved plan',
-      body: 'The shop enters the amount and turns the screen. You scan the code and approve it on your own phone — the split is never chosen on their device.',
-      link: null,
-    },
-    {
-      key: 'member',
-      heading: 'You are standing at a counter',
-      figure: '2%',
-      figureNote: 'a cycle on what you still owe, so clearing early costs less',
-      body: 'Your car needs $940 of work today. You pick how to clear it — in full, or split two, four or twelve ways.',
-      /* §7 Legal: a credit-advertising claim. Do not paraphrase it into
-         anything stronger than it already is. */
-      note: 'No credit-score pull to approve your first plan.',
-      link: { href: '/how', label: 'How the member side works' },
-    },
+/* ── 03 · The counter ─────────────────────────────────────────────────────
+   Two columns, one hand-off. The shop keys in the charge and shows a code;
+   the turn passes across the counter to your phone, where you pick the split
+   and approve, and comes back. A sample charge, run on the real terms. */
+export const COUNTER = {
+  n: '03',
+  label: 'If you run a shop, or shop at one',
+  title: 'Whichever side of the counter you are on.',
+  line: 'The shop keys in the charge and shows a code. You pick how to clear it on your own phone. Try it.',
+  links: [
+    { href: '/shops', label: 'For shops' },
+    { href: '/how', label: 'How the member side works' },
   ],
+  shop: {
+    who: 'The shop',
+    device: 'Counter tablet',
+    /* What the header says at each of the side's three steps. */
+    steps: ['Enter the charge', 'Show the code', 'Paid'],
+    ticket: "Mike's Tire · ticket 2291",
+    amount: 940,
+    memo: 'Front pads and rotors',
+    fee: 'Clear keeps 2.5%',
+    net: 'Paid to the shop, net-30',
+    showCode: 'Show the code',
+    codeCap: 'Scan it with your own phone. A new customer joins from this same code.',
+    scannedCap: 'Scanned on the customer’s phone. Waiting for them to approve.',
+    elapsed: 'Elapsed',
+    approved: 'Approved by the customer',
+    paidNet: 916.5,
+    paidMemo: "To Mike's Tire on net-30, whichever way the customer splits it. Clear carries the plan.",
+    paidRows: { ticket: 'Ticket', plan: "Customer's plan", time: 'Code to approval' },
+    status: {
+      entering: 'Entering the charge',
+      code: 'Code on screen',
+      waiting: 'Waiting for approval',
+      paid: 'Paid · $916.50 on net-30',
+    },
+  },
+  you: {
+    who: 'You',
+    device: 'Your phone',
+    steps: ['Get the charge', 'Pick a split', 'Approved'],
+    waiting: 'Waiting on the shop',
+    idle: 'Nothing to approve yet. When the shop shows its code, the charge lands here.',
+    notifyApp: 'Clear',
+    notifyWhen: 'now',
+    notify: ["Mike's Tire", ' sent you a charge for ', '$940.00', '.'],
+    notifySub: 'Front pads and rotors · you have not been charged',
+    review: 'Review the charge',
+    pickQ: "Mike's Tire · $940.00 · how do you want to clear it?",
+    pickGroup: 'How to clear it',
+    each: { many: 'a cycle', once: 'once' },
+    total: 'Total',
+    carry: 'Carry',
+    doneBy: 'Done by',
+    approve: 'Approve',
+    approveNote: 'Clearing early always costs less.',
+    approved: 'Approved',
+    doneRows: { plan: 'Plan', total: 'Total', done: 'Done by', from: 'Clears from' },
+    from: 'Chase 4471',
+    again: 'Run it again',
+    againNote: 'On your term-plans shelf, and in the ledger below.',
+    planName: { once: 'In full', many: 'Split in ' },
+    status: {
+      none: 'Nothing yet',
+      notCharged: 'Not charged yet',
+      approved: 'Approved · first payment next cycle',
+    },
+  },
+  /* The reference's own figures for $940, never recomputed here. */
+  splits: [
+    { label: 'In full', n: 1, each: 958.8, carry: 18.8, total: 958.8, done: 'October 2026' },
+    { label: 'In 2', n: 2, each: 484.1, carry: 28.2, total: 968.2, done: 'November 2026' },
+    { label: 'In 4', n: 4, each: 246.75, carry: 47.0, total: 987.0, done: 'January 2027' },
+    { label: 'In 12', n: 12, each: 88.52, carry: 122.2, total: 1062.2, done: 'September 2027' },
+  ],
+  /* The split a reader sees first. */
+  defaultSplit: 2,
+  figs: [
+    { fig: '2.5%', text: 'of the ticket for the shop, paid on net‑30' },
+    { fig: '3 min', text: 'from the code on screen to an approved plan' },
+    { fig: '2%', text: 'a cycle on what you still owe, so clearing early costs less' },
+    { fig: '0', text: 'credit-score pulls to approve your first plan' },
+  ],
+  caption: 'Sample charge · the figures are the real terms',
 } as const;
 
 /* ── 04 · Status ──────────────────────────────────────────────────────────
-   An index: the one section that should be a plain list, because a list of
-   facts is what it is. */
+   A plain list, because a list of facts is what it is. The two apps are
+   live to invited members, so their chips are green. */
 export const STATUS = {
-  rail: '04 / Status',
-  kicker: 'Before you trust us with anything',
-  heading: 'What exists today, plainly.',
-  standfirst: 'A co-op that asks people to save with it should be straight about what it has built. This list is maintained, not marketing.',
-  ledger: [
-    {
-      label: 'Member app — savings, credit, term plans, card',
-      value: 'live',
-      chip: 'live',
-      chipTone: 'live',
-      description: 'Savings, credit, term plans and the card are running. Accounts and cards on Lithic, wallets on Privy.',
-    },
-    {
-      label: 'Merchant counter app',
-      value: 'in beta',
-      chip: 'in beta',
-      chipTone: 'underway',
-      description: 'Built and ready for the first counters. Tablet-first, installs from a browser. Charge, show a code, refund with an owner code.',
-    },
-    {
-      label: 'Protocol contracts',
-      value: 'in build',
-      chip: 'in build',
-      chipTone: 'underway',
-      description: 'Public and open source. Savings-backed credit needs no outside capital, so it ships first.',
-    },
-    {
-      label: 'First merchant partners',
-      value: 'signing',
-      chip: 'signing',
-      chipTone: 'underway',
-      description: 'Auto repair, tires and similar trades in the Inland Empire.',
-    },
-    {
-      label: 'First homes',
-      value: 'not yet',
-      chip: 'not yet',
-      chipTone: 'absent',
-      description: 'Twelve detached homes, paced to member savings and financing capacity. Land first.',
-    },
-  ] satisfies LedgerItem[],
+  n: '04',
+  label: 'Before you trust us with anything',
+  title: 'What exists today, plainly.',
+  line: 'A co-op that asks you to save with it should be straight about what it has built. Updated October 2026.',
+  rows: [
+    { name: 'Member app', desc: 'Savings, credit, term plans and the card', chip: 'Invite-only', tone: 'live' },
+    { name: 'Merchant counter app', desc: 'Tablet-first, installs from a browser', chip: 'Invite-only', tone: 'live' },
+    { name: 'Protocol contracts', desc: 'Public and open source', chip: 'In build', tone: 'underway' },
+    { name: 'First merchant partners', desc: 'Auto repair and tires, Inland Empire', chip: 'Signing', tone: 'underway' },
+    { name: 'First homes', desc: 'Twelve detached homes, land first', chip: 'Not yet', tone: 'absent' },
+  ],
 } as const;
 
-/* ── 05 · Underneath ──────────────────────────────────────────────────────
-   A stage: one sentence at display size. The paragraph under it was 55 words
-   restating the sentence. */
-export const UNDERNEATH = {
-  rail: '05 / Underneath',
-  kicker: 'The public ledger',
-  statement: 'You should not have to take our word for the numbers.',
-  body: 'Balances, credit lines, deeds and titles run on an open-source protocol held by an ownerless Wyoming foundation. The co-op is a user of it, not its owner.',
+/* ── 05 · The public ledger ───────────────────────────────────────────────
+   Sample entries stream while the section is on screen; a plan you approve
+   at the counter above is added at the top as "You, just now". */
+export const LEDGER = {
+  n: '05',
+  label: 'The public ledger',
+  title: 'You should not have to take our word for the numbers.',
+  line: 'Balances, credit lines, deeds and titles run on an open-source protocol. The co-op uses it. It does not own it.',
   source: 'github.com/Deed3Labs/Protocol-Contracts · AGPL-3.0',
-  link: { href: '/coop', label: 'How the co-op is put together' },
+  more: { href: '/coop', label: 'How the co-op is put together' },
+  cols: { block: 'Block', contract: 'Contract', event: 'Event', amount: 'Amount' },
+  foot: { live: 'Sample entries, streaming', status: 'Contracts in build' },
+  /* The block the sample stream starts from. */
+  firstBlock: 18204331,
+  /* [contract, event, amount, credit] */
+  events: [
+    ['StableCredit', 'CLRUSD minted on deposit', 250, true],
+    ['CreditIssuer', 'credit line opened', 1500, false],
+    ['LendingPool', 'plan payment cleared', 246.75, true],
+    ['AssurancePool', 'reserve top-up from spread', 41.2, true],
+    ['StableCredit', 'CLRUSD redeemed to cash', 120, false],
+    ['CreditIssuer', 'cycle cleared in full', 312.4, true],
+    ['BurnerBond', 'bond issued, 12 months', 4367.19, false],
+    ['StableCredit', 'CLRUSD minted on deposit', 75, true],
+    ['LendingPool', 'plan payment cleared', 88.52, true],
+  ] as ReadonlyArray<readonly [string, string, number, boolean]>,
+  mine: {
+    who: 'You, just now',
+    contract: 'LendingPool',
+    /* "term plan approved, in 4, Mike’s Tire" */
+    event: (split: string) => `term plan approved, ${split.toLowerCase()}, Mike’s Tire`,
+    amount: 940,
+  },
+} as const;
+
+export const CLOSE = {
+  title: 'Your money, kept in the neighborhood.',
+  line: 'One member, one vote. Building in Inland Empire, California.',
+  primary: { href: '/join', label: 'Join the waitlist' },
+  ghost: { href: '/shops', label: 'Bring Clear to your shop' },
 } as const;

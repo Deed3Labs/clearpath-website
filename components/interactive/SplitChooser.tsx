@@ -1,81 +1,92 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { gsap, motionOK, useIsoLayoutEffect } from '@/lib/anim';
 import { SPLIT } from '@/content/how';
 
-/* §6.2 S4 — a segmented control against a five-row ledger.
- *
- * No bars: splits are counts, not ratios, and a bar would imply a proportion
- * that does not exist. The figures are declining-balance and are never
- * recomputed here from a flat rate — flat carry would cost the same whether
- * the plan is cleared in month one or month four, which contradicts the one
- * line that separates this from buy-now-pay-later. */
+/* /how 03 · the split chooser: a segmented control against a short ledger,
+   with the total set large beside it.
 
-type Option = (typeof SPLIT.options)[number];
-type Field = Exclude<keyof Option, 'key' | 'label' | 'cycles'>;
+   The figures are declining-balance and are never recomputed here from a
+   flat rate — flat carry would cost the same whether the plan is cleared in
+   month one or month four, which contradicts the one line that separates
+   this from buy-now-pay-later. A change swaps the figures (a 150ms fade)
+   rather than counting through them, because a tween would pass through
+   figures no split produces. The bar is the balance cut into N equal
+   segments: a count, decoration for the ledger, hence aria-hidden. */
 
 export function SplitChooser() {
-  const [key, setKey] = useState<string>('4');
-  const active = SPLIT.options.find((o) => o.key === key) ?? SPLIT.options[2];
+  const [pressed, setPressed] = useState<number>(SPLIT.initial);
+  const [shown, setShown] = useState<number>(SPLIT.initial);
+  const [swap, setSwap] = useState(false);
+  const segs = useRef<HTMLDivElement>(null);
+  const grow = useRef(false);
+  const t = SPLIT.options[shown];
+
+  const choose = (i: number) => {
+    setPressed(i);
+    if (!motionOK()) return setShown(i);
+    setSwap(true);
+    window.setTimeout(() => {
+      grow.current = true;
+      setShown(i);
+      setSwap(false);
+    }, 150);
+  };
+
+  useIsoLayoutEffect(() => {
+    if (!grow.current || !segs.current) return;
+    grow.current = false;
+    const tw = gsap.from(segs.current.children, { scaleX: 0, duration: 0.45, stagger: 0.03, ease: 'power3.out' });
+    return () => {
+      tw.kill();
+    };
+  }, [shown]);
 
   return (
-    <div className="chooser">
-      {/* What is being divided, stated before the control that divides it.
-          The figure used to appear once, in the last line under the ledger. */}
-      <div className="chooser-balance">
-        <p className="chooser-balance-label t-sm">{SPLIT.balance.label}</p>
-        <p className="chooser-balance-fig fig">{SPLIT.balance.figure}</p>
-      </div>
-
-      <div className="chooser-control" role="group" aria-label="How to clear it">
-        {SPLIT.options.map((o) => {
-          const on = o.key === key;
-          return (
-            <button
-              key={o.key}
-              type="button"
-              className="chooser-option"
-              aria-pressed={on}
-              onClick={() => setKey(o.key)}
-            >
+    <div className="split body-gap">
+      <div className="chs">
+        <div className="balance">
+          <span>{SPLIT.balance.label}</span>
+          <span className="fig">{SPLIT.balance.figure}</span>
+        </div>
+        <div className="opts" role="group" aria-label={SPLIT.group}>
+          {SPLIT.options.map((o, i) => (
+            <button key={o.label} type="button" aria-pressed={pressed === i} onClick={() => choose(i)}>
               {o.label}
             </button>
-          );
-        })}
-      </div>
-
-      {/* The balance cut into equal parts. The section note says no bars,
-          because a bar implies a proportion — but N equal segments is a
-          count, which is exactly what a split is. The reading is carried by
-          the caption; the bar is decoration for it, hence aria-hidden. */}
-      <div className="chooser-split">
-        <div className="chooser-split-bar" aria-hidden="true">
-          {Array.from({ length: active.cycles }, (_, i) => (
-            <span key={i} />
           ))}
         </div>
-        <p className="chooser-split-cap t-sm">
-          {active.cycles === 1
-            ? `One payment of ${active.each}`
-            : `${active.cycles} payments of ${active.each}`}
-        </p>
-      </div>
-
-      {/* aria-live so a change announces the figures rather than silently
-          swapping them under a screen-reader user. */}
-      <dl className="ledger chooser-ledger" aria-live="polite">
-        {SPLIT.rows.map((row) => (
-          <div className="ledger-row" key={row.label}>
-            <dt className="t-sm">{row.label}</dt>
-            <dd className={`fig${row.field === 'total' ? ' is-live' : ''}`}>
-              {active[row.field as Field]}
-            </dd>
+        <div className="segs2" ref={segs} aria-hidden="true">
+          {Array.from({ length: t.n }, (_, k) => (
+            <span key={`${shown}-${k}`} />
+          ))}
+        </div>
+        <dl className={'ledger2' + (swap ? ' swap' : '')} aria-live="polite">
+          <div>
+            <dt>{t.n === 1 ? SPLIT.rows.once : SPLIT.rows.each}</dt>
+            <dd>{t.each}</dd>
           </div>
-        ))}
-      </dl>
-
-      <p className="t-note chooser-caption">{SPLIT.caption}</p>
-      <p className="t-sm chooser-close">{SPLIT.close}</p>
+          <div>
+            <dt>{SPLIT.rows.now}</dt>
+            <dd>{t.now}</dd>
+          </div>
+          <div>
+            <dt>{SPLIT.rows.plan}</dt>
+            <dd>{t.plan}</dd>
+          </div>
+          <div>
+            <dt>{SPLIT.rows.done}</dt>
+            <dd>{t.done}</dd>
+          </div>
+        </dl>
+        <span className="wf-note">{SPLIT.rate}</span>
+      </div>
+      <div className="split-side">
+        <span className="label">{SPLIT.totalLabel}</span>
+        <span className={'fig big' + (swap ? ' swap' : '')}>{t.total}</span>
+        <p>{SPLIT.close}</p>
+      </div>
     </div>
   );
 }
