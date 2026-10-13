@@ -57,6 +57,18 @@ export function Del({ className }: P) {
   );
 }
 
+/* A board seat. */
+export function Person({ className }: P) {
+  return (
+    <svg viewBox="0 0 16 16" className={className} {...hide}>
+      <g fill="none" stroke="currentColor" strokeWidth="1.3">
+        <circle cx="8" cy="5" r="2.8" />
+        <path d="M2.5 15c0-3.2 2.4-5 5.5-5s5.5 1.8 5.5 5" />
+      </g>
+    </svg>
+  );
+}
+
 /* The Clear mark, unaltered — the brand's own geometry, never redrawn. */
 export function Mark({ className }: P) {
   return <LogoMark size={18} variant="solid" className={className} />;

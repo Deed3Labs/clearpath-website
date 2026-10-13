@@ -191,19 +191,8 @@
   }
 
   /* ── 04 The downsides ─────────────────────────────────────────────────── */
-  .down { grid-template-columns: minmax(0, 1fr); }
-  .down ol { display: grid; }
-  .down li { display: grid; grid-template-columns: 56px minmax(150px, 3fr) minmax(0, 9fr); align-items: baseline; gap: 16px; padding: 22px var(--px); }
-  .down li + li { border-top: 1px solid var(--line); }
-  .down li b { font-family: var(--font-mono); font-weight: 400; font-size: 11px; letter-spacing: .08em; color: var(--color-ink-50); }
-  .down li em { font-style: normal; font-weight: 600; font-size: clamp(16px, 1.3vw, 18px); letter-spacing: -0.01em; color: var(--color-ink); }
-  .down li span { font-size: clamp(16px, 1.3vw, 18px); line-height: 1.45; color: var(--color-ink-70); text-wrap: pretty; }
   .down li.other { background: var(--color-paper-2); }
   .down li.other b { color: var(--color-underway); }
-  @media (max-width: 760px) {
-    .down li { grid-template-columns: 36px minmax(0, 1fr); row-gap: 4px; padding-block: 18px; }
-    .down li span { grid-column: 2; }
-  }
 
   /* ── 05 Next, on ink: what we publish, and what we will not ──────────── */
   .ts { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }

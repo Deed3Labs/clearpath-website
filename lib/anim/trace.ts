@@ -38,6 +38,14 @@ export function rr(x: number, y: number, w: number, h: number, r: number, start:
   return d + `L ${sx} ${sy}`;
 }
 
+/* The y of a cell's header rule in its bento's own pixels: where a hand-off
+   trace runs when a turn passes from one cell to the other. */
+export function headRuleY(cell: HTMLElement | null) {
+  if (!cell) return 0;
+  const h = cell.querySelector<HTMLElement>('.c-h');
+  return cell.offsetTop + (h?.offsetHeight ?? 0) - 0.5;
+}
+
 export type RunOpts = {
   ease?: string;
   repeat?: number;

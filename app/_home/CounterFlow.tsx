@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { gsap, motionOK, useInView, useIsoLayoutEffect, useTrace } from '@/lib/anim';
+import { gsap, headRuleY, motionOK, useInView, useIsoLayoutEffect, useTrace } from '@/lib/anim';
 import { money } from '@/lib/format';
 import { Qr, Check, Mark, LiveDot } from '@/components/system';
 import { COUNTER } from '@/content/home';
@@ -120,11 +120,7 @@ export function CounterFlow() {
 
   /* The hand-off runs along the header rules: from the end of the shop's
      second step to the end of your first. Stacked, it runs down the wall. */
-  const rule = (col: HTMLDivElement | null) => {
-    if (!col) return 0;
-    const h = col.querySelector<HTMLElement>('.c-h');
-    return col.offsetTop + (h?.offsetHeight ?? 0) - 0.5;
-  };
+  const rule = headRuleY;
   const stacked = () => (youCol.current?.offsetTop ?? 0) > 0;
   const handoff = useTrace(
     flowRef,

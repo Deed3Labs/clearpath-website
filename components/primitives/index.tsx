@@ -9,8 +9,8 @@ import Link from 'next/link';
  * replaced them page by page and nothing imports them any more. Panel went
  * with them because the site draws rules, not boxes.
  *
- * StepItem stays: three content files still describe their steps with it,
- * and the bento and the track both render that shape. */
+ * Stat, FigureXL, Tiles and the StepItem type went with the redesign, which
+ * draws those shapes as bento cells (components/system). */
 export type LedgerItem = {
   label: string;
   value: string;
@@ -35,53 +35,6 @@ export function Ledger({ items }: { items: LedgerItem[] }) {
         </div>
       ))}
     </dl>
-  );
-}
-
-/* ── Steps — numbered rows, only where content is genuinely sequential. ── */
-export type StepItem = { title: string; meta?: string; body: React.ReactNode };
-
-export function Stat({
-  figure,
-  caption,
-  live,
-  muted,
-}: {
-  figure: string;
-  caption: string;
-  live?: boolean;
-  muted?: boolean;
-}) {
-  return (
-    <div className="stat">
-      <p className={`stat-fig fig${live ? ' is-live' : ''}${muted ? ' is-muted' : ''}`}>{figure}</p>
-      <p className="t-sm stat-cap">{caption}</p>
-    </div>
-  );
-}
-
-/* One number at set-piece size with a short caption. One per page. */
-export function FigureXL({ figure, caption, live }: { figure: string; caption: string; live?: boolean }) {
-  return (
-    <div className="figure-xl-block">
-      <p className={`figure-xl fig${live ? ' is-live' : ''}`}>{figure}</p>
-      <p className="t-sm figure-xl-cap">{caption}</p>
-    </div>
-  );
-}
-
-/* A grid of terse facts — a line and a qualifier each — for a list that was
-   a bulleted paragraph. Ruled cells, not filled cards. */
-export function Tiles({ items }: { items: readonly { line: string; note: string }[] }) {
-  return (
-    <ul className="tiles">
-      {items.map((t) => (
-        <li className="tile" key={t.line}>
-          <p className="d4 tile-line">{t.line}</p>
-          <p className="t-sm tile-note">{t.note}</p>
-        </li>
-      ))}
-    </ul>
   );
 }
 

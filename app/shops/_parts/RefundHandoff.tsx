@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { motionOK, useTrace } from '@/lib/anim';
+import { headRuleY, motionOK, useTrace } from '@/lib/anim';
 import { MONEY } from '@/content/shops';
 
 /* 05 · The refund hand-off: a ruled component, not a screenshot. The writer
@@ -24,8 +24,8 @@ export function RefundHandoff() {
     (w) => {
       const [a, b] = cells();
       if (!a || !b) return 'M 0 0';
-      const ya = a.offsetTop + (a.querySelector<HTMLElement>('.c-h')?.offsetHeight ?? 0) - 0.5;
-      const yb = b.offsetTop + (b.querySelector<HTMLElement>('.c-h')?.offsetHeight ?? 0) - 0.5;
+      const ya = headRuleY(a);
+      const yb = headRuleY(b);
       return b.offsetTop > 0
         ? `M ${w * 0.5} ${ya} L ${w + 0.5} ${ya} L ${w + 0.5} ${yb} L ${w * 0.5} ${yb}`
         : `M ${a.offsetWidth * 0.5} ${ya} L ${a.offsetWidth + b.offsetWidth * 0.5} ${yb}`;

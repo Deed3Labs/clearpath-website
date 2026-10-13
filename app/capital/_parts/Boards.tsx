@@ -2,23 +2,13 @@
 
 import { useRef } from 'react';
 import { useHeroIntro, useTrace, rr } from '@/lib/anim';
+import { Person } from '@/components/system/icons';
 import { BOARDS } from '@/content/capital';
 
 /* The hero's stage: two boards side by side, a seam between them that
    neither crosses. After the bento arrives the co-op board seats itself, the
    Holdings board follows a beat behind, and light runs round the first
    investor seat on a loop — the one place outside money sits. */
-
-function Person() {
-  return (
-    <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-      <g fill="none" stroke="currentColor" strokeWidth="1.3">
-        <circle cx="8" cy="5" r="2.8" />
-        <path d="M2.5 15c0-3.2 2.4-5 5.5-5s5.5 1.8 5.5 5" />
-      </g>
-    </svg>
-  );
-}
 
 type Seat = (typeof BOARDS.coop.seats)[number];
 

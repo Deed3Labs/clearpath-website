@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { PageHero, Section, SectionHead, Bento, Cell, Fig, Knob, Rail, Button, More } from '@/components/system';
 import { money, int } from '@/lib/format';
-import { HeroBeat } from './_parts/HeroBeat';
+import { HeroBeat } from '@/components/system';
 import { HeldStrip } from './_parts/HeldStrip';
 import './page.css';
 import {

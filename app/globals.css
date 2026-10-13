@@ -51,14 +51,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
 /* ─── Type scale (§4) ───────────────────────────────────────────────────── */
 
-.d1, .d3, .d4 {
-  font-family: var(--font-display);
-  text-wrap: balance;
-}
-
-.d1 { font-size: clamp(46px, 6.4vw, 96px); font-weight: 800; letter-spacing: -0.04em;  line-height: 0.94; }
-.d3 { font-size: clamp(23px, 2.1vw, 30px); font-weight: 600; letter-spacing: -0.024em; line-height: 1.12; }
-.d4 { font-size: 19px;                     font-weight: 600; letter-spacing: -0.016em; line-height: 1.25; }
+.d3, .d4 {
 
 /* .t-body, .t-sm and .t-note are text hooks used in 82 places across the
    site, and they are deliberately unstyled. Read that twice, because the file
@@ -78,6 +71,11 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
    The lesson, since it cost a day: never delete a rule that sits directly
    under a comment without checking that the comment still closes. */
+  font-family: var(--font-display);
+  text-wrap: balance;
+}
+.d3 { font-size: clamp(23px, 2.1vw, 30px); font-weight: 600; letter-spacing: -0.024em; line-height: 1.12; }
+.d4 { font-size: 19px;                     font-weight: 600; letter-spacing: -0.016em; line-height: 1.25; }
 
 /* ─── Blocks (§4) — three, and no more. ───────────────────────────────── */
 
@@ -105,9 +103,6 @@ button, input, select, textarea { font: inherit; color: inherit; }
 }
 
 /* Stat — a rule, a figure, a caption. Never a boxed card. */
-.stat { border-top: 1px solid var(--color-ink); padding-top: var(--spacing-2); }
-.stat-fig { font-size: clamp(24px, 2.4vw, 34px); letter-spacing: -0.02em; line-height: 1.05; }
-.stat-cap { margin-top: var(--spacing-1); color: var(--color-ink-70); max-width: 34ch; }
 
 .fig.is-live { color: var(--color-live); }
 .fig.is-muted { color: var(--color-ink-50); }
@@ -160,11 +155,6 @@ button, input, select, textarea { font: inherit; color: inherit; }
 /* A note under a full-width table ran as one 1,870px mono line. Small type at
    full viewport width is not a note, it is a rule made of words. */
 .hx .note-block { max-width: 78ch; }
-/* The exception: a disclaimer that qualifies the whole section rather than the
-   block above it. At 78ch it sits in the left half and looks like a caption on
-   the left column; run the width of the band it belongs to and it reads as
-   what it is. */
-.hx .note-wide .note-block { max-width: none; }
 
 /* Two strings on the site are long enough to break §4's three-line limit at
    360px even at their scale's floor — a 67-character section heading and a
@@ -172,235 +162,11 @@ button, input, select, textarea { font: inherit; color: inherit; }
    the site to fix one string, so those instances take the step down instead.
    Marked in the JSX rather than detected, so it stays visible to whoever
    edits the copy next. */
-@media (max-width: 460px) {
-}
 .prose p + p { margin-top: var(--spacing-2); }
 .prose { color: var(--color-ink-70); }
 .prose strong { color: var(--color-ink); font-weight: 500; }
 
 /* ─── Interactive: the split chooser (§6.2 S4) ────────────────────────── */
-
-/* The balance sits above the control, on a full ink rule — it is the thing
-   being divided, so it reads as the head of the block rather than another
-   row of it. */
-.chooser-balance {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: baseline;
-  column-gap: var(--spacing-3);
-  border-top: 1px solid var(--color-ink);
-  padding-top: var(--spacing-2);
-  margin-bottom: var(--spacing-1);
-}
-.chooser-balance-label { color: var(--color-ink-70); }
-.chooser-balance-fig {
-  font-size: clamp(26px, 2.6vw, 36px);
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-  text-align: right;
-  white-space: nowrap;
-}
-
-/* N equal segments, one per cycle. Equal because the payments are levelled;
-   the widths carry the COUNT, which is what a split is, and never a ratio. */
-.chooser-split { display: grid; gap: var(--spacing-1); margin-bottom: var(--spacing-1); }
-.chooser-split-bar {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(0, 1fr);
-  gap: 3px;
-  height: 10px;
-}
-.chooser-split-bar span { background: var(--color-ink); }
-.chooser-split-cap { color: var(--color-ink-70); }
-
-.chooser { display: grid; gap: var(--spacing-2); }
-.chooser-control {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-1);
-  margin-bottom: var(--spacing-1);
-}
-.chooser-option {
-  flex: 1 1 0;
-  min-width: 0;
-  min-height: 44px;
-  padding-inline: var(--spacing-2);
-  background: none;
-  border: 1px solid var(--color-ink-28);
-  border-radius: var(--radius-pill);
-  color: var(--color-ink-70);
-  font-size: 15px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: color var(--hover) var(--ease), border-color var(--hover) var(--ease),
-    background-color var(--hover) var(--ease);
-}
-.chooser-option:hover { border-color: var(--color-ink); color: var(--color-ink); }
-.chooser-option[aria-pressed='true'] {
-  background: var(--color-ink);
-  border-color: var(--color-ink);
-  color: var(--color-paper);
-}
-/* Each .ledger-row is its own grid, so every row sized its value column to
-   its own content — five different boundaries, all of them moving when the
-   plan changed. Worse, on a narrow screen the auto track could land under
-   the widest date and break it across two lines ("September" / "2027"),
-   which made the whole ledger jump on a control that is meant to be a
-   comparison.
-
-   One grid for the ledger, rows borrowing it through subgrid, and a floor on
-   the value column at 8.5em — "September 2027" measures 133px at 17px/600,
-   the widest figure any option produces, so the column is already wide
-   enough for all four before the reader touches anything. The label column
-   is the flexible one and gives up the room; there is plenty of it on the
-   left. nowrap makes the break impossible rather than merely unlikely. */
-.chooser-ledger {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(8.5em, max-content);
-}
-.chooser-ledger .ledger-row {
-  grid-column: span 2;
-  grid-template-columns: subgrid;
-}
-.chooser-ledger .ledger-row dd { white-space: nowrap; }
-
-.chooser-caption { margin-top: var(--spacing-1); }
-.chooser-close { color: var(--color-ink-70); margin-top: var(--spacing-1); }
-
-/* The merchant calculator (§6.3 S2). Stats are rules and figures, never
-   boxed cards, so the four read as a row of measurements. */
-.calc { display: grid; gap: var(--spacing-4); }
-.calc-field { display: grid; gap: var(--spacing-1); max-width: 46ch; }
-.calc-field input[type='range'] {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 44px;            /* the tap target, not the track */
-  background: transparent;
-  cursor: pointer;
-}
-.calc-field input[type='range']::-webkit-slider-runnable-track {
-  height: 1px;
-  background: var(--color-ink-28);
-}
-.calc-field input[type='range']::-moz-range-track {
-  height: 1px;
-  background: var(--color-ink-28);
-}
-.calc-field input[type='range']::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 18px;
-  height: 18px;
-  margin-top: -9px;
-  border-radius: var(--radius-pill);
-  background: var(--color-ink);
-  border: 0;
-}
-.calc-field input[type='range']::-moz-range-thumb {
-  width: 18px;
-  height: 18px;
-  border-radius: var(--radius-pill);
-  background: var(--color-ink);
-  border: 0;
-}
-
-.calc-stats {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--spacing-3);
-}
-@media (max-width: 860px) { .calc-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 480px) { .calc-stats { grid-template-columns: minmax(0, 1fr); } }
-
-/* The structure diagram (§6.7 S2). Landscape above 860px, the same tree
-   reflowed portrait below it. §6.7 asks for a nested list on narrow screens
-   and the reason is right — the landscape layout scales to 4px labels on a
-   phone — but a portrait layout keeps the drawing at its real size, so the
-   graphic survives instead of degrading to text. The list stays in the DOM at
-   every width as the text alternative. */
-.dia-figure { margin: 0; }
-.dia, .dia-stack { width: 100%; height: auto; display: block; }
-.dia-stack { display: none; max-width: 420px; }
-.dia-name {
-  font-family: var(--font-text);
-  font-size: 13px;
-  font-weight: 500;
-  fill: var(--color-ink);
-  text-anchor: middle;
-}
-.dia-note {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.01em;
-  fill: var(--color-ink-50);
-  text-anchor: middle;
-}
-.dia-contract { font-size: 10.5px; }
-/* The portrait label is left-aligned against the spine it belongs to. */
-.dia-stack-contract { text-anchor: start; font-size: 10px; }
-
-/* The text alternative. Present at every width, visible at none — both
-   layouts above are drawings and carry aria-hidden. */
-.dia-list {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-@media (max-width: 860px) {
-  .dia { display: none; }
-  .dia-stack { display: block; }
-}
-
-/* The join form (§6.8). The one page that breaks the pattern: it is a
-   conversion page, so the ink band that carries the argument everywhere else
-   is spent on the form itself. */
-.join { display: contents; }
-/* The lead column: the question, the qualifier, and the four answers. */
-.join-lead { display: grid; align-content: start; gap: var(--spacing-3); }
-.join-lead .hx-lede { max-width: none; }
-/* The asides sit under the form, in the same column, where somebody hesitating
-   over the button will actually read them. */
-.join-after { display: grid; gap: var(--spacing-4); margin-top: var(--spacing-5); }
-@media (min-width: 861px) { .join-after { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-.join-after .side-note { max-width: none; }
-
-/* A ruled list, not a row of pills. "I want to work on it" is a sentence, and
-   four of them do not fit a pill row at any width worth designing for. */
-.join-modes { display: grid; align-content: start; border-top: 1px solid var(--color-ink-28); }
-.join-mode {
-  display: grid;
-  grid-template-columns: 2.5em 1fr;
-  align-items: baseline;
-  gap: var(--spacing-2);
-  width: 100%;
-  padding: var(--spacing-2) 0;
-  border: 0;
-  border-bottom: 1px solid var(--color-ink-13);
-  background: none;
-  color: inherit;
-  text-align: left;
-  cursor: pointer;
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: clamp(18px, 1.5vw, 23px);
-  letter-spacing: -0.02em;
-  line-height: 1.15;
-}
-.join-mode > span:first-child {
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-  letter-spacing: 0.08em;
-  color: var(--color-ink-50);
-}
-.join-mode:hover { color: var(--color-live); }
-.join-mode[aria-pressed='true'],
-.join-mode[aria-pressed='true'] > span:first-child { color: var(--color-live); }
-.join-mode:focus-visible { outline: 2px solid var(--color-live); outline-offset: 3px; }
 
 /* Two columns of fields. One column at 882px would set a 60-character input,
    which looks like a mistake next to a five-character ZIP. */
@@ -430,278 +196,11 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .join-field textarea { min-height: 110px; resize: vertical; line-height: 1.5; }
 .join-field input:focus, .join-field textarea:focus { border-color: var(--color-ink); outline: 0; }
 
-/* ── The listbox (FieldSelect) ─────────────────────────────────────────────
-   Same box as a text input, because it answers the same kind of question and
-   a control that looks different implies it behaves differently. What marks
-   it is the caret and the fact that the value sits in ink while an unchosen
-   placeholder sits at ink-50 — the difference between an answer and a prompt
-   has to be visible at a glance down the column. */
-.fs { position: relative; }
-.fs-label { font-size: 15px; color: var(--color-ink-70); }
-.fs-button {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--spacing-2);
-  width: 100%;
-  min-height: 44px;              /* §8.4 tap target */
-  padding: 10px 12px;
-  background: var(--color-paper-2);
-  border: 1px solid var(--color-ink-28);
-  border-radius: var(--radius-none);
-  font: inherit;
-  color: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-.fs-button:hover { border-color: var(--color-ink); }
-.fs-button[aria-expanded='true'] { border-color: var(--color-ink); }
-/* Truncate rather than wrap. Half-width now that the property type shares a
-   row with the ZIP, the longest option ("Commercial building") is a pixel
-   wider than the button at a 1000px viewport — and a wrapped label makes the
-   control taller than the 49px field beside it, so the row stops lining up.
-   A native select truncates here; so does this. min-width:0 because a flex
-   item will not shrink below its content without it. */
-.fs-button { min-width: 0; }
-.fs-value {
-  min-width: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.fs-value[data-empty] { color: var(--color-ink-50); }
-/* Drawn, not a glyph: a character would carry the font's own metrics and sit
-   off-centre at this size. */
-.fs-caret {
-  flex: none;
-  width: 9px;
-  height: 9px;
-  border-right: 1.5px solid var(--color-ink-70);
-  border-bottom: 1.5px solid var(--color-ink-70);
-  transform: translateY(-2px) rotate(45deg);
-  transition: transform var(--hover) var(--ease);
-}
-.fs-button[aria-expanded='true'] .fs-caret { transform: translateY(1px) rotate(-135deg); }
-
-.fs-list {
-  position: absolute;
-  z-index: 20;
-  top: calc(100% + 4px);
-  left: 0;
-  right: 0;
-  max-height: 260px;
-  overflow-y: auto;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  /* paper-2 and ink, never paper. The join band is data-tone="ink", which
-     rebinds --color-ink to the light value but leaves --color-paper light —
-     so a panel drawn on --color-paper with inherited colour would have been
-     light text on a light ground. paper-2 IS rebound, so this pair inverts
-     with the band and reads on either. */
-  background: var(--color-paper-2);
-  color: var(--color-ink);
-  border: 1px solid var(--color-ink);
-  border-radius: var(--radius-none);
-  /* The one shadow on the site. A menu floats over content and nothing else
-     here does, so the exception is the point. */
-  box-shadow: 0 12px 28px rgb(0 0 0 / 0.22);
-}
-.fs-option {
-  padding: 10px 12px;
-  font-size: 15px;
-  line-height: 1.35;
-  cursor: pointer;
-}
-.fs-option + .fs-option { border-top: 1px solid var(--color-ink-13); }
-/* Hover and keyboard share one highlight, because they are one cursor.
-   A wash plus a marker rather than an ink fill: an inverted row would need
-   --color-ink for the ground and --color-paper for the text, and on an ink
-   band both resolve light. ink-13 is rebound with the band, so this holds on
-   either ground. */
-.fs-option { position: relative; }
-.fs-option[data-cursor='true'] { background: var(--color-ink-13); }
-.fs-option[data-cursor='true']::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: var(--color-live);
-}
-.fs-option[aria-selected='true'] { font-weight: 600; }
-
-/* ── The range (FieldRange) ────────────────────────────────────────────────
-   A label row, then one control box — which is exactly what a text field is,
-   so the two sit as peers in the column. The box is the same ground, border
-   and height a text input gets; only its content differs.
-
-   Three earlier passes got this wrong in three ways worth recording. Boxing
-   the whole thing, value and scale included, made a box inside a box. Leaving
-   the track bare gave the control no body next to 49px inputs. Pulling the
-   rows together with negative margins made the label, the line and the scale
-   crowd each other while the field still read as lighter than its neighbours.
-   The fix was none of those: put the ends of the scale INSIDE the control,
-   where they label the thing they belong to, and let the box carry the weight.
-*/
-.fr-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--spacing-2);
-  margin-bottom: 6px;
-}
-.fr-label { font-size: 15px; color: var(--color-ink-70); }
-.fr-value { font-size: clamp(20px, 1.8vw, 26px); line-height: 1.15; letter-spacing: -0.02em; }
-
-.fr-track {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  /* The measured height of a text input in this form, so the two line up
-     down the column rather than nearly lining up. */
-  height: 49px;
-  padding-inline: 12px;
-  background: var(--color-paper-2);
-  border: 1px solid var(--color-ink-28);
-  border-radius: var(--radius-none);
-}
-.fr:focus-within .fr-track { border-color: var(--color-ink); }
-/* Same face as the label and the figure, a step down and a shade back. These
-   were mono, which is the site's voice for rails and labels — beside a sans
-   label and a sans figure it read as a third typeface arriving for two
-   words. Tabular so both ends keep one rhythm. */
-.fr-end {
-  flex: none;
-  font-size: 12.5px;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-  color: var(--color-ink-50);
-}
-
-.fr input[type='range'] {
-  -webkit-appearance: none;
-  appearance: none;
-  flex: 1;
-  min-width: 0;
-  height: 44px;              /* §8.4 tap target, inside the 49px box */
-  /* .join-field input gives every input in this form a border, a ground and
-     10px of padding. A range is an input, so it was getting all three — a
-     real bordered box inside the control, which is the box-inside-a-box that
-     survived three redesigns because I kept re-styling around it instead of
-     turning it off. */
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-}
-.fr input[type='range']::-webkit-slider-runnable-track {
-  height: 3px;
-  border-radius: var(--radius-pill);
-  background: linear-gradient(
-    to right,
-    var(--color-ink) 0 var(--fr-pct, 0%),
-    var(--color-ink-28) var(--fr-pct, 0%) 100%
-  );
-}
-.fr input[type='range']::-moz-range-track {
-  height: 3px;
-  border-radius: var(--radius-pill);
-  background: var(--color-ink-28);
-}
-.fr input[type='range']::-moz-range-progress {
-  height: 3px;
-  border-radius: var(--radius-pill);
-  background: var(--color-ink);
-}
-.fr input[type='range']::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 16px;
-  height: 16px;
-  margin-top: -6.5px;
-  border-radius: var(--radius-pill);
-  background: var(--color-ink);
-  border: 0;
-}
-.fr input[type='range']::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
-  border-radius: var(--radius-pill);
-  background: var(--color-ink);
-  border: 0;
-}
-.fr input[type='range']:focus-visible { outline: 0; }
-.fr input[type='range']:focus-visible::-webkit-slider-thumb {
-  box-shadow: 0 0 0 3px var(--color-live);
-}
-.fr input[type='range']:focus-visible::-moz-range-thumb {
-  box-shadow: 0 0 0 3px var(--color-live);
-}
-
-/* ── The two-handle range (FieldRangeDual) ─────────────────────────────────
-   Same box, same ends, same thumb — only the middle changes. HTML has no
-   dual-handle input, so this is two ranges lying on top of each other with
-   the line and the filled span painted behind them by the rail.
-
-   The inputs take no pointer events and their own tracks are transparent;
-   only the thumbs are grabbable. That way a click never lands ambiguously
-   between two handles, and the one line you see is the rail's, not two tracks
-   fighting over the same three pixels.
-
-   These rules come after the single-handle ones deliberately: same
-   specificity, so order is what turns off the gradient track above. */
-.fr2-rail {
-  position: relative;
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  height: 44px;
-}
-.fr2-line,
-.fr2-fill {
-  position: absolute;
-  height: 3px;
-  border-radius: var(--radius-pill);
-}
-.fr2-line { left: 0; right: 0; background: var(--color-ink-28); }
-.fr2-fill { left: var(--lo); right: calc(100% - var(--hi)); background: var(--color-ink); }
-
-.fr2-rail input[type='range'] {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 44px;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  pointer-events: none;
-}
-.fr2-rail input[type='range']::-webkit-slider-runnable-track {
-  height: 3px;
-  background: transparent;
-}
-.fr2-rail input[type='range']::-moz-range-track {
-  height: 3px;
-  background: transparent;
-}
-.fr2-rail input[type='range']::-moz-range-progress { background: transparent; }
-.fr2-rail input[type='range']::-webkit-slider-thumb { pointer-events: auto; }
-.fr2-rail input[type='range']::-moz-range-thumb { pointer-events: auto; }
-
 /* Two figures and a dash where there was one figure. */
-.fr2 .fr-value { font-size: clamp(17px, 1.5vw, 22px); }
 
 .join-submit { display: flex; flex-wrap: wrap; align-items: center; gap: var(--spacing-3); }
 .join-status { color: var(--color-ink-70); margin: 0; }
 .join-form .btn:disabled { opacity: 0.5; pointer-events: none; }
-
-.join-fallback { min-height: 420px; }
 
 @media (max-width: 860px) {
   .join-form fieldset { grid-template-columns: minmax(0, 1fr); }
@@ -723,11 +222,6 @@ button, input, select, textarea { font: inherit; color: inherit; }
 p > .tlink:only-child { display: inline-block; padding-block: 11px; }
 
 /* ─── Shell — header, mobile sheet, footer. ────────────────────────────── */
-
-/* The header and footer answer to the page's edges, not to the old centred
-   container. --container is min(1320px, 100% - 48px), which put them 60px in
-   from the viewport at 1440 while .hx-wrap starts at 46px — a 14px
-   misalignment between the logo and the headline directly beneath it. */
 /* The header answers to the page measure (system.css sets its inline padding
    to --gutter-x, so its ground runs full width and its content sits on the
    same 1280 column as every section below it). */
@@ -904,8 +398,6 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
   text-decoration-color: var(--color-live);
 }
 
-/* The footer's rules live in app/styles/system.css. */
-
 /* §8.4 — the logo link is a standalone destination, so it gets a real hit
    area rather than a text-height line. */
 .site-header > a { display: inline-flex; padding-block: 12px; }
@@ -1015,57 +507,6 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
 }
 .tlink:hover { text-decoration-color: var(--color-ink); }
 
-/* A link set in display type — one word inside a heading, which the site does
-   in exactly one place (§03 on /how, where "co-op" points at the page that
-   proves the claim the heading makes).
-
-   It leans instead of changing face. Bricolage ships no italic, so a second
-   cut would mean loading another family and cross-fading two copies of the
-   word, and the two would never share a width — the line would twitch on
-   hover. A skew is one transform: it cannot reflow, it interpolates smoothly
-   at any size, and a slanted Bricolage is a shape the stack cannot otherwise
-   make, which is the whole appeal.
-
-   Everything — the skew and the rule — sits on the inner span, not on the
-   anchor. A transform needs a transformable box, so the span is an
-   inline-block, and CSS does not paint an ancestor's underline through an
-   atomic inline: put the decoration on the anchor and it simply never draws.
-   On the span it rides with the word, and because a skew shifts every point
-   on a given line by the same amount, the rule stays level while the letters
-   lean over it.
-
-   260ms — longer than the 200ms hover token, because the eye is tracking a
-   shape here rather than a colour. */
-.lean { display: inline-block; color: inherit; }
-.lean > span {
-  display: inline-block;
-  transform-origin: 0 100%;
-  text-decoration: underline;
-  /* Heavier at rest than a body link's ink-28 hairline: at display size the
-     rule has to read as "this word is a link" from across the page, before
-     anyone has a cursor near it. */
-  text-decoration-color: var(--color-ink-50);
-  text-decoration-thickness: 0.045em;
-  text-underline-offset: 0.08em;
-  transition:
-    transform 260ms var(--ease),
-    color var(--hover) var(--ease),
-    text-decoration-color var(--hover) var(--ease);
-}
-.lean:hover > span, .lean:focus-visible > span {
-  transform: skewX(-10deg);
-  color: var(--color-live);
-  text-decoration-color: var(--color-live);
-}
-/* Held down: the lean settles a fraction further, so a press reads as a
-   press on a touch screen, where there is no hover to precede it. */
-.lean:active > span { transform: skewX(-12deg) scaleX(0.99); }
-
-/* The lean is the signal, so it stays; only the travel goes. */
-@media (prefers-reduced-motion: reduce) {
-  .lean > span { transition: color var(--hover) var(--ease); }
-}
-
 /* Nav links get the underline on hover instead: in a row of six, six
    permanent underlines read as a paragraph rather than a menu. */
 .navlink { transition: color var(--hover) var(--ease); }
@@ -1114,71 +555,6 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
   }
 }
 
-
-/* ─── The skim layer ───────────────────────────────────────────────────────
-   A reader on a phone skims headline → sub-headline → figure, and reads the
-   paragraph fourth. These are the pieces that make that layer exist. ────── */
-
-/* A row of figures. Was referenced on /housing and never defined. */
-.stat-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: var(--spacing-3) var(--gutter);
-}
-
-/* One number at set-piece size. */
-.figure-xl-block { display: grid; gap: var(--spacing-2); }
-.figure-xl {
-  font-size: clamp(44px, 6vw, 88px);
-  line-height: 0.9;
-  letter-spacing: -0.035em;
-}
-.figure-xl-cap { color: var(--color-ink-70); max-width: 38ch; }
-/* The set-piece figure still steps down inside .hx, where it shares a band
-   with display type rather than carrying a section on its own. */
-.hx .figure-xl { font-size: clamp(40px, 5vw, 76px); }
-
-/* Terse facts in a grid. Ruled cells — the site draws rules, not boxes. */
-.tiles {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0 var(--gutter);
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  border-top: 1px solid var(--color-ink);
-}
-.tile { padding-block: var(--spacing-3); border-bottom: 1px solid var(--color-ink-13); min-width: 0; }
-.tile-note { margin-top: 4px; color: var(--color-ink-50); }
-@media (min-width: 861px) { .tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
-
-/* Two claims set against each other. */
-.versus { border-top: 1px solid var(--color-ink-28); padding-top: var(--spacing-2); }
-.versus.is-ours { border-top-color: var(--color-live); }
-.versus-line {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: clamp(28px, 3.4vw, 52px);
-  line-height: 1.02;
-  letter-spacing: -0.03em;
-  margin-top: var(--spacing-1);
-  max-width: 12ch;
-}
-.versus.is-ours .versus-line { color: var(--color-live); }
-/* The closing pair, set as the page's one grand moment. At 3.4vw one side fit
-   on a line and the other wrapped, which put a 92px hole under the shorter of
-   the two and made a symmetrical claim look accidental. Both break after the
-   verb now, so the pair is two lines against two lines, and the size can go up
-   because the break is decided rather than discovered. */
-.versus-line[data-grand] {
-  font-size: clamp(40px, 6vw, 96px);
-  line-height: 0.96;
-  letter-spacing: -0.04em;
-  max-width: none;
-}
-.versus-line[data-grand] span { display: block; }
-.versus-note { margin-top: var(--spacing-2); color: var(--color-ink-70); }
-
 /* ═══ Home layout system ══════════════════════════════════════════════════
    Built blank, not converted. The old sections put a numbered note in columns
    1–2 of every band, which boxed all content into columns 3–12 permanently —
@@ -1198,6 +574,8 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
 
 .hx-wrap { width: 100%; padding-inline: var(--gutter-x); }
 
+/* .hx-band[data-tone='ink'] is the same band as .band-ink; both are defined
+   once, in app/styles/system.css. */
 .hx-band { padding-block: clamp(72px, 8.5vw, 150px); position: relative; }
 .hx-band[data-pad='tight'] { padding-block: clamp(48px, 5vw, 88px); }
 .hx-band[data-pad='open']  { padding-block: clamp(96px, 12vw, 210px); }
@@ -1207,9 +585,6 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
    dead air above the opening section at 1440 and pushed its call to action
    below the fold. The top pad is the header's job here, not the band's. */
 .hx > .hx-band:first-child { padding-top: clamp(32px, 4.5vw, 88px); }
-
-/* .hx-band[data-tone='ink'] is the same band as .band-ink; both are defined
-   once, in app/styles/system.css. */
 
 /* The grid. Twelve tracks across the whole measure — no rail, no reserved
    columns, so a child can span 1 to 13 and actually touch both edges. */
@@ -1258,11 +633,6 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
   margin: 0;
   text-wrap: balance;
 }
-/* Body prose inside a column. Two jobs at once: a half column at 1440 sets a
-   95-character line, well past a readable measure, and capping it leaves a
-   column of air on the right that separates a pair of columns better than any
-   gutter can. Prose filling its column edge to edge is what made adjacent
-   paragraphs look like one block occupying one row. */
 /* Columns whose ROWS line up. The repeated fault across this site was a row
    of columns each flowing its own parts at its own heights: a two-line
    heading in one column pushed its body out of step with its neighbour, and
@@ -1347,130 +717,6 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
   max-width: 40ch;
 }
 
-/* ── TALLY. Two figure stacks, edge to edge. The page's one big moment. ─── */
-/* Rows the two columns share. Each .tally used to flow on its own, so a
-   two-line caption in one column pushed its big figure 22px below the figure
-   it is meant to be compared with — in a section whose entire point is that
-   the two numbers sit side by side. */
-.hx-tally {
-  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--hx-gap);
-  grid-template-rows: auto auto auto;
-}
-.tally {
-  display: grid; gap: var(--spacing-3); align-content: start; min-width: 0;
-  grid-row: span 3; grid-template-rows: subgrid;
-}
-/* The three-column variant carries a label and one figure, not two. */
-.hx-tally[data-n='3'] { grid-template-rows: auto auto; }
-.hx-tally[data-n='3'] > .tally { grid-row: span 2; }
-.tally-label {
-  font-family: var(--font-mono);
-  font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--color-ink-50);
-  padding-bottom: var(--spacing-2);
-  border-bottom: 1px solid var(--color-ink-28);
-}
-.tally-row { display: grid; gap: var(--spacing-2); }
-/* Line-height 1, not 0.86. At 136px a 0.86 box is 118px tall — shorter than
-   the glyphs it contains — so the caption below sat 6px under the BOX while
-   the digits ran past it and collided. Tight leading is for stacked display
-   lines, not for a single line with something under it.
-
-   The size is capped where the longest figure fits with margin: "$90,000" is
-   seven characters at ~0.69em advance in Plex Mono, which at 136px measured
-   662px in a 660px column — exactly flush, one pixel from overflow. */
-.tally-fig {
-  font-family: var(--font-text); font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  font-size: clamp(38px, 6vw, 92px); line-height: 1; letter-spacing: -0.035em;
-}
-.tally-fig[data-weight='quiet'] { font-size: clamp(20px, 2.2vw, 32px); color: var(--color-ink-50); letter-spacing: -0.02em; }
-.tally[data-live] .tally-fig[data-weight='loud'] { color: var(--color-live); }
-/* 30ch wrapped "paid out over the same five years" to two lines while its
-   opposite number stayed on one, which is what put the figures out of step in
-   the first place. Every caption in the row fits one line at 42ch. */
-.tally-note { color: var(--color-ink-70); max-width: 42ch; }
-/* Three columns is a different job from two: two figures are in tension and
-   want to be enormous, three are a breakdown and still want some size.
-   Measured rather than estimated: the longest of them, "~$450,000", sets 5.0em
-   wide in Plex Mono with this tracking, so 4.8vw puts it at 345px inside a
-   417px column at 1440 and 246px inside 296px at 1024 — clear at every width
-   down to where the row stacks. */
-.hx-tally[data-n='3'] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.hx-tally[data-n='3'] .tally-fig { font-size: clamp(28px, 3.8vw, 58px); }
-.tally[data-muted] .tally-fig { color: var(--color-ink-50); }
-@media (max-width: 900px) {
-  .hx-tally[data-n='3'] { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; gap: var(--spacing-5); }
-  .hx-tally[data-n='3'] > .tally { grid-row: auto; grid-template-rows: none; }
-}
-@media (max-width: 700px) {
-  /* Stacked, there is nothing to align across and each column needs its own
-     rows back. */
-  .hx-tally { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; gap: var(--spacing-5); }
-  .hx-tally > .tally { grid-row: auto; grid-template-rows: none; }
-}
-
-/* ── TRACK. A sequence that happens over time, not a list of features.
-      Three marks sitting ON a rule, the moment in mono above a short line and
-      a note under it. Distinct from Tiles (a figure over a caption, each on
-      its own rule) because the shared rule is the point: it is one span of
-      time with things happening along it.
-
-      Square marks, not dots — sharp edges throughout. ─────────────────── */
-.track {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--hx-gap);
-  border-top: 1px solid var(--color-ink-28);
-  /* Rows the steps opt into, so `what` and `note` line up across all three
-     however the mono marker wraps. Same subgrid rule as .hx-cols. */
-  grid-template-rows: auto auto auto;
-}
-.track-step {
-  display: grid;
-  grid-row: span 3;
-  grid-template-rows: subgrid;
-  gap: var(--spacing-2);
-  min-width: 0;
-  padding-top: var(--spacing-4);
-  position: relative;
-}
-.track-step::before {
-  content: '';
-  position: absolute;
-  top: -5px;
-  left: 0;
-  width: 9px;
-  height: 9px;
-  background: var(--color-ink);
-}
-.track-step[data-live]::before { background: var(--color-live); }
-.track-when {
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--color-ink-50);
-  margin: 0;
-}
-.track-step[data-live] .track-when { color: var(--color-live); }
-.track-what {
-  font-size: clamp(19px, 1.7vw, 26px);
-  line-height: 1.14;
-  letter-spacing: -0.02em;
-  margin: 0;
-  /* 18ch set a ~220px measure in a 410px column, which wrapped a short
-     sentence to four lines. */
-  max-width: 22ch;
-}
-.track-note { color: var(--color-ink-70); margin: 0; max-width: 42ch; }
-@media (max-width: 900px) {
-  .track { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; row-gap: 0; }
-  .track-step { grid-row: auto; grid-template-rows: none; padding-bottom: var(--spacing-4); }
-  .track-step + .track-step { border-top: 1px solid var(--color-ink-13); }
-}
-
 /* ── SIDES. Two people looking at the same refund and seeing different
       numbers. A pair of statements at heading size, one of them in cobalt,
       because "by design" is the claim and the pair IS the evidence. ───── */
@@ -1497,115 +743,13 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
 /* A third row under the statement, for the pair that has to carry an argument
    as well as a claim. Margin zero because the grid gap does that spacing. */
 .side-note { color: var(--color-ink-70); max-width: 46ch; margin: 0; }
-/* A figure in the statement slot, for a row where one of the columns is a
-   number and the others are claims. Sized against .side-line so the three
-   sit on one line together. */
-/* A label, a figure and its caption as a stack. The three were plain
-   paragraphs with margin: 0 inside a plain div, so the caption sat hard
-   against the bottom of an 89px number and the label hard against its top.
-   Nothing separated the three parts of the block from each other. */
 /* Inside a subgrid column the container gap already separates the parts, so
    .side-label's own bottom margin doubles up: 32px above the big line and 16px
    below it, in a block whose two halves have no reason to be spaced
    differently. .sides on /shops is plain block flow and still needs the
    margin, so this is scoped rather than removed. */
 .hx-cols[data-rows] .side-label { margin-bottom: 0; }
-
-.fig-stack { display: grid; gap: var(--spacing-2); align-content: start; }
-/* The grid gap is the only spacing in here. .side-label carries a 16px bottom
-   margin for its use inside .side, which stacked with the gap and the figure's
-   own margin to put 40px above the number and 16px below it — a block whose
-   two halves were spaced differently for no reason. */
-.fig-stack .side-label { margin-bottom: 0; }
-.fig-stack .side-fig { margin-block: 0; }
-.fig-stack .side-note { max-width: 34ch; }
-
-.side-fig {
-  font-family: var(--font-text); font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  font-size: clamp(28px, 3.2vw, 46px); line-height: 1.05; letter-spacing: -0.03em;
-  color: var(--color-live); margin: 0;
-}
 @media (max-width: 900px) { .sides { grid-template-columns: minmax(0, 1fr); } }
-
-/* ── SPLIT. Three columns: the shop's price, the mechanism between them, the
-      member's price. Two columns of ~660px left the row horizontally empty
-      and vertically tall; three fill the measure and shorten it. ────────── */
-.hx-split { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--hx-gap); }
-.door-head { font-size: clamp(19px, 1.7vw, 25px); font-weight: 600; letter-spacing: -0.02em; line-height: 1.14; margin: 0; }
-/* Flex, not grid: the link is pinned to the bottom so both doors' links land
-   on one line. As a grid with align-content:start the rows pack to the top
-   and no track has free space, so margin-top:auto had nothing to consume and
-   the links still staggered by 49px. In a flex column it works. */
-.door {
-  display: flex; flex-direction: column; gap: var(--spacing-2);
-  padding-top: var(--spacing-3); border-top: 2px solid var(--color-ink); min-width: 0;
-}
-.door-link { margin-top: auto; padding-top: var(--spacing-3); }
-.door-fig {
-  font-family: var(--font-text); font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  /* Three columns, so the ceiling comes down. */
-  font-size: clamp(28px, 3.2vw, 46px); line-height: 1.05; letter-spacing: -0.03em;
-  margin-top: var(--spacing-1);
-}
-/* The statement counterpart of .door-fig, for a row where the big line is a
-   short sentence rather than a number. Mono at 64px is emphasis for digits and
-   reads as a mistake on words — "Passive" and "One person" set that way looked
-   broken. Sized to match .side-line, which is the same idea elsewhere: a claim
-   at display size under a mono label. */
-.door-line {
-  font-family: var(--font-display); font-weight: 800;
-  font-size: clamp(26px, 2.8vw, 42px); line-height: 1.05; letter-spacing: -0.03em;
-  margin-top: var(--spacing-1);
-}
-.door-note { color: var(--color-ink-50); }
-/* Tighter than the flex gap: the note belongs to the figure above it, and the
-   body is the next thought. The old spacing-2 on top of a spacing-2 gap put
-   32px between every part of a column and made the section tall. */
-.door-body { color: var(--color-ink-70); margin-top: var(--spacing-1); }
-/* Three columns straight down to one. A two-column step in between put the
-   third door alone on its own row with an empty half beside it — three items
-   never divide into two. At 900px three columns are still 270px each, which
-   holds a 40px figure and a two-line heading. */
-@media (max-width: 900px) { .hx-split { grid-template-columns: minmax(0, 1fr); gap: var(--spacing-5); } }
-
-/* ── STAGE. One sentence at display size, and the page ends on it. ─────── */
-.hx-stage-line {
-  font-family: var(--font-display); font-weight: 800;
-  font-size: clamp(32px, 4.8vw, 76px); line-height: 1.02; letter-spacing: -0.035em;
-  margin: 0; max-width: 20ch; text-wrap: balance;
-}
-
-/* ── The hero's kinetic moment ─────────────────────────────────────────────
-   A printing misregistration settling into register: the second line arrives
-   with a cobalt plate a few pixels out, which converges and disappears. It is
-   a press reference rather than a screen one, which is the language the rest
-   of the palette speaks — a sci-fi glitch on a survey-paper site would read
-   as borrowed.
-
-   Pure CSS, so the homepage keeps its zero-JS budget. The ghost is a pseudo-
-   element on a decorative layer: the real text is never hidden, so this
-   cannot fail to a blank headline. */
-.misreg { position: relative; display: block; }
-.misreg::after {
-  content: attr(data-ghost);
-  position: absolute;
-  inset: 0;
-  color: var(--color-live);
-  opacity: 0;
-  pointer-events: none;
-  animation: misreg 1400ms cubic-bezier(0.16, 1, 0.3, 1) both;
-  animation-delay: 340ms;
-}
-@keyframes misreg {
-  0%   { transform: translate3d(0.09em, -0.035em, 0); opacity: 0.55; }
-  55%  { transform: translate3d(0.02em, -0.008em, 0); opacity: 0.28; }
-  100% { transform: translate3d(0, 0, 0); opacity: 0; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .misreg::after { animation: none; opacity: 0; }
-}
 
 /* ─── /style — the brand and style guide ───────────────────────────────────
    Guide-only pieces. Everything else on that page is the site's own
@@ -2134,7 +1278,6 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
 .shop-error { margin-top: var(--spacing-2); color: var(--color-absent); }
 .shop-error:empty { display: none; }
 
-
 /* ─── Events ─────────────────────────────────────────────────────────────────
    A calendar set as a ledger: ruled rows, a date column in the margin, the
    one pressable thing in each row (Register) as a pill. */
@@ -2321,7 +1464,6 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
   .nf-link, .nf-links li + li .nf-link { padding: 14px 0; border-left: 0; }
   .nf-links li + li { border-top: 1px solid var(--color-ink-13); }
 }
-
 
 /* ─── Directory ──────────────────────────────────────────────────────────────
    A ruled list like the events calendar: an initials plate in the margin,
