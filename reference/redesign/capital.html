@@ -1,3 +1,4 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Clear Capital Redesign</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -263,7 +264,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .boards .c-m { padding-top: 20px; }
 .boards .c-m p { font-size: 15px; max-width: 46ch; }
 .boards .c-f { grid-column: 1 / -1; font-size: 14.5px; color: var(--ink-70); }
-.seats { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.seats { position: relative; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
 .seat { position: relative; display: grid; align-content: space-between; gap: 18px; height: 84px; padding: 10px 9px; border: 1px solid var(--ink-28); font-size: 12.5px; line-height: 1.2; color: var(--ink-70); min-width: 0; }
 .seat svg { width: 16px; height: 16px; color: var(--ink-50); }
 .seat b { font-weight: 500; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -274,6 +275,9 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .seat.open svg { opacity: .5; }
 .seat.inv { background: var(--live); border-color: var(--live); color: var(--paper); }
 .seat.inv svg, .seat.inv b, .seat.inv small { color: var(--paper); }
+/* The light around the investor pair is a faded cobalt, quieter than the green the site uses for live things. */
+#seats-h .trace .halo { stroke: #A9B6E6; stroke-width: 6; opacity: .4; }
+#seats-h .trace .core { stroke: #8D9BD3; stroke-width: 1.3; }
 @media (max-width: 1000px) {
   .boards { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
   .boards .cell { grid-row: auto; grid-template-rows: auto auto auto auto; }
@@ -281,9 +285,9 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 }
 @media (max-width: 560px) {
   .seats { gap: 4px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .seat { height: 64px; padding: 8px 7px; gap: 8px; }
+  .seat { height: 76px; padding: 8px 7px; gap: 8px; }
   .seat b { font-size: 11px; overflow: visible; }
-  .seat small { display: none; }
+  .seat small { font-size: 10.5px; }
   .boards .c-f { flex-wrap: wrap; padding-block: 14px; gap: 6px 16px; }
 }
 
@@ -958,7 +962,15 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   /* Hero: two lines rise, then the two boards seat themselves. */
   const h1 = $('#hero-h1');
   $$('.ln', h1).forEach(ln => { ln.innerHTML = ln.textContent.split(' ').map(w => `<span class="w"><span>${w}</span></span>`).join(' '); });
-  const invTrace = makeTrace($('#seat-inv'), (w, h) => rr(.5, .5, w - 1, h - 1, 0.01, 'top'), { seg: 70, speed: 220 });
+  /* The light runs around the outside of the two investor seats together:
+     the pair is the thing the page is pointing at. Measured from the seats
+     themselves, so it follows them when they wrap to a second row. */
+  const invTrace = makeTrace($('#seats-h'), (w, h, host) => {
+    const s = $$('.seat.inv', host), o = 4;
+    const L = Math.min(...s.map(e => e.offsetLeft)), T = Math.min(...s.map(e => e.offsetTop));
+    const R = Math.max(...s.map(e => e.offsetLeft + e.offsetWidth)), B = Math.max(...s.map(e => e.offsetTop + e.offsetHeight));
+    return rr(L - o, T - o, R - L + o * 2, B - T + o * 2, 0.01, 'top');
+  }, { seg: 110, speed: 260 });
   gsap.timeline({ defaults: { ease: 'power3.out' } })
     .from('#hero-h1 .w > span', { yPercent: 105, duration: 1, stagger: .06, onComplete: () => $('#hero-h1').classList.add('revealed') })
     .from('[data-in]', { opacity: 0, y: 14, duration: .8, stagger: .1 }, '-=.6')
@@ -1005,3 +1017,5 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   $$('.band-ink').forEach(band => ScrollTrigger.create({ trigger: band, start: 'top 34px', end: 'bottom 34px', onToggle: s => head.classList.toggle('on-ink', s.isActive) }));
 })();
 </script>
+
+</body></html>

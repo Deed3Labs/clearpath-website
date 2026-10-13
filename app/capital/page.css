@@ -18,7 +18,11 @@
   .boards .c-m { padding-top: 20px; }
   .boards .c-m p { font-size: 15px; max-width: 46ch; }
   .boards .c-f { grid-column: 1 / -1; font-size: 14.5px; color: var(--color-ink-70); }
-  .seats { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+  .seats { position: relative; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+  /* The light round the investor pair is a faded cobalt, quieter than the
+     green the site uses for live things. */
+  #seats-h .trace .halo { stroke: #A9B6E6; stroke-width: 6; opacity: .4; }
+  #seats-h .trace .core { stroke: #8D9BD3; stroke-width: 1.3; }
   .seat { position: relative; display: grid; align-content: space-between; gap: 18px; height: 84px; padding: 10px 9px; border: 1px solid var(--color-ink-28); font-size: 12.5px; line-height: 1.2; color: var(--color-ink-70); min-width: 0; }
   .seat svg { width: 16px; height: 16px; color: var(--color-ink-50); }
   .seat b { font-weight: 500; color: var(--color-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -36,9 +40,9 @@
   }
   @media (max-width: 560px) {
     .seats { gap: 4px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
-    .seat { height: 64px; padding: 8px 7px; gap: 8px; }
+    .seat { height: 76px; padding: 8px 7px; gap: 8px; }
     .seat b { font-size: 11px; overflow: visible; }
-    .seat small { display: none; }
+    .seat small { font-size: 10.5px; }
     .boards .c-f { flex-wrap: wrap; padding-block: 14px; gap: 6px 16px; }
   }
 
