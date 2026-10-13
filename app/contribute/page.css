@@ -3,11 +3,6 @@
    from reference/redesign/contribute.html with the tokens renamed. */
 
 .pg-contribute {
-  /* The old .hx layout's global .cell (globals.css) paints a paper ground,
-     pads every side and spans four rows. None of that belongs to a bento
-     cell, which takes its padding on the rows. */
-  .cell { background: none; padding: 0; gap: 0; grid-row: auto; }
-
   /* 03 sits straight under 02: the two read as one argument. */
   .sec-who { padding-top: 0; }
 

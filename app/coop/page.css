@@ -4,11 +4,6 @@
    is the shared Seg. */
 
 .pg-coop {
-  /* The old .hx layout's global .cell (globals.css) paints a paper ground,
-     pads every side and spans four rows. None of that belongs to a bento
-     cell, which takes its padding on the rows. */
-  .cell { background: none; padding: 0; gap: 0; grid-row: auto; }
-
   /* The same sentence, written two ways, put to the same vote. */
   .vs { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto auto auto minmax(0, 1fr); margin-top: clamp(56px, 7vw, 104px); }
   .vs .cell { grid-row: span 4; grid-template-rows: subgrid; }

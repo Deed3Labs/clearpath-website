@@ -4,11 +4,6 @@
    segmented toggle is the shared Seg. */
 
 .pg-capital {
-  /* The old .hx layout's global .cell (globals.css) paints a paper ground,
-     pads every side and spans four rows. None of that belongs to a bento
-     cell, which takes its padding on the rows. */
-  .cell { background: none; padding: 0; gap: 0; grid-row: auto; }
-
   /* The disclaimer meets the reader before anything else, in full. */
   .notice { border-top: 1px solid var(--color-ink); padding-top: 14px; display: grid; gap: 10px; }
   .notice .label { color: var(--color-ink); }
