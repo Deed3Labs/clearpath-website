@@ -33,6 +33,30 @@ function emph(word: string) {
   );
 }
 
+/* The h1's lines and words, pre-split into masks on the server: what the
+   intro animates, and what reads the same with JS off. Exported for the
+   heroes that are not a PageHero (the closed shop's ink band, the events
+   hero with its card beside the h1). */
+export function HeroWords({ lines }: { lines: readonly string[] }) {
+  return (
+    <>
+      {lines.map((ln, i) => (
+        <span className="ln" key={i}>
+          {ln.split(' ').map((w, j, all) => (
+            <Fragment key={j}>
+              <span className="w">
+                <span>{emph(w)}</span>
+              </span>
+              {j < all.length - 1 ? ' ' : null}
+            </Fragment>
+          ))}
+          {i < lines.length - 1 ? ' ' : null}
+        </span>
+      ))}
+    </>
+  );
+}
+
 export function PageHero({
   label,
   lines,
@@ -84,19 +108,7 @@ export function PageHero({
         </div>
       )}
       <h1 className="hero-h1" data-phone={phone} data-balance={balance ? '' : undefined}>
-        {lines.map((ln, i) => (
-          <span className="ln" key={i}>
-            {ln.split(' ').map((w, j, all) => (
-              <Fragment key={j}>
-                <span className="w">
-                  <span>{emph(w)}</span>
-                </span>
-                {j < all.length - 1 ? ' ' : null}
-              </Fragment>
-            ))}
-            {i < lines.length - 1 ? ' ' : null}
-          </span>
-        ))}
+        <HeroWords lines={lines} />
       </h1>
 
       {(lede || actions || facts || side) && (

@@ -1,6 +1,6 @@
 export { Section, SectionHead, More } from './Section';
 export { Close } from './Close';
-export { PageHero, type Fact } from './PageHero';
+export { PageHero, HeroWords, type Fact } from './PageHero';
 export { Bento, Cell, Fig, Knob } from './Bento';
 export { Rail } from './Rail';
 export { Seg, type SegOption } from './Seg';
@@ -11,3 +11,8 @@ export { Chip, type ChipTone } from '@/components/primitives';
 export { Button, LiveDot } from '@/components/primitives/Button';
 export { Qr } from './Qr';
 export { HeroBeat, type Beat } from './HeroBeat';
+export { Crumbbar, CrumbLink, type Crumb } from './Crumbbar';
+export { Ticket, type TicketFact } from './Ticket';
+export { PillField } from './PillField';
+export { DateBlock } from './DateBlock';
+export { CatChips, type CatOption } from './CatChips';

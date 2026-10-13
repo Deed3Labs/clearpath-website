@@ -1,5 +1,6 @@
-import Link from 'next/link';
+import { Bento, More } from '@/components/system';
 import { ClearBag } from '@/components/shop/ClearBag';
+import { ThanksMotion } from '@/components/shop/ThanksMotion';
 import { SUPPORT_EMAIL, THANKS } from '@/content/shop';
 
 export const metadata = {
@@ -8,28 +9,48 @@ export const metadata = {
 };
 
 /* Deliberately says nothing specific about the order. Anyone can open this
-   URL, so it cannot be the confirmation; Stripe's receipt email is. */
+   URL, so it cannot be the confirmation; Stripe's receipt email is. That is
+   the one place this page leaves the mockup: its receipt card and ship-to
+   block are not ported, nor the mockup's "Paid" chip (a claim about one
+   order this URL cannot make), and the thank-you cell takes the full width,
+   with the way back to the shop in its footer. */
 export default function Thanks() {
   return (
-    <div className="hx">
+    <div className="pg-shop">
       <ClearBag />
-      <section className="hx-band hx-wrap" data-pad="tight">
-        <div className="hx-grid">
-          <h1 className="hx-h2 c-two-thirds">{THANKS.heading}</h1>
-          <div className="c-third shop-soon-side">
-            <p className="hx-lede">{THANKS.lede}</p>
-            <p className="t-sm shop-thanks-help">
-              {THANKS.questions}{' '}
-              <a href={`mailto:${SUPPORT_EMAIL}`} className="shop-inline-link">
-                {SUPPORT_EMAIL}
-              </a>
-              .
-            </p>
-            <Link href="/shop" className="btn" data-variant="ghost">
-              {THANKS.back}
-            </Link>
+      <section className="wrap vsec">
+        <Bento className="tbx">
+          <div className="cell">
+            <div className="c-h">
+              <span className="who">{THANKS.who}</span>
+            </div>
+            <div className="c-m">
+              <h1 className="vh1">{THANKS.heading}</h1>
+              <p className="tlede">{THANKS.lede}</p>
+              <ThanksMotion>
+                <ol className="tl">
+                  {THANKS.steps.map((s) => (
+                    <li key={s.b} data-s={s.done ? 'done' : undefined}>
+                      <span className="bar" aria-hidden="true" />
+                      <b>{s.b}</b>
+                      <small>{s.s}</small>
+                    </li>
+                  ))}
+                </ol>
+              </ThanksMotion>
+            </div>
+            <div className="c-f">
+              <span>
+                {THANKS.questions}{' '}
+                <a className="inl" href={`mailto:${SUPPORT_EMAIL}`}>
+                  {SUPPORT_EMAIL}
+                </a>
+                .
+              </span>
+              <More href="/shop">{THANKS.back}</More>
+            </div>
           </div>
-        </div>
+        </Bento>
       </section>
     </div>
   );

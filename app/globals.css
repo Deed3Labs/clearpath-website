@@ -51,7 +51,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
 /* ─── Type scale (§4) ───────────────────────────────────────────────────── */
 
-.d3, .d4 {
+.d3 {
 
 /* .t-body, .t-sm and .t-note are text hooks used in 82 places across the
    site, and they are deliberately unstyled. Read that twice, because the file
@@ -75,37 +75,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
   text-wrap: balance;
 }
 .d3 { font-size: clamp(23px, 2.1vw, 30px); font-weight: 600; letter-spacing: -0.024em; line-height: 1.12; }
-.d4 { font-size: 19px;                     font-weight: 600; letter-spacing: -0.016em; line-height: 1.25; }
 
 /* ─── Blocks (§4) — three, and no more. ───────────────────────────────── */
-
-/* Content subdivides the PARENT grid rather than nesting a second one with a
-   different gutter. Ten tracks, because content runs columns 3-12 and the
-@media (max-width: 1080px) {
-}
-
-/* Ledger — the workhorse. Ink top border, 13% row separators. */
-.ledger { border-top: 1px solid var(--color-ink); }
-.ledger-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  column-gap: var(--spacing-3);
-  align-items: baseline;
-  padding-block: var(--spacing-2);
-  border-bottom: 1px solid var(--color-ink-13);
-}
-.ledger-row dd { margin: 0; text-align: right; }
-.ledger-desc {
-  grid-column: 1 / -1;
-  margin-top: var(--spacing-1);
-  color: var(--color-ink-70);
-  max-width: 52ch;
-}
-
-/* Stat — a rule, a figure, a caption. Never a boxed card. */
-
-.fig.is-live { color: var(--color-live); }
-.fig.is-muted { color: var(--color-ink-50); }
 
 /* Status chips. A pill is the one rounded shape in a site that otherwise
    draws rules and documents — which is exactly why it reads as a badge and
@@ -148,13 +119,6 @@ button, input, select, textarea { font: inherit; color: inherit; }
   box-shadow: 0 0 4px color-mix(in srgb, var(--dot) 45%, transparent);
 }
 .chip .chip-dot[data-still]::after { animation: none; opacity: 0; }
-.note-block { margin-top: var(--spacing-2); }
-/* A note that opens its container has nothing above it to be spaced from, and
-   the 16px pushed it out of line with whatever sits beside it. */
-.note-block:first-child { margin-top: 0; }
-/* A note under a full-width table ran as one 1,870px mono line. Small type at
-   full viewport width is not a note, it is a rule made of words. */
-.hx .note-block { max-width: 78ch; }
 
 /* Two strings on the site are long enough to break §4's three-line limit at
    360px even at their scale's floor — a 67-character section heading and a
@@ -168,43 +132,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
 /* ─── Interactive: the split chooser (§6.2 S4) ────────────────────────── */
 
-/* Two columns of fields. One column at 882px would set a 60-character input,
-   which looks like a mistake next to a five-character ZIP. */
-.join-form fieldset {
-  border: 0; margin: 0; padding: 0;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  /* One gap, both directions. The column gap was --hx-gap, which is the
-     page's gutter — 49px at 1440, the distance between two SECTIONS. Between
-     two fields of the same question it read as a gulf. 24px both ways gives
-     the grid one rhythm. */
-  gap: var(--spacing-3);
-}
-.join-field { display: grid; gap: 6px; align-content: start; }
-.join-field.is-wide, .join-submit.is-wide { grid-column: 1 / -1; }
-.join-field label { font-size: 15px; color: var(--color-ink-70); }
-.join-field input,
-.join-field textarea {
-  width: 100%;
-  padding: 10px 12px;
-  background: var(--color-paper-2);
-  border: 1px solid var(--color-ink-28);
-  border-radius: var(--radius-none);
-  font: inherit;
-  color: inherit;
-}
-.join-field textarea { min-height: 110px; resize: vertical; line-height: 1.5; }
-.join-field input:focus, .join-field textarea:focus { border-color: var(--color-ink); outline: 0; }
-
 /* Two figures and a dash where there was one figure. */
-
-.join-submit { display: flex; flex-wrap: wrap; align-items: center; gap: var(--spacing-3); }
-.join-status { color: var(--color-ink-70); margin: 0; }
-.join-form .btn:disabled { opacity: 0.5; pointer-events: none; }
-
-@media (max-width: 860px) {
-  .join-form fieldset { grid-template-columns: minmax(0, 1fr); }
-}
 
 .sr-only {
   position: absolute;
@@ -214,12 +142,6 @@ button, input, select, textarea { font: inherit; color: inherit; }
   clip-path: inset(50%);
   white-space: nowrap;
 }
-
-/* A link that is the whole of its paragraph is a destination, not a word in a
-   sentence, so it takes a real 44px target. WCAG exempts a target inline in a
-   block of text, and padding one of those would break the line it sits in —
-   which is why this is scoped by :only-child rather than applied to .tlink. */
-p > .tlink:only-child { display: inline-block; padding-block: 11px; }
 
 /* ─── Shell — header, mobile sheet, footer. ────────────────────────────── */
 /* The header answers to the page measure (system.css sets its inline padding
@@ -496,17 +418,6 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
   .live-dot::after { animation: none; opacity: 0; }
 }
 
-/* Text links carry their underline from the start — an underline that only
-   appears on hover is not a link until the mouse finds it. */
-.tlink {
-  text-decoration: underline;
-  text-decoration-color: var(--color-ink-28);
-  text-underline-offset: 0.22em;
-  text-decoration-thickness: 1px;
-  transition: text-decoration-color var(--hover) var(--ease), color var(--hover) var(--ease);
-}
-.tlink:hover { text-decoration-color: var(--color-ink); }
-
 /* Nav links get the underline on hover instead: in a row of six, six
    permanent underlines read as a paragraph rather than a menu. */
 .navlink { transition: color var(--hover) var(--ease); }
@@ -601,9 +512,8 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
 .c-full { grid-column: 1 / 13; }
 .c-half { grid-column: span 6; }
 .c-two-thirds { grid-column: span 8; }
-.c-third { grid-column: span 4; }
 @media (max-width: 900px) {
-  .c-half, .c-two-thirds, .c-third { grid-column: 1 / 13; }
+  .c-half, .c-two-thirds { grid-column: 1 / 13; }
 }
 
 /* ── The section label. Inline, one line, at the top of a band. Replaces the
@@ -633,52 +543,10 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
   margin: 0;
   text-wrap: balance;
 }
-/* Columns whose ROWS line up. The repeated fault across this site was a row
-   of columns each flowing its own parts at its own heights: a two-line
-   heading in one column pushed its body out of step with its neighbour, and
-   the pair stopped reading as a row. Same subgrid idea as the bento, made
-   general, because this shape recurs on every page. */
-.hx-cols { display: grid; gap: var(--hx-gap); }
-.hx-cols[data-n='2'] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.hx-cols[data-n='3'] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.hx-cols[data-rows='2'] { grid-template-rows: auto auto; }
-.hx-cols[data-rows='3'] { grid-template-rows: auto auto auto; }
-.hx-cols[data-rows='4'] { grid-template-rows: auto auto auto auto; }
-.hx-cols[data-rows='5'] { grid-template-rows: auto auto auto auto auto; }
-/* Listed explicitly rather than matching any [data-rows], so an unlisted
-   value degrades to an ordinary column instead of collapsing. Bare
-   [data-rows] applied subgrid to a child whose parent had no explicit rows
-   and which had nothing to span — every child then piled into row one on top
-   of the others, which is exactly what data-rows="4" did before it was
-   defined. A missing value should read as "no alignment", never as a pile. */
-.hx-cols[data-rows='2'] > *,
-.hx-cols[data-rows='3'] > *,
-.hx-cols[data-rows='4'] > *,
-.hx-cols[data-rows='5'] > * {
-  display: grid;
-  grid-template-rows: subgrid;
-  gap: var(--spacing-2);
-  min-width: 0;
-}
-.hx-cols[data-rows='2'] > * { grid-row: span 2; }
-.hx-cols[data-rows='3'] > * { grid-row: span 3; }
-.hx-cols[data-rows='4'] > * { grid-row: span 4; }
-.hx-cols[data-rows='5'] > * { grid-row: span 5; }
-@media (max-width: 900px) {
-  /* Stacked, there is nothing to align across, and each column needs its own
-     rows back. Same specificity as the rules above, and later, so it wins. */
-  .hx-cols[data-n] { grid-template-columns: minmax(0, 1fr); row-gap: var(--spacing-5); }
-  .hx-cols[data-rows] { grid-template-rows: none; }
-  .hx-cols[data-rows] > * { grid-row: auto; grid-template-rows: none; }
-}
-
-.hx-prose { max-width: 62ch; color: var(--color-ink-70); margin-top: var(--spacing-2); }
-.hx-prose + .hx-prose { margin-top: var(--spacing-3); }
 /* The older .prose block predates the grid and had no cap at all, so it ran
    the full width of whatever column held it. Scoped to .hx so the pages still
    on the old system are untouched. */
 .hx .prose { max-width: 62ch; }
-.hx .hx-grid > .t-body { max-width: 62ch; }
 
 /* Criteria, not a paragraph. Three conditions joined by middots is a sentence
    pretending to be a list — a shop owner scanning for whether they qualify has
@@ -731,135 +599,25 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
   color: var(--color-ink-50);
   margin: 0 0 var(--spacing-2);
 }
-.side-line {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: clamp(24px, 2.8vw, 40px);
-  line-height: 1.05;
-  letter-spacing: -0.03em;
-  margin: 0;
-}
-.side[data-live] .side-line { color: var(--color-live); }
-/* A third row under the statement, for the pair that has to carry an argument
-   as well as a claim. Margin zero because the grid gap does that spacing. */
-.side-note { color: var(--color-ink-70); max-width: 46ch; margin: 0; }
 /* Inside a subgrid column the container gap already separates the parts, so
    .side-label's own bottom margin doubles up: 32px above the big line and 16px
    below it, in a block whose two halves have no reason to be spaced
    differently. .sides on /shops is plain block flow and still needs the
    margin, so this is scoped rather than removed. */
-.hx-cols[data-rows] .side-label { margin-bottom: 0; }
 @media (max-width: 900px) { .sides { grid-template-columns: minmax(0, 1fr); } }
 
 /* ─── Shop ──────────────────────────────────────────────────────────────────
    Merchandise, on the site's own terms: rules not cards, drawings not
    renders, pills only where something is pressed. */
-
-/* The strip under the header. Mono like a section label, because that is
-   what it is: where you are, and one count. */
-.shop-bar {
-  display: flex; align-items: center; justify-content: space-between;
-  min-height: 52px;
-  border-block: 1px solid var(--color-ink-13);
-  font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase;
-}
-.shop-crumbs { display: flex; align-items: center; gap: 10px; margin: 0; padding: 0; list-style: none; }
-.shop-crumb-sep { color: var(--color-ink-28); }
-.shop-crumb-here { color: var(--color-ink); }
-.shop-bar-link { display: inline-flex; align-items: center; gap: var(--spacing-1); min-height: 44px; color: var(--color-ink-50); }
-.shop-bar-link:hover { color: var(--color-ink); }
-/* The bag as a pill: it is pressed, so it gets the pressable shape. Drawn
-   34px so the strip stays slim, with invisible hit area above and below for
-   44px to a thumb, the same trick as the style guide's copy button. */
-.shop-bag-pill {
-  position: relative;
-  display: inline-flex; align-items: center; gap: 7px;
-  min-height: 34px; padding: 0 5px 0 12px;
-  border: 1px solid var(--color-ink-28); border-radius: var(--radius-pill);
-  color: var(--color-ink);
-  transition: border-color var(--hover) var(--ease);
-}
-.shop-bag-pill::before { content: ''; position: absolute; inset: -5px 0; }
-.shop-bag-pill:hover { border-color: var(--color-ink); }
 /* Without a count the pill would end on its 5px count-side padding. */
-.shop-bag-pill:has(.shop-bar-count:empty) { padding-right: 12px; }
-.shop-bag-icon { width: 14px; height: 14px; flex: none; }
-.shop-bar-count {
-  display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding-inline: 6px;
-  border-radius: var(--radius-pill); background: var(--color-ink); color: var(--color-paper);
-  font-variant-numeric: tabular-nums; letter-spacing: 0;
-}
-.shop-bar-count:empty { display: none; }
 
 .shop-inline-link {
   padding: 0; border: 0; background: none; font: inherit; color: inherit; cursor: pointer;
   text-decoration: underline; text-decoration-color: var(--color-ink-28); text-underline-offset: 3px;
 }
 .shop-inline-link:hover { text-decoration-color: currentColor; }
-
-/* The drawn product. Square, flat ground, one line weight. */
-.shop-plate {
-  --plate-ground: var(--color-paper-2);
-  --plate-line: var(--color-ink-ground);
-  --plate-fill: rgb(22 33 29 / .05);
-  aspect-ratio: 1; background: var(--plate-ground); color: var(--plate-line);
-}
-.shop-plate[data-tone='ink']  { --plate-ground: var(--color-ink-ground); --plate-line: #DFE3DE; --plate-fill: rgb(223 227 222 / .06); }
-.shop-plate[data-tone='land'] { --plate-ground: var(--color-land); --plate-line: #E9ECE7; --plate-fill: rgb(233 236 231 / .10); }
-.shop-plate svg { display: block; width: 100%; height: 100%; }
-.shop-plate-body { fill: var(--plate-fill); stroke: currentColor; stroke-width: 2.5; stroke-linejoin: round; }
-.shop-plate-line { fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; }
-
-/* Closed — sold out, restocking, packing orders, a break. The lights are off
-   (an ink band), there is a sign on the door and a status board beside it. The sign is a drawing, so square corners; it
-   swings once as the page loads and settles crooked, the way a sign on a
-   door does. That swing is the page's only motion besides the live dot, and
-   reduced motion skips it. */
-.shop-soon-side { display: grid; align-content: start; gap: var(--spacing-3); }
-.shop-notify { display: grid; gap: var(--spacing-2); justify-items: start; width: 100%; scroll-margin-top: var(--spacing-5); }
-.shop-notify .join-field { width: 100%; }
-.shop-notify .join-status:empty { display: none; }
-.shop-notify-done { margin: 0; padding-top: var(--spacing-2); border-top: 2px solid var(--color-settled); color: var(--color-ink); scroll-margin-top: var(--spacing-5); }
-
-.shop-closed-grid { align-items: center; }
-.shop-door { display: grid; place-items: center; min-height: clamp(340px, 42vw, 600px); }
-.shop-sign {
-  position: relative;
-  display: grid; justify-items: center;
-  padding-top: clamp(64px, 7vw, 110px);
-  transform-origin: 50% 0;
-  transform: rotate(-2deg);
-  animation: shop-sign-settle 2.6s var(--ease) both;
-}
-.shop-sign-string {
-  position: absolute; top: 0; left: 50%; translate: -50% 0;
-  width: 62%; height: clamp(64px, 7vw, 110px);
-  overflow: visible; fill: none; stroke: var(--color-ink-50); stroke-width: 1.5;
-}
-.shop-sign-nail {
-  position: absolute; top: 0; left: 50%; translate: -50% -50%;
-  width: 14px; height: 14px; border-radius: var(--radius-pill);
-  background: var(--color-ink); box-shadow: 0 0 0 4px var(--color-ink-13);
-}
 /* Light board on a dark band: --color-ink is the light value in here, and
    the ground token is the one a band never rebinds, so it is the text. */
-.shop-sign-board {
-  display: grid; justify-items: center; gap: 6px;
-  width: clamp(260px, 32vw, 460px);
-  padding: clamp(22px, 2.4vw, 34px) clamp(20px, 2.6vw, 40px);
-  background: var(--color-ink); color: var(--color-ink-ground);
-  outline: 1.5px solid color-mix(in srgb, var(--color-ink-ground) 40%, transparent);
-  outline-offset: -10px;
-  box-shadow: 0 30px 60px rgb(0 0 0 / .35);
-}
-.shop-sign-top, .shop-sign-foot {
-  font-family: var(--font-mono); font-size: clamp(11px, 1vw, 13px);
-  letter-spacing: 0.16em; text-transform: uppercase;
-}
-.shop-sign-word {
-  font-family: var(--font-display); font-weight: 800;
-  font-size: clamp(64px, 8.2vw, 128px); line-height: 0.9; letter-spacing: -0.045em;
-}
 @keyframes shop-sign-settle {
   0%   { transform: rotate(9deg); }
   28%  { transform: rotate(-6deg); }
@@ -867,304 +625,11 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
   74%  { transform: rotate(-3deg); }
   100% { transform: rotate(-2deg); }
 }
-@media (prefers-reduced-motion: reduce) { .shop-sign { animation: none; } }
-
-.shop-closed-copy { display: grid; justify-items: start; gap: var(--spacing-3); }
-.shop-closed-h {
-  margin: 0; font-family: var(--font-display); font-weight: 800;
-  font-size: clamp(40px, 5vw, 80px); line-height: 0.96; letter-spacing: -0.038em; text-wrap: balance;
-}
-.shop-closed-copy .ledger { width: 100%; margin-top: var(--spacing-2); }
-@media (max-width: 900px) {
-  .shop-door { min-height: 0; padding-block: var(--spacing-3) var(--spacing-4); }
-}
-
-.shop-meanwhile-line { font-size: clamp(22px, 2.2vw, 32px); }
-/* The buy button's stand-in on a product page, and the bag's notice. */
-.shop-closed-note { display: grid; justify-items: start; gap: var(--spacing-1); margin: 0; padding-block: var(--spacing-2); border-block: 1px solid var(--color-ink-13); color: var(--color-ink-70); }
-.shop-bag-closed { margin-bottom: var(--spacing-4); }
-.shop-closing {
-  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
-  gap: var(--spacing-3); border-top: 2px solid var(--color-ink); padding-top: var(--spacing-3); margin-top: var(--spacing-4);
-}
-.shop-closing-line {
-  margin: 0; font-family: var(--font-display); font-weight: 800;
-  font-size: clamp(28px, 3.4vw, 52px); line-height: 1; letter-spacing: -0.03em;
-}
-
-.shop-why .side-line { font-size: clamp(22px, 2.2vw, 32px); }
-
-.shop-grid {
-  list-style: none; margin: 0; padding: 0;
-  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--spacing-3);
-}
-.shop-card-row { display: flex; justify-content: space-between; gap: var(--spacing-2); }
-
-/* The shelf, with things on it. */
-.shop-lede { align-self: end; }
-.shop-card { display: grid; gap: var(--spacing-1); }
-.shop-card .shop-plate { margin-bottom: var(--spacing-1); transition: opacity var(--hover) var(--ease); }
-.shop-card:hover .shop-plate { opacity: .88; }
-.shop-card-name { font-family: var(--font-display); font-weight: 700; font-size: 19px; letter-spacing: -0.016em; }
-.shop-card:hover .shop-card-name { color: var(--color-live); }
-.shop-card-price { font-size: 17px; }
-.shop-card-line { color: var(--color-ink-70); }
-
-@media (max-width: 900px) { .shop-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 560px) { .shop-grid { grid-template-columns: minmax(0, 1fr); } }
-
-/* A product. */
-.shop-product { align-items: start; }
-.shop-gallery { display: grid; gap: var(--spacing-2); }
-.shop-photo { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; }
-.shop-buy { display: grid; gap: var(--spacing-4); align-content: start; }
-@media (min-width: 901px) { .shop-buy { position: sticky; top: var(--spacing-3); } }
-.shop-buy-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--spacing-1) var(--spacing-3); border-bottom: 1px solid var(--color-ink); padding-bottom: var(--spacing-2); }
-.shop-name {
-  margin: 0; font-family: var(--font-display); font-weight: 800;
-  font-size: clamp(36px, 4.2vw, 64px); line-height: 0.98; letter-spacing: -0.035em;
-}
-.shop-price { margin: 0; font-size: clamp(22px, 2vw, 28px); }
-.shop-buy .hx-lede { max-width: 46ch; }
-
-.shop-add { display: grid; gap: var(--spacing-3); }
-.shop-variants .side-label { margin-bottom: var(--spacing-1); }
-.shop-variant-row { display: flex; flex-wrap: wrap; gap: var(--spacing-1); }
-.shop-variant {
-  min-width: 52px; min-height: 44px; padding-inline: var(--spacing-2);
-  border: 1px solid var(--color-ink-28); border-radius: var(--radius-pill);
-  background: none; font: inherit; font-size: 15px; font-weight: 500; color: var(--color-ink); cursor: pointer;
-  transition: border-color var(--hover) var(--ease), background-color var(--hover) var(--ease), color var(--hover) var(--ease);
-}
-.shop-variant:hover { border-color: var(--color-ink); }
-.shop-variant[aria-pressed='true'] { background: var(--color-ink); border-color: var(--color-ink); color: var(--color-paper); }
-.shop-variant:disabled { color: var(--color-ink-50); text-decoration: line-through; cursor: not-allowed; border-color: var(--color-ink-13); }
-
-.shop-add-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--spacing-2); }
-.shop-add-row .btn { flex: 1; }
-.shop-add .btn:disabled, .shop-address .btn:disabled, .shop-rates .btn:disabled { opacity: .5; pointer-events: none; }
-.shop-add-status { margin: 0; min-height: 1.4em; color: var(--color-ink-70); }
-
-.shop-qty {
-  display: inline-grid; grid-template-columns: 44px 32px 44px; align-items: center;
-  min-height: 44px; border: 1px solid var(--color-ink-28); border-radius: var(--radius-pill);
-}
-.shop-qty button {
-  height: 42px; border: 0; background: none; font: inherit; font-size: 18px; color: var(--color-ink);
-  border-radius: var(--radius-pill); cursor: pointer;
-}
-.shop-qty button:hover { background: var(--color-ink-13); }
-.shop-qty button:disabled { color: var(--color-ink-28); background: none; cursor: default; }
-.shop-qty output { text-align: center; font-variant-numeric: tabular-nums; }
-
-.shop-details ul { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--color-ink-13); }
-.shop-details li { padding-block: 10px; border-bottom: 1px solid var(--color-ink-13); }
-.shop-details .side-label { margin-bottom: var(--spacing-1); }
-.shop-ship-note { margin: var(--spacing-2) 0 0; color: var(--color-ink-70); }
-
-/* The bag. */
-.shop-bag-fallback { grid-column: 1 / 13; min-height: 320px; }
-.shop-thanks-help { margin: 0; color: var(--color-ink-70); }
-.shop-bag-empty { display: grid; justify-items: start; gap: var(--spacing-3); }
-.shop-bag-empty .d3 { margin: 0; color: var(--color-ink-70); }
-
-.shop-lines { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--color-ink); }
-.shop-line {
-  display: grid; grid-template-columns: 96px minmax(0, 1fr) auto; gap: var(--spacing-2);
-  align-items: start; padding-block: var(--spacing-2); border-bottom: 1px solid var(--color-ink-13);
-}
-.shop-line-thumb { display: block; width: 96px; aspect-ratio: 1; background: var(--color-paper-2); }
-.shop-line-main { display: grid; gap: 4px; }
-.shop-line-name { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 19px; letter-spacing: -0.016em; }
-.shop-line-meta { margin: 0; color: var(--color-ink-70); }
-.shop-line-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--spacing-2); margin-top: var(--spacing-1); }
-.shop-line-actions .shop-inline-link { min-height: 44px; font-size: 15px; color: var(--color-ink-70); }
-.shop-line-price { margin: 0; font-size: 17px; }
-@media (max-width: 560px) {
-  .shop-line { grid-template-columns: 72px minmax(0, 1fr) auto; gap: 12px; }
-  .shop-line-thumb { width: 72px; }
-}
-
-.shop-totals { margin: var(--spacing-3) 0 0; display: grid; gap: var(--spacing-1); }
-.shop-totals div { display: flex; justify-content: space-between; gap: var(--spacing-2); }
-.shop-totals dt { color: var(--color-ink-70); }
-.shop-totals dd { margin: 0; }
-.shop-totals-total { border-top: 1px solid var(--color-ink); padding-top: var(--spacing-2); margin-top: var(--spacing-1); }
-.shop-totals-total dt { color: var(--color-ink); font-weight: 600; }
-.shop-totals-total dd { font-size: 22px; }
-
-/* A legend sits outside the fieldset's grid, so its spacing is padding: a
-   margin on it does not push the first row down. */
-.shop-legend { display: grid; gap: 4px; padding: 0 0 var(--spacing-3); }
-.shop-address #bag-state { text-transform: uppercase; }
-.shop-legend .d3 { display: block; }
-.shop-legend .t-sm { color: var(--color-ink-70); }
-@media (max-width: 900px) { .shop-address { margin-top: var(--spacing-4); } }
-
-.shop-rates { display: grid; margin-top: var(--spacing-4); }
-.shop-rates .side-label { margin-bottom: var(--spacing-1); }
-.shop-rate {
-  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--spacing-2);
-  min-height: 56px; padding-block: 10px; border-top: 1px solid var(--color-ink-13); cursor: pointer;
-}
-.shop-rate:last-of-type { border-bottom: 1px solid var(--color-ink-13); }
-.shop-rate input { width: 18px; height: 18px; margin: 0; accent-color: var(--color-ink); }
-.shop-rate-label { display: grid; gap: 2px; }
-.shop-rate-days { color: var(--color-ink-70); }
-.shop-rates .join-submit { margin-top: var(--spacing-3); }
-.shop-pay-note { margin: var(--spacing-2) 0 0; color: var(--color-ink-70); }
-.shop-error { margin-top: var(--spacing-2); color: var(--color-absent); }
-.shop-error:empty { display: none; }
-
-/* ─── Events ─────────────────────────────────────────────────────────────────
-   A calendar set as a ledger: ruled rows, a date column in the margin, the
-   one pressable thing in each row (Register) as a pill. */
-.ev-intro { display: grid; align-content: end; gap: var(--spacing-2); justify-items: start; }
-
-.ev-board { display: grid; gap: var(--spacing-5); }
-.ev-filter { display: flex; flex-wrap: wrap; gap: var(--spacing-1); }
-.ev-filter-chip {
-  display: inline-flex; align-items: center; gap: var(--spacing-1);
-  min-height: 44px; padding: 0 8px 0 var(--spacing-2);
-  border: 1px solid var(--color-ink-28); border-radius: var(--radius-pill);
-  background: none; font: inherit; font-size: 15px; font-weight: 500; color: var(--color-ink); cursor: pointer;
-  transition: border-color var(--hover) var(--ease), background-color var(--hover) var(--ease), color var(--hover) var(--ease);
-}
-.ev-filter-chip:hover { border-color: var(--color-ink); }
-.ev-filter-count {
-  display: inline-grid; place-items: center; min-width: 26px; height: 26px; padding-inline: 7px;
-  border-radius: var(--radius-pill); background: var(--color-ink-13);
-  font-family: var(--font-mono); font-size: 12px; font-variant-numeric: tabular-nums;
-}
-.ev-filter-chip[aria-pressed='true'] { background: var(--color-ink); border-color: var(--color-ink); color: var(--color-paper); }
-.ev-filter-chip[aria-pressed='true'] .ev-filter-count { background: rgb(255 255 255 / .16); }
-
-.ev-section { display: grid; }
-.ev-section-head {
-  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--spacing-1) var(--spacing-3);
-  padding-bottom: var(--spacing-2); border-bottom: 2px solid var(--color-ink);
-}
-.ev-section-head .d3 { margin: 0; }
-.ev-section-note { margin: 0; max-width: 60ch; color: var(--color-ink-70); }
-
-.ev-month { display: grid; }
-.ev-month-h {
-  margin: 0; padding: var(--spacing-3) 0 var(--spacing-1);
-  font-family: var(--font-mono); font-size: 11.5px; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--color-ink-50);
-}
-
-.ev-row {
-  position: relative;
-  /* The date column is exactly as wide as its widest date ("22") plus the
-     space before the hairline, so the date starts on the section's left edge
-     instead of floating in the middle of a wider column. */
-  display: grid; grid-template-columns: calc(48px + var(--spacing-3)) minmax(0, 1fr) auto; align-items: center;
-  gap: var(--spacing-3); padding-block: 20px;
-  border-bottom: 1px solid var(--color-ink-13);
-}
-.ev-row:hover .ev-title { color: var(--color-live); }
-.ev-row[data-cancelled] .ev-title, .ev-row[data-cancelled] .ev-date { color: var(--color-ink-50); }
-.ev-row[data-cancelled] .ev-title { text-decoration: line-through; text-decoration-thickness: 1px; }
-
-/* The date owns its column: it fills the row's height and sits dead centre,
-   with a hairline separating it from the event. */
-.ev-date {
-  align-self: stretch; display: grid; place-content: center; justify-items: center;
-  margin: 0; padding-right: var(--spacing-3); border-right: 1px solid var(--color-ink-13); line-height: 1;
-}
-.ev-date-wk, .ev-date-mo { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-ink-50); }
-.ev-date-day { font-family: var(--font-display); font-weight: 800; font-size: 38px; letter-spacing: -0.04em; margin-block: 4px 3px; font-variant-numeric: tabular-nums; }
-
-.ev-main { display: grid; gap: 8px; min-width: 0; }
-.ev-main .ev-chips { margin-bottom: 4px; }
-/* A meeting has nothing to register for, so its row has no third column and
-   no gap standing in for one on the right. */
-.ev-row:has(.ev-aside:empty) { grid-template-columns: calc(48px + var(--spacing-3)) minmax(0, 1fr); }
-.ev-aside:empty { display: none; }
-.ev-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.ev-title { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(18px, 1.6vw, 22px); line-height: 1.2; letter-spacing: -0.018em; transition: color var(--hover) var(--ease); }
-/* The title's link covers the row; Register is lifted above it. */
-.ev-link::after { content: ''; position: absolute; inset: 0; }
-.ev-meta { margin: 0; color: var(--color-ink-70); }
-/* A time taken from a regular schedule, not an agenda. Its own line, quieter. */
-.ev-caveat { display: block; margin-top: 2px; font-size: 13px; color: var(--color-ink-50); }
-
-.ev-aside { position: relative; z-index: 1; display: flex; align-items: center; gap: var(--spacing-2); }
-.ev-price { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-ink-50); }
-
-.ev-nomatch { display: none; margin: 0; padding-block: var(--spacing-3); color: var(--color-ink-70); }
-.ev-local-empty { margin: 0; padding-block: var(--spacing-3); color: var(--color-ink-70); }
-
-/* Filtering: hide rows, months and whole sections that do not match. */
-.ev-board[data-filter='community'] .ev-row:not([data-groups~='community']),
-.ev-board[data-filter='investors'] .ev-row:not([data-groups~='investors']),
-.ev-board[data-filter='governance'] .ev-row:not([data-groups~='governance']),
-.ev-board[data-filter='community'] .ev-month:not([data-groups~='community']),
-.ev-board[data-filter='investors'] .ev-month:not([data-groups~='investors']),
-.ev-board[data-filter='governance'] .ev-month:not([data-groups~='governance']),
-.ev-board[data-filter='local'] [data-section='clear'],
-.ev-board[data-filter='community'] [data-section='local'],
-.ev-board[data-filter='investors'] [data-section='local'],
-.ev-board[data-filter='governance'] [data-section='local'] { display: none; }
-.ev-board[data-filter='community'] [data-section='clear']:not([data-groups~='community']) .ev-nomatch,
-.ev-board[data-filter='investors'] [data-section='clear']:not([data-groups~='investors']) .ev-nomatch,
-.ev-board[data-filter='governance'] [data-section='clear']:not([data-groups~='governance']) .ev-nomatch { display: block; }
-
-/* No Clear events: a ruled panel with the email field beside the words. */
-.ev-empty {
-  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--spacing-3) var(--hx-gap);
-  align-items: end; padding-block: var(--spacing-4); border-bottom: 1px solid var(--color-ink-13);
-}
-.ev-empty-h { margin: 0 0 var(--spacing-1); font-family: var(--font-display); font-weight: 800; font-size: clamp(26px, 2.8vw, 40px); line-height: 1.05; letter-spacing: -0.03em; }
-.ev-empty-lede { margin: 0; max-width: 46ch; color: var(--color-ink-70); }
-
-.ev-kinds .side-line { font-size: clamp(22px, 2.2vw, 32px); }
-
-@media (max-width: 700px) {
-  /* One scrolling row of chips rather than three wrapped lines above the list. */
-  .ev-filter { flex-wrap: nowrap; overflow-x: auto; margin-inline: calc(var(--hx-inset) * -1); padding-inline: var(--hx-inset); scrollbar-width: none; }
-  .ev-filter::-webkit-scrollbar { display: none; }
-  .ev-filter-chip { flex: none; }
-  /* The date spans both rows (event, then Register) so it centres on the
-     whole entry, not just the title. */
-  .ev-row, .ev-row:has(.ev-aside:empty) { grid-template-columns: calc(40px + 14px) minmax(0, 1fr); align-items: start; column-gap: var(--spacing-2); row-gap: 12px; padding-block: var(--spacing-2); }
-  .ev-date { grid-row: 1 / span 2; padding-right: 14px; }
-  .ev-date-day { font-size: 30px; }
-  .ev-aside { grid-column: 2; }
-  .ev-row:has(.ev-aside:empty) .ev-date { grid-row: 1; }
-  .ev-empty { grid-template-columns: minmax(0, 1fr); }
-}
-
-/* An event. */
-.ev-detail { align-items: start; }
 /* Seven and five rather than eight and four: at a third of the page the
    facts column set a street address in three or four lines. Five columns
    keeps most of them to two. */
-@media (min-width: 901px) {
-  .ev-detail > .ev-body { grid-column: span 7; }
-  .ev-detail > .ev-ticket { grid-column: span 5; }
-}
 .ev-body { display: grid; gap: var(--spacing-3); justify-items: start; }
-.ev-body .hx-prose { margin: 0; }
 .ev-detail-title { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: clamp(38px, 5vw, 76px); line-height: 0.98; letter-spacing: -0.036em; text-wrap: balance; }
-.ev-agenda { width: 100%; }
-.ev-agenda ol { margin: var(--spacing-1) 0 0; padding: 0; list-style: none; counter-reset: ev; border-top: 1px solid var(--color-ink-13); }
-.ev-agenda li { counter-increment: ev; display: grid; grid-template-columns: 40px 1fr; padding-block: 12px; border-bottom: 1px solid var(--color-ink-13); }
-.ev-agenda li::before { content: counter(ev, decimal-leading-zero); font-family: var(--font-mono); font-size: 12px; color: var(--color-ink-50); padding-top: 3px; }
-.ev-legal { margin: 0; color: var(--color-ink-70); max-width: 62ch; }
-
-.ev-ticket { display: grid; gap: var(--spacing-3); align-content: start; border-top: 2px solid var(--color-ink); padding-top: var(--spacing-2); }
-@media (min-width: 901px) { .ev-ticket { position: sticky; top: var(--spacing-3); } }
-.ev-facts { margin: 0; display: grid; }
-.ev-facts div { display: grid; grid-template-columns: 72px 1fr; gap: var(--spacing-2); padding-block: 12px; border-bottom: 1px solid var(--color-ink-13); }
-.ev-facts dt { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-ink-50); padding-top: 3px; }
-.ev-facts dd { margin: 0; line-height: 1.45; }
-.ev-cta { width: 100%; }
-.ev-state { margin: 0; color: var(--color-ink-70); }
-.ev-add .side-label { margin-bottom: var(--spacing-1); }
-.ev-add-row { display: flex; flex-wrap: wrap; gap: var(--spacing-1) var(--spacing-3); }
-.ev-add-row a { min-height: 44px; display: inline-flex; align-items: center; }
 .ev-error-actions { display: flex; flex-wrap: wrap; gap: var(--spacing-2); }
 
 /* ─── 404 ──────────────────────────────────────────────────────────────────
@@ -1206,68 +671,4 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
 /* ─── Directory ──────────────────────────────────────────────────────────────
    A ruled list like the events calendar: an initials plate in the margin,
    name and "kind · city", and the tags a member scans for on the right. */
-.dir-lede { align-self: end; }
 .dir { display: grid; gap: var(--spacing-3); }
-.dir-controls { display: grid; gap: var(--spacing-2); }
-.dir-search {
-  display: flex; align-items: center; gap: 10px; max-width: 560px; min-height: 48px;
-  padding-inline: 14px; background: var(--color-paper-2); border: 1px solid var(--color-ink-28);
-  color: var(--color-ink-50);
-}
-.dir-search:focus-within { border-color: var(--color-ink); color: var(--color-ink); }
-.dir-search input {
-  flex: 1; min-width: 0; height: 46px; border: 0; background: none; outline: 0;
-  font: inherit; font-size: 16px; color: var(--color-ink);
-}
-.dir-search input::placeholder { color: var(--color-ink-50); }
-.dir-count { margin: 0; color: var(--color-ink-50); font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; }
-
-.dir-list { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--color-ink); }
-.dir-row {
-  position: relative;
-  display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; align-items: center; gap: var(--spacing-3);
-  padding-block: 18px; border-bottom: 1px solid var(--color-ink-13);
-}
-.dir-row:hover .dir-name { color: var(--color-live); }
-.dir-avatar {
-  display: grid; place-items: center; width: 52px; height: 52px;
-  border: 1px solid var(--color-ink-28); background: var(--color-paper-2);
-  font-family: var(--font-display); font-weight: 800; font-size: 17px; letter-spacing: -0.02em;
-}
-.dir-avatar-lg { width: 88px; height: 88px; font-size: 30px; flex: none; }
-.dir-main { display: grid; gap: 4px; min-width: 0; }
-.dir-name { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(18px, 1.6vw, 22px); letter-spacing: -0.018em; transition: color var(--hover) var(--ease); }
-.dir-link::after { content: ''; position: absolute; inset: 0; }
-.dir-meta { margin: 0; color: var(--color-ink-70); }
-.dir-tags { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
-.dir-nomatch { margin: 0; padding-block: var(--spacing-3); color: var(--color-ink-70); }
-
-.dir-empty {
-  display: grid; justify-items: start; gap: var(--spacing-2);
-  padding-block: var(--spacing-4);
-  border-top: 2px solid var(--color-ink); border-bottom: 1px solid var(--color-ink-13);
-}
-.dir-empty-h { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: clamp(26px, 2.8vw, 40px); line-height: 1.05; letter-spacing: -0.03em; }
-.dir-empty-lede { margin: 0 0 var(--spacing-1); max-width: 52ch; color: var(--color-ink-70); }
-
-.dir-refer-band {
-  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: var(--spacing-3) var(--hx-gap);
-  align-items: start; margin-top: var(--spacing-4); padding-top: var(--spacing-3); border-top: 1px solid var(--color-ink-13);
-  scroll-margin-top: var(--spacing-5);
-}
-.dir-refer-h { margin: 0 0 var(--spacing-1); font-family: var(--font-display); font-weight: 700; font-size: clamp(22px, 2vw, 28px); letter-spacing: -0.02em; line-height: 1.15; }
-.dir-refer-lede { margin: 0; color: var(--color-ink-70); max-width: 44ch; }
-.dir-why .side-line { font-size: clamp(22px, 2.2vw, 32px); }
-
-.dir-profile-head { display: flex; align-items: center; gap: var(--spacing-3); }
-.dir-profile-meta { margin: 6px 0 0; }
-.dir-split-note { margin: 0; color: var(--color-ink-70); }
-
-@media (max-width: 700px) {
-  .dir-row { grid-template-columns: 44px minmax(0, 1fr); gap: 4px var(--spacing-2); align-items: start; }
-  .dir-avatar { width: 44px; height: 44px; font-size: 15px; grid-row: 1 / span 2; }
-  .dir-tags { grid-column: 2; justify-content: flex-start; margin-top: 6px; }
-  .dir-refer-band { grid-template-columns: minmax(0, 1fr); }
-  .dir-profile-head { align-items: flex-start; }
-  .dir-avatar-lg { width: 64px; height: 64px; font-size: 22px; }
-}

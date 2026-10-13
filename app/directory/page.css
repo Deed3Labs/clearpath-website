@@ -1,0 +1,194 @@
+/* Directory — page-only rules, all under .pg-directory (a route's CSS stays
+   loaded after you leave it, so nothing here may be global). Ported from
+   reference/redesign/directory.html with the tokens renamed. The partner
+   page (/directory/[slug]) imports this file too. Shared pieces (Ticket,
+   CatChips, Crumbbar) are styled in system.css. */
+
+.pg-directory {
+  /* ── Hero ────────────────────────────────────────────────────────────── */
+  .dhero { padding-top: clamp(40px, 5vw, 80px); padding-bottom: clamp(40px, 4.5vw, 64px); }
+  .dhero .hero-lede { text-wrap: pretty; }
+  .dhero .facts li span:last-child { text-align: right; }
+  .dhero .facts b { font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  /* ── Search and kinds ────────────────────────────────────────────────── */
+  .dbar { display: grid; grid-template-columns: minmax(260px, 380px) minmax(0, 1fr); align-items: center; gap: 12px 16px; margin-bottom: 14px; }
+  .srch { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 16px; border: 1px solid var(--color-ink-28); border-radius: var(--radius-pill); transition: border-color 200ms var(--ease); }
+  .srch:focus-within { border-color: var(--color-ink); }
+  .srch svg { flex: none; width: 16px; height: 16px; color: var(--color-ink-50); }
+  .srch input { flex: 1; min-width: 0; font: inherit; font-size: 15.5px; color: var(--color-ink); background: transparent; border: 0; outline: none; -webkit-appearance: none; appearance: none; }
+  .srch input::-webkit-search-cancel-button { display: none; }
+  .srch input::placeholder { color: var(--color-ink-50); }
+  .srch .clr { display: none; width: 24px; height: 24px; place-items: center; color: var(--color-ink-50); font-size: 17px; border-radius: var(--radius-pill); }
+  .srch .clr:hover { color: var(--color-ink); }
+  .srch.has .clr { display: grid; }
+  .dbar .cats { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 32px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 32px), transparent); padding-right: 28px; }
+  @media (max-width: 900px) { .dbar { grid-template-columns: minmax(0, 1fr); } }
+
+  /* ── The board: the list, and the map beside it ──────────────────────── */
+  .dir { padding-bottom: 0; }
+  .dboard { --px: clamp(18px, 2vw, 28px); --line: var(--color-ink-28); display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); border: 1px solid var(--line); align-items: start; }
+  .dlist { min-width: 0; border-right: 1px solid var(--line); align-self: stretch; }
+  .dlist .c-h, .dmap .c-h { min-height: 56px; border-bottom: 1px solid var(--line); }
+  .prow { position: relative; display: grid; grid-template-columns: 52px minmax(0, 1fr) auto 14px; min-height: 84px; align-items: center; gap: 16px; padding: 16px var(--px); border-bottom: 1px solid var(--color-ink-13); transition: background-color 200ms var(--ease); }
+  .prow:last-child { border-bottom: 0; }
+  .prow:hover, .prow.hot { background: var(--color-paper-2); }
+  .av { display: grid; place-items: center; width: 52px; height: 52px; border: 1px solid var(--color-ink-28); background: var(--color-paper); color: var(--color-ink); transition: background-color 200ms var(--ease), color 200ms var(--ease), border-color 200ms var(--ease); }
+  .av svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+  .av .ini { font-weight: 600; font-size: 16px; letter-spacing: -0.01em; }
+  .prow.hot .av { background: var(--color-ink); color: var(--color-paper); border-color: var(--color-ink); }
+  .prow h3 { font-family: var(--font-display); font-weight: 600; font-size: 18px; letter-spacing: -0.015em; line-height: 1.2; overflow-wrap: break-word; }
+  .prow h3 a::after { content: ''; position: absolute; inset: 0; }
+  .prow h3 a:focus-visible { outline: none; }
+  .prow:has(h3 a:focus-visible) { outline: 2px solid var(--color-live); outline-offset: -2px; }
+  .prow mark { background: color-mix(in srgb, var(--color-signal-light) 45%, transparent); color: inherit; }
+  .prow .meta { margin-top: 2px; font-size: 14px; color: var(--color-ink-50); }
+  .prow .tags { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  .prow > svg { width: 14px; height: 10px; color: var(--color-ink-50); transition: transform 200ms var(--ease); }
+  .prow:hover > svg { transform: translateX(3px); color: var(--color-ink); }
+  .dnone { padding: 28px var(--px); font-size: 14.5px; color: var(--color-ink-50); }
+  .dempty { display: grid; gap: 14px; justify-items: start; padding: clamp(28px, 3vw, 44px) var(--px); }
+  .dempty h3 { font-family: var(--font-display); font-weight: 600; font-size: clamp(22px, 2vw, 28px); letter-spacing: -0.022em; line-height: 1.15; max-width: 20ch; }
+  .dempty p { font-size: 15px; color: var(--color-ink-70); max-width: 42ch; }
+  @media (max-width: 640px) {
+    .prow { grid-template-columns: 44px minmax(0, 1fr) 14px; gap: 14px; }
+    .prow .av { width: 44px; height: 44px; font-size: 15px; }
+    .prow .tags { grid-column: 2; grid-row: 2; justify-content: flex-start; }
+    .prow .tags:empty { display: none; }
+    .prow > svg { grid-row: 1 / span 2; grid-column: 3; }
+  }
+
+  /* The map: drawn, not to scale. Pins sit on the towns. */
+  .dmap { min-width: 0; align-self: stretch; }
+  .dmap-in { position: sticky; top: calc(var(--head-h, 68px) + 16px); }
+  .mapw { position: relative; background: var(--color-paper-2); }
+  .mapw svg { display: block; width: 100%; height: auto; }
+  .mapw .fw2 { fill: none; stroke: var(--color-ink-28); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  .mapw .shd { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .06em; fill: var(--color-ink-50); }
+  .mapw .shd-b { fill: var(--color-paper-2); stroke: var(--color-ink-28); stroke-width: 1; }
+  .mapw .town circle { fill: var(--color-paper-2); stroke: var(--color-ink-50); stroke-width: 1.2; }
+  .mapw .town text { font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; fill: var(--color-ink-70); }
+  .pin { cursor: pointer; transition: opacity 250ms var(--ease); }
+  .pin .pr2 { fill: color-mix(in srgb, var(--color-settled) 18%, transparent); stroke: none; transform-box: fill-box; transform-origin: center; }
+  .pin .pc2 { fill: var(--color-settled); stroke: var(--color-paper-2); stroke-width: 2; transform-box: fill-box; transform-origin: center; transition: transform 200ms var(--ease); }
+  .pin.split .pc2 { fill: var(--color-ink); }
+  .pin.off { opacity: .14; pointer-events: none; }
+  .pin.hot .pr2 { animation: pg-directory-pulse 1.4s ease-out infinite; }
+  .pin.hot .pc2 { transform: scale(1.333); }
+  .tip { position: absolute; z-index: 3; transform: translate(-50%, calc(-100% - 16px)); pointer-events: none; padding: 8px 12px; background: var(--color-ink); color: var(--color-paper); font-size: 13px; line-height: 1.3; white-space: nowrap; opacity: 0; transition: opacity 150ms var(--ease); }
+  .tip.on { opacity: 1; }
+  .tip small { display: block; font-size: 11.5px; color: #ABB1AC; }
+  .tip::after { content: ''; position: absolute; left: 50%; bottom: -5px; width: 10px; height: 10px; background: var(--color-ink); transform: translateX(-50%) rotate(45deg); }
+  .mlegend { display: flex; flex-wrap: wrap; gap: 6px 18px; padding: 14px var(--px); border-top: 1px solid var(--color-ink-13); font-size: 13px; color: var(--color-ink-70); }
+  .mlegend span { display: inline-flex; align-items: center; gap: 8px; }
+  .mlegend i { width: 10px; height: 10px; border-radius: var(--radius-pill); background: var(--color-settled); }
+  .mlegend i.s { background: var(--color-ink); }
+
+  /* Under the map: the partner you are pointing at, or the towns. */
+  .peek { border-top: 1px solid var(--line); padding: 18px var(--px) 20px; min-height: 150px; }
+  .peek .label { display: block; margin-bottom: 12px; }
+  .towns { display: flex; flex-wrap: wrap; gap: 6px; }
+  .towns button { display: inline-flex; align-items: center; gap: 8px; min-height: 34px; padding-inline: 12px; border: 1px solid var(--color-ink-28); border-radius: var(--radius-pill); font-size: 13.5px; transition: border-color 200ms var(--ease), background-color 200ms var(--ease), color 200ms var(--ease); }
+  .towns button span { font-family: var(--font-mono); font-size: 10.5px; color: var(--color-ink-50); }
+  .towns button:hover { border-color: var(--color-ink); }
+  .towns button[aria-pressed='true'] { background: var(--color-ink); border-color: var(--color-ink); color: var(--color-paper); }
+  .towns button[aria-pressed='true'] span { color: rgb(223 227 222 / .6); }
+  .pk { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 6px 16px; align-items: start; }
+  .pk .av { grid-row: 1 / span 2; }
+  .pk b { font-family: var(--font-display); font-weight: 600; font-size: 18px; letter-spacing: -0.015em; }
+  .pk small { display: block; font-size: 13.5px; color: var(--color-ink-50); }
+  .pk dl { grid-column: 2; display: grid; gap: 4px; margin-top: 6px; font-size: 14px; }
+  .pk dl div { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 10px; }
+  .pk dt { color: var(--color-ink-50); }
+
+  @media (max-width: 900px) {
+    .dboard { grid-template-columns: minmax(0, 1fr); }
+    .dmap { order: -1; border-bottom: 1px solid var(--line); }
+    .dlist { border-right: 0; }
+    .peek { min-height: 0; }
+    .dmap-in { position: static; }
+  }
+  @media (max-width: 640px) {
+    /* The map shrinks to a phone, so its words and pins grow to stay readable. */
+    .dmap .mapw .town text { font-size: 17px; letter-spacing: .06em; }
+    .dmap .mapw .town circle { r: 5; }
+    .dmap .mapw .shd, .dmap .mapw .shd-b { display: none; }
+    .dmap .mapw .town.empty text { display: none; }
+    .dmap .mapw .pin .pc2 { r: 10; stroke-width: 3; }
+    .dmap .mapw .pin .pr2 { r: 18; }
+    .dmap .mapw .fw2 { stroke-width: 3.4; }
+  }
+
+  /* ── 01 Refer a business: a framed cell, three underline fields ──────── */
+  .refer2 { --px: clamp(20px, 2.6vw, 36px); --line: var(--color-ink-28); display: grid; border: 1px solid var(--line); }
+  .refer2 .c-h { border-bottom: 1px solid var(--line); }
+  .rf { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px clamp(24px, 3vw, 44px); padding: clamp(26px, 3vw, 40px) var(--px) clamp(30px, 3.4vw, 44px); }
+  .f2 { display: grid; gap: 4px; min-width: 0; }
+  .f2 .lb { font-size: 13px; color: var(--color-ink-50); transition: color 200ms var(--ease); }
+  .f2 input { width: 100%; min-width: 0; font: inherit; font-size: 17px; color: var(--color-ink); background: transparent; border: 0; border-bottom: 1px solid var(--color-ink-28); border-radius: 0; padding: 8px 0 10px; outline: none; transition: border-color 200ms var(--ease); -webkit-appearance: none; appearance: none; }
+  .f2 input::placeholder { color: var(--color-ink-28); }
+  .f2 input:hover, .f2 input:focus { border-color: var(--color-ink); }
+  /* Focus thickens the underline, so it shows on a red (invalid) line too. */
+  .f2 input:focus { border-bottom-width: 2px; padding-bottom: 9px; }
+  .f2.bad .lb { color: var(--color-absent); }
+  .f2.bad input { border-color: var(--color-absent); border-bottom-width: 2px; padding-bottom: 9px; }
+  .refer2 .c-f { min-height: 72px; flex-wrap: wrap; padding-block: 12px; }
+  .refer2 .c-f .btn { min-height: 46px; }
+  .refer2 .c-f .err { color: var(--color-absent); }
+  .refer2 .ok { display: grid; gap: 12px; justify-items: start; padding: clamp(26px, 3vw, 40px) var(--px); }
+  .refer2 .ok p { display: flex; align-items: center; gap: 12px; font-family: var(--font-display); font-weight: 600; font-size: clamp(19px, 1.7vw, 23px); letter-spacing: -0.02em; line-height: 1.25; }
+  .refer2 .ok svg { flex: none; width: 20px; height: 20px; color: var(--color-settled); }
+  .refer2 .ok button { font-size: 14.5px; min-height: 32px; text-decoration: underline; text-decoration-color: var(--color-ink-28); text-underline-offset: 3px; }
+  @media (max-width: 900px) { .rf { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .rf .f2:nth-child(3) { grid-column: 1 / -1; } }
+  @media (max-width: 560px) { .rf { grid-template-columns: minmax(0, 1fr); } .refer2 .c-f .btn { width: 100%; } }
+
+  /* ── 02 Why spend here, on ink ───────────────────────────────────────── */
+  .why3d { --px: clamp(20px, 2.6vw, 36px); --line: var(--color-ink-28); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--line); }
+  .why3d > .cell + .cell { border-left: 1px solid var(--line); }
+  .why3d .art { aspect-ratio: 320 / 140; margin-bottom: 10px; }
+  .why3d .art svg { width: 100%; height: 100%; overflow: visible; }
+  .why3d .o { fill: none; stroke: var(--color-ink); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .why3d .r { fill: none; stroke: var(--color-ink-28); stroke-width: 1.2; }
+  .why3d .f { fill: var(--color-ink); }
+  .why3d .g { fill: var(--color-signal-light); }
+  .why3d .bgk { fill: var(--color-ink-ground); }
+  .why3d .ink { color: var(--color-ink); }
+  .why3d .gnd { color: var(--color-ink-ground); }
+  .why3d text { font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; fill: var(--color-ink-50); }
+  @media (max-width: 1000px) { .why3d { grid-template-columns: minmax(0, 1fr); } .why3d > .cell + .cell { border-left: 0; border-top: 1px solid var(--line); } .why3d .art { max-width: 420px; } }
+
+  /* ── Partner page ────────────────────────────────────────────────────── */
+  .vsec { padding-top: clamp(28px, 3.4vw, 48px); padding-bottom: var(--sec); }
+  .pp2 { --px: clamp(20px, 2.6vw, 40px); --line: var(--color-ink-28); display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); border: 1px solid var(--line); }
+  .pp2 > .cell + .cell { border-left: 1px solid var(--line); }
+  .pp2 .body { grid-template-rows: none; grid-template-columns: minmax(0, 1fr); display: grid; align-content: start; gap: 18px; padding: clamp(28px, 3.4vw, 48px) var(--px); }
+  .phd { display: flex; align-items: center; gap: 20px; min-width: 0; }
+  .phd .av { flex: none; width: 84px; height: 84px; }
+  .phd .av svg { width: 36px; height: 36px; }
+  .phd .av .ini { font-size: 26px; }
+  .pp2 h1 { font-family: var(--font-display); font-weight: 800; font-size: clamp(36px, 4.4vw, 62px); line-height: .98; letter-spacing: -0.04em; text-wrap: balance; overflow-wrap: break-word; }
+  .pp2 .lede { margin-top: 6px; font-size: clamp(17px, 1.4vw, 20px); color: var(--color-ink-70); }
+  .pp2 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .pp2 .copy { font-size: 16.5px; line-height: 1.6; color: var(--color-ink-70); max-width: 52ch; }
+  .pp2 .note2 { font-size: 14px; padding: 12px 16px; border-left: 2px solid var(--color-ink); background: var(--color-paper-2); max-width: 52ch; }
+  .pmap { margin: 10px 0 0; border: 1px solid var(--color-ink-28); width: 100%; }
+  .pmap .mapw svg { aspect-ratio: 2 / 1; width: 100%; }
+  .pmap .mapw .town text { font-size: 9px; }
+  .pmap figcaption { display: flex; justify-content: space-between; gap: 12px; padding: 10px 14px; border-top: 1px solid var(--color-ink-13); font-size: 13px; color: var(--color-ink-50); }
+  .tk .act > .btn[data-variant='ghost'] { min-height: 46px; }
+  .tk .inl { text-decoration: underline; text-decoration-color: var(--color-ink-28); text-underline-offset: 3px; }
+  @media (max-width: 1000px) { .pp2 { grid-template-columns: minmax(0, 1fr); } .pp2 > .cell + .cell { border-left: 0; border-top: 1px solid var(--line); } }
+  .near { --px: clamp(18px, 2vw, 28px); margin-top: clamp(56px, 6vw, 88px); }
+  .near .bxn { border: 1px solid var(--color-ink-28); border-top: 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pin.hot .pr2 { animation: none; opacity: .5; transform: scale(1.4); }
+  }
+
+  /* Held back until the hero's intro takes over (see HeroScope and the
+     layout's motion gate), and the partner page's cells until they rise. */
+  html.motion &:has(.hero:not([data-intro])) #dir :is(.dbar, .dboard) { opacity: 0; }
+  html.motion & [data-rise]:not([data-risen]) { opacity: 0; }
+}
+
+@keyframes pg-directory-pulse { 0% { transform: scale(.6); opacity: 1 } 100% { transform: scale(2.2); opacity: 0 } }

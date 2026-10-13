@@ -1,75 +1,77 @@
-import { DirectoryList } from '@/components/directory/DirectoryList';
+import { PageHero, Section, SectionHead } from '@/components/system';
+import { BoardIntro } from '@/components/events/Motion';
+import { DirectoryBoard } from '@/components/directory/DirectoryBoard';
 import { ReferForm } from '@/components/directory/ReferForm';
-import { Button } from '@/components/primitives/Button';
-import { EMPTY, OPENING, WHY } from '@/content/directory';
+import { WhyArt } from '@/components/directory/WhyArt';
+import { int } from '@/lib/format';
+import { EMPTY, FACTS, META, OPENING, WHY } from '@/content/directory';
 import { listedPartners } from '@/lib/directory';
+import './page.css';
 
-export const metadata = {
-  title: 'Directory',
-  description: 'Local businesses in the Inland Empire that take Clear Pay.',
-};
+export const metadata = { title: META.title, description: META.description };
 
-/* The public side of the app's Clear Partners list.
+/* The directory, ported from reference/redesign/directory.html: the public
+ * side of the app's Clear Partners list.
  *
- * With partners it is a list you search: name, kind of business and city,
- * with a tag for Clear Pay and one for split plans. Without any it is not a
- * dead page — it says the first partners are signing on, points a shop owner
- * at /shops, and asks members for the businesses they already use, which is
- * how most partners arrive. The referral form is on the page either way.
+ * With partners it is a list you search beside a drawn map of the Inland
+ * Empire, the two linked. Without any it is not a dead page: it says the
+ * first partners are signing on, points a shop owner at /shops, and the map
+ * shows the towns with no pins. 01 asks members for the businesses they
+ * already use, which is how most partners arrive; 02, on ink, is why it
+ * matters. Drafts never reach the live site (lib/directory.ts).
  */
 export default function Directory() {
   const partners = listedPartners();
+  const n = [partners.length, new Set(partners.map((p) => p.city)).size, partners.filter((p) => p.splitPlans).length];
 
   return (
-    <div className="hx">
-      <section className="hx-band hx-wrap" data-pad="tight">
-        <p className="hx-label">
-          <b>01</b> {OPENING.kicker}
-        </p>
-        <div className="hx-grid">
-          <h1 className="hx-h2 c-two-thirds">{OPENING.heading}</h1>
-          <p className="hx-lede c-third dir-lede">{OPENING.lede}</p>
+    <div className="pg-directory">
+      <PageHero
+        label={OPENING.label}
+        lines={OPENING.lines}
+        size="min(7.6vw, 104px)"
+        phoneSize="clamp(40px, 11.6vw, 60px)"
+        phone="wrap"
+        className="dhero"
+        lede={OPENING.lede}
+        side={
+          <ul className="facts" data-in>
+            {partners.length
+              ? FACTS.listed.map((f, i) => (
+                  <li key={f.k}>
+                    <span>{f.k}</span>
+                    <span>
+                      <b>{int(n[i])}</b> {f.after}
+                    </span>
+                  </li>
+                ))
+              : FACTS.empty.map((f) => (
+                  <li key={f.k}>
+                    <span>{f.k}</span>
+                    <span>{f.v}</span>
+                  </li>
+                ))}
+          </ul>
+        }
+      >
+        <BoardIntro bar="#dir .dbar" board="#dir .dboard" rows="#dir .prow" />
+      </PageHero>
 
-          <div className="c-full">
-            {partners.length ? (
-              <DirectoryList partners={partners} />
-            ) : (
-              <div className="dir-empty">
-                <p className="dir-empty-h">{EMPTY.heading}</p>
-                <p className="t-sm dir-empty-lede">{EMPTY.lede}</p>
-                <Button href="/shops" live>
-                  {EMPTY.shopButton}
-                </Button>
-              </div>
-            )}
-          </div>
-
-          <div className="c-full dir-refer-band" id="refer">
-            <div className="dir-refer-copy">
-              <h2 className="dir-refer-h">{EMPTY.referHeading}</h2>
-              <p className="t-sm dir-refer-lede">{EMPTY.referLede}</p>
-            </div>
-            <ReferForm />
-          </div>
-        </div>
+      <section className="wrap dir" id="dir">
+        <DirectoryBoard partners={partners} />
       </section>
 
-      <section className="hx-band" data-tone="ink">
-        <div className="hx-wrap">
-          <p className="hx-label">
-            <b>02</b> {WHY.kicker}
-          </p>
-          <div className="hx-cols dir-why" data-n="3" data-rows="3">
-            {WHY.sides.map((s) => (
-              <div className="side" key={s.label}>
-                <p className="side-label">{s.label}</p>
-                <p className="side-line">{s.line}</p>
-                <p className="t-sm side-note">{s.note}</p>
-              </div>
-            ))}
-          </div>
+      <Section id="refer">
+        <SectionHead n={EMPTY.referN} label={EMPTY.referLabel} title={EMPTY.referHeading} line={EMPTY.referLede} />
+        <div className="body-gap">
+          <ReferForm />
         </div>
-      </section>
+      </Section>
+
+      <Section ink id="why">
+        <SectionHead n={WHY.n} label={WHY.label} title={WHY.title} line={WHY.line} />
+        <WhyArt />
+      </Section>
     </div>
   );
 }

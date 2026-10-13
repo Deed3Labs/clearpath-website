@@ -1,62 +1,98 @@
 import Link from 'next/link';
-import { Chip } from '@/components/primitives';
-import { LiveDot } from '@/components/primitives/Button';
+import { Chip, DateBlock, LiveDot } from '@/components/system';
 import { DETAIL, LISTING } from '@/content/events';
-import { EventChips } from './EventChips';
 import type { CalEvent } from '@/lib/events/sources';
-import { dayNumber, monthShort, timeRange, weekdayShort } from '@/lib/events/time';
+import { groupLabel, isLocal, shortTitle, timeLabel, whereShort } from './model';
 
-const FORMAT: Record<CalEvent['format'], string> = {
-  online: 'Online',
-  'in-person': 'In person',
-  hybrid: 'In person and online',
-};
-
-/* One line of the calendar. The title is the link to the detail page and
-   stretches over the whole row; Register sits above that overlay so it is its
-   own target, not a link nested inside a link. */
-export function EventRow({ event: e }: { event: CalEvent }) {
-
-  const where = e.source === 'local' ? e.location : e.format === 'online' ? FORMAT.online : e.location ?? FORMAT[e.format];
-
+/* The chips on an event: one per category, named as the filters are, so a
+   chip says which filters show it. A local meeting's one chip is its place. */
+export function EventChips({ event: e }: { event: CalEvent }) {
+  if (isLocal(e)) return <span className="chip k">{e.place}</span>;
   return (
-    <article className="ev-row" data-groups={e.groups.join(' ')} data-cancelled={e.cancelled ? '' : undefined}>
-      <p className="ev-date" aria-hidden="true">
-        <span className="ev-date-wk">{weekdayShort(e.start)}</span>
-        <span className="ev-date-day">{dayNumber(e.start)}</span>
-        <span className="ev-date-mo">{monthShort(e.start)}</span>
-      </p>
+    <>
+      {e.groups.map((g) => (
+        <Chip key={g}>{groupLabel(g)}</Chip>
+      ))}
+    </>
+  );
+}
 
-      <div className="ev-main">
-        <div className="ev-chips">
+/* The little arrow that says a link leaves the site. */
+export function Ext() {
+  return (
+    <svg viewBox="0 0 12 12" aria-hidden="true">
+      <path d="M3 9L9 3M4 3h5v5" fill="none" stroke="currentColor" strokeWidth="1.4" />
+    </svg>
+  );
+}
+
+/* One line of the agenda. The title is the link to the event's page and
+   stretches over the whole row; Register and Agenda sit above that overlay,
+   so each is its own target rather than a link inside a link. */
+export function EventRowBody({ event: e }: { event: CalEvent }) {
+  const local = isLocal(e);
+  const where = whereShort(e);
+  return (
+    <>
+      <DateBlock date={e.start} />
+      <div className="rm">
+        <div className="chips">
           <EventChips event={e} />
           {e.cancelled && <Chip tone="absent">{LISTING.cancelled}</Chip>}
         </div>
-        <h3 className="ev-title">
-          <Link href={`/events/${e.slug}`} className="ev-link">
-            {e.title}
+        <h3>
+          {/* A local meeting's page is rendered on demand from its city's
+              calendar, so prefetching every row in view fired a burst of
+              requests at those servers and drew 429s. Clear events are
+              prerendered, so they still prefetch. */}
+          <Link href={`/events/${e.slug}`} prefetch={local ? false : undefined}>
+            {shortTitle(e)}
           </Link>
         </h3>
-        <p className="t-sm ev-meta">
-          <time dateTime={e.start.toISOString()}>{e.timeUnknown ? 'Time to be posted' : timeRange(e.start, e.end)}</time>
-          {where && <span> · {where}</span>}
-          {e.provisional && <span className="ev-caveat">{DETAIL.scheduleCaveat}</span>}
+        <p className="meta">
+          <time dateTime={e.start.toISOString()}>{timeLabel(e)}</time>
+          {where && ` · ${where}`}
+          {e.provisional && <span className="cav">{DETAIL.scheduleCaveat}</span>}
         </p>
       </div>
-
-      <div className="ev-aside">
-        {e.source !== 'local' && !e.cancelled && (
-          <>
-            <span className="ev-price">{e.price ?? LISTING.free}</span>
-            {e.registerUrl && (
-              <a href={e.registerUrl} className="btn ev-register" data-variant="primary" target="_blank" rel="noopener noreferrer">
-                <LiveDot />
-                {LISTING.register}
+      <div className="ra">
+        {local
+          ? e.officialUrl && (
+              <a className="ext" href={e.officialUrl} target="_blank" rel="noopener noreferrer">
+                {LISTING.agenda}
+                <Ext />
               </a>
+            )
+          : !e.cancelled && (
+              <>
+                <span className="pr">{e.price ?? LISTING.free}</span>
+                {e.registerUrl && (
+                  <a className="btn" data-variant="primary" href={e.registerUrl} target="_blank" rel="noopener noreferrer">
+                    <LiveDot />
+                    {LISTING.register}
+                  </a>
+                )}
+              </>
             )}
-          </>
-        )}
       </div>
+    </>
+  );
+}
+
+export function EventRow({ event: e }: { event: CalEvent }) {
+  return (
+    <article className="row">
+      <EventRowBody event={e} />
     </article>
+  );
+}
+
+/* A calendar with a plus: "add to your calendar". */
+export function CalAdd() {
+  return (
+    <svg viewBox="0 0 18 18" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.4">
+      <rect x="2.5" y="3.5" width="13" height="12" />
+      <path d="M2.5 7h13M6 2v3M12 2v3M9 9.5v4M7 11.5h4" />
+    </svg>
   );
 }
