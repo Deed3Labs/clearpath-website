@@ -3,9 +3,6 @@
    reference/redesign/housing.html with the repo's token names. */
 
 .pg-housing {
-  /* The legacy global .cell (globals.css, the old .hx bento) leaks padding,
-     a paper ground, a gap and grid-row: span 4 into every .cell. */
-  .cell { padding: 0; background: none; gap: 0; grid-row: auto; }
 
   /* ── Hero: the member app's Savings screen, desktop canvas 1200 wide ───── */
   .sv { padding: 30px 40px 40px; display: grid; gap: 22px; }

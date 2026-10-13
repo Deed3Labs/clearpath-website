@@ -5,9 +5,6 @@
    .fitlist, .track → .mtrack. */
 
 .pg-shops {
-  /* The legacy global .cell (globals.css, the old .hx bento) leaks padding,
-     a paper ground, a gap and grid-row: span 4 into every .cell. */
-  .cell { padding: 0; background: none; gap: 0; grid-row: auto; }
 
   /* ── Hero: the merchant counter app, landscape tablet canvas 1200 wide ──── */
   .app .lock em { color: var(--a-fg); }
