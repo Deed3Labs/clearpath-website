@@ -1,4 +1,7 @@
 import Link from 'next/link';
+import { PageHero, Device, Button } from '@/components/system';
+import { MemberHome } from './_home/MemberHome';
+import './page.css';
 import { Ledger, Note, TextLink } from '@/components/primitives';
 import { LiveDot } from '@/components/primitives/Button';
 import { HERO, GAP, PHASES, WAYS_IN, STATUS, UNDERNEATH } from '@/content/home';
@@ -14,48 +17,40 @@ import { HERO, GAP, PHASES, WAYS_IN, STATUS, UNDERNEATH } from '@/content/home';
 
 export default function Home() {
   return (
-    <div className="hx">
-      {/* ── S1 · Hero ──────────────────────────────────────────────────── */}
-      <section className="hx-band hx-wrap hero" data-pad="open">
-        <div className="hx-grid hero-grid">
-          <h1 className="d1 hero-headline">
-            {/* The misregistration runs over the whole headline now that it is
-                one sentence — a cobalt ghost slipping into register, which is
-                what it was doing on the old second line anyway. */}
-            <span
-              className="misreg"
-              data-ghost={HERO.headline}
-              data-rise
-              style={{ ['--i' as string]: 0 }}
-            >
-              {HERO.headline}
-            </span>
-          </h1>
-
-          <p className="hx-lede hero-lede" data-rise style={{ ['--i' as string]: 1 }}>
-            {HERO.lede}
-          </p>
-
-          <div className="hero-actions" data-rise style={{ ['--i' as string]: 2 }}>
-            <Link href={HERO.primary.href} className="btn" data-variant="primary">
-              <LiveDot />
+    <div className="pg-home">
+      <PageHero
+        home
+        lines={HERO.lines}
+        size="min(9.4vw, 132px)"
+        phoneSize="clamp(46px, 13.4vw, 72px)"
+        stagger={0.07}
+        lede={HERO.lede}
+        actions={
+          <>
+            <Button href={HERO.primary.href} live>
               {HERO.primary.label}
-            </Link>
-            <Link href={HERO.ghost.href} className="btn" data-variant="ghost">
+            </Button>
+            <Button href={HERO.ghost.href} variant="ghost">
               {HERO.ghost.label}
-            </Link>
+            </Button>
+          </>
+        }
+        facts={HERO.facts}
+      >
+        <div className="stage">
+          <div className="stagebox" data-stage="device">
+            <Device trace="hero">
+              <MemberHome />
+            </Device>
           </div>
-
-          <div className="hero-meta" data-rise style={{ ['--i' as string]: 3 }}>
-            {HERO.meta.map((m) => (
-              <p className="t-note" key={m}>
-                {m}
-              </p>
-            ))}
+          <div className="stage-cap label">
+            <span>{HERO.stage.caption}</span>
+            <span>{HERO.stage.sample}</span>
           </div>
         </div>
-      </section>
+      </PageHero>
 
+    <div className="hx">
       {/* ── S2 · The gap. Full-bleed ink, two figures in tension. ───────── */}
       <section className="hx-band" data-tone="ink" id="the-gap">
         <div className="hx-wrap">
@@ -180,6 +175,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+    </div>
     </div>
   );
 }

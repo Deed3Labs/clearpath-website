@@ -11,12 +11,14 @@
 import type { LedgerItem } from '@/components/primitives';
 
 export const HERO = {
-  /* One sentence, no second line: a payoff line after it only delays the
-     hit, and the misregistration runs over the whole headline anyway.
-     States what the co-op is for rather than what is wrong — the accusing
-     version ('Your rent is making someone else rich.') read past the
-     shopkeepers and savers the page also has to speak to. */
+  /* One sentence, set on two lines from 700px up and broken after "kept":
+     the second line is the place the money stays. States what the co-op is
+     for rather than what is wrong — the accusing version ('Your rent is making
+     someone else rich.') read past the shopkeepers and savers the page also
+     has to speak to. `headline` is the same sentence whole, for the metadata
+     and the link-preview image. */
   headline: 'Your money, kept in the neighborhood.',
+  lines: ['Your money, kept', 'in the neighborhood.'],
   /* What Clear is, then the four things it does, in the order the page
      covers them: save, borrow against it, pay local shops over time, and
      put rent toward a home. Doubles as the meta and link-preview
@@ -31,14 +33,96 @@ export const HERO = {
   lede: 'Clear is a member-owned cooperative. Save with us, open a credit line, pay local shops over time, and put your rent toward a home of your own.',
   primary: { href: '/join', label: 'Join the waitlist' },
   ghost: { href: '/shops', label: 'Bring Clear to your shop' },
-  /* The place comes last. The two lines above it are what the co-op is, not
-     what it has built — the status section answers "how far along" in full,
-     and a reader meeting the hero wants the terms first. */
+  /* Three facts, each with what kind of fact it is. The place comes last:
+     the status section answers "how far along" in full. */
+  facts: [
+    { k: 'Local money, local returns', v: 'Co-op' },
+    { k: 'One member, one vote', v: 'Governance' },
+    { k: 'Inland Empire, California', v: 'Building' },
+  ],
+  /* Old hero; read by the page until Phase 2 replaces it. */
   meta: [
     'Local money, local returns',
     'One member, one vote',
     'Building in Inland Empire, California',
   ],
+  stage: { caption: 'The member app', sample: 'Sample account' },
+} as const;
+
+/* The member app's Home screen, drawn as real UI from the live app
+   (demo.useclear.org): the balance first, then the cycle card, the temporary
+   slot, and the four-block slab. A sample account — every figure here is a
+   picture of the product, labelled "Sample account" under the device. The
+   phone canvas leaves out the action buttons under the balance, as the app's
+   phone layout does. */
+export const MEMBER_APP = {
+  brand: 'Clear',
+  tabs: ['Home', 'Savings', 'Earn', 'Send', 'Activity', 'Card'],
+  phoneTabs: ['Home', 'Savings', 'Earn', 'Card'],
+  initials: 'DR',
+  balance: {
+    label: 'Available to spend',
+    value: '$5,718.42',
+    sub: '$2,318.42 cash · $0.00 used · $3,400.00 left',
+    actions: ['Add money', 'Send', 'Save', 'Pay'],
+  },
+  cycle: {
+    label: 'To clear this cycle',
+    amount: '$157.50',
+    days: '9',
+    daysLabel: 'days left',
+    status: 'Your deposit covers it',
+    detail: 'Rivera Auto Glass, 3 of 4 · clears October 21',
+    phoneDetail: 'Clears October 21',
+    action: 'Repay early',
+  },
+  slot: { label: 'Activate your card', action: 'Activate' },
+  credit: {
+    label: 'Credit used',
+    value: '$0',
+    of: 'of $3,400',
+    rows: [
+      ['Savings (CLRUSD) · free', '$1,500 · not drawn'],
+      ['Assets · 0.75% / cycle', 'not added'],
+      ['Income · 1.5% / cycle', '$1,900 · not drawn'],
+      ['Clear Boost™ · 3% / cycle', 'not added'],
+    ],
+    /* The phone shows the two lines that are drawing. */
+    phoneRows: [0, 2],
+    action: 'Limit breakdown',
+  },
+  spendable: {
+    label: 'Spendable',
+    value: '$2,318.42',
+    rows: [
+      ['Card and payments', '$2,133.43'],
+      ['Ready to allocate', '$184.99'],
+    ],
+    moves: ['Savings', 'Earn', 'Back to cash'],
+    deposit: 'Direct deposit on',
+    action: 'Details',
+  },
+  plans: {
+    label: 'Term plans',
+    value: '$315.00',
+    of: 'of $3,000.00',
+    open: { name: 'Rivera Auto Glass', value: '$315.00', detail: 'Split in 4 · $157.50 a cycle · ', cleared: '50% cleared', rate: ' · 2% / cycle' },
+    cash: { name: 'Clear Cash™', lock: 'Locked', detail: 'Unlocks after six clean cycles · 2.5% / cycle' },
+    homeRule: 'Your home · outside this limit',
+    home: { name: 'ELPA — buy a home', lock: 'Locked', detail: '1,500 of 15,000 credits' },
+    limit: ['Limit ', '$850.00/cycle'],
+    from: ['Clears from ', 'Chase 4471'],
+  },
+  savings: {
+    label: 'Savings',
+    value: '$3,000.00',
+    rows: [
+      ['Cash (CLRUSD)', '$1,500.00', 'fg'],
+      ['Vested', '$1,000', 'ok'],
+      ['Vesting', '$500', 'warn'],
+    ],
+    credits: '1,500 of 15,000 credits',
+  },
 } as const;
 
 /* Alternates, already weighed. Kept here so the decision is visible in the

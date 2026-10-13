@@ -68,6 +68,7 @@ All in `components/system/` (import from `@/components/system`) and `lib/anim/`.
 | `Device` (client) | `id?`, `className?`, `trace?: 'hero'` | `.device` outline; `trace="hero"` loops light round it after the hero intro |
 | `Screen` | `w`, `h`, `variant?: 'desk'\|'phone'`, `className?`, `canvasClassName?`, `children` | `.screen` + `.canvas.app` at its real size, scaled to fit **in CSS** (`container-type` + `tan(atan2(100cqw, w))`), so it works with JS off and never shifts |
 | icons | `Arrow`, `Check`, `Back`, `Bell`, `Plus`, `Del`, `Mark` | the mockups' `<symbol>`s as components (`aria-hidden`) |
+| `Qr` | `id?`, `className?`, `seed?=7` | the mockups' seeded decorative QR, rendered on the server |
 
 `lib/anim`:
 
@@ -76,6 +77,10 @@ All in `components/system/` (import from `@/components/system`) and `lib/anim/`.
   reverts on cleanup, and does nothing under reduced motion.
 - `useInView(ref, onEnter, {start='top 70%', once=true})`, `useActive(ref, onToggle, {start,end})`,
   `useScrub(ref, onUpdate(p), {start, end, scrub=.4})`.
+- `useAfterHero(ref, cb)`: run `cb` once the hero intro has finished (traces, key-ins).
+  `useHeroIntro(ref, (tl, hero) => …)`: append beats to the intro timeline from a component
+  rendered inside the hero.
+- `useRail(ref, {vertical, start, end, onProgress})`: the rail logic without the component.
 - `rr(x,y,w,h,r,start)` and `useTrace(hostRef, build(w,h,host), {seg, speed})` returning
   `{ run(opts), kill() }`: the mockups' `makeTrace` (halo + core, rebuilt on resize, uses the
   global `#glow` filter rendered in the layout).
@@ -87,6 +92,11 @@ All in `components/system/` (import from `@/components/system`) and `lib/anim/`.
 - `HeaderInk` (in the layout): makes the header sticky and toggles `.on-ink` while a `.band-ink`
   is under it, and `.scrolled` after 8px. Header components are untouched.
 - `lib/format`: `money(n, dp=2)`, `int(n)`.
+
+Canvas sizes measured from the mockups (use these `h` values): home desk 1200×1140, home phone
+390×860; shops desk 1200×728, phone 390×690, counter 760×480 / narrow 400×526; housing desk
+1200×766, phone 390×820. The home hero (`app/page.tsx`, `app/_home/MemberHome.tsx`,
+`app/page.css`) is the worked example of PageHero + Device + Screen + page CSS.
 
 Footer: restyled to the mockup's `.foot` (five columns, mono headings), same links, legal block
 unchanged.

@@ -75,7 +75,9 @@
      The page inset and gutter. These started life inside .hx, but the header
      and footer sit outside it and have to answer to the same edges, so they
      belong to the document rather than to one layout. */
-  --hx-inset:   clamp(20px, 3.2vw, 56px);
+  /* The same inset as the redesign's --inset (system.css), so a page still on
+     the .hx system lines up with the header above it. */
+  --hx-inset:   clamp(16px, 4vw, 56px);
   --hx-gap:     clamp(20px, 3.4vw, 64px);
 
   /* The old centred container, still used by the mobile nav sheet. */

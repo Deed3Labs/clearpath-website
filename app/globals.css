@@ -79,100 +79,6 @@ button, input, select, textarea { font: inherit; color: inherit; }
    The lesson, since it cost a day: never delete a rule that sits directly
    under a comment without checking that the comment still closes. */
 
-/* ─── Hero (§6.1) — type-led ──────────────────────────────────────────────
-   Agreed direction: the headline owns the hero and nothing sits beside it.
-   The sting is the headline, so anything competing with it dilutes it.
-
-   d1 runs at its full clamp across the whole content width rather than being
-   squeezed into five columns, which is what the token was scaled for. The two
-   sentences are separate block lines so the break is the sentence break at
-   every width — that also caps the headline at three lines on a phone without
-   relying on a measure that happens to work out.
-
-   The load sequence is CSS only. No JavaScript on this page at all, so the
-   no-JS and reduced-motion states are not something that has to be arranged —
-   the content is simply there. */
-
-.hero { padding-block: 0; }
-.hero-grid { row-gap: clamp(24px, 3vw, 44px); align-items: start; }
-
-/* Every hero child is placed explicitly at EVERY width. They were placed only
-   inside a min-width:1280 block once the wrapper was removed, which left them
-   auto-placing into single 1/12 tracks below it — headline, lede, actions and
-   meta each in a ~90px column, stacked on top of one another. A grid child
-   without a declared column is not neutral; it takes one track. */
-.hero-headline,
-.hero-lede,
-.hero-actions,
-.hero-meta { grid-column: 1 / 13; }
-
-.hero-headline { max-width: 20ch; }
-.hero-headline span { display: block; }
-
-/* On a phone the headline stacks to three lines at every width, instead of
-   three on a small handset and two on a large one.
-
-   Measured in Bricolage 800 at the hero's -0.04em tracking, not estimated:
-     "neighborhood."      6.44em  — the longest line, so the floor on a measure
-     "Your money, kept"   7.60em  — must NOT fit, or line one swallows "kept"
-   Any measure inside [6.44em, 7.60em) breaks the sentence after "money," and
-   again after "the", and 7em sits in the middle of that window. The cap is in
-   em so it holds at any font-size, including the swap-in fallback face.
-   Re-measure if the headline changes: this is tuned to one sentence.
-
-   The font-size floor is the same arithmetic run backwards. Below ~355px the
-   46px minimum made "neighborhood." wider than the column and the word ran
-   out under the right inset, four pixels from the screen edge, so the type
-   steps down to keep the longest line inside the measure. */
-@media (max-width: 640px) {
-  .hero-headline {
-    max-width: 7em;
-    font-size: min(46px, calc((100vw - 2 * var(--hx-inset)) / 6.6));
-  }
-}
-.hero-actions { display: flex; flex-wrap: wrap; gap: var(--spacing-2); }
-.hero-meta {
-  border-top: 1px solid var(--color-ink-13);
-  padding-top: var(--spacing-2);
-  display: flex;
-  flex-wrap: wrap;
-  /* Row then column. 40px is the right separation between three facts sitting
-     side by side, and far too much between three 17px lines once they stack —
-     it put 40px of air between each on a phone. The column gap is unchanged. */
-  gap: var(--spacing-2) var(--spacing-4);
-}
-
-/* From 1000 up the headline takes the full measure and the three facts sit
-   beside the lede and the actions, where there was nothing.
-
-   "Rent builds equity." measures 7.47em in Bricolage 800 — measured in the
-   browser, not estimated. An estimate of 0.56em a glyph put it at 10.6em and
-   capped the headline at 102px for no reason. At a full-width measure the
-   sentence holds one line well past 130px. */
-@media (min-width: 1000px) {
-  .hero-headline { grid-row: 1; font-size: clamp(96px, 10.5vw, 172px); max-width: none; }
-  .hero-lede    { grid-column: 1 / 8; grid-row: 2; }
-  .hero-actions { grid-column: 1 / 8; grid-row: 3; }
-  .hero-meta {
-    grid-column: 9 / 13;
-    grid-row: 2 / 4;
-    align-self: start;
-    flex-direction: column;
-    gap: var(--spacing-2);
-    border-top: 1px solid var(--color-ink);
-  }
-}
-
-/* One orchestrated arrival, ~1.5s, on first paint. (§4) */
-@keyframes hero-rise {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: none; }
-}
-.hero [data-rise] {
-  animation: hero-rise 700ms var(--ease) backwards;
-  animation-delay: calc(var(--i) * 160ms);
-}
-
 /* ─── Blocks (§4) — three, and no more. ───────────────────────────────── */
 
 /* Content subdivides the PARENT grid rather than nesting a second one with a
@@ -822,12 +728,10 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
    container. --container is min(1320px, 100% - 48px), which put them 60px in
    from the viewport at 1440 while .hx-wrap starts at 46px — a 14px
    misalignment between the logo and the headline directly beneath it. */
-.site-header,
-.site-footer {
-  width: 100%;
-  margin-inline: 0;
-  padding-inline: var(--hx-inset);
-}
+/* The header answers to the page measure (system.css sets its inline padding
+   to --gutter-x, so its ground runs full width and its content sits on the
+   same 1280 column as every section below it). */
+.site-header { width: 100%; margin-inline: 0; }
 
 .site-header {
   display: flex;
@@ -1000,52 +904,11 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
   text-decoration-color: var(--color-live);
 }
 
-.site-footer { padding-block: var(--spacing-5) var(--spacing-4); }
-.site-footer .hx-grid { row-gap: var(--spacing-4); }
-.footer-brand { grid-column: 1 / 4; }
-.footer-cols  { grid-column: 4 / 13; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--spacing-4) var(--hx-gap); }
-/* The column headings and the links under them were the same 17px regular
-   ink, and the links are underlined — so the heading was the quietest thing
-   in its own column. Heading takes the weight and keeps full ink; the links
-   step back to ink-70 and come forward on hover. Its own class rather than
-   .t-note, so the heading's weight is not tied to a shared note style. */
-.footer-heading {
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--color-ink);
-}
-.footer-col ul { display: grid; margin-top: var(--spacing-1); }
-.footer-col ul a { color: var(--color-ink-70); }
-.footer-col ul a:hover { color: var(--color-ink); }
-/* §8.4 — 44px tap targets. Footer links and the two logo links are standalone
-   destinations, so they get real hit areas rather than a text-height line.
-   Links inside a sentence keep their inline height: WCAG exempts a target in
-   a block of text, and padding one would break the line it sits in. */
-.footer-col ul a { display: inline-block; padding-block: 12px; }
-.site-footer .footer-brand > a,
+/* The footer's rules live in app/styles/system.css. */
+
+/* §8.4 — the logo link is a standalone destination, so it gets a real hit
+   area rather than a text-height line. */
 .site-header > a { display: inline-flex; padding-block: 12px; }
-
-.footer-legal {
-  margin-top: var(--spacing-5);
-  padding-top: var(--spacing-3);
-  border-top: 1px solid var(--color-ink-13);
-  display: grid;
-  gap: var(--spacing-2);
-  max-width: 92ch;
-}
-.footer-legal p {
-  font-size: 13px;
-  line-height: 1.55;
-  color: var(--color-ink-70);
-}
-
-@media (max-width: 1080px) {
-  .footer-brand { grid-column: 1 / 13; }
-  .footer-cols  { grid-column: 1 / 13; }
-}
-@media (max-width: 640px) {
-  .footer-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
 
 /* ─── Controls (§4) — two states, both 200ms. Nothing else moves. ─────── */
 
@@ -1333,7 +1196,7 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
    a seam in it, and paragraphs in adjacent columns looked like they shared a
    row. A gutter has to be legible at the scale of the thing it separates. */
 
-.hx-wrap { width: 100%; padding-inline: var(--hx-inset); }
+.hx-wrap { width: 100%; padding-inline: var(--gutter-x); }
 
 .hx-band { padding-block: clamp(72px, 8.5vw, 150px); position: relative; }
 .hx-band[data-pad='tight'] { padding-block: clamp(48px, 5vw, 88px); }
@@ -1345,30 +1208,8 @@ p > .tlink:only-child { display: inline-block; padding-block: 11px; }
    below the fold. The top pad is the header's job here, not the band's. */
 .hx > .hx-band:first-child { padding-top: clamp(32px, 4.5vw, 88px); }
 
-.hx-band[data-tone='ink'] {
-  /* --color-ink-ground, not --color-ink: this rule rebinds --color-ink below,
-     and a custom property resolves to the value in scope on the element using
-     it — so background: var(--color-ink) would paint the band light on light. */
-  background: var(--color-ink-ground);
-  color: var(--color-paper);
-  --color-ink: #DFE3DE;
-  --color-ink-70: rgb(223 227 222 / .74);
-  --color-ink-50: rgb(223 227 222 / .62);
-  --color-ink-28: rgb(223 227 222 / .34);
-  --color-ink-13: rgb(223 227 222 / .18);
-  /* Cobalt at its paper value measures 1.81:1 on ink. Same role, a value that
-     clears AA on this ground. */
-  --color-live: #7C8CC5;
-  /* The status trio, lightened for a dark ground. Same roles, same order. */
-  --color-settled:  #6FCB9F;
-  --color-underway: #E3B667;
-  --color-absent:   #E58C7F;
-  /* Raised surfaces need the same inversion. The structure diagram fills its
-     boxes with --color-paper-2; unrebound, a dark band would draw light boxes
-     with the light text this rule already gave them. A hair above the ground
-     so a box still reads as a box. */
-  --color-paper-2: #1E2C27;
-}
+/* .hx-band[data-tone='ink'] is the same band as .band-ink; both are defined
+   once, in app/styles/system.css. */
 
 /* The grid. Twelve tracks across the whole measure — no rail, no reserved
    columns, so a child can span 1 to 13 and actually touch both edges. */

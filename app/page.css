@@ -1,0 +1,77 @@
+/* Home — page-only rules, all under .pg-home (see PLAN.md: a route's CSS stays
+   loaded after you leave it, so nothing here may be global). */
+
+.pg-home {
+  /* ── Hero: the member app's Home, on its own ground ─────────────────────
+     Desktop canvas 1200 wide, drawn from the live app: the balance first,
+     then the cycle, the temporary slot, and the accounts slab. */
+  .hb { padding: 30px 40px 40px; display: grid; gap: 22px; }
+  .bal { display: flex; justify-content: space-between; align-items: end; gap: 24px; }
+  .bal-l { display: grid; gap: 6px; }
+  .bal-n { font-size: 46px; line-height: 1; letter-spacing: -0.035em; margin-top: 4px; }
+  .acts { display: grid; grid-template-columns: repeat(2, 150px); gap: 10px; }
+  .acts .pillb { height: 36px; font-size: 13.5px; }
+  .cyc { border: 1px solid var(--a-line); background: var(--a-2); }
+  .cyc-r1 { display: flex; justify-content: space-between; align-items: start; padding: 18px 20px; }
+  .cyc-r1 .lbl { display: block; }
+  .cyc-r1 .amt { display: block; font-size: 24px; line-height: 1; margin-top: 10px; }
+  .cyc-r1 .cd { display: grid; justify-items: end; gap: 2px; }
+  .cyc-r1 .cd .num { font-size: 26px; line-height: 1; }
+  .cyc-r2 { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 16px 14px 20px; border-top: 1px solid var(--a-line); }
+  .st2 { display: grid; gap: 2px; font-size: 14px; }
+  .slot { border: 1px solid var(--a-line); padding-inline: 20px; }
+  .slot-r { display: flex; justify-content: space-between; align-items: center; min-height: 62px; font-size: 14px; }
+  .slab2 { display: grid; grid-template-columns: 1.05fr 1fr; border: 1px solid var(--a-line); }
+  .slab2 > .blk { border-top: 1px solid var(--a-line); }
+  .slab2 > .blk:nth-child(-n+2) { border-top: 0; }
+  .slab2 > .blk:nth-child(even) { border-left: 1px solid var(--a-line); }
+  .blk { display: grid; grid-template-rows: auto 1fr auto; min-width: 0; }
+  .bh { display: flex; justify-content: space-between; align-items: center; height: 56px; padding: 0 20px; border-bottom: 1px solid var(--a-line); }
+  .bh .num { font-size: 19px; }
+  .bh .num span { color: var(--a-50); font-weight: 500; font-size: 13px; }
+  .bm { padding: 16px 20px; display: grid; align-content: start; gap: 14px; }
+  .bf { border-top: 1px solid var(--a-line); padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 13px; color: var(--a-70); }
+  .bf.col { display: grid; gap: 10px; align-content: center; justify-content: stretch; }
+  .comp { display: flex; height: 6px; gap: 0; }
+  .comp i { display: block; transform-origin: 0 50%; }
+  .trows { display: grid; gap: 6px; font-size: 13px; color: var(--a-70); }
+  .trows div { display: flex; justify-content: space-between; gap: 12px; }
+  .trows .fg { color: var(--a-fg); } .trows .ok { color: var(--a-ok); } .trows .warn { color: var(--a-warn); }
+  .trows.big { gap: 0; font-size: 14px; }
+  .trows.big div { padding-block: 11px; border-bottom: 1px solid var(--a-line); }
+  .trows.big div:first-child { padding-top: 0; color: var(--a-50); font-size: 13px; }
+  .trows.big div:last-child { border-bottom: 0; color: var(--a-fg); padding-bottom: 0; }
+  .three { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .cred { position: relative; height: 4px; background: var(--a-2); }
+  .cred i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--a-ok); transform-origin: 0 50%; }
+  .plan { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 3px 12px; padding-bottom: 12px; border-bottom: 1px solid var(--a-line); align-items: center; }
+  .plan + .plan, .sub-rule + .plan { padding-top: 0; }
+  .plan .d { grid-column: 1 / -1; color: var(--a-50); font-size: 12.5px; }
+  .plan .d b { color: var(--a-ok); font-weight: 500; }
+  .plan.locked > span:first-child { color: var(--a-70); }
+  .lk { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--a-50); border: 1px solid var(--a-line); border-radius: 999px; padding: 3px 8px; }
+  .sub-rule { color: var(--a-50); }
+  .split-foot { display: grid; grid-template-columns: 1fr 1px 1fr; width: 100%; align-items: center; gap: 14px; }
+  .split-foot i { height: 18px; background: var(--a-line); }
+  .split-foot b { color: var(--a-fg); font-weight: 500; }
+  .dd { display: inline-flex; align-items: center; gap: 7px; height: 28px; padding-inline: 11px; border-radius: 999px; border: 1px solid rgb(111 203 159 / .35); color: var(--a-ok); font-size: 12.5px; }
+  .dd i { width: 6px; height: 6px; border-radius: 999px; background: var(--a-ok); }
+  
+  /* Member home, phone canvas 390 x 860 — the same components, stacked */
+  .ph-top { height: 58px; display: flex; align-items: center; justify-content: space-between; padding-inline: 18px; border-bottom: 1px solid var(--a-line); }
+  .ph-top .r { display: flex; align-items: center; gap: 16px; }
+  .ph-body { padding: 22px 18px 96px; display: grid; gap: 16px; }
+  .ph-body .bal { display: grid; gap: 16px; }
+  .ph-body .bal-n { font-size: 38px; }
+  .ph-body .acts { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+  .ph-body .acts .pillb { padding-inline: 6px; font-size: 12.5px; }
+  .ph-body .slab2 { grid-template-columns: minmax(0, 1fr); }
+  .ph-body .slab2 > .blk:nth-child(2) { border-top: 1px solid var(--a-line); border-left: 0; }
+  .ph-body .cyc-r1 .amt { font-size: 24px; }
+  .navpill { position: absolute; left: 16px; bottom: 18px; height: 50px; display: flex; align-items: center; gap: 4px; padding: 5px; border-radius: 17px; background: var(--a-2); border: 1px solid var(--a-line); }
+  .navpill span { height: 40px; padding-inline: 14px; display: grid; place-items: center; border-radius: 13px; font-size: 13px; color: var(--a-50); }
+  .navpill span.on { background: var(--a-fg); color: var(--a-bg); font-weight: 500; }
+  .navact { position: absolute; right: 16px; bottom: 18px; width: 50px; height: 50px; border-radius: 17px; background: var(--a-fg); color: var(--a-bg); display: grid; place-items: center; }
+  .navact svg { width: 18px; height: 18px; }
+  .plan.last { border-bottom: 0; }
+}
