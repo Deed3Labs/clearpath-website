@@ -1,0 +1,1073 @@
+<title>Clear Co-op Redesign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: a constrained page (1280 max) with one rhythm per section —
+   label, a headline that answers itself, one line, one crafted figure, one
+   link. The product is shown on its own dark ground inside thin device
+   outlines (the guide's one radius exception); figures that explain the
+   model are drawn in the site's ink. Single look: paper with ink bands. */
+:root {
+  color-scheme: light;
+  --paper: #DFE3DE;
+  --paper-2: #E9ECE7;
+  --ink: #16211D;
+  --ground: #16211D;
+  --live: #24409E;
+  --settled: #0E6B4E;
+  --underway: #8A5512;
+  --absent: #9B2C22;
+  --sig-deep: #0E6B4E;
+  --sig-light: #6FCB9F;
+  --ink-70: #525B57;
+  --ink-50: #5A635F;
+  --ink-28: #A7ADA8;
+  --ink-13: #C5CAC5;
+
+  --f-display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --f-text: 'Instrument Sans', system-ui, sans-serif;
+  --f-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  --s1: 8px; --s2: 16px; --s3: 24px; --s4: 40px; --s5: 64px; --s6: 96px;
+  --inset: clamp(16px, 4vw, 56px);
+  --max: 1280px;
+  --sec: clamp(80px, 9vw, 144px);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+.band-ink {
+  background: var(--ground); color: var(--paper);
+  --ink: #DFE3DE; --ink-70: #ABB1AC; --ink-50: #939995;
+  --ink-28: rgb(223 227 222 / .32); --ink-13: rgb(223 227 222 / .16);
+  --live: #7C8CC5; --settled: #6FCB9F; --underway: #E3B667; --absent: #E58C7F;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--f-text); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+h1, h2, h3, p, dl, dd, figure { margin: 0; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+a { color: inherit; text-decoration: none; }
+svg { display: block; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--live); outline-offset: 3px; }
+::selection { background: var(--ink); color: var(--paper); }
+
+.wrap { width: 100%; max-width: calc(var(--max) + var(--inset) * 2); margin-inline: auto; padding-inline: var(--inset); }
+.fig { font-family: var(--f-text); font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.label { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-50); }
+
+/* ── Section rhythm ───────────────────────────────────────────────────── */
+.sec { padding-block: var(--sec); }
+/* A section opens with a full-width label rule, then the headline on the
+   left seven-twelfths and its one line plus link on the right, bottom-aligned
+   to the headline. Phones stack it. */
+.head { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: clamp(32px, 6vw, 112px); row-gap: clamp(28px, 3vw, 44px); align-items: end; }
+.head > .sec-label { grid-column: 1 / -1; }
+.head > .aside { display: grid; gap: var(--s3); align-content: end; padding-bottom: .4em; }
+@media (max-width: 900px) { .head { grid-template-columns: minmax(0, 1fr); } .head > .aside { padding-bottom: 0; gap: var(--s2); } }
+.sec-label { display: flex; gap: 14px; padding-bottom: var(--s2); border-bottom: 1px solid var(--ink-13); }
+.sec-label b { font-weight: 400; color: var(--live); }
+.h2 { font-family: var(--f-display); font-weight: 800; font-size: clamp(36px, 4.7vw, 72px); line-height: .98; letter-spacing: -0.038em; text-wrap: balance; }
+.line { font-size: clamp(17px, 1.35vw, 20px); line-height: 1.5; color: var(--ink-70); max-width: 42ch; text-wrap: pretty; }
+.more { display: inline-flex; align-items: center; gap: 10px; font-size: 15.5px; font-weight: 500; color: var(--ink); border-bottom: 1px solid var(--ink-28); padding-bottom: 3px; justify-self: start; transition: border-color 200ms var(--ease), gap 200ms var(--ease); }
+.more svg { width: 14px; height: 10px; transition: transform 200ms var(--ease); }
+.more:hover { border-color: var(--ink); }
+.more:hover svg { transform: translateX(3px); }
+.body-gap { margin-top: clamp(48px, 5.5vw, 80px); }
+
+/* ── Controls (guide) ─────────────────────────────────────────────────── */
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding-inline: var(--s3); border: 1px solid transparent; border-radius: 999px; font-size: 15px; font-weight: 500; line-height: 1; white-space: nowrap; transition: background-color 200ms var(--ease), border-color 200ms var(--ease), color 200ms var(--ease); }
+.btn-primary { background: var(--ink); color: var(--paper); }
+.btn-primary:hover { background: var(--live); }
+.band-ink .btn-primary { color: var(--ground); }
+.btn-ghost { border-color: var(--ink-28); color: var(--ink); }
+.btn-ghost:hover { border-color: var(--ink); }
+.dot { --dot: var(--sig-light); position: relative; flex: none; width: 7px; height: 7px; margin-right: 10px; border-radius: 999px; background: var(--dot); box-shadow: 0 0 6px 1px color-mix(in srgb, var(--dot) 55%, transparent); }
+.dot::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: var(--dot); animation: ping 2s cubic-bezier(0, 0, .2, 1) infinite; }
+.band-ink .btn-primary .dot { --dot: var(--sig-deep); }
+@keyframes ping { 0% { transform: scale(1); opacity: .6 } 75%, 100% { transform: scale(3.4); opacity: 0 } }
+.chip { --chip: var(--ink-70); display: inline-flex; align-items: center; font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .09em; text-transform: uppercase; line-height: 1; padding: 6px 11px 5px; border: 1px solid; border-radius: 999px; white-space: nowrap; color: var(--chip); border-color: color-mix(in srgb, var(--chip) 34%, transparent); background: color-mix(in srgb, var(--chip) 10%, transparent); }
+.chip .dot { --dot: var(--chip); width: 6px; height: 6px; margin-right: 7px; box-shadow: 0 0 4px color-mix(in srgb, var(--chip) 45%, transparent); }
+.chip[data-tone="live"] { --chip: var(--settled); }
+.chip[data-tone="underway"] { --chip: var(--underway); }
+.chip[data-tone="absent"] { --chip: var(--absent); }
+.chip:not([data-tone="live"]) .dot::after { animation: none; opacity: 0; }
+
+/* ── Header — the live site's shell, kept as it is: five links, the
+   Community menu and Join; below 1000px a Menu button that opens the
+   full-screen sheet. Only the colours follow the ground underneath. ─── */
+.site-head { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 30; background: color-mix(in srgb, var(--paper) 88%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-bottom: 1px solid transparent; transition: border-color 200ms var(--ease), background-color 300ms var(--ease), color 300ms var(--ease); }
+.site-head.scrolled { border-bottom-color: var(--ink-13); }
+.site-head.on-ink { background: color-mix(in srgb, var(--ground) 90%, transparent); color: #DFE3DE; border-bottom-color: rgb(223 227 222 / .14); }
+.site-head.on-ink .nav > ul > li > a, .site-head.on-ink .navmenu-button { color: #ABB1AC; }
+.site-head.on-ink .nav > ul > li > a:hover, .site-head.on-ink .navmenu-button:hover, .site-head.on-ink .nav > ul > li > a[aria-current="page"] { color: #DFE3DE; }
+.site-head.on-ink .btn-primary { background: #DFE3DE; color: var(--ground); }
+.site-head.on-ink .btn-primary .dot { --dot: var(--sig-deep); }
+.top { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); height: 68px; }
+.brand { display: flex; align-items: center; gap: 9px; font-family: var(--f-display); font-weight: 800; font-size: 19px; letter-spacing: -0.035em; }
+.brand svg { width: 21px; height: 21px; }
+.nav { display: flex; align-items: center; gap: clamp(20px, 2.4vw, 40px); font-size: 14.5px; }
+.nav > ul { display: flex; align-items: center; gap: clamp(16px, 1.8vw, 24px); }
+.nav > ul > li > a { display: inline-flex; align-items: center; min-height: 44px; white-space: nowrap; color: var(--ink-70); transition: color 200ms var(--ease); }
+.nav > ul > li > a:hover { color: var(--ink); }
+.nav > ul > li > a[aria-current="page"] { color: var(--ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 6px; }
+.nav .btn { min-height: 38px; padding-inline: 18px; font-size: 14px; }
+/* The Community menu: a nav link that opens a short sheet of paper. */
+.navmenu { position: relative; }
+.navmenu-button { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; white-space: nowrap; color: var(--ink-70); font-size: 14.5px; transition: color 200ms var(--ease); }
+.navmenu-button:hover { color: var(--ink); }
+.navmenu-button svg { width: 10px; height: 10px; transition: transform 200ms var(--ease); }
+.navmenu-button[aria-expanded="true"] svg { transform: rotate(180deg); }
+.navmenu-panel { position: absolute; z-index: 40; top: calc(100% + 10px); right: -12px; width: 320px; background: #DFE3DE; color: #16211D; border: 1px solid #C5CAC5; border-top: 2px solid #16211D; box-shadow: 0 18px 40px rgb(22 33 29 / .14); }
+.navmenu-panel::before { content: ''; position: absolute; left: 0; right: 0; top: -12px; height: 12px; }
+.navmenu-panel li + li { border-top: 1px solid #C5CAC5; }
+.navmenu-link { display: grid; grid-template-columns: 40px minmax(0, 1fr); align-items: center; gap: 14px; padding: 14px 16px; color: #16211D; transition: background-color 200ms var(--ease); }
+.navmenu-link:hover, .navmenu-link:focus-visible { background: #E9ECE7; }
+.navmenu-icon { display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid #C5CAC5; transition: border-color 200ms var(--ease); }
+.navmenu-link:hover .navmenu-icon { border-color: #16211D; }
+.navmenu-icon svg { width: 18px; height: 18px; }
+.navmenu-text { display: grid; gap: 2px; }
+.navmenu-label { font-size: 15px; font-weight: 600; letter-spacing: -0.005em; }
+.navmenu-note { font-size: 13px; line-height: 1.35; color: #525B57; }
+.menu-btn { display: none; min-height: 44px; min-width: 44px; align-items: center; justify-content: center; gap: 8px; font-size: 15px; }
+.menu-btn svg { width: 16px; height: 16px; }
+@media (max-width: 1000px) {
+  .nav > ul, .nav > .btn { display: none; }
+  .menu-btn { display: inline-flex; }
+}
+/* The sheet: a full-screen <dialog>, which traps focus and closes on Escape. */
+.sheet { width: 100%; max-width: none; height: 100%; max-height: none; margin: 0; padding: 0; border: 0; background: var(--paper); color: var(--ink); }
+.sheet::backdrop { background: #16211D; opacity: .28; }
+.sheet-inner { padding-bottom: var(--s3); }
+.sheet-top { display: flex; align-items: center; justify-content: space-between; height: 68px; margin-bottom: var(--s3); }
+.sheet-top .t-note { font-size: 15px; color: var(--ink-70); }
+.sheet-close { min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; justify-content: flex-end; }
+.sheet-close svg { width: 18px; height: 18px; }
+.sheet-nav { display: grid; gap: var(--s4); }
+.sheet-main { display: grid; gap: var(--s2); }
+.sheet-main a { display: block; padding-block: 9px; font-family: var(--f-display); font-weight: 600; font-size: clamp(23px, 2.1vw, 30px); letter-spacing: -0.024em; line-height: 1.12; }
+.sheet-main a[aria-current="page"] { color: var(--live); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 7px; }
+.sheet-community { display: grid; gap: var(--s1); }
+.sheet-label { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-50); }
+.sheet-tiles { border-top: 1px solid var(--ink-13); }
+.sheet-tiles li { border-bottom: 1px solid var(--ink-13); }
+.sheet-tile { display: grid; grid-template-columns: 44px minmax(0, 1fr); align-items: center; column-gap: 14px; padding: 12px 0; }
+.sheet-tile svg { grid-row: 1 / span 2; box-sizing: content-box; width: 20px; height: 20px; padding: 11px; border: 1px solid var(--ink-13); }
+.sheet-tile-label { font-family: var(--f-display); font-weight: 600; font-size: 20px; letter-spacing: -0.02em; line-height: 1.1; }
+.sheet-tile-note { font-size: 13px; line-height: 1.35; color: var(--ink-70); }
+.sheet-join { display: flex; width: 100%; min-height: 48px; }
+
+/* ── Hero ─────────────────────────────────────────────────────────────── */
+.hero { padding-top: clamp(40px, 6vw, 96px); padding-bottom: var(--sec); }
+.hero-h1 { font-family: var(--f-display); font-weight: 800; font-size: min(9.4vw, 132px); line-height: .92; letter-spacing: -0.045em; }
+/* Two set lines from tablet up; below that the words wrap on their own. */
+.hero-h1 .ln { display: block; white-space: nowrap; }
+@media (max-width: 699px) { .hero-h1 { font-size: clamp(46px, 13.4vw, 72px); } .hero-h1 .ln { display: inline; white-space: normal; } }
+.hero-h1 .w { display: inline-block; overflow: hidden; vertical-align: top; padding: .04em .1em .24em; margin: -.04em -.1em -.24em; }
+/* The mask is only for the rise. Once the words are up it comes off, so no
+   descender, overhang or tight-tracked edge is ever clipped. */
+.hero-h1.revealed .w { overflow: visible; }
+.hero-h1 .w > span { display: inline-block; }
+.hero-row { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); gap: var(--s4) clamp(24px, 6vw, 120px); margin-top: clamp(32px, 4vw, 56px); align-items: end; }
+.hero-lede { font-size: clamp(18px, 1.6vw, 22px); line-height: 1.45; color: var(--ink-70); max-width: 38ch; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: var(--s3); }
+.facts { border-top: 1px solid var(--ink); display: grid; }
+.facts li { padding-block: 12px; border-bottom: 1px solid var(--ink-13); font-size: 15px; display: flex; justify-content: space-between; gap: 12px; }
+.facts li span:last-child { color: var(--ink-50); font-family: var(--f-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; align-self: center; }
+@media (max-width: 860px) { .hero-row { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 560px) {
+  .hero-actions .btn { flex: 1 1 100%; min-height: 48px; }
+  .hero-row { gap: var(--s4); }
+}
+
+/* The product stage: flat on the page. */
+.stage { margin-top: clamp(56px, 7vw, 104px); position: relative; }
+.stage-cap { display: flex; justify-content: space-between; gap: 12px; margin-top: 14px; }
+.stagebox { position: relative; }
+
+/* ── Device outlines and scaled screens ───────────────────────────────── */
+/* A device is only its outline: one thin light line at the guide's 14px
+   radius, the screen pushed almost to it. Light travels along that line. */
+.device { position: relative; border: 1px solid var(--ink-28); border-radius: 14px; padding: 7px; }
+.screen { position: relative; overflow: hidden; background: #16211D; border-radius: 7px; }
+.trace { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; z-index: 4; }
+.trace path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.trace .halo { stroke: #6FCB9F; stroke-width: 7; opacity: .75; filter: url(#glow); }
+.trace .core { stroke: #0E6B4E; stroke-width: 1.6; }
+.trace .rest { stroke: var(--ink-28); stroke-width: 1; }
+.canvas { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+.screen-phone { display: none; }
+@media (max-width: 699px) {
+  .screen-desk { display: none; }
+  .screen-phone { display: block; }
+  .stage .device { max-width: 420px; margin-inline: auto; }
+}
+
+/* ── The app (member and merchant) — its own ground, same guide ──────── */
+.app {
+  --a-bg: #16211D; --a-2: #1E2C27; --a-line: rgb(223 227 222 / .14); --a-fg: #DFE3DE;
+  --a-70: #ABB1AC; --a-50: #939995; --a-live: #7C8CC5; --a-ok: #6FCB9F; --a-warn: #E3B667;
+  background: var(--a-bg); color: var(--a-fg); font-family: var(--f-text); font-size: 14px; line-height: 1.45;
+  -webkit-font-smoothing: antialiased; overflow: hidden;
+}
+.app .lbl { font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--a-50); }
+.app .num { font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.app .bar-top { height: 56px; display: flex; align-items: center; justify-content: space-between; padding-inline: 24px; border-bottom: 1px solid var(--a-line); }
+.app .bar-top .l { display: flex; align-items: center; gap: 28px; }
+.app .lock { display: flex; align-items: center; gap: 8px; font-family: var(--f-display); font-weight: 800; font-size: 17px; letter-spacing: -0.035em; }
+.app .lock svg { width: 18px; height: 18px; }
+.app .lock i { width: 1px; height: 16px; background: var(--a-line); margin-inline: 4px; }
+.app .lock em { font-style: normal; font-family: var(--f-text); font-weight: 500; font-size: 14px; letter-spacing: 0; color: var(--a-70); }
+.app .tabs { display: flex; gap: 22px; color: var(--a-50); font-size: 14px; }
+.app .tabs .on { color: var(--a-fg); }
+.app .ava { width: 30px; height: 30px; border-radius: 999px; border: 1px solid var(--a-line); display: grid; place-items: center; font-size: 11.5px; font-weight: 600; color: var(--a-70); }
+.app .pillb { display: inline-flex; align-items: center; justify-content: center; height: 32px; padding-inline: 14px; border-radius: 999px; border: 1px solid var(--a-line); font-size: 13px; font-weight: 500; color: var(--a-fg); white-space: nowrap; }
+.app .pillb.solid { background: var(--a-fg); color: var(--a-bg); border-color: var(--a-fg); }
+
+
+/* Shared bento vocabulary for this page: one line weight, padding on the
+   rows so every rule runs wall to wall, header / main / footer in a cell. */
+.who { font-size: 15px; font-weight: 500; letter-spacing: -0.01em; }
+.ck { font-size: 13.5px; color: var(--ink-50); }
+.bx { --line: var(--ink-28); --px: clamp(20px, 2.6vw, 36px); border: 1px solid var(--line); display: grid; }
+.bx + .bx { border-top: 0; }
+.cell { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; min-width: 0; }
+.c-h, .c-f { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 56px; padding: 0 var(--px); }
+.c-h { border-bottom: 1px solid var(--line); }
+.c-f { border-top: 1px solid var(--line); }
+.c-m { display: grid; align-content: start; gap: 18px; padding: clamp(26px, 3vw, 40px) var(--px); }
+.c-m h3 { font-family: var(--f-display); font-weight: 600; font-size: clamp(20px, 1.8vw, 26px); line-height: 1.15; letter-spacing: -0.022em; text-wrap: balance; max-width: 22ch; }
+.c-m p { font-size: 15px; line-height: 1.55; color: var(--ink-70); max-width: 44ch; }
+.note { font-size: 13.5px; color: var(--ink-50); }
+
+
+
+/* ── Hero ─────────────────────────────────────────────────────────────── */
+.phero { padding-bottom: var(--sec); }
+.phero .hero-h1 { font-size: min(6.1vw, 84px); }
+@media (max-width: 699px) { .phero .hero-h1 { font-size: clamp(36px, 10.4vw, 56px); } .phero .hero-h1 .ln { display: block; white-space: normal; } }
+.page-label { display: flex; gap: 14px; margin-bottom: clamp(24px, 3vw, 40px); }
+.page-label b { font-weight: 400; color: var(--live); }
+.facts.figs li { align-items: baseline; }
+.facts.figs li span:last-child { font-family: var(--f-text); font-size: 16px; font-weight: 600; letter-spacing: -0.01em; text-transform: none; color: var(--ink); font-variant-numeric: tabular-nums; }
+
+/* The same sentence, written two ways, put to the same vote. */
+.vs { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto auto auto minmax(0, 1fr); margin-top: clamp(56px, 7vw, 104px); }
+.vs .cell { grid-row: span 4; grid-template-rows: subgrid; }
+.vs .cell + .cell { border-left: 1px solid var(--line); }
+.vs .q { position: relative; justify-self: start; margin: clamp(26px, 3vw, 40px) var(--px) 0; font-family: var(--f-display); font-weight: 800; font-size: clamp(30px, 3.4vw, 52px); line-height: 1; letter-spacing: -0.035em; }
+.vs .q::after { content: ''; position: absolute; left: -2px; right: -2px; top: 54%; height: 4px; background: var(--absent); transform: scaleX(0); transform-origin: 0 50%; transition: transform 500ms var(--ease); }
+.vs .pol.struck .q { color: var(--ink-50); }
+.vs .pol.struck .q::after { transform: scaleX(1); }
+.vs .res.held .q { color: var(--live); }
+/* the vote */
+.vote { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 14px; margin: clamp(22px, 2.4vw, 30px) var(--px) 0; padding-block: 14px; border-block: 1px solid var(--ink-13); font-size: 13.5px; color: var(--ink-70); }
+.vote .seats7 { display: grid; grid-template-columns: repeat(7, minmax(0, 22px)); gap: 4px; }
+.vote .seats7 i { height: 22px; border: 1px solid var(--ink-28); transition: background-color 200ms var(--ease), border-color 200ms var(--ease); }
+.vote .seats7 i.y { background: var(--ink); border-color: var(--ink); }
+.vote .seats7 i.n { border-color: var(--ink-50); background: repeating-linear-gradient(135deg, var(--ink-13) 0 3px, transparent 3px 6px); }
+.vote .tally { font-variant-numeric: tabular-nums; color: var(--ink-50); }
+.vote .out { font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-50); white-space: nowrap; transition: color 300ms var(--ease); }
+.pol.struck .vote .out { color: var(--absent); }
+.res.held .vote .out { color: var(--live); }
+.vs .c-m { padding-top: 22px; gap: 10px; }
+.vs .c-m h3 { max-width: none; }
+.vs .c-m p { font-size: 15px; max-width: 48ch; }
+@media (max-width: 860px) {
+  .vs { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
+  .vs .cell { grid-row: auto; grid-template-rows: auto auto auto auto; }
+  .vs .cell + .cell { border-left: 0; border-top: 1px solid var(--line); }
+}
+@media (max-width: 460px) {
+  .vote { grid-template-columns: minmax(0, 1fr) auto; }
+  .vote .tally { display: none; }
+}
+
+/* ── 01 Structure, on ink: the org chart, as the page's centrepiece ───── */
+.org { grid-template-columns: minmax(0, 1fr); }
+.org .c-h { min-height: 64px; flex-wrap: wrap; padding-block: 12px; }
+.seg { display: inline-flex; padding: 3px; border: 1px solid var(--ink-28); border-radius: 999px; }
+.seg button { height: 34px; padding-inline: 16px; border-radius: 999px; font-size: 14px; font-weight: 500; color: var(--ink-70); transition: background-color 250ms var(--ease), color 250ms var(--ease); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--ground); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 20px; font-size: 13px; color: var(--ink-50); }
+.legend span { display: inline-flex; align-items: center; gap: 8px; }
+.legend i { display: inline-block; width: 22px; height: 0; border-top: 1.4px solid var(--ink); }
+.legend i.ctr { border-top: 1.4px dotted var(--ink-50); }
+.legend i.box { width: 14px; height: 10px; border: 1px dashed var(--ink); }
+.legend i.mon { width: 14px; height: 10px; border: 0; background: var(--ink); }
+.legend i.hou { width: 14px; height: 10px; border: 1px solid var(--ink); background: repeating-linear-gradient(135deg, var(--live) 0 1.5px, transparent 1.5px 4px); }
+.legend [data-m] { display: none; }
+.org.bs .legend [data-m="bs"], .org:not(.bs) .legend [data-m="own"] { display: inline-flex; }
+.chart { padding: clamp(28px, 3.4vw, 52px) var(--px); }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart .stack { display: none; max-width: 460px; margin-inline: auto; }
+@media (max-width: 860px) { .chart .wide { display: none; } .chart .stack { display: block; } }
+/* drawing */
+.chart .e { fill: none; stroke: var(--ink-50); stroke-width: 1; transition: stroke 250ms var(--ease), stroke-width 250ms var(--ease); }
+.chart .e.hl { stroke: var(--ink); stroke-width: 2; }
+.chart .k { fill: none; stroke: var(--ink-50); stroke-width: 1.2; stroke-dasharray: 2 4; }
+.chart .k.hl { stroke: var(--ink); }
+.chart .n { cursor: pointer; }
+.chart .n rect { fill: var(--ground); stroke: var(--ink-50); stroke-width: 1; transition: fill 300ms var(--ease), stroke 250ms var(--ease); }
+.chart .n.root rect { stroke: var(--ink); stroke-width: 1.4; }
+.chart .n.found rect { stroke: var(--ink); stroke-dasharray: 5 4; }
+.chart .n text { text-anchor: middle; pointer-events: none; transition: fill 300ms var(--ease); }
+.chart .n .nm { font-family: var(--f-text); font-size: 14px; font-weight: 600; fill: var(--ink); letter-spacing: -0.01em; }
+.chart .n .nt { font-family: var(--f-text); font-size: 11.5px; fill: var(--ink-50); }
+.chart .n:hover rect, .chart .n.on rect { stroke: var(--ink); }
+.chart .n.on rect { stroke-width: 2; }
+.chart .cl { font-family: var(--f-text); font-size: 11.5px; fill: var(--ink-50); }
+.chart .stack .cl { text-anchor: start; }
+/* balance-sheet view */
+.chart .hatch line { stroke: var(--live); stroke-width: 1.3; }
+.org.bs .n rect { opacity: .55; }
+.org.bs .n.mon rect, .org.bs .n.hou rect { opacity: 1; }
+.org.bs .n.mon rect { fill: var(--ink); stroke: var(--ink); }
+.org.bs .n.mon .nm { fill: var(--ground); }
+.org.bs .n.mon .nt { fill: color-mix(in srgb, var(--ground) 70%, var(--ink)); }
+.org.bs .n.hou rect { fill: url(#hatch-w); stroke: var(--live); stroke-width: 1.4; }
+.org.bs .stack .n.hou rect { fill: url(#hatch-s); }
+.org.bs .n.hou .nm { fill: var(--ink); }
+.org.bs .n:not(.mon):not(.hou) text { opacity: .55; }
+.chart .gap { opacity: 0; transition: opacity 300ms var(--ease); }
+.org.bs .chart .gap { opacity: 1; }
+.chart .gap line { stroke: var(--absent); stroke-width: 1.6; }
+.chart .gap text { font-family: var(--f-mono); font-size: 10px; letter-spacing: .08em; fill: var(--absent); text-anchor: middle; text-transform: uppercase; }
+/* the detail row */
+.org-d { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 5fr) minmax(0, 3fr); border-top: 1px solid var(--line); }
+.org-d > div { padding: 20px var(--px); display: grid; gap: 4px; align-content: start; min-width: 0; }
+.org-d > div + div { border-left: 1px solid var(--line); }
+.org-d .k1 { font-size: 13px; color: var(--ink-50); }
+.org-d .v1 { font-size: clamp(18px, 1.6vw, 22px); font-weight: 600; letter-spacing: -0.015em; }
+.org-d .v2 { font-size: 15px; color: var(--ink-70); }
+.org-d .more { align-self: center; }
+.org-f { border-top: 1px solid var(--line); padding: 18px var(--px); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px 40px; font-size: 14px; color: var(--ink-70); }
+@media (max-width: 860px) {
+  .org-d { grid-template-columns: minmax(0, 1fr); }
+  .org-d > div + div { border-left: 0; border-top: 1px solid var(--line); }
+  .org-f { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 560px) {
+  .org .c-h { flex-direction: column; align-items: stretch; gap: 12px; padding-block: 14px; }
+  .seg { display: flex; } .seg button { flex: 1; }
+}
+
+/* ── 02 Governance: three levels and one fraction ─────────────────────── */
+.gov { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: auto auto auto minmax(0, 1fr); }
+.gov .cell { grid-row: span 4; grid-template-rows: subgrid; }
+.gov .cell + .cell { border-left: 1px solid var(--line); }
+.gov .line2 { font-family: var(--f-display); font-weight: 800; font-size: clamp(28px, 2.8vw, 42px); line-height: 1.02; letter-spacing: -0.035em; padding: clamp(26px, 3vw, 40px) var(--px) 0; }
+.gov .cell:nth-child(3) .line2 { color: var(--live); }
+.gov .fg { padding: 22px var(--px) 0; }
+.gov .c-m { padding-top: 18px; }
+.gov .c-m p { font-size: 15px; }
+/* members: balances differ, votes do not */
+.bal { display: grid; }
+.bal div { display: grid; grid-template-columns: minmax(0, 1fr) auto 44px; align-items: center; gap: 12px; padding-block: 8px; border-bottom: 1px solid var(--ink-13); font-size: 13.5px; color: var(--ink-70); }
+.bal div:first-child { border-top: 1px solid var(--ink-13); }
+.bal .bar { height: 8px; background: var(--ink-28); transform-origin: 0 50%; }
+.bal b { font-weight: 600; color: var(--ink); text-align: right; font-variant-numeric: tabular-nums; }
+.bal .h { font-size: 12px; color: var(--ink-50); }
+.bal .h b { font-weight: 400; color: var(--ink-50); }
+/* councils: three places, a chair from each */
+.cns { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.cns div { display: grid; align-content: space-between; gap: 8px; min-height: 132px; padding: 12px 10px; border: 1px solid var(--ink-28); }
+.cns .dots { display: flex; flex-wrap: wrap; gap: 5px; }
+.cns .dots i { width: 11px; height: 11px; border-radius: 999px; background: var(--ink-28); }
+.cns .dots i.ch { background: var(--ink); }
+.cns span { font-size: 12px; color: var(--ink-50); }
+/* the board: one third delegated, at any size */
+.brd { display: grid; gap: 12px; }
+.brd .sz { display: flex; gap: 6px; }
+.brd .sz button { height: 30px; min-width: 40px; padding-inline: 10px; border-radius: 999px; border: 1px solid var(--ink-28); font-size: 13px; font-weight: 500; color: var(--ink-70); font-variant-numeric: tabular-nums; }
+.brd .sz button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.brd .seatsN { display: grid; grid-template-columns: repeat(var(--n, 9), minmax(0, 1fr)); gap: 3px; }
+.brd .seatsN i { height: 30px; border: 1px solid var(--ink-28); transition: background-color 300ms var(--ease), border-color 300ms var(--ease); }
+.brd .seatsN i.d { background: var(--live); border-color: var(--live); }
+.brd .cap { font-size: 12.5px; color: var(--ink-50); font-variant-numeric: tabular-nums; }
+.brd .cap b { font-weight: 600; color: var(--live); }
+@media (max-width: 1000px) {
+  .gov { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
+  .gov .cell { grid-row: auto; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); grid-template-rows: auto auto minmax(0, 1fr); }
+  .gov .cell > .c-h { grid-column: 1 / -1; }
+  .gov .fg { grid-column: 2; grid-row: 2 / span 2; padding-bottom: clamp(24px, 3vw, 36px); }
+  .gov .line2 { grid-column: 1; grid-row: 2; }
+  .gov .c-m { grid-column: 1; grid-row: 3; }
+  .gov .cell + .cell { border-left: 0; border-top: 1px solid var(--line); }
+}
+@media (max-width: 640px) {
+  .gov .cell { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
+  .gov .fg, .gov .line2, .gov .c-m { grid-column: 1; grid-row: auto; }
+  .gov .fg { padding-bottom: 0; }
+}
+/* the five reserved matters */
+.rsv { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.rsv .c-h { grid-column: 1 / -1; }
+.rsv li { display: grid; gap: 10px; align-content: start; padding: 20px var(--px) 24px; min-width: 0; }
+.rsv li + li { border-left: 1px solid var(--line); }
+.rsv li b { font-family: var(--f-mono); font-weight: 400; font-size: 11px; letter-spacing: .08em; color: var(--ink-50); }
+.rsv li span { font-size: clamp(15px, 1.25vw, 17px); font-weight: 500; line-height: 1.3; letter-spacing: -0.01em; }
+.rsv ol { display: contents; }
+@media (max-width: 1000px) {
+  .rsv { grid-template-columns: minmax(0, 1fr); }
+  .rsv li { grid-template-columns: 44px minmax(0, 1fr); align-items: baseline; padding-block: 16px; }
+  .rsv li + li { border-left: 0; border-top: 1px solid var(--ink-13); }
+}
+
+/* ── 03 The protocol, on ink: a fork you can actually take ────────────── */
+.proto { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.fork { grid-column: 1 / -1; padding: clamp(28px, 3.2vw, 44px) var(--px) clamp(20px, 2.4vw, 32px); border-bottom: 1px solid var(--line); }
+.fork svg { width: 100%; height: auto; overflow: visible; display: block; }
+.fork .main { stroke: var(--ink); stroke-width: 2; fill: none; }
+.fork .br { stroke: var(--live); stroke-width: 2; fill: none; stroke-dasharray: 6 5; }
+.fork .cm { fill: var(--ground); stroke: var(--ink); stroke-width: 1.6; }
+.fork .cm.lab { fill: var(--ink); }
+.fork .cm.fk { stroke: var(--live); }
+.fork text { font-family: var(--f-text); font-size: 12px; fill: var(--ink-50); }
+.fork text.t1 { font-size: 13px; font-weight: 600; fill: var(--ink); }
+.fork text.t2 { font-size: 13px; font-weight: 600; fill: var(--live); }
+.fork .fk-only { opacity: 0; }
+.fork .narrow { display: none; }
+@media (max-width: 640px) { .fork .wide { display: none; } .fork .narrow { display: block; } }
+.proto .cell + .cell { border-left: 1px solid var(--line); }
+.proto .line2 { font-family: var(--f-display); font-weight: 800; font-size: clamp(26px, 2.6vw, 40px); line-height: 1.02; letter-spacing: -0.035em; padding: clamp(24px, 2.8vw, 36px) var(--px) 0; text-wrap: balance; }
+.proto .cell:nth-child(3) .line2 { color: var(--live); }
+.proto .c-m { padding-top: 16px; }
+.proto .c-m p { font-size: 15px; }
+.proto .c-f { grid-column: 1 / -1; font-size: 14px; color: var(--ink-70); }
+.proto .c-f a { color: var(--ink); border-bottom: 1px solid var(--ink-28); }
+@media (max-width: 760px) {
+  .proto { grid-template-columns: minmax(0, 1fr); }
+  .proto .cell + .cell { border-left: 0; border-top: 1px solid var(--line); }
+}
+
+/* ── 04 Who: small, local, and four open seats ───────────────────────── */
+.who2 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto auto minmax(0, 1fr); }
+.who2 .cell { grid-row: span 3; grid-template-rows: subgrid; }
+.who2 .cell + .cell { border-left: 1px solid var(--line); }
+.who2 .big { padding: clamp(26px, 3vw, 40px) var(--px) 0; display: grid; gap: 14px; align-content: start; }
+.who2 .yr { font-family: var(--f-display); font-weight: 800; font-size: clamp(64px, 7vw, 112px); line-height: .86; letter-spacing: -0.045em; }
+.who2 .line2 { font-family: var(--f-display); font-weight: 800; font-size: clamp(26px, 2.6vw, 40px); line-height: 1.02; letter-spacing: -0.035em; text-wrap: balance; }
+.who2 .c-m p { font-size: 15px; }
+.tl3 { display: grid; }
+.tl3 span { display: flex; justify-content: space-between; gap: 12px; padding-block: 10px; border-bottom: 1px solid var(--ink-13); font-size: 14.5px; color: var(--ink); }
+.tl3 span:first-child { border-top: 1px solid var(--ink-13); }
+.tl3 span em { font-style: normal; font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--settled); align-self: center; }
+.maps { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+.maps figure { border: 1px solid var(--ink-28); display: grid; }
+.maps svg { width: 100%; height: auto; display: block; }
+.maps figcaption { display: flex; justify-content: space-between; gap: 8px; padding: 8px 10px; border-top: 1px solid var(--ink-13); font-size: 12px; color: var(--ink-50); }
+.maps figcaption b { font-weight: 600; color: var(--ink); }
+.maps .rd { stroke: var(--ink-28); stroke-width: 1; fill: none; }
+.maps .cor { stroke: var(--ink); stroke-width: 2; fill: none; }
+.maps .m { fill: var(--ink); }
+.maps .ring { fill: none; stroke: var(--ink-28); stroke-width: 1; stroke-dasharray: 2 3; }
+@media (max-width: 860px) {
+  .who2 { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
+  .who2 .cell { grid-row: auto; grid-template-rows: auto auto auto; }
+  .who2 .cell + .cell { border-left: 0; border-top: 1px solid var(--line); }
+}
+.hire { grid-template-columns: minmax(0, 1fr); }
+.hire .row { display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; align-items: baseline; gap: 16px; padding: 18px var(--px); }
+.hire .row + .row { border-top: 1px solid var(--ink-13); }
+.hire .row b { font-family: var(--f-display); font-weight: 800; font-size: 28px; line-height: 1; letter-spacing: -0.03em; }
+.hire .row span { font-size: clamp(16px, 1.3vw, 18px); font-weight: 500; letter-spacing: -0.01em; }
+.hire .row em { font-style: normal; font-size: 13.5px; color: var(--ink-50); }
+.hire .c-f { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px 32px; padding-block: 16px; }
+.hire .c-f p { font-size: 14.5px; color: var(--ink-70); max-width: 60ch; }
+@media (max-width: 560px) {
+  .hire .row { grid-template-columns: 40px minmax(0, 1fr); row-gap: 2px; }
+  .hire .row em { grid-column: 2; }
+  .hire .c-f .btn { flex: 1 1 100%; min-height: 48px; }
+}
+@media (max-width: 560px) {
+  .vs .c-h .ck, .hire .c-h .ck, .rsv .c-h .ck { display: none; }
+  .vote .out { grid-column: 1 / -1; }
+  .chart { padding-inline: 10px; }
+  .proto .c-f { flex-wrap: wrap; padding-block: 14px; }
+  .maps figcaption { flex-direction: column; gap: 0; font-size: 11.5px; }
+}
+/* ── Close + footer ───────────────────────────────────────────────────── */
+.close .h2 { font-size: clamp(40px, 5.6vw, 88px); max-width: 12ch; }
+.foot { border-top: 1px solid var(--ink); padding-block: var(--s5); display: grid; grid-template-columns: minmax(0, 1.4fr) repeat(4, minmax(0, 1fr)); gap: var(--s4) var(--s4); font-size: 14.5px; }
+.foot h4 { margin: 0 0 12px; font-family: var(--f-mono); font-weight: 400; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-50); }
+.foot li + li { margin-top: 6px; }
+.foot a { color: var(--ink-70); } .foot a:hover { color: var(--ink); }
+.foot .about { color: var(--ink-70); max-width: 30ch; display: grid; gap: var(--s2); align-content: start; }
+.legal { grid-column: 1 / -1; border-top: 1px solid var(--ink-13); padding-top: var(--s3); color: var(--ink-50); font-size: 12.5px; display: grid; gap: 8px; max-width: 110ch; }
+@media (max-width: 900px) { .foot { grid-template-columns: repeat(2, minmax(0, 1fr)); } .foot .about { grid-column: 1 / -1; } }
+
+.mock-flag { position: fixed; left: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); z-index: 40; font-family: var(--f-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; background: #24409E; color: #E9ECE7; padding: 6px 11px; border-radius: 999px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .dot::after { animation: none; opacity: 0; }
+  *, *::before, *::after { transition-duration: 0ms !important; }
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="mark" viewBox="-168 -168 336 336">
+    <path d="M 148.28 -64 A 161.5 161.5 0 1 0 148.28 64 L 74.22 64 A 98 98 0 1 1 74.22 -64 Z" fill="currentColor" stroke="currentColor" stroke-width="4"/>
+    <path d="M 0 -8 H 114 V 8 H 0 Z" fill="currentColor"/>
+    <circle cx="0" cy="0" r="34" fill="currentColor"/>
+    <circle cx="131.5" cy="0" r="25.25" fill="none" stroke="currentColor" stroke-width="15.5"/>
+  </symbol>
+  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3.2"/></filter>
+  <symbol id="i-events" viewBox="0 0 18 18"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="3.5" width="13" height="12"/><path d="M2.5 7h13M6 2v3M12 2v3"/><path d="M5.5 10h2M5.5 12.5h2M10.5 10h2"/></g></symbol>
+  <symbol id="i-directory" viewBox="0 0 18 18"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l1.2-4h10.6l1.2 4"/><path d="M2.5 7.5c0 1.1.9 2 2 2s2-.9 2-2c0 1.1.9 2 2 2s2-.9 2-2c0 1.1.9 2 2 2s2-.9 2-2"/><path d="M3.5 9.3V15.5h11V9.3M7.5 15.5v-3.5h3v3.5"/></g></symbol>
+  <symbol id="i-shop" viewBox="0 0 18 18"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6.5h12l-1 9H4z"/><path d="M6.5 6.5V5a2.5 2.5 0 0 1 5 0v1.5"/></g></symbol>
+  <symbol id="person" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="5" r="2.8"/><path d="M2.5 15c0-3.2 2.4-5 5.5-5s5.5 1.8 5.5 5"/></g></symbol>
+  <symbol id="arrow" viewBox="0 0 14 10"><path d="M0 5h12M8 1l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.4"/></symbol>
+  <symbol id="check" viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="back" viewBox="0 0 9 15"><path d="M8 1L2 7.5 8 14" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+  <symbol id="bell" viewBox="0 0 18 18"><path d="M4.5 12.5V8a4.5 4.5 0 0 1 9 0v4.5l1.5 1.5H3z M7.2 15.5a1.9 1.9 0 0 0 3.6 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></symbol>
+  <symbol id="plus" viewBox="0 0 18 18"><path d="M9 2v14M2 9h14" stroke="currentColor" stroke-width="1.8"/></symbol>
+  <symbol id="del" viewBox="0 0 24 16"><path d="M8 1h14v14H8L1 8z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M12 5l6 6M18 5l-6 6" stroke="currentColor" stroke-width="1.4"/></symbol>
+</svg>
+
+<header class="site-head" id="site-head">
+  <div class="wrap">
+    <div class="top">
+      <a class="brand" href="https://www.useclear.org/" aria-label="Clear, home"><svg aria-hidden="true"><use href="#mark"/></svg>Clear</a>
+      <nav class="nav" aria-label="Main">
+        <ul>
+          <li><a href="https://www.useclear.org/how">How it works</a></li>
+          <li><a href="https://www.useclear.org/shops">For shops</a></li>
+          <li><a href="https://www.useclear.org/housing">Housing</a></li>
+          <li><a href="https://www.useclear.org/contribute">Contribute land</a></li>
+          <li><a href="https://www.useclear.org/coop" aria-current="page">The co-op</a></li>
+          <li class="navmenu" id="navmenu">
+            <button type="button" class="navmenu-button" id="navmenu-btn" aria-expanded="false" aria-controls="navmenu-panel">Community<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></button>
+            <div class="navmenu-panel" id="navmenu-panel" hidden><ul>
+              <li><a class="navmenu-link" href="https://www.useclear.org/events"><span class="navmenu-icon"><svg aria-hidden="true"><use href="#i-events"/></svg></span><span class="navmenu-text"><span class="navmenu-label">Events</span><span class="navmenu-note">Calls, town halls and local meetings</span></span></a></li>
+              <li><a class="navmenu-link" href="https://www.useclear.org/directory"><span class="navmenu-icon"><svg aria-hidden="true"><use href="#i-directory"/></svg></span><span class="navmenu-text"><span class="navmenu-label">Directory</span><span class="navmenu-note">Local businesses that take Clear Pay</span></span></a></li>
+              <li><a class="navmenu-link" href="https://www.useclear.org/shop"><span class="navmenu-icon"><svg aria-hidden="true"><use href="#i-shop"/></svg></span><span class="navmenu-text"><span class="navmenu-label">Shop</span><span class="navmenu-note">Goods with the Clear name on them</span></span></a></li>
+            </ul></div>
+          </li>
+        </ul>
+        <a class="btn btn-primary" href="https://www.useclear.org/join"><span class="dot"></span>Join</a>
+        <button type="button" class="menu-btn" id="menu-btn" aria-haspopup="dialog">Menu<svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 4h14M1 8h14M1 12h14"/></svg></button>
+      </nav>
+    </div>
+  </div>
+</header>
+<dialog class="sheet" id="sheet" aria-label="Main">
+  <div class="sheet-inner wrap">
+    <div class="sheet-top"><span class="t-note">Menu</span><button type="button" class="sheet-close" id="sheet-close" aria-label="Close menu"><svg viewBox="0 0 18 18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 2l14 14M16 2L2 16"/></svg></button></div>
+    <nav class="sheet-nav">
+      <ul class="sheet-main">
+          <li><a href="https://www.useclear.org/">Home</a></li>
+          <li><a href="https://www.useclear.org/how">How it works</a></li>
+          <li><a href="https://www.useclear.org/shops">For shops</a></li>
+          <li><a href="https://www.useclear.org/housing">Housing</a></li>
+          <li><a href="https://www.useclear.org/contribute">Contribute land</a></li>
+          <li><a href="https://www.useclear.org/coop" aria-current="page">The co-op</a></li>
+          <li><a href="https://www.useclear.org/capital">Clear Capital</a></li>
+      </ul>
+      <section class="sheet-community" aria-labelledby="sheet-community-label">
+        <p class="sheet-label" id="sheet-community-label">Community</p>
+        <ul class="sheet-tiles">
+            <li><a class="sheet-tile" href="https://www.useclear.org/events"><svg aria-hidden="true"><use href="#i-events"/></svg><span class="sheet-tile-label">Events</span><span class="sheet-tile-note">Calls, town halls and local meetings</span></a></li>
+            <li><a class="sheet-tile" href="https://www.useclear.org/directory"><svg aria-hidden="true"><use href="#i-directory"/></svg><span class="sheet-tile-label">Directory</span><span class="sheet-tile-note">Local businesses that take Clear Pay</span></a></li>
+            <li><a class="sheet-tile" href="https://www.useclear.org/shop"><svg aria-hidden="true"><use href="#i-shop"/></svg><span class="sheet-tile-label">Shop</span><span class="sheet-tile-note">Goods with the Clear name on them</span></a></li>
+        </ul>
+      </section>
+      <a class="btn btn-primary sheet-join" href="https://www.useclear.org/join"><span class="dot"></span>Join</a>
+    </nav>
+  </div>
+</dialog>
+
+<main>
+  <!-- HERO -->
+  <section class="hero phero wrap">
+    <div class="page-label label"><b>Structure</b>The co-op</div>
+    <h1 class="hero-h1" id="hero-h1"><span class="ln">A lender that builds houses.</span> <span class="ln">Owned by the people who use it.</span></h1>
+    <div class="hero-row">
+      <div data-in>
+        <p class="hero-lede">Your deposit is your share, every member has one vote, and the promises that matter are written where a future board cannot quietly reverse them.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="https://www.useclear.org/join"><span class="dot"></span>Join the waitlist</a>
+          <a class="btn btn-ghost" href="#structure">See the structure</a>
+        </div>
+      </div>
+      <ul class="facts figs" data-in>
+        <li><span>Your deposit</span><span>Your share</span></li>
+        <li><span>Votes per member</span><span>One</span></li>
+        <li><span>Reserved matters</span><span>Five</span></li>
+        <li><span>The protocol</span><span>Owned by nobody</span></li>
+      </ul>
+    </div>
+
+    <div class="bx vs" id="vs">
+      <div class="cell pol" id="vs-pol">
+        <div class="c-h"><span class="who">Written as a policy</span><span class="ck">Set by a board</span></div>
+        <div class="q">“We never sell the land.”</div>
+        <div class="vote"><span>Motion to sell</span><span class="seats7"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="out">Awaiting vote</span></div>
+        <div class="c-m"><h3>A board reverses it in an afternoon.</h3><p>Policies are what a board sets, and what the next board is free to unset.</p></div>
+      </div>
+      <div class="cell res" id="vs-res">
+        <div class="c-h"><span class="who">Written as a reserved matter</span><span class="ck">Set in the structure</span></div>
+        <div class="q">“We never sell the land.”</div>
+        <div class="vote"><span>Motion to sell</span><span class="seats7"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="out">Awaiting vote</span></div>
+        <div class="c-m"><h3>It cannot pass without the co-op.</h3><p>No matter who else joins the board. The only kind of protection that survives the people who wrote it.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 01 -->
+  <section class="sec band-ink" id="structure">
+    <div class="wrap">
+      <div class="head">
+        <div class="sec-label label"><b>01</b>Structure</div>
+        <h2 class="h2">Two balance sheets that never touch.</h2>
+        <div class="aside"><p class="line">Housing on one side: land and contributed property. Money on the other: deposits, credit and loans.</p></div>
+      </div>
+      <div class="bx org body-gap" id="org">
+        <div class="c-h">
+          <div class="seg" role="group" aria-label="View">
+            <button type="button" data-v="own" aria-pressed="true">Ownership</button>
+            <button type="button" data-v="bs" aria-pressed="false">Balance sheets</button>
+          </div>
+          <div class="legend">
+            <span data-m="own"><i></i>Owns</span><span data-m="own"><i class="ctr"></i>Contract</span><span data-m="own"><i class="box"></i>Ownerless</span>
+            <span data-m="bs"><i class="mon"></i>Money</span><span data-m="bs"><i class="hou"></i>Housing</span>
+          </div>
+        </div>
+        <div class="chart" id="chart"><svg class="wide" id="chart-w" aria-hidden="true"></svg><svg class="stack" id="chart-s" aria-hidden="true"></svg></div>
+        <div class="org-d" aria-live="polite">
+          <div><span class="k1">Selected</span><span class="v1" id="od-n">The co-op</span></div>
+          <div><span class="k1" id="od-k">What it is</span><span class="v2" id="od-t">Members, one member one vote. It owns everything in the tree except the foundation.</span></div>
+          <div><a class="more" href="https://www.useclear.org/capital">How outside capital enters<svg><use href="#arrow"/></svg></a></div>
+        </div>
+        <div class="org-f">
+          <span>Members hold no shares in Clear Capital Holdings. It is a separate company with its own board.</span>
+          <span>Land backstops construction borrowing and never credit losses. A member’s savings never fund another member’s credit.</span>
+        </div>
+      </div>
+      <ul class="sr-list" style="position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)">
+        <li>The co-op, members, one member one vote. Owns: Program entity (accounts, cards, payments); Deed &amp; Title Co (records, administration); Clear Capital Holdings (where outside investors sit), which owns Clear Lending (funds the credit book) and Clear Properties (contributed property); ClearLabs (builds the protocol).</li>
+        <li>Outside the ownership tree: the Protocol foundation, ownerless, holds the source, and contracts ClearLabs to maintain it.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section class="sec" id="governance">
+    <div class="wrap">
+      <div class="head">
+        <div class="sec-label label"><b>02</b>Governance</div>
+        <h2 class="h2">Who decides what.</h2>
+        <div class="aside"><p class="line">One vote each, councils where people actually live, and a third of the board delegated from them.</p></div>
+      </div>
+      <div class="bx gov body-gap">
+        <div class="cell">
+          <div class="c-h"><span class="who">Members</span><span class="ck">Not by balance</span></div>
+          <div class="line2">One vote each.</div>
+          <div class="fg">
+            <div class="bal" id="bal">
+              <div class="h"><span>Balance</span><span></span><b>Votes</b></div>
+              <div><span>$240</span><span class="bar" style="width:14px"></span><b>1</b></div>
+              <div><span>$3,100</span><span class="bar" style="width:46px"></span><b>1</b></div>
+              <div><span>$12,800</span><span class="bar" style="width:110px"></span><b>1</b></div>
+            </div>
+          </div>
+          <div class="c-m"><p>Your deposit makes you an owner. It does not make you a bigger one.</p></div>
+        </div>
+        <div class="cell">
+          <div class="c-h"><span class="who">Regional councils</span><span class="ck">Per community</span></div>
+          <div class="line2">Residents govern their own place.</div>
+          <div class="fg">
+            <div class="cns" id="cns">
+              <div><span class="dots"><i class="ch"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span>Community 1</span></div>
+              <div><span class="dots"><i class="ch"></i><i></i><i></i><i></i><i></i><i></i></span><span>Community 2</span></div>
+              <div><span class="dots"><i class="ch"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span>Community 3</span></div>
+            </div>
+          </div>
+          <div class="c-m"><p>From outside it looks like an HOA. It is not one. Each council chair goes up to the board.</p></div>
+        </div>
+        <div class="cell">
+          <div class="c-h"><span class="who">Delegate assembly</span><span class="ck">A fraction, not a number</span></div>
+          <div class="line2">One third of the board.</div>
+          <div class="fg">
+            <div class="brd">
+              <div class="sz" role="group" aria-label="Board size"><button type="button" data-n="6" aria-pressed="false">6</button><button type="button" data-n="9" aria-pressed="true">9</button><button type="button" data-n="12" aria-pressed="false">12</button><button type="button" data-n="15" aria-pressed="false">15</button></div>
+              <div class="seatsN" id="seatsN"></div>
+              <span class="cap" id="brd-cap"><b>3</b> of 9 seats delegated from councils</span>
+            </div>
+          </div>
+          <div class="c-m"><p>Each community delegates its council chair. Written as a fraction so it holds at any board size.</p></div>
+        </div>
+      </div>
+      <div class="bx rsv">
+        <div class="c-h"><span class="who">Five reserved matters</span><span class="ck">None pass without the co-op</span></div>
+        <ol>
+          <li><b>01</b><span>Selling land</span></li>
+          <li><b>02</b><span>Diluting members</span></li>
+          <li><b>03</b><span>Amending the purpose</span></li>
+          <li><b>04</b><span>Replacing the manager</span></li>
+          <li><b>05</b><span>Related-party deals above a threshold</span></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section class="sec band-ink" id="protocol">
+    <div class="wrap">
+      <div class="head">
+        <div class="sec-label label"><b>03</b>The protocol</div>
+        <h2 class="h2">Control is unnecessary when exit is credible.</h2>
+        <div class="aside"><p class="line">The ledger, the credit issuers and the deed and title records run on open-source contracts held by a foundation nobody owns.</p></div>
+      </div>
+      <div class="bx proto body-gap" id="proto">
+        <div class="fork" id="fork"><svg class="wide" viewBox="0 0 1000 172" aria-hidden="true"><text class="t1" x="20" y="24">The protocol, held by a foundation nobody owns</text><path class="main" d="M20 60 H980"/><path class="br" d="M600 60 C 650 60, 650 128, 700 128 H980"/><circle class="cm" cx="70" cy="60" r="7"/><circle class="cm lab" cx="160" cy="60" r="7"/><circle class="cm lab" cx="250" cy="60" r="7"/><circle class="cm" cx="340" cy="60" r="7"/><circle class="cm lab" cx="430" cy="60" r="7"/><circle class="cm lab" cx="520" cy="60" r="7"/><circle class="cm" cx="690" cy="60" r="7"/><circle class="cm lab" cx="780" cy="60" r="7"/><circle class="cm lab" cx="870" cy="60" r="7"/><circle class="cm" cx="950" cy="60" r="7"/><text x="160" y="92" text-anchor="middle">ClearLabs</text><text x="340" y="92" text-anchor="middle">Anyone else</text><circle class="cm fk" cx="770" cy="128" r="7"/><circle class="cm fk" cx="870" cy="128" r="7"/><circle class="cm fk" cx="960" cy="128" r="7"/><text class="fk-t" x="604" y="104">fork</text><text class="t2 fk-t" x="700" y="162">The co-op’s fork, if governance diverged</text></svg><svg class="narrow" viewBox="0 0 360 196" aria-hidden="true"><text class="t1" x="4" y="20">The protocol, held by nobody</text><path class="main" d="M8 54 H352"/><path class="br" d="M180 54 C 206 54, 206 118, 232 118 H352"/><circle class="cm" cx="30" cy="54" r="6"/><circle class="cm lab" cx="80" cy="54" r="6"/><circle class="cm lab" cx="130" cy="54" r="6"/><circle class="cm" cx="230" cy="54" r="6"/><circle class="cm lab" cx="280" cy="54" r="6"/><circle class="cm lab" cx="340" cy="54" r="6"/><text x="80" y="84" text-anchor="middle">ClearLabs</text><circle class="cm fk" cx="280" cy="118" r="6"/><circle class="cm fk" cx="340" cy="118" r="6"/><text class="fk-t" x="150" y="98">fork</text><text class="t2 fk-t" x="4" y="164">The co-op’s fork,</text><text class="t2 fk-t" x="4" y="182">if governance diverged</text></svg></div>
+        <div class="cell">
+          <div class="c-h"><span class="who">Who maintains it</span><span class="ck">Under contract</span></div>
+          <div class="line2">ClearLabs, and not only ClearLabs.</div>
+          <div class="c-m"><p>Paid to maintain the contracts today, and deliberately not the only party that could be.</p></div>
+        </div>
+        <div class="cell">
+          <div class="c-h"><span class="who">If governance diverged</span><span class="ck">A right and a capability</span></div>
+          <div class="line2">The co-op can fork the code.</div>
+          <div class="c-m"><p>It already funds the maintainer, so it has the capability and not just the right.</p></div>
+        </div>
+        <div class="c-f"><a href="https://github.com/Deed3Labs/Protocol-Contracts">github.com/Deed3Labs/Protocol-Contracts</a><span class="ck">AGPL-3.0</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section class="sec" id="who">
+    <div class="wrap">
+      <div class="head">
+        <div class="sec-label label"><b>04</b>Who</div>
+        <h2 class="h2">Small, local, and honest about it.</h2>
+        <div class="aside"><p class="line">Built out of the Inland Empire by a very small team, starting with a handful of shops in one corridor rather than a launch.</p></div>
+      </div>
+      <div class="bx who2 body-gap">
+        <div class="cell">
+          <div class="c-h"><span class="who">In progress</span><span class="ck">Since the design work started</span></div>
+          <div class="big"><span class="yr" id="yr">2017</span><div class="tl3"><span>The credit waterfall<em>Built</em></span><span>The entity structure<em>Designed</em></span><span>The protocol<em>Open source</em></span></div></div>
+          <div class="c-m"><p>The year the design work started, on the three pieces everything else rests on.</p></div>
+        </div>
+        <div class="cell">
+          <div class="c-h"><span class="who">Why a corridor</span><span class="ck">Density over reach</span></div>
+          <div class="big"><span class="line2">Ten merchants a mile apart compound.</span><div class="maps"><figure><svg viewBox="0 0 200 120" aria-hidden="true"><path class="rd" d="M0 22 H200"/><path class="rd" d="M0 58 H200"/><path class="rd" d="M0 94 H200"/><path class="rd" d="M38 0 V120"/><path class="rd" d="M96 0 V120"/><path class="rd" d="M154 0 V120"/><path class="cor" d="M8 104 L192 20"/><circle class="m" cx="72.1" cy="69.8" r="3.2"/><circle class="m" cx="78.9" cy="67.8" r="3.2"/><circle class="m" cx="81.8" cy="67.7" r="3.2"/><circle class="m" cx="94.1" cy="69.2" r="3.2"/><circle class="m" cx="98.4" cy="60.9" r="3.2"/><circle class="m" cx="102.1" cy="58.9" r="3.2"/><circle class="m" cx="104.7" cy="54.7" r="3.2"/><circle class="m" cx="110.6" cy="60.4" r="3.2"/><circle class="m" cx="121.0" cy="56.7" r="3.2"/><circle class="m" cx="126.3" cy="48.0" r="3.2"/><ellipse class="ring" cx="98" cy="62" rx="40" ry="16" transform="rotate(-24.5 98 62)"/></svg><figcaption><span>One corridor</span><b>Compounds</b></figcaption></figure><figure><svg viewBox="0 0 200 120" aria-hidden="true"><path class="rd" d="M0 22 H200"/><path class="rd" d="M0 58 H200"/><path class="rd" d="M0 94 H200"/><path class="rd" d="M38 0 V120"/><path class="rd" d="M96 0 V120"/><path class="rd" d="M154 0 V120"/><circle class="m" cx="14" cy="12" r="3.2"/><circle class="m" cx="70" cy="30" r="3.2"/><circle class="m" cx="176" cy="14" r="3.2"/><circle class="m" cx="120" cy="48" r="3.2"/><circle class="m" cx="30" cy="72" r="3.2"/><circle class="m" cx="186" cy="70" r="3.2"/><circle class="m" cx="84" cy="104" r="3.2"/><circle class="m" cx="142" cy="96" r="3.2"/><circle class="m" cx="56" cy="52" r="3.2"/><circle class="m" cx="166" cy="110" r="3.2"/></svg><figcaption><span>The county</span><b>Does not</b></figcaption></figure></div></div>
+          <div class="c-m"><p>Ten across the county do not. What is new is that the first product is small enough to actually ship.</p></div>
+        </div>
+      </div>
+      <div class="bx hire">
+        <div class="c-h"><span class="who">We are looking for four people</span><span class="ck">Equity-only at this stage</span></div>
+        <div class="row"><b>1</b><span>A partnerships lead</span><em>Shops and land</em></div>
+        <div class="row"><b>1</b><span>A protocol engineer</span><em>The contracts</em></div>
+        <div class="row"><b>2</b><span>Advisers who know real estate and banking</span><em>Both sides</em></div>
+        <div class="c-f"><p>We say equity-only in the first conversation rather than the fourth.</p><a class="btn btn-primary" href="https://www.useclear.org/join?as=work"><span class="dot"></span>Get in touch</a></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <div class="foot">
+    <div class="about"><a class="brand" href="https://www.useclear.org/"><svg aria-hidden="true"><use href="#mark"/></svg>Clear</a><p>A member-owned cooperative, building in Inland Empire, California.</p></div>
+    <div><h4>Members</h4><ul><li><a href="https://www.useclear.org/how">How it works</a></li><li><a href="https://www.useclear.org/housing">Housing</a></li><li><a href="https://www.useclear.org/join">Join the waitlist</a></li><li><a href="https://demo.useclear.org">Members app</a></li></ul></div>
+    <div><h4>Partners</h4><ul><li><a href="https://www.useclear.org/shops">For shops</a></li><li><a href="https://www.useclear.org/contribute">Contribute land</a></li><li><a href="https://www.useclear.org/capital">Clear Capital</a></li><li><a href="https://merchant.useclear.org">Merchant app</a></li></ul></div>
+    <div><h4>The co-op</h4><ul><li><a href="https://www.useclear.org/coop">Structure and governance</a></li><li><a href="https://github.com/Deed3Labs/Protocol-Contracts">Protocol source</a></li><li><a href="https://www.useclear.org/join?as=work">Work with us</a></li><li><a href="https://www.useclear.org/style">Brand and style guide</a></li></ul></div>
+    <div><h4>Community</h4><ul><li><a href="https://www.useclear.org/events">Events</a></li><li><a href="https://www.useclear.org/directory">Directory</a></li><li><a href="https://www.useclear.org/shop">Shop</a></li></ul></div>
+    <div class="legal">
+      <p>Clear is not a bank and deposits are not FDIC insured. Membership accounts are cooperative capital accounts, not deposit accounts.</p>
+      <p>Nothing here is an offer to sell or a solicitation to buy any security. Figures shown for housing, savings and credit are illustrations of how the model works, not quotes, offers or predictions. Credit is subject to the terms disclosed in the app before you draw.</p>
+      <p>We are not tax or legal advisers. Descriptions of property contributions are general and depend entirely on your own circumstances.</p>
+    </div>
+  </div>
+</footer>
+
+<div class="mock-flag">Mockup v1 · The co-op</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const G = typeof window.gsap !== 'undefined' && !reduce;
+  const money = (n, dp = 2) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: dp, maximumFractionDigits: dp });
+
+  /* Header */
+  const head = $('#site-head');
+  const onScroll = () => head.classList.toggle('scrolled', scrollY > 8);
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+  /* The Community menu: opens on click, and on hover for a mouse. */
+  const nm = $('#navmenu'), nb = $('#navmenu-btn'), np = $('#navmenu-panel');
+  let nmT = null, byHover = false;
+  const nmSet = o => { np.hidden = !o; nb.setAttribute('aria-expanded', String(o)); if (!o) byHover = false; };
+  /* A mouse already opened it by hovering, so a click keeps it open. */
+  nb.addEventListener('click', () => nmSet(byHover ? true : np.hidden));
+  nm.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') { clearTimeout(nmT); if (np.hidden) byHover = true; nmSet(true); } });
+  nm.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') nmT = setTimeout(() => nmSet(false), 180); });
+  document.addEventListener('pointerdown', e => { if (!nm.contains(e.target)) nmSet(false); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { nmSet(false); $('#sheet').close(); } });
+  /* The full-screen sheet, on <dialog>. */
+  const sheet = $('#sheet');
+  $('#menu-btn').addEventListener('click', () => sheet.showModal());
+  $('#sheet-close').addEventListener('click', () => sheet.close());
+
+  /* Screens: each app canvas is authored at its real width and scaled to fit,
+     so the product reads like a screenshot at every width. */
+  function fit() {
+    $$('.screen').forEach(sc => {
+      if (!sc.offsetParent) return;
+      const w = +sc.dataset.w, h = +sc.dataset.h || sc.firstElementChild.offsetHeight, s = sc.clientWidth / w;
+      sc.style.height = (h * s) + 'px';
+      sc.firstElementChild.style.transform = `scale(${s})`;
+    });
+  }
+  new ResizeObserver(fit).observe(document.body); fit();
+
+  /* ── Light along the lines ──────────────────────────────────────────────
+     One engine. A path is built in an element's own pixels; a short lit
+     segment (soft halo + thin core) runs along it. Paths are rebuilt on resize. */
+  const NS = 'http://www.w3.org/2000/svg';
+  function traceLayer(host) {
+    const svg = document.createElementNS(NS, 'svg'); svg.classList.add('trace');
+    const halo = document.createElementNS(NS, 'path'); halo.classList.add('halo');
+    const core = document.createElementNS(NS, 'path'); core.classList.add('core');
+    svg.append(halo, core); host.appendChild(svg);
+    return { svg, halo, core };
+  }
+  /* Rounded rectangle, clockwise, starting at a chosen point on its edge. */
+  function rr(x, y, w, h, r, start = 'top') {
+    const L = x, T = y, R = x + w, B = y + h;
+    const seg = {
+      top:    `L ${R - r} ${T} A ${r} ${r} 0 0 1 ${R} ${T + r}`,
+      right:  `L ${R} ${B - r} A ${r} ${r} 0 0 1 ${R - r} ${B}`,
+      bottom: `L ${L + r} ${B} A ${r} ${r} 0 0 1 ${L} ${B - r}`,
+      left:   `L ${L} ${T + r} A ${r} ${r} 0 0 1 ${L + r} ${T}`,
+    };
+    const starts = { top: [L + w / 2, T], right: [R, T + h / 2], bottom: [L + w / 2, B], left: [L, T + h / 2] };
+    const order = ['top', 'right', 'bottom', 'left'];
+    const i = order.indexOf(start), [sx, sy] = starts[start];
+    let d = `M ${sx} ${sy} `;
+    for (let k = 0; k < 4; k++) d += seg[order[(i + k) % 4]] + ' ';
+    return d + `L ${sx} ${sy}`;
+  }
+  function makeTrace(host, build, { seg = 140, speed = 520 } = {}) {
+    if (!G) return { run(o = {}) { if (o.done) o.done(); }, kill() {} };
+    const t = traceLayer(host);
+    let len = 0, tw = null;
+    function layout() {
+      const w = host.clientWidth, h = host.clientHeight;
+      t.svg.setAttribute('width', w); t.svg.setAttribute('height', h); t.svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+      const d = build(w, h, host); t.halo.setAttribute('d', d); t.core.setAttribute('d', d);
+      len = t.core.getTotalLength();
+      [t.halo, t.core].forEach(p => { p.style.strokeDasharray = `${seg} ${len + seg}`; p.style.strokeDashoffset = seg; });
+    }
+    layout(); new ResizeObserver(layout).observe(host);
+    return {
+      run(opts = {}) {
+        if (tw) tw.kill(); layout();
+        const o = { v: seg };
+        tw = gsap.to(o, { v: -len, duration: len / speed, ease: opts.ease || 'power1.inOut', repeat: opts.repeat || 0, repeatDelay: opts.repeatDelay || 0,
+          onUpdate: () => { t.halo.style.strokeDashoffset = o.v; t.core.style.strokeDashoffset = o.v; }, onComplete: opts.done });
+      },
+      kill() { if (tw) tw.kill(); [t.halo, t.core].forEach(p => { p.style.strokeDashoffset = seg; }); },
+    };
+  }
+
+
+
+
+  /* ── 01 the org chart: every coordinate derived, nothing typed in ────── */
+  const ORG = {
+    root: { id: 'coop', name: 'The co-op', note: 'members, one member one vote', by: 'Owned by its members', what: 'One member, one vote. It owns everything in the tree except the foundation.' },
+    kids: [
+      { id: 'prog', name: 'Program entity', note: 'accounts, cards, payments', bs: 'mon', what: 'Accounts, cards and payments. Member money sits here, on the money side.' },
+      { id: 'dtc', name: 'Deed & Title Co', note: 'records, administration', what: 'Records and administration for deeds and title.' },
+      { id: 'hold', name: 'Clear Capital Holdings', note: 'where outside investors sit', what: 'A separate company with its own board, and the only place outside investors sit.' },
+      { id: 'labs', name: 'ClearLabs', note: 'builds the protocol', what: 'Builds the protocol, and is paid by the foundation to maintain it.' },
+    ],
+    gc: [
+      { id: 'lend', name: 'Clear Lending', note: 'funds the credit book', bs: 'mon', what: 'Funds the credit book. The money side, and it never touches the land.' },
+      { id: 'prop', name: 'Clear Properties', note: 'contributed property', bs: 'hou', what: 'Holds contributed property. The housing side, and it never backs a credit loss.' },
+    ],
+    found: { id: 'found', name: 'Protocol foundation', note: 'ownerless, holds the source', by: 'Owned by nobody', what: 'Holds the source, and contracts ClearLabs to maintain it.' },
+    contract: 'contracts ClearLabs to maintain it',
+  };
+  const parentOf = id => ORG.kids.some(k => k.id === id) ? 'coop' : ORG.gc.some(g => g.id === id) ? 'hold' : null;
+  const nodeOf = id => [ORG.root, ...ORG.kids, ...ORG.gc, ORG.found].find(n => n.id === id);
+  const svgEl = (tag, attrs = {}, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+  const hatchDef = (svg, id) => {
+    const d = svgEl('defs', {}, svg), p = svgEl('pattern', { id, patternUnits: 'userSpaceOnUse', width: 6, height: 6, patternTransform: 'rotate(45)' }, d);
+    svgEl('rect', { width: 6, height: 6, fill: 'var(--ground)' }, p); const g = svgEl('g', { class: 'hatch' }, p); svgEl('line', { x1: 0, y1: 0, x2: 0, y2: 6 }, g);
+  };
+  function box(svg, n, x, y, w, h, extra = '') {
+    const g = svgEl('g', { class: `n ${extra} ${n.bs || ''}`.trim(), 'data-id': n.id, tabindex: 0, role: 'button', 'aria-label': n.name }, svg);
+    svgEl('rect', { x, y, width: w, height: h }, g);
+    svgEl('text', { x: x + w / 2, y: y + h / 2 - 3, class: 'nm' }, g).textContent = n.name;
+    svgEl('text', { x: x + w / 2, y: y + h / 2 + 15, class: 'nt' }, g).textContent = n.note;
+    return g;
+  }
+  function edge(svg, id, d, cls = 'e') { return svgEl('path', { d, class: `${cls} draw`, 'data-to': id }, svg); }
+
+  /* Landscape. ClearLabs sits last, beside the foundation it contracts with,
+     so the dotted line never crosses Holdings. */
+  (function wide() {
+    const svg = $('#chart-w'); hatchDef(svg, 'hatch-w');
+    const W = 1000, BH = 76, RH = 68, R1 = 8, R2 = 142, R3 = 292, CW = 180, CG = 16, X0 = 8;
+    const cx = i => X0 + i * (CW + CG) + CW / 2;
+    const FX = X0 + 4 * (CW + CG), FW = 180;
+    const rootCx = (cx(0) + cx(ORG.kids.length - 1)) / 2, bus = R2 - 30;
+    const HI = 2, LI = 3, hCx = cx(HI);
+    const GW = 172, GG = 64, gT = ORG.gc.length * GW + (ORG.gc.length - 1) * GG, gX0 = hCx - gT / 2;
+    const gcx = i => gX0 + i * (GW + GG) + GW / 2, gBus = R3 - 30;
+    const elbow = R2 + BH + 24, fCx = FX + FW / 2, lCx = cx(LI);
+    svg.setAttribute('viewBox', `0 0 ${W} ${R3 + BH + 8}`);
+    ORG.kids.forEach((k, i) => edge(svg, k.id, `M ${rootCx} ${R1 + RH} V ${bus} H ${cx(i)} V ${R2}`));
+    ORG.gc.forEach((g, i) => edge(svg, g.id, `M ${hCx} ${R2 + BH} V ${gBus} H ${gcx(i)} V ${R3}`));
+    edge(svg, 'found', `M ${fCx} ${R2 + BH} V ${elbow} H ${lCx} V ${R2 + BH}`, 'k');
+    svgEl('text', { x: (fCx + lCx) / 2, y: elbow + 20, class: 'cl', 'text-anchor': 'middle' }, svg).textContent = ORG.contract;
+    /* the seam between the two balance sheets, shown in that view */
+    const gx = (gcx(0) + gcx(1)) / 2, gp = svgEl('g', { class: 'gap' }, svg);
+    svgEl('line', { x1: gx - 5, y1: R3 + 10, x2: gx - 5, y2: R3 + BH - 10 }, gp); svgEl('line', { x1: gx + 5, y1: R3 + 10, x2: gx + 5, y2: R3 + BH - 10 }, gp);
+    svgEl('text', { x: gx, y: R3 - 8 }, gp).textContent = 'never touch';
+    box(svg, ORG.root, rootCx - 130, R1, 260, RH, 'root');
+    ORG.kids.forEach((k, i) => box(svg, k, X0 + i * (CW + CG), R2, CW, BH));
+    box(svg, ORG.found, FX, R2, FW, BH, 'found');
+    ORG.gc.forEach((g, i) => box(svg, g, gX0 + i * (GW + GG), R3, GW, BH));
+  })();
+
+  /* Portrait: the same tree as a spine, at its real size on a phone. */
+  (function stack() {
+    const svg = $('#chart-s'); hatchDef(svg, 'hatch-s');
+    const MW = 360, RH = 58, BH = 54, GH = 50, GAP = 12, I1 = 28, I2 = 56, S1 = 14, S2 = 42, CGAP = 50;
+    const rows = []; let y = RH + 16;
+    ORG.kids.forEach((k, i) => { rows.push({ n: k, kind: 'c', y, h: BH }); y += BH + GAP; if (i === 2) ORG.gc.forEach(g => { rows.push({ n: g, kind: 'g', y, h: GH }); y += GH + GAP; }); });
+    const mid = r => r.y + r.h / 2, kids = rows.filter(r => r.kind === 'c'), gcs = rows.filter(r => r.kind === 'g');
+    const last = kids[kids.length - 1], hold = kids[2], fY = y + CGAP;
+    svg.setAttribute('viewBox', `0 0 ${MW} ${fY + BH + 4}`);
+    kids.forEach(r => edge(svg, r.n.id, `M ${S1} ${RH} V ${mid(r)} H ${I1}`));
+    gcs.forEach(r => edge(svg, r.n.id, `M ${S2} ${hold.y + hold.h} V ${mid(r)} H ${I2}`));
+    edge(svg, 'found', `M ${S2} ${last.y + last.h} V ${fY}`, 'k');
+    svgEl('text', { x: I2, y: last.y + last.h + 30, class: 'cl' }, svg).textContent = ORG.contract;
+    const gp = svgEl('g', { class: 'gap' }, svg), gy = gcs[0].y + gcs[0].h + GAP / 2;
+    svgEl('line', { x1: I2 + 40, y1: gy - 3, x2: MW - 40, y2: gy - 3 }, gp); svgEl('line', { x1: I2 + 40, y1: gy + 3, x2: MW - 40, y2: gy + 3 }, gp);
+    box(svg, ORG.root, 0, 0, MW, RH, 'root');
+    rows.forEach(r => box(svg, r.n, r.kind === 'g' ? I2 : I1, r.y, MW - (r.kind === 'g' ? I2 : I1), r.h));
+    box(svg, ORG.found, I1, fY, MW - I1, BH, 'found');
+  })();
+
+  /* Selecting a box lights its line of ownership back to the root. */
+  const org = $('#org');
+  function select(id) {
+    const n = nodeOf(id), chain = [];
+    let cur = id; while (cur && cur !== 'coop') { chain.push(cur); cur = parentOf(cur); }
+    $$('#chart .n').forEach(g => g.classList.toggle('on', g.dataset.id === id));
+    $$('#chart .e').forEach(e => e.classList.toggle('hl', chain.includes(e.dataset.to)));
+    $$('#chart .k').forEach(e => e.classList.toggle('hl', id === 'found' || id === 'labs'));
+    const p = parentOf(id);
+    $('#od-n').textContent = n.name;
+    $('#od-k').textContent = n.by || ('Owned by ' + nodeOf(p).name.replace(/^The /, 'the '));
+    $('#od-t').textContent = n.what;
+  }
+  $$('#chart .n').forEach(g => {
+    g.addEventListener('click', () => select(g.dataset.id));
+    g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(g.dataset.id); } });
+    g.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') select(g.dataset.id); });
+  });
+  select('coop');
+  $$('#org .seg button').forEach(b => b.addEventListener('click', () => {
+    $$('#org .seg button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    org.classList.toggle('bs', b.dataset.v === 'bs');
+    if (b.dataset.v === 'bs') select('prop'); else select('coop');
+  }));
+
+  /* ── 02 the board, at any size ───────────────────────────────────────── */
+  const sN = $('#seatsN');
+  function setBoard(n) {
+    const d = n / 3;
+    sN.style.setProperty('--n', n);
+    sN.innerHTML = Array.from({ length: n }, (_, i) => `<i class="${i < d ? 'd' : ''}"></i>`).join('');
+    $('#brd-cap').innerHTML = `<b>${d}</b> of ${n} seats delegated from councils`;
+    $$('.brd .sz button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.n === n)));
+    if (G) gsap.from('#seatsN i', { opacity: 0, y: 6, duration: .35, stagger: .025, ease: 'power2.out' });
+  }
+  $$('.brd .sz button').forEach(b => b.addEventListener('click', () => setBoard(+b.dataset.n)));
+  setBoard(9);
+
+  /* ── Hero: the same sentence, put to the same vote ───────────────────── */
+  const pol = $('#vs-pol'), res = $('#vs-res');
+  const VOTES = ['y', 'n', 'y', 'y', 'n', 'n', 'y'];
+  function resetVote() {
+    [pol, res].forEach(c => { c.classList.remove('struck', 'held'); $$('.seats7 i', c).forEach(i => i.className = ''); $('.out', c).textContent = 'Awaiting vote'; });
+  }
+  function finalVote() {
+    [pol, res].forEach(c => $$('.seats7 i', c).forEach((i, k) => i.className = VOTES[k]));
+    pol.classList.add('struck'); $('.out', pol).textContent = 'Passes, 4 to 3';
+    res.classList.add('held'); $('.out', res).textContent = 'Blocked';
+  }
+  let voteT = [];
+  function runVote() {
+    voteT.forEach(clearTimeout); voteT = []; resetVote();
+    $$('.out', $('#vs')).forEach(o => o.textContent = 'Voting');
+    VOTES.forEach((v, k) => voteT.push(setTimeout(() => [pol, res].forEach(c => $$('.seats7 i', c)[k].className = v), 500 + k * 260)));
+    const end = 500 + VOTES.length * 260 + 300;
+    voteT.push(setTimeout(() => { pol.classList.add('struck'); $('.out', pol).textContent = 'Passes, 4 to 3'; }, end));
+    voteT.push(setTimeout(() => { res.classList.add('held'); $('.out', res).textContent = 'Blocked'; }, end + 500));
+  }
+
+  if (!G) { finalVote(); return; }
+  gsap.registerPlugin(ScrollTrigger);
+
+  /* Hero: two lines rise, then the vote runs on a loop while it is in view. */
+  const h1 = $('#hero-h1');
+  $$('.ln', h1).forEach(ln => { ln.innerHTML = ln.textContent.split(' ').map(w => `<span class="w"><span>${w}</span></span>`).join(' '); });
+  gsap.timeline({ defaults: { ease: 'power3.out' } })
+    .from('#hero-h1 .w > span', { yPercent: 105, duration: 1, stagger: .06, onComplete: () => $('#hero-h1').classList.add('revealed') })
+    .from('[data-in]', { opacity: 0, y: 14, duration: .8, stagger: .1 }, '-=.6')
+    .from('#vs', { opacity: 0, y: 20, duration: .9 }, '-=.5');
+  let voteLoop = null;
+  ScrollTrigger.create({ trigger: '#vs', start: 'top 85%', end: 'bottom 10%', onToggle: s => {
+    clearInterval(voteLoop);
+    if (s.isActive) { runVote(); voteLoop = setInterval(runVote, 7600); } else { voteT.forEach(clearTimeout); finalVote(); }
+  } });
+
+  /* 01: the tree draws from the root down, then the contract, then the foundation. */
+  const drawIn = svg => {
+    const es = $$('.draw', svg); es.forEach(p => { const L = Math.ceil(p.getTotalLength()); p.style.strokeDasharray = p.classList.contains('k') ? '' : L; p.style.strokeDashoffset = p.classList.contains('k') ? 0 : L; });
+    const tl = gsap.timeline();
+    tl.from($$('.n.root', svg), { opacity: 0, y: -8, duration: .5 })
+      .to($$('.e', svg), { strokeDashoffset: 0, duration: .8, stagger: .08, ease: 'power2.inOut' }, '-=.1')
+      .from($$('.n:not(.root):not(.found)', svg), { opacity: 0, y: 8, duration: .45, stagger: .07 }, '-=.6')
+      .from($$('.n.found, .k, .cl', svg), { opacity: 0, duration: .6 }, '-=.1');
+  };
+  ScrollTrigger.create({ trigger: '#chart', start: 'top 72%', once: true, onEnter: () => drawIn(matchMedia('(max-width: 860px)').matches ? $('#chart-s') : $('#chart-w')) });
+
+  /* 02: balances grow, votes stay at one; council chairs light up. */
+  gsap.set('#bal .bar', { scaleX: 0 });
+  ScrollTrigger.create({ trigger: '.gov', start: 'top 75%', once: true, onEnter: () => {
+    gsap.to('#bal .bar', { scaleX: 1, duration: .9, stagger: .15, ease: 'power3.out' });
+    gsap.from('#cns .dots i', { scale: 0, duration: .3, stagger: .03, delay: .2, ease: 'back.out(2)' });
+  } });
+
+  /* 03: the main line runs, then the fork peels off it. */
+  const fk = $$('#fork svg');
+  fk.forEach(svg => { $$('.main, .br', svg).forEach(p => { const L = Math.ceil(p.getTotalLength()); p.dataset.L = L; }); });
+  gsap.set('#fork .main', { strokeDasharray: (i, el) => el.dataset.L, strokeDashoffset: (i, el) => el.dataset.L });
+  gsap.set('#fork .br', { opacity: 0 }); gsap.set('#fork .cm, #fork text', { opacity: 0 });
+  ScrollTrigger.create({ trigger: '#fork', start: 'top 75%', once: true, onEnter: () => {
+    gsap.timeline()
+      .to('#fork .main', { strokeDashoffset: 0, duration: 1.4, ease: 'power2.inOut' })
+      .to('#fork .cm:not(.fk), #fork text:not(.fk-t)', { opacity: 1, duration: .3, stagger: .06 }, '-=1.2')
+      .to('#fork .br', { opacity: 1, duration: .6 }, '+=.1')
+      .to('#fork .cm.fk, #fork .fk-t', { opacity: 1, duration: .3, stagger: .1 }, '-=.2');
+  } });
+
+  /* 04: the year counts up from nothing. */
+  ScrollTrigger.create({ trigger: '#yr', start: 'top 85%', once: true, onEnter: () => { const o = { v: 2026 }; gsap.fromTo(o, { v: 2026 }, { v: 2017, duration: 1.2, ease: 'power3.out', onUpdate: () => $('#yr').textContent = Math.round(o.v) }); } });
+
+  /* Header follows the ground beneath it. */
+  $$('.band-ink').forEach(band => ScrollTrigger.create({ trigger: band, start: 'top 34px', end: 'bottom 34px', onToggle: s => head.classList.toggle('on-ink', s.isActive) }));
+})();
+</script>

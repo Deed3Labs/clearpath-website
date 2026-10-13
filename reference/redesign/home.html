@@ -1,0 +1,1320 @@
+<title>Clear Home Redesign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: a constrained page (1280 max) with one rhythm per section —
+   label, a headline that answers itself, one line, one crafted figure, one
+   link. The product is shown on its own dark ground inside thin device
+   outlines (the guide's one radius exception); figures that explain the
+   model are drawn in the site's ink. Single look: paper with ink bands. */
+:root {
+  color-scheme: light;
+  --paper: #DFE3DE;
+  --paper-2: #E9ECE7;
+  --ink: #16211D;
+  --ground: #16211D;
+  --live: #24409E;
+  --settled: #0E6B4E;
+  --underway: #8A5512;
+  --absent: #9B2C22;
+  --sig-deep: #0E6B4E;
+  --sig-light: #6FCB9F;
+  --ink-70: #525B57;
+  --ink-50: #5A635F;
+  --ink-28: #A7ADA8;
+  --ink-13: #C5CAC5;
+
+  --f-display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --f-text: 'Instrument Sans', system-ui, sans-serif;
+  --f-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  --s1: 8px; --s2: 16px; --s3: 24px; --s4: 40px; --s5: 64px; --s6: 96px;
+  --inset: clamp(16px, 4vw, 56px);
+  --max: 1280px;
+  --sec: clamp(80px, 9vw, 144px);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+.band-ink {
+  background: var(--ground); color: var(--paper);
+  --ink: #DFE3DE; --ink-70: #ABB1AC; --ink-50: #939995;
+  --ink-28: rgb(223 227 222 / .32); --ink-13: rgb(223 227 222 / .16);
+  --live: #7C8CC5; --settled: #6FCB9F; --underway: #E3B667; --absent: #E58C7F;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--f-text); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+h1, h2, h3, p, dl, dd, figure { margin: 0; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+a { color: inherit; text-decoration: none; }
+svg { display: block; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--live); outline-offset: 3px; }
+::selection { background: var(--ink); color: var(--paper); }
+
+.wrap { width: 100%; max-width: calc(var(--max) + var(--inset) * 2); margin-inline: auto; padding-inline: var(--inset); }
+.fig { font-family: var(--f-text); font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.label { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-50); }
+
+/* ── Section rhythm ───────────────────────────────────────────────────── */
+.sec { padding-block: var(--sec); }
+/* A section opens with a full-width label rule, then the headline on the
+   left seven-twelfths and its one line plus link on the right, bottom-aligned
+   to the headline. Phones stack it. */
+.head { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: clamp(32px, 6vw, 112px); row-gap: clamp(28px, 3vw, 44px); align-items: end; }
+.head > .sec-label { grid-column: 1 / -1; }
+.head > .aside { display: grid; gap: var(--s3); align-content: end; padding-bottom: .4em; }
+@media (max-width: 900px) { .head { grid-template-columns: minmax(0, 1fr); } .head > .aside { padding-bottom: 0; gap: var(--s2); } }
+.sec-label { display: flex; gap: 14px; padding-bottom: var(--s2); border-bottom: 1px solid var(--ink-13); }
+.sec-label b { font-weight: 400; color: var(--live); }
+.h2 { font-family: var(--f-display); font-weight: 800; font-size: clamp(36px, 4.7vw, 72px); line-height: .98; letter-spacing: -0.038em; text-wrap: balance; }
+.line { font-size: clamp(17px, 1.35vw, 20px); line-height: 1.5; color: var(--ink-70); max-width: 42ch; text-wrap: pretty; }
+.more { display: inline-flex; align-items: center; gap: 10px; font-size: 15.5px; font-weight: 500; color: var(--ink); border-bottom: 1px solid var(--ink-28); padding-bottom: 3px; justify-self: start; transition: border-color 200ms var(--ease), gap 200ms var(--ease); }
+.more svg { width: 14px; height: 10px; transition: transform 200ms var(--ease); }
+.more:hover { border-color: var(--ink); }
+.more:hover svg { transform: translateX(3px); }
+.body-gap { margin-top: clamp(48px, 5.5vw, 80px); }
+
+/* ── Controls (guide) ─────────────────────────────────────────────────── */
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding-inline: var(--s3); border: 1px solid transparent; border-radius: 999px; font-size: 15px; font-weight: 500; line-height: 1; white-space: nowrap; transition: background-color 200ms var(--ease), border-color 200ms var(--ease), color 200ms var(--ease); }
+.btn-primary { background: var(--ink); color: var(--paper); }
+.btn-primary:hover { background: var(--live); }
+.band-ink .btn-primary { color: var(--ground); }
+.btn-ghost { border-color: var(--ink-28); color: var(--ink); }
+.btn-ghost:hover { border-color: var(--ink); }
+.dot { --dot: var(--sig-light); position: relative; flex: none; width: 7px; height: 7px; margin-right: 10px; border-radius: 999px; background: var(--dot); box-shadow: 0 0 6px 1px color-mix(in srgb, var(--dot) 55%, transparent); }
+.dot::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: var(--dot); animation: ping 2s cubic-bezier(0, 0, .2, 1) infinite; }
+.band-ink .btn-primary .dot { --dot: var(--sig-deep); }
+@keyframes ping { 0% { transform: scale(1); opacity: .6 } 75%, 100% { transform: scale(3.4); opacity: 0 } }
+.chip { --chip: var(--ink-70); display: inline-flex; align-items: center; font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .09em; text-transform: uppercase; line-height: 1; padding: 6px 11px 5px; border: 1px solid; border-radius: 999px; white-space: nowrap; color: var(--chip); border-color: color-mix(in srgb, var(--chip) 34%, transparent); background: color-mix(in srgb, var(--chip) 10%, transparent); }
+.chip .dot { --dot: var(--chip); width: 6px; height: 6px; margin-right: 7px; box-shadow: 0 0 4px color-mix(in srgb, var(--chip) 45%, transparent); }
+.chip[data-tone="live"] { --chip: var(--settled); }
+.chip[data-tone="underway"] { --chip: var(--underway); }
+.chip[data-tone="absent"] { --chip: var(--absent); }
+.chip:not([data-tone="live"]) .dot::after { animation: none; opacity: 0; }
+
+/* ── Header — the live site's shell, kept as it is: five links, the
+   Community menu and Join; below 1000px a Menu button that opens the
+   full-screen sheet. Only the colours follow the ground underneath. ─── */
+.site-head { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 30; background: color-mix(in srgb, var(--paper) 88%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-bottom: 1px solid transparent; transition: border-color 200ms var(--ease), background-color 300ms var(--ease), color 300ms var(--ease); }
+.site-head.scrolled { border-bottom-color: var(--ink-13); }
+.site-head.on-ink { background: color-mix(in srgb, var(--ground) 90%, transparent); color: #DFE3DE; border-bottom-color: rgb(223 227 222 / .14); }
+.site-head.on-ink .nav > ul > li > a, .site-head.on-ink .navmenu-button { color: #ABB1AC; }
+.site-head.on-ink .nav > ul > li > a:hover, .site-head.on-ink .navmenu-button:hover, .site-head.on-ink .nav > ul > li > a[aria-current="page"] { color: #DFE3DE; }
+.site-head.on-ink .btn-primary { background: #DFE3DE; color: var(--ground); }
+.site-head.on-ink .btn-primary .dot { --dot: var(--sig-deep); }
+.top { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); height: 68px; }
+.brand { display: flex; align-items: center; gap: 9px; font-family: var(--f-display); font-weight: 800; font-size: 19px; letter-spacing: -0.035em; }
+.brand svg { width: 21px; height: 21px; }
+.nav { display: flex; align-items: center; gap: clamp(20px, 2.4vw, 40px); font-size: 14.5px; }
+.nav > ul { display: flex; align-items: center; gap: clamp(16px, 1.8vw, 24px); }
+.nav > ul > li > a { display: inline-flex; align-items: center; min-height: 44px; white-space: nowrap; color: var(--ink-70); transition: color 200ms var(--ease); }
+.nav > ul > li > a:hover { color: var(--ink); }
+.nav > ul > li > a[aria-current="page"] { color: var(--ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 6px; }
+.nav .btn { min-height: 38px; padding-inline: 18px; font-size: 14px; }
+/* The Community menu: a nav link that opens a short sheet of paper. */
+.navmenu { position: relative; }
+.navmenu-button { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; white-space: nowrap; color: var(--ink-70); font-size: 14.5px; transition: color 200ms var(--ease); }
+.navmenu-button:hover { color: var(--ink); }
+.navmenu-button svg { width: 10px; height: 10px; transition: transform 200ms var(--ease); }
+.navmenu-button[aria-expanded="true"] svg { transform: rotate(180deg); }
+.navmenu-panel { position: absolute; z-index: 40; top: calc(100% + 10px); right: -12px; width: 320px; background: #DFE3DE; color: #16211D; border: 1px solid #C5CAC5; border-top: 2px solid #16211D; box-shadow: 0 18px 40px rgb(22 33 29 / .14); }
+.navmenu-panel::before { content: ''; position: absolute; left: 0; right: 0; top: -12px; height: 12px; }
+.navmenu-panel li + li { border-top: 1px solid #C5CAC5; }
+.navmenu-link { display: grid; grid-template-columns: 40px minmax(0, 1fr); align-items: center; gap: 14px; padding: 14px 16px; color: #16211D; transition: background-color 200ms var(--ease); }
+.navmenu-link:hover, .navmenu-link:focus-visible { background: #E9ECE7; }
+.navmenu-icon { display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid #C5CAC5; transition: border-color 200ms var(--ease); }
+.navmenu-link:hover .navmenu-icon { border-color: #16211D; }
+.navmenu-icon svg { width: 18px; height: 18px; }
+.navmenu-text { display: grid; gap: 2px; }
+.navmenu-label { font-size: 15px; font-weight: 600; letter-spacing: -0.005em; }
+.navmenu-note { font-size: 13px; line-height: 1.35; color: #525B57; }
+.menu-btn { display: none; min-height: 44px; min-width: 44px; align-items: center; justify-content: center; gap: 8px; font-size: 15px; }
+.menu-btn svg { width: 16px; height: 16px; }
+@media (max-width: 1000px) {
+  .nav > ul, .nav > .btn { display: none; }
+  .menu-btn { display: inline-flex; }
+}
+/* The sheet: a full-screen <dialog>, which traps focus and closes on Escape. */
+.sheet { width: 100%; max-width: none; height: 100%; max-height: none; margin: 0; padding: 0; border: 0; background: var(--paper); color: var(--ink); }
+.sheet::backdrop { background: #16211D; opacity: .28; }
+.sheet-inner { padding-bottom: var(--s3); }
+.sheet-top { display: flex; align-items: center; justify-content: space-between; height: 68px; margin-bottom: var(--s3); }
+.sheet-top .t-note { font-size: 15px; color: var(--ink-70); }
+.sheet-close { min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; justify-content: flex-end; }
+.sheet-close svg { width: 18px; height: 18px; }
+.sheet-nav { display: grid; gap: var(--s4); }
+.sheet-main { display: grid; gap: var(--s2); }
+.sheet-main a { display: block; padding-block: 9px; font-family: var(--f-display); font-weight: 600; font-size: clamp(23px, 2.1vw, 30px); letter-spacing: -0.024em; line-height: 1.12; }
+.sheet-main a[aria-current="page"] { color: var(--live); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 7px; }
+.sheet-community { display: grid; gap: var(--s1); }
+.sheet-label { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-50); }
+.sheet-tiles { border-top: 1px solid var(--ink-13); }
+.sheet-tiles li { border-bottom: 1px solid var(--ink-13); }
+.sheet-tile { display: grid; grid-template-columns: 44px minmax(0, 1fr); align-items: center; column-gap: 14px; padding: 12px 0; }
+.sheet-tile svg { grid-row: 1 / span 2; box-sizing: content-box; width: 20px; height: 20px; padding: 11px; border: 1px solid var(--ink-13); }
+.sheet-tile-label { font-family: var(--f-display); font-weight: 600; font-size: 20px; letter-spacing: -0.02em; line-height: 1.1; }
+.sheet-tile-note { font-size: 13px; line-height: 1.35; color: var(--ink-70); }
+.sheet-join { display: flex; width: 100%; min-height: 48px; }
+
+/* ── Hero ─────────────────────────────────────────────────────────────── */
+.hero { padding-top: clamp(40px, 6vw, 96px); padding-bottom: var(--sec); }
+.hero-h1 { font-family: var(--f-display); font-weight: 800; font-size: min(9.4vw, 132px); line-height: .92; letter-spacing: -0.045em; }
+/* Two set lines from tablet up; below that the words wrap on their own. */
+.hero-h1 .ln { display: block; white-space: nowrap; }
+@media (max-width: 699px) { .hero-h1 { font-size: clamp(46px, 13.4vw, 72px); } .hero-h1 .ln { display: inline; white-space: normal; } }
+.hero-h1 .w { display: inline-block; overflow: hidden; vertical-align: top; padding: .04em .1em .24em; margin: -.04em -.1em -.24em; }
+/* The mask is only for the rise. Once the words are up it comes off, so no
+   descender, overhang or tight-tracked edge is ever clipped. */
+.hero-h1.revealed .w { overflow: visible; }
+.hero-h1 .w > span { display: inline-block; }
+.hero-row { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); gap: var(--s4) clamp(24px, 6vw, 120px); margin-top: clamp(32px, 4vw, 56px); align-items: end; }
+.hero-lede { font-size: clamp(18px, 1.6vw, 22px); line-height: 1.45; color: var(--ink-70); max-width: 38ch; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: var(--s3); }
+.facts { border-top: 1px solid var(--ink); display: grid; }
+.facts li { padding-block: 12px; border-bottom: 1px solid var(--ink-13); font-size: 15px; display: flex; justify-content: space-between; gap: 12px; }
+.facts li span:last-child { color: var(--ink-50); font-family: var(--f-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; align-self: center; }
+@media (max-width: 860px) { .hero-row { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 560px) {
+  .hero-actions .btn { flex: 1 1 100%; min-height: 48px; }
+  .hero-row { gap: var(--s4); }
+}
+
+/* The product stage: flat on the page. */
+.stage { margin-top: clamp(56px, 7vw, 104px); position: relative; }
+.stage-cap { display: flex; justify-content: space-between; gap: 12px; margin-top: 14px; }
+.stagebox { position: relative; }
+
+/* ── Device outlines and scaled screens ───────────────────────────────── */
+/* A device is only its outline: one thin light line at the guide's 14px
+   radius, the screen pushed almost to it. Light travels along that line. */
+.device { position: relative; border: 1px solid var(--ink-28); border-radius: 14px; padding: 7px; }
+.screen { position: relative; overflow: hidden; background: #16211D; border-radius: 7px; }
+.trace { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; z-index: 4; }
+.trace path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.trace .halo { stroke: #6FCB9F; stroke-width: 7; opacity: .75; filter: url(#glow); }
+.trace .core { stroke: #0E6B4E; stroke-width: 1.6; }
+.trace .rest { stroke: var(--ink-28); stroke-width: 1; }
+.canvas { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+.screen-phone { display: none; }
+@media (max-width: 699px) {
+  .screen-desk { display: none; }
+  .screen-phone { display: block; }
+  .stage .device { max-width: 420px; margin-inline: auto; }
+}
+
+/* ── The app (member and merchant) — its own ground, same guide ──────── */
+.app {
+  --a-bg: #16211D; --a-2: #1E2C27; --a-line: rgb(223 227 222 / .14); --a-fg: #DFE3DE;
+  --a-70: #ABB1AC; --a-50: #939995; --a-live: #7C8CC5; --a-ok: #6FCB9F; --a-warn: #E3B667;
+  background: var(--a-bg); color: var(--a-fg); font-family: var(--f-text); font-size: 14px; line-height: 1.45;
+  -webkit-font-smoothing: antialiased; overflow: hidden;
+}
+.app .lbl { font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--a-50); }
+.app .num { font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.app .bar-top { height: 56px; display: flex; align-items: center; justify-content: space-between; padding-inline: 24px; border-bottom: 1px solid var(--a-line); }
+.app .bar-top .l { display: flex; align-items: center; gap: 28px; }
+.app .lock { display: flex; align-items: center; gap: 8px; font-family: var(--f-display); font-weight: 800; font-size: 17px; letter-spacing: -0.035em; }
+.app .lock svg { width: 18px; height: 18px; }
+.app .lock i { width: 1px; height: 16px; background: var(--a-line); margin-inline: 4px; }
+.app .lock em { font-style: normal; font-family: var(--f-text); font-weight: 500; font-size: 14px; letter-spacing: 0; color: var(--a-70); }
+.app .tabs { display: flex; gap: 22px; color: var(--a-50); font-size: 14px; }
+.app .tabs .on { color: var(--a-fg); }
+.app .ava { width: 30px; height: 30px; border-radius: 999px; border: 1px solid var(--a-line); display: grid; place-items: center; font-size: 11.5px; font-weight: 600; color: var(--a-70); }
+.app .pillb { display: inline-flex; align-items: center; justify-content: center; height: 32px; padding-inline: 14px; border-radius: 999px; border: 1px solid var(--a-line); font-size: 13px; font-weight: 500; color: var(--a-fg); white-space: nowrap; }
+.app .pillb.solid { background: var(--a-fg); color: var(--a-bg); border-color: var(--a-fg); }
+
+/* Member home, desktop canvas 1200 wide — drawn from the live app: the
+   balance first, then the cycle, the temporary slot, and the accounts slab. */
+.app .bar-top .r { display: flex; align-items: center; gap: 22px; }
+.app .bell { width: 17px; height: 17px; color: var(--a-70); }
+.hb { padding: 30px 40px 40px; display: grid; gap: 22px; }
+.bal { display: flex; justify-content: space-between; align-items: end; gap: 24px; }
+.bal-l { display: grid; gap: 6px; }
+.bal-n { font-size: 46px; line-height: 1; letter-spacing: -0.035em; margin-top: 4px; }
+.acts { display: grid; grid-template-columns: repeat(2, 150px); gap: 10px; }
+.acts .pillb { height: 36px; font-size: 13.5px; }
+.app .pillb.lg { height: 38px; padding-inline: 20px; font-size: 13.5px; }
+.app .pillb.full { width: 100%; }
+.cyc { border: 1px solid var(--a-line); background: var(--a-2); }
+.cyc-r1 { display: flex; justify-content: space-between; align-items: start; padding: 18px 20px; }
+.cyc-r1 .lbl { display: block; }
+.cyc-r1 .amt { display: block; font-size: 24px; line-height: 1; margin-top: 10px; }
+.cyc-r1 .cd { display: grid; justify-items: end; gap: 2px; }
+.cyc-r1 .cd .num { font-size: 26px; line-height: 1; }
+.cyc-r2 { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 16px 14px 20px; border-top: 1px solid var(--a-line); }
+.st2 { display: grid; gap: 2px; font-size: 14px; }
+.slot { border: 1px solid var(--a-line); padding-inline: 20px; }
+.slot-r { display: flex; justify-content: space-between; align-items: center; min-height: 62px; font-size: 14px; }
+.slab2 { display: grid; grid-template-columns: 1.05fr 1fr; border: 1px solid var(--a-line); }
+.slab2 > .blk { border-top: 1px solid var(--a-line); }
+.slab2 > .blk:nth-child(-n+2) { border-top: 0; }
+.slab2 > .blk:nth-child(even) { border-left: 1px solid var(--a-line); }
+.blk { display: grid; grid-template-rows: auto 1fr auto; min-width: 0; }
+.app .of { color: var(--a-50); font-weight: 500; }
+.app .cap2 { color: var(--a-50); font-size: 13px; }
+.bh { display: flex; justify-content: space-between; align-items: center; height: 56px; padding: 0 20px; border-bottom: 1px solid var(--a-line); }
+.bh .num { font-size: 19px; }
+.bh .num span { color: var(--a-50); font-weight: 500; font-size: 13px; }
+.bm { padding: 16px 20px; display: grid; align-content: start; gap: 14px; }
+.bf { border-top: 1px solid var(--a-line); padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 13px; color: var(--a-70); }
+.bf.col { display: grid; gap: 10px; align-content: center; justify-content: stretch; }
+.comp { display: flex; height: 6px; gap: 0; }
+.comp i { display: block; transform-origin: 0 50%; }
+.trows { display: grid; gap: 6px; font-size: 13px; color: var(--a-70); }
+.trows div { display: flex; justify-content: space-between; gap: 12px; }
+.trows .fg { color: var(--a-fg); } .trows .ok { color: var(--a-ok); } .trows .warn { color: var(--a-warn); }
+.trows.big { gap: 0; font-size: 14px; }
+.trows.big div { padding-block: 11px; border-bottom: 1px solid var(--a-line); }
+.trows.big div:first-child { padding-top: 0; color: var(--a-50); font-size: 13px; }
+.trows.big div:last-child { border-bottom: 0; color: var(--a-fg); padding-bottom: 0; }
+.three { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.cred { position: relative; height: 4px; background: var(--a-2); }
+.cred i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--a-ok); transform-origin: 0 50%; }
+.plan { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 3px 12px; padding-bottom: 12px; border-bottom: 1px solid var(--a-line); align-items: center; }
+.plan + .plan, .sub-rule + .plan { padding-top: 0; }
+.plan .d { grid-column: 1 / -1; color: var(--a-50); font-size: 12.5px; }
+.plan .d b { color: var(--a-ok); font-weight: 500; }
+.plan.locked > span:first-child { color: var(--a-70); }
+.lk { font-family: var(--f-mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--a-50); border: 1px solid var(--a-line); border-radius: 999px; padding: 3px 8px; }
+.sub-rule { color: var(--a-50); }
+.split-foot { display: grid; grid-template-columns: 1fr 1px 1fr; width: 100%; align-items: center; gap: 14px; }
+.split-foot i { height: 18px; background: var(--a-line); }
+.split-foot b { color: var(--a-fg); font-weight: 500; }
+.dd { display: inline-flex; align-items: center; gap: 7px; height: 28px; padding-inline: 11px; border-radius: 999px; border: 1px solid rgb(111 203 159 / .35); color: var(--a-ok); font-size: 12.5px; }
+.dd i { width: 6px; height: 6px; border-radius: 999px; background: var(--a-ok); }
+
+/* Member home, phone canvas 390 x 860 — the same components, stacked */
+.ph-top { height: 58px; display: flex; align-items: center; justify-content: space-between; padding-inline: 18px; border-bottom: 1px solid var(--a-line); }
+.ph-top .r { display: flex; align-items: center; gap: 16px; }
+.ph-body { padding: 22px 18px 96px; display: grid; gap: 16px; }
+.ph-body .bal { display: grid; gap: 16px; }
+.ph-body .bal-n { font-size: 38px; }
+.ph-body .acts { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.ph-body .acts .pillb { padding-inline: 6px; font-size: 12.5px; }
+.ph-body .slab2 { grid-template-columns: minmax(0, 1fr); }
+.ph-body .slab2 > .blk:nth-child(2) { border-top: 1px solid var(--a-line); border-left: 0; }
+.ph-body .cyc-r1 .amt { font-size: 24px; }
+.navpill { position: absolute; left: 16px; bottom: 18px; height: 50px; display: flex; align-items: center; gap: 4px; padding: 5px; border-radius: 17px; background: var(--a-2); border: 1px solid var(--a-line); }
+.navpill span { height: 40px; padding-inline: 14px; display: grid; place-items: center; border-radius: 13px; font-size: 13px; color: var(--a-50); }
+.navpill span.on { background: var(--a-fg); color: var(--a-bg); font-weight: 500; }
+.navact { position: absolute; right: 16px; bottom: 18px; width: 50px; height: 50px; border-radius: 17px; background: var(--a-fg); color: var(--a-bg); display: grid; place-items: center; }
+.navact svg { width: 18px; height: 18px; }
+
+/* ── 01 The gap: two columns, one clock ─────────────────────────────────
+   The same enclosed bento as the counter below. Renting on the left,
+   inside Clear on the right, and scrolling pays the months into both. */
+.cmp { --line: var(--ink-28); --px: clamp(20px, 2.8vw, 40px); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); border: 1px solid var(--line); }
+.cmp-col { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; min-width: 0; }
+.cmp-col + .cmp-col { border-left: 1px solid var(--line); }
+.cmp-h, .cmp-f { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 56px; padding: 0 var(--px); }
+.cmp-h { border-bottom: 1px solid var(--line); }
+.cmp-h .fig { font-size: 15px; }
+.cmp-f { border-top: 1px solid var(--line); }
+.cmp-f .fig { font-size: 15px; }
+.cmp-m { display: grid; align-content: start; gap: clamp(24px, 2.6vw, 36px); padding: clamp(28px, 3.2vw, 44px) var(--px); }
+.keep { display: grid; gap: 6px; }
+.kept { font-size: clamp(52px, 5.6vw, 88px); line-height: .95; letter-spacing: -0.04em; }
+.clear .kept { color: var(--settled); }
+.bars { position: relative; display: grid; grid-template-columns: repeat(60, minmax(0, 1fr)); gap: 2px; height: clamp(96px, 9vw, 136px); align-items: end; border-bottom: 1px solid var(--line); }
+.bar { position: relative; height: var(--h); background: var(--ink-28); transform-origin: 50% 100%; transition: transform 260ms var(--ease); }
+.keeps .bar::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 63.83%; background: var(--settled); }
+.cursor { position: absolute; top: -10px; bottom: 0; width: 1px; background: var(--ink); left: 100%; opacity: 0; pointer-events: none; }
+.axis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); margin-top: -14px; }
+.axis span { border-left: 1px solid var(--line); padding: 4px 0 0 6px; font-size: 12.5px; color: var(--ink-50); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13.5px; color: var(--ink-70); margin-top: -8px; }
+.legend span { display: inline-flex; align-items: center; gap: 8px; }
+.legend i { width: 10px; height: 10px; background: var(--settled); }
+.legend i.fee { background: var(--ink-28); }
+.legend i.gone { background: var(--ink-28); }
+.cmp-foot { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; gap: 12px 24px; flex-wrap: wrap; min-height: 52px; padding: 12px var(--px); border-top: 1px solid var(--line); }
+.cmp-foot .mo { font-size: 14px; color: var(--ink-70); }
+.cmp-foot .mo b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+.cmp-foot .label { font-size: 10.5px; }
+@media (max-width: 760px) {
+  .cmp { grid-template-columns: minmax(0, 1fr); }
+  .cmp-col + .cmp-col { border-left: 0; border-top: 1px solid var(--line); }
+  .bars { gap: 1px; }
+}
+
+/* ── 02 The ClearPath: three phases on one rule ──────────────────────────
+   An enclosed bento. Its top rule is the path: it fills as you scroll, and
+   each phase's node darkens as the line reaches it. Each phase shows the
+   thing a member actually sees at that gate, not a paragraph about it. */
+.path3 { --line: var(--ink-28); --px: clamp(20px, 2.4vw, 36px); position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--line); }
+.rail-fill { position: absolute; left: -1px; right: -1px; top: -1px; height: 2px; background: var(--ink); transform-origin: 0 50%; transform: scaleX(0); z-index: 2; pointer-events: none; }
+/* All three phases share four rows (header, line, what you see, gate), so
+   every row lines up across the columns. */
+.path3 { grid-template-rows: auto auto minmax(0, 1fr) auto; }
+.ph { display: grid; grid-row: span 4; grid-template-rows: subgrid; min-width: 0; }
+.ph + .ph { border-left: 1px solid var(--line); }
+.ph-h { position: relative; display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 56px; padding: 0 var(--px); border-bottom: 1px solid var(--line); }
+.ph-h .n { font-family: var(--f-mono); font-size: 11px; color: var(--ink-50); }
+.node { position: absolute; top: -7px; left: calc(50% - 7px); width: 13px; height: 13px; border-radius: 999px; border: 1px solid var(--ink-50); background: var(--paper); z-index: 3; transition: background-color 300ms var(--ease), border-color 300ms var(--ease); }
+.ph.reached .node { background: var(--ink); border-color: var(--ink); }
+.ph.reached .ph-h .n { color: var(--live); }
+.ph-t { font-family: var(--f-display); font-weight: 600; font-size: clamp(21px, 1.9vw, 27px); line-height: 1.14; letter-spacing: -0.022em; text-wrap: balance; max-width: 19ch; padding: clamp(26px, 3vw, 40px) var(--px) 0; }
+.ph-v { display: grid; align-content: start; gap: 14px; padding: 28px var(--px) clamp(28px, 3vw, 40px); }
+.ph-c { font-size: 14px; line-height: 1.5; color: var(--ink-50); max-width: 36ch; }
+.ph-f { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; min-height: 64px; padding: 14px var(--px); border-top: 1px solid var(--line); }
+.ph-f .fig { font-size: clamp(20px, 1.8vw, 26px); letter-spacing: -0.025em; }
+/* Renter: credits count with the scroll, to the first gate */
+.cred-n { display: flex; align-items: baseline; gap: 8px; }
+.cred-n .fig { font-size: clamp(34px, 3.2vw, 46px); line-height: 1; letter-spacing: -0.035em; }
+.ladder { position: relative; height: 6px; background: var(--ink-13); margin-block: 4px; }
+.ladder i { position: absolute; left: 0; top: 0; bottom: 0; width: 100%; background: var(--ink); transform-origin: 0 50%; transform: scaleX(0); }
+.ladder b { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--paper); }
+/* Owner and earner: a short list, one line per row */
+.ph-l { border-top: 1px solid var(--ink); }
+.ph-l li { display: flex; align-items: center; gap: 10px; padding-block: 12px; border-bottom: 1px solid var(--ink-13); font-size: 15px; }
+.ph-l li > span:first-of-type { flex: 1; min-width: 0; }
+.ph-l li .r { color: var(--settled); font-size: 14px; }
+.ph-l li.ok > svg { width: 14px; height: 14px; color: var(--settled); flex: none; }
+.ph-l li > svg:last-child:not(:first-child) { width: 14px; height: 10px; color: var(--ink-50); flex: none; }
+@media (max-width: 1000px) and (min-width: 761px) { .ph-t { font-size: 20px; } .ph-l li { font-size: 14px; } }
+@media (max-width: 760px) {
+  .path3 { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
+  .ph { grid-row: auto; grid-template-rows: auto auto auto auto; }
+  .ph + .ph { border-left: 0; border-top: 1px solid var(--line); }
+  .rail-fill { left: -1px; right: auto; top: -1px; bottom: -1px; width: 2px; height: auto; transform-origin: 50% 0; transform: scaleY(0); }
+  .node { left: -7px; top: 21px; }
+  .ph-h { justify-content: space-between; }
+  .ph-h { padding-left: calc(var(--px) + 4px); }
+}
+
+/* ── 03 The counter: two columns, one hand-off ──────────────────────────
+   Each column is one surface that moves through its own states. The header
+   rule is that side's progress, and light runs along it when the turn
+   passes across the counter, and again when it comes back. */
+.links { display: flex; flex-wrap: wrap; gap: 12px 28px; }
+.duo3 { --line: var(--ink-28); --px: clamp(20px, 2.8vw, 40px); position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); border: 1px solid var(--line); }
+.col { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; min-width: 0; }
+.col.you { border-left: 1px solid var(--line); }
+.ck { font-size: 13.5px; color: var(--ink-50); }
+.c-h { position: relative; display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 56px; padding: 0 var(--px); border-bottom: 1px solid var(--line); }
+.who { font-size: 15px; font-weight: 500; letter-spacing: -0.01em; }
+.c-h .now { font-size: 14px; color: var(--ink-50); transition: color 300ms var(--ease); }
+.col.active .c-h .now { color: var(--ink); }
+.prog { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3px; pointer-events: none; }
+.prog i { background: var(--ink); transform: scaleX(0); transform-origin: 0 50%; transition: transform 700ms var(--ease), background-color 300ms var(--ease); }
+.prog i.on, .prog i.done { transform: scaleX(1); }
+.col.active .prog i.on { background: var(--live); }
+.col:not(.active) .prog i.on { background: var(--ink-50); }
+.c-stage { display: grid; padding: clamp(32px, 3.6vw, 52px) var(--px); }
+.state { grid-area: 1 / 1; display: grid; align-content: start; gap: 22px; min-width: 0; opacity: 0; visibility: hidden; transform: translateY(10px); transition: opacity 300ms var(--ease), transform 420ms var(--ease), visibility 0s linear 420ms; }
+.state.on { opacity: 1; visibility: visible; transform: none; transition: opacity 420ms var(--ease) 140ms, transform 560ms var(--ease) 140ms, visibility 0s; }
+.state.mid { align-content: center; justify-items: center; text-align: center; }
+.c-f { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 56px; padding: 0 var(--px); border-top: 1px solid var(--line); }
+.amt-row { display: grid; gap: 8px; }
+.big-fig { font-size: clamp(52px, 5.2vw, 84px); line-height: .95; letter-spacing: -0.04em; }
+.memo2 { color: var(--ink-70); font-size: 14.5px; line-height: 1.5; margin: 0; max-width: 40ch; }
+.pay { border-top: 1px solid var(--ink-13); }
+.pay div { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; padding-block: 11px; border-bottom: 1px solid var(--ink-13); font-size: 14.5px; color: var(--ink-70); align-items: baseline; }
+.pay dd { color: var(--ink); text-align: right; font-weight: 500; font-variant-numeric: tabular-nums; }
+.pay .pos dd { color: var(--settled); }
+.act { justify-self: start; min-height: 48px; padding-inline: 26px; }
+.btn.hit { transform: scale(.97); }
+.btn[disabled] { opacity: .35; cursor: default; }
+.ok-l { display: inline-flex; align-items: center; gap: 8px; color: var(--settled); font-size: 14px; font-weight: 500; }
+.ok-l svg { width: 16px; height: 16px; }
+/* The code */
+.scan { position: relative; width: clamp(168px, 15vw, 212px); aspect-ratio: 1; }
+.scan svg#qr { width: 100%; height: 100%; display: block; transition: opacity 400ms var(--ease); }
+.scan rect { fill: var(--ink); }
+.scanline { position: absolute; left: -10px; right: -10px; top: 0; height: 2px; background: var(--live); box-shadow: 0 0 12px 2px rgb(36 64 158 / .45); opacity: 0; pointer-events: none; }
+.scan.scanning .scanline { opacity: 1; animation: sweep 2.2s cubic-bezier(.45,0,.55,1) infinite; }
+@keyframes sweep { 0% { top: 0; } 50% { top: calc(100% - 2px); } 100% { top: 0; } }
+.scan.spent svg#qr { opacity: .1; }
+.okmark { position: absolute; inset: 22%; border-radius: 999px; border: 1px solid var(--settled); color: var(--settled); display: grid; place-items: center; background: var(--paper); }
+.okmark svg { width: 34%; height: 34%; }
+.okmark[hidden] { display: none; }
+.code-cap { display: grid; gap: 4px; justify-items: center; }
+.code-cap .fig { font-size: 22px; }
+.clock2 { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; width: min(100%, 240px); padding-top: 12px; border-top: 1px solid var(--ink-13); }
+.clock2 .fig { font-size: 17px; }
+/* Your phone */
+.idle-mark { width: 40px; height: 40px; color: var(--ink-28); }
+.notif3 { display: grid; gap: 6px; padding: 18px 20px; background: var(--paper-2); border: 1px solid var(--ink-13); }
+.n-h { display: flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 500; }
+.n-h svg { width: 15px; height: 15px; }
+.n-h .ck { margin-left: auto; }
+.n-b { font-size: clamp(18px, 1.6vw, 22px); line-height: 1.35; letter-spacing: -0.01em; }
+.n-b b { font-weight: 600; }
+.choose { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.choose button { min-height: 46px; border: 1px solid var(--ink-28); border-radius: 999px; color: var(--ink-70); font-size: 15px; white-space: nowrap; transition: color 200ms var(--ease), border-color 200ms var(--ease), background-color 200ms var(--ease); }
+.choose button:hover { border-color: var(--ink); color: var(--ink); }
+.choose button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.choose.ask button:not([aria-pressed="true"]) { animation: ask 1.6s var(--ease) 2; }
+@keyframes ask { 50% { border-color: var(--ink); color: var(--ink); } }
+.fsegs { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 3px; height: 6px; }
+.fsegs span { background: var(--ink); transform-origin: 0 50%; }
+.result { display: grid; gap: 16px; transition: opacity 150ms linear; }
+.result.swap { opacity: 0; }
+.r-main { display: flex; align-items: baseline; gap: 12px; }
+.r-unit { color: var(--ink-50); font-size: 17px; }
+.r-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--ink-13); }
+.r-row div { display: grid; gap: 2px; padding: 12px 0 0 14px; border-left: 1px solid var(--ink-13); }
+.r-row div:first-child { padding-left: 0; border-left: 0; }
+.r-row .fig { font-size: 18px; }
+.act2 { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
+.act2 .memo2 { max-width: 30ch; font-size: 14px; }
+.st { display: inline-flex; align-items: center; gap: 9px; font-size: 14px; color: var(--ink-70); }
+.st i { width: 7px; height: 7px; border-radius: 999px; background: var(--ink-28); transition: background-color 300ms var(--ease); }
+.st.wait i { background: var(--underway); }
+.st.ok i { background: var(--settled); }
+.st.ok { color: var(--ink); }
+@media (max-width: 900px) {
+  .duo3 { grid-template-columns: minmax(0, 1fr); }
+  .col.you { border-left: 0; border-top: 1px solid var(--line); }
+}
+@media (max-width: 560px) {
+  .c-stage { padding-block: 32px; }
+  .c-f .ck { display: none; }
+  .big-fig { font-size: 52px; }
+  .r-row .fig { font-size: 15px; white-space: nowrap; }
+  .r-row div { padding-left: 10px; }
+  .choose { gap: 6px; }
+  .choose button { font-size: 14px; min-height: 44px; }
+  .act, .act2 .btn { width: 100%; }
+}
+
+.kfigs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: clamp(40px, 5vw, 64px); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink-13); }
+.kfigs div { display: grid; gap: 4px; align-content: start; padding: 18px clamp(14px, 2vw, 28px) 20px; border-left: 1px solid var(--ink-13); }
+.kfigs div:first-child { border-left: 0; padding-left: 0; }
+.kfigs div:last-child { padding-right: 0; }
+.kfigs .fig { font-size: clamp(28px, 2.8vw, 42px); line-height: 1.02; }
+.kfigs p { color: var(--ink-70); font-size: 14.5px; line-height: 1.45; max-width: 26ch; }
+.flow-cap { margin-top: 14px; }
+@media (max-width: 1100px) { .kfigs { grid-template-columns: repeat(2, minmax(0, 1fr)); } .kfigs div:nth-child(3) { border-left: 0; padding-left: 0; } .kfigs div:nth-child(n+3) { border-top: 1px solid var(--ink-13); } }
+@media (max-width: 680px) { .kfigs { grid-template-columns: minmax(0, 1fr); } .kfigs div { grid-template-columns: 76px minmax(0, 1fr); align-items: baseline; column-gap: 16px; border-left: 0 !important; padding: 14px 0 !important; border-top: 1px solid var(--ink-13); } .kfigs div:first-child { border-top: 0; } .kfigs .fig { font-size: 26px; } }
+
+/* ── 04 Status ────────────────────────────────────────────────────────── */
+.rows { border-top: 1px solid var(--ink); }
+.rows li { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr) 110px; column-gap: clamp(32px, 6vw, 112px); padding-block: 22px; border-bottom: 1px solid var(--ink-13); align-items: baseline; }
+.rows .nm { font-size: clamp(18px, 1.6vw, 22px); font-weight: 500; letter-spacing: -0.015em; }
+.rows .ds { color: var(--ink-70); font-size: 15px; }
+.rows .chip { justify-self: end; }
+@media (max-width: 900px) {
+  .rows li { grid-template-columns: minmax(0, 1fr) auto; row-gap: 4px; column-gap: var(--s3); padding-block: 18px; }
+  .rows .ds { grid-column: 1; grid-row: 2; }
+  .rows .chip { grid-column: 2; grid-row: 1; }
+}
+
+/* ── 05 The ledger ────────────────────────────────────────────────────── */
+.statement { font-family: var(--f-display); font-weight: 800; font-size: clamp(36px, 5vw, 76px); line-height: 1.02; letter-spacing: -0.035em; text-wrap: balance; max-width: 18ch; }
+.src { font-family: var(--f-mono); font-size: 11.5px; color: var(--ink-50); overflow-wrap: anywhere; margin-top: 10px; }
+.led-head, .ev { display: grid; grid-template-columns: 130px minmax(0, 1fr) minmax(0, 1.3fr) 120px; gap: 18px; align-items: baseline; }
+.led-head span:last-child { text-align: right; }
+.led { --line: var(--ink-28); --px: clamp(20px, 2.6vw, 36px); border: 1px solid var(--line); }
+.led-head { min-height: 52px; padding: 0 var(--px); align-items: center !important; border-bottom: 1px solid var(--line); font-size: 10.5px; }
+.led .ev { padding-inline: var(--px); }
+.led-body { height: 384px; overflow: hidden; -webkit-mask-image: linear-gradient(#000 74%, transparent); mask-image: linear-gradient(#000 74%, transparent); }
+.ev { padding-block: 12px; border-bottom: 1px solid var(--ink-13); font-family: var(--f-mono); font-size: 12.5px; }
+.ev > span { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ev .blk, .ev .ev2 { color: var(--ink-50); }
+.ev .val { text-align: right; }
+.ev .val.up { color: var(--settled); }
+.ev.mine .blk, .ev.mine .val { color: var(--live); }
+.ev.mine .ev2 { color: var(--ink-70); }
+.led-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 52px; padding: 0 var(--px); border-top: 1px solid var(--line); font-size: 10.5px; }
+.led-foot .on { display: inline-flex; align-items: center; color: var(--ink-70); }
+@media (max-width: 900px) { .led-head, .ev { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 100px; } .led-head .blk, .ev .blk { display: none; } }
+@media (max-width: 560px) { .led-head, .ev { grid-template-columns: minmax(0, 1fr) 96px; } .led-head .ev2, .ev .ev2 { display: none; } }
+
+/* ── Close + footer ───────────────────────────────────────────────────── */
+.close .h2 { font-size: clamp(40px, 5.6vw, 88px); max-width: 12ch; }
+.foot { border-top: 1px solid var(--ink); padding-block: var(--s5); display: grid; grid-template-columns: minmax(0, 1.4fr) repeat(4, minmax(0, 1fr)); gap: var(--s4) var(--s4); font-size: 14.5px; }
+.foot h4 { margin: 0 0 12px; font-family: var(--f-mono); font-weight: 400; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-50); }
+.foot li + li { margin-top: 6px; }
+.foot a { color: var(--ink-70); } .foot a:hover { color: var(--ink); }
+.foot .about { color: var(--ink-70); max-width: 30ch; display: grid; gap: var(--s2); align-content: start; }
+.legal { grid-column: 1 / -1; border-top: 1px solid var(--ink-13); padding-top: var(--s3); color: var(--ink-50); font-size: 12.5px; display: grid; gap: 8px; max-width: 110ch; }
+@media (max-width: 900px) { .foot { grid-template-columns: repeat(2, minmax(0, 1fr)); } .foot .about { grid-column: 1 / -1; } }
+
+.mock-flag { position: fixed; left: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); z-index: 40; font-family: var(--f-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; background: #24409E; color: #E9ECE7; padding: 6px 11px; border-radius: 999px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .dot::after { animation: none; opacity: 0; }
+  *, *::before, *::after { transition-duration: 0ms !important; }
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="mark" viewBox="-168 -168 336 336">
+    <path d="M 148.28 -64 A 161.5 161.5 0 1 0 148.28 64 L 74.22 64 A 98 98 0 1 1 74.22 -64 Z" fill="currentColor" stroke="currentColor" stroke-width="4"/>
+    <path d="M 0 -8 H 114 V 8 H 0 Z" fill="currentColor"/>
+    <circle cx="0" cy="0" r="34" fill="currentColor"/>
+    <circle cx="131.5" cy="0" r="25.25" fill="none" stroke="currentColor" stroke-width="15.5"/>
+  </symbol>
+  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3.2"/></filter>
+  <symbol id="i-events" viewBox="0 0 18 18"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="3.5" width="13" height="12"/><path d="M2.5 7h13M6 2v3M12 2v3"/><path d="M5.5 10h2M5.5 12.5h2M10.5 10h2"/></g></symbol>
+  <symbol id="i-directory" viewBox="0 0 18 18"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l1.2-4h10.6l1.2 4"/><path d="M2.5 7.5c0 1.1.9 2 2 2s2-.9 2-2c0 1.1.9 2 2 2s2-.9 2-2c0 1.1.9 2 2 2s2-.9 2-2"/><path d="M3.5 9.3V15.5h11V9.3M7.5 15.5v-3.5h3v3.5"/></g></symbol>
+  <symbol id="i-shop" viewBox="0 0 18 18"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6.5h12l-1 9H4z"/><path d="M6.5 6.5V5a2.5 2.5 0 0 1 5 0v1.5"/></g></symbol>
+  <symbol id="arrow" viewBox="0 0 14 10"><path d="M0 5h12M8 1l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.4"/></symbol>
+  <symbol id="check" viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="back" viewBox="0 0 9 15"><path d="M8 1L2 7.5 8 14" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+  <symbol id="bell" viewBox="0 0 18 18"><path d="M4.5 12.5V8a4.5 4.5 0 0 1 9 0v4.5l1.5 1.5H3z M7.2 15.5a1.9 1.9 0 0 0 3.6 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></symbol>
+  <symbol id="plus" viewBox="0 0 18 18"><path d="M9 2v14M2 9h14" stroke="currentColor" stroke-width="1.8"/></symbol>
+  <symbol id="del" viewBox="0 0 24 16"><path d="M8 1h14v14H8L1 8z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M12 5l6 6M18 5l-6 6" stroke="currentColor" stroke-width="1.4"/></symbol>
+</svg>
+
+<header class="site-head" id="site-head">
+  <div class="wrap">
+    <div class="top">
+      <a class="brand" href="https://www.useclear.org/" aria-label="Clear, home"><svg aria-hidden="true"><use href="#mark"/></svg>Clear</a>
+      <nav class="nav" aria-label="Main">
+        <ul>
+          <li><a href="https://www.useclear.org/how">How it works</a></li>
+          <li><a href="https://www.useclear.org/shops">For shops</a></li>
+          <li><a href="https://www.useclear.org/housing">Housing</a></li>
+          <li><a href="https://www.useclear.org/contribute">Contribute land</a></li>
+          <li><a href="https://www.useclear.org/coop">The co-op</a></li>
+          <li class="navmenu" id="navmenu">
+            <button type="button" class="navmenu-button" id="navmenu-btn" aria-expanded="false" aria-controls="navmenu-panel">Community<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></button>
+            <div class="navmenu-panel" id="navmenu-panel" hidden><ul>
+              <li><a class="navmenu-link" href="https://www.useclear.org/events"><span class="navmenu-icon"><svg aria-hidden="true"><use href="#i-events"/></svg></span><span class="navmenu-text"><span class="navmenu-label">Events</span><span class="navmenu-note">Calls, town halls and local meetings</span></span></a></li>
+              <li><a class="navmenu-link" href="https://www.useclear.org/directory"><span class="navmenu-icon"><svg aria-hidden="true"><use href="#i-directory"/></svg></span><span class="navmenu-text"><span class="navmenu-label">Directory</span><span class="navmenu-note">Local businesses that take Clear Pay</span></span></a></li>
+              <li><a class="navmenu-link" href="https://www.useclear.org/shop"><span class="navmenu-icon"><svg aria-hidden="true"><use href="#i-shop"/></svg></span><span class="navmenu-text"><span class="navmenu-label">Shop</span><span class="navmenu-note">Goods with the Clear name on them</span></span></a></li>
+            </ul></div>
+          </li>
+        </ul>
+        <a class="btn btn-primary" href="https://www.useclear.org/join"><span class="dot"></span>Join</a>
+        <button type="button" class="menu-btn" id="menu-btn" aria-haspopup="dialog">Menu<svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 4h14M1 8h14M1 12h14"/></svg></button>
+      </nav>
+    </div>
+  </div>
+</header>
+<dialog class="sheet" id="sheet" aria-label="Main">
+  <div class="sheet-inner wrap">
+    <div class="sheet-top"><span class="t-note">Menu</span><button type="button" class="sheet-close" id="sheet-close" aria-label="Close menu"><svg viewBox="0 0 18 18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 2l14 14M16 2L2 16"/></svg></button></div>
+    <nav class="sheet-nav">
+      <ul class="sheet-main">
+          <li><a href="https://www.useclear.org/">Home</a></li>
+          <li><a href="https://www.useclear.org/how">How it works</a></li>
+          <li><a href="https://www.useclear.org/shops">For shops</a></li>
+          <li><a href="https://www.useclear.org/housing">Housing</a></li>
+          <li><a href="https://www.useclear.org/contribute">Contribute land</a></li>
+          <li><a href="https://www.useclear.org/coop">The co-op</a></li>
+          <li><a href="https://www.useclear.org/capital">Clear Capital</a></li>
+      </ul>
+      <section class="sheet-community" aria-labelledby="sheet-community-label">
+        <p class="sheet-label" id="sheet-community-label">Community</p>
+        <ul class="sheet-tiles">
+            <li><a class="sheet-tile" href="https://www.useclear.org/events"><svg aria-hidden="true"><use href="#i-events"/></svg><span class="sheet-tile-label">Events</span><span class="sheet-tile-note">Calls, town halls and local meetings</span></a></li>
+            <li><a class="sheet-tile" href="https://www.useclear.org/directory"><svg aria-hidden="true"><use href="#i-directory"/></svg><span class="sheet-tile-label">Directory</span><span class="sheet-tile-note">Local businesses that take Clear Pay</span></a></li>
+            <li><a class="sheet-tile" href="https://www.useclear.org/shop"><svg aria-hidden="true"><use href="#i-shop"/></svg><span class="sheet-tile-label">Shop</span><span class="sheet-tile-note">Goods with the Clear name on them</span></a></li>
+        </ul>
+      </section>
+      <a class="btn btn-primary sheet-join" href="https://www.useclear.org/join"><span class="dot"></span>Join</a>
+    </nav>
+  </div>
+</dialog>
+
+<main>
+  <!-- HERO — settled copy, then the product. -->
+  <section class="hero wrap">
+    <h1 class="hero-h1" id="hero-h1"><span class="ln">Your money, kept</span> <span class="ln">in the neighborhood.</span></h1>
+    <div class="hero-row">
+      <div data-in>
+        <p class="hero-lede">Clear is a member-owned cooperative. Save with us, open a credit line, pay local shops over time, and put your rent toward a home of your own.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="https://www.useclear.org/join"><span class="dot"></span>Join the waitlist</a>
+          <a class="btn btn-ghost" href="https://www.useclear.org/shops">Bring Clear to your shop</a>
+        </div>
+      </div>
+      <ul class="facts" data-in>
+        <li><span>Local money, local returns</span><span>Co-op</span></li>
+        <li><span>One member, one vote</span><span>Governance</span></li>
+        <li><span>Inland Empire, California</span><span>Building</span></li>
+      </ul>
+    </div>
+
+    <div class="stage" id="stage">
+      <div class="stagebox" id="stagebox">
+        <div class="device" id="hero-device">
+          <!-- Desktop + tablet: the member app's Home, as it is in the app -->
+          <div class="screen screen-desk" data-w="1200">
+            <div class="canvas app" style="width:1200px">
+              <div class="bar-top">
+                <span class="lock"><svg><use href="#mark"/></svg>Clear</span>
+                <div class="r"><nav class="tabs"><span class="on">Home</span><span>Savings</span><span>Earn</span><span>Send</span><span>Activity</span><span>Card</span></nav><svg class="bell" aria-hidden="true"><use href="#bell"/></svg><span class="ava">DR</span></div>
+              </div>
+              <div class="hb">
+                <div class="bal" data-a>
+                  <div class="bal-l"><span class="lbl">Available to spend</span><span class="num bal-n">$5,718.42</span><span class="cap2">$2,318.42 cash · $0.00 used · $3,400.00 left</span></div>
+                  <div class="acts"><span class="pillb">Add money</span><span class="pillb">Send</span><span class="pillb">Save</span><span class="pillb">Pay</span></div>
+                </div>
+                <div class="cyc" data-a>
+                  <div class="cyc-r1"><div><span class="lbl">To clear this cycle</span><span class="num amt">$157.50</span></div><div class="cd"><span class="num">9</span><span class="cap2">days left</span></div></div>
+                  <div class="cyc-r2"><div class="st2"><span>Your deposit covers it</span><span class="cap2">Rivera Auto Glass, 3 of 4 · clears October 21</span></div><span class="pillb lg">Repay early</span></div>
+                </div>
+                <div class="slot" data-a><div class="slot-r"><span>Activate your card</span><span class="pillb">Activate</span></div></div>
+                <div class="slab2">
+                  <div class="blk" data-a>
+                    <div class="bh"><span class="lbl">Credit used</span><span class="num">$0 <span>of $3,400</span></span></div>
+                    <div class="bm">
+                      <span class="comp" aria-hidden="true"><i data-grow style="flex-basis:44.1%;background:#3E6B55"></i><i data-grow style="flex-basis:55.9%;background:#4C5A4C"></i></span>
+                      <div class="trows">
+                        <div><span>Savings (CLRUSD) · free</span><span>$1,500 · not drawn</span></div>
+                        <div><span>Assets · 0.75% / cycle</span><span>not added</span></div>
+                        <div><span>Income · 1.5% / cycle</span><span>$1,900 · not drawn</span></div>
+                        <div><span>Clear Boost™ · 3% / cycle</span><span>not added</span></div>
+                      </div>
+                    </div>
+                    <div class="bf"><span class="pillb lg full">Limit breakdown</span></div>
+                  </div>
+                  <div class="blk" data-a>
+                    <div class="bh"><span class="lbl">Spendable</span><span class="num">$2,318.42</span></div>
+                    <div class="bm">
+                      <div class="trows big"><div><span>Card and payments</span><span>$2,133.43</span></div><div><span>Ready to allocate</span><span class="num">$184.99</span></div></div>
+                      <div class="three"><span class="pillb lg">Savings</span><span class="pillb lg">Earn</span><span class="pillb lg">Back to cash</span></div>
+                    </div>
+                    <div class="bf"><span class="dd"><i></i>Direct deposit on</span><span class="pillb lg">Details</span></div>
+                  </div>
+                  <div class="blk" data-a>
+                    <div class="bh"><span class="lbl">Term plans</span><span class="num">$315.00 <span>of $3,000.00</span></span></div>
+                    <div class="bm">
+                      <div class="plan"><span>Rivera Auto Glass</span><span class="num">$315.00</span><span class="d">Split in 4 · $157.50 a cycle · <b>50% cleared</b> · 2% / cycle</span></div>
+                      <div class="plan locked"><span>Clear Cash™</span><span class="lk">Locked</span><span class="d">Unlocks after six clean cycles · 2.5% / cycle</span></div>
+                      <div class="sub-rule lbl">Your home · outside this limit</div>
+                      <div class="plan locked" style="border-bottom:0"><span>ELPA — buy a home</span><span class="lk">Locked</span><span class="d">1,500 of 15,000 credits</span></div>
+                    </div>
+                    <div class="bf"><div class="split-foot"><span>Limit <b>$850.00/cycle</b></span><i></i><span>Clears from <b>Chase 4471</b></span></div></div>
+                  </div>
+                  <div class="blk" data-a>
+                    <div class="bh"><span class="lbl">Savings</span><span class="num">$3,000.00</span></div>
+                    <div class="bm">
+                      <span class="comp" aria-hidden="true"><i data-grow style="flex-basis:50%;background:#DFE3DE"></i><i data-grow style="flex-basis:33.3%;background:#6FCB9F"></i><i data-grow style="flex-basis:16.7%;background:#E3B667"></i></span>
+                      <div class="trows"><div><span class="fg">Cash (CLRUSD)</span><span class="fg">$1,500.00</span></div><div><span class="ok">Vested</span><span class="fg">$1,000</span></div><div><span class="warn">Vesting</span><span class="fg">$500</span></div></div>
+                    </div>
+                    <div class="bf col"><span>1,500 of 15,000 credits</span><span class="cred" aria-hidden="true"><i data-grow style="width:10%"></i></span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Phone: the same Home at phone width -->
+          <div class="screen screen-phone" data-w="390">
+            <div class="canvas app" style="width:390px;height:860px">
+              <div class="ph-top"><span class="lock"><svg><use href="#mark"/></svg>Clear</span><span class="r"><svg class="bell" aria-hidden="true"><use href="#bell"/></svg><span class="ava">DR</span></span></div>
+              <div class="ph-body">
+                <div class="bal" data-a>
+                  <div class="bal-l"><span class="lbl">Available to spend</span><span class="num bal-n">$5,718.42</span><span class="cap2">$2,318.42 cash · $0.00 used · $3,400.00 left</span></div>
+                </div>
+                <div class="cyc" data-a>
+                  <div class="cyc-r1"><div><span class="lbl">To clear this cycle</span><span class="num amt">$157.50</span></div><div class="cd"><span class="num">9</span><span class="cap2">days left</span></div></div>
+                  <div class="cyc-r2"><div class="st2"><span>Your deposit covers it</span><span class="cap2">Clears October 21</span></div><span class="pillb lg">Repay early</span></div>
+                </div>
+                <div class="slot" data-a><div class="slot-r"><span>Activate your card</span><span class="pillb">Activate</span></div></div>
+                <div class="slab2" data-a>
+                  <div class="blk">
+                    <div class="bh"><span class="lbl">Credit used</span><span class="num">$0 <span>of $3,400</span></span></div>
+                    <div class="bm">
+                      <span class="comp" aria-hidden="true"><i data-grow style="flex-basis:44.1%;background:#3E6B55"></i><i data-grow style="flex-basis:55.9%;background:#4C5A4C"></i></span>
+                      <div class="trows"><div><span>Savings (CLRUSD) · free</span><span>$1,500 · not drawn</span></div><div><span>Income · 1.5% / cycle</span><span>$1,900 · not drawn</span></div></div>
+                    </div>
+                  </div>
+                  <div class="blk">
+                    <div class="bh"><span class="lbl">Spendable</span><span class="num">$2,318.42</span></div>
+                    <div class="bm"><div class="trows big"><div><span>Card and payments</span><span>$2,133.43</span></div><div><span>Ready to allocate</span><span class="num">$184.99</span></div></div></div>
+                  </div>
+                </div>
+              </div>
+              <div class="navpill"><span class="on">Home</span><span>Savings</span><span>Earn</span><span>Card</span></div>
+              <span class="navact"><svg><use href="#plus"/></svg></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="stage-cap label"><span>The member app</span><span>Sample account</span></div>
+    </div>
+  </section>
+
+  <!-- 01 -->
+  <section class="sec band-ink" id="gap">
+    <div class="wrap">
+      <div class="head">
+        <div class="sec-label label"><b>01</b>If you rent today</div>
+        <h2 class="h2">Same money. But you end up owning something.</h2>
+        <div class="aside"><p class="line">$2,350 a month inside Clear, against $2,520 in rent. Most of it stays yours.</p><a class="more" href="https://www.useclear.org/housing">How the housing math works<svg><use href="#arrow"/></svg></a></div>
+      </div>
+      <div class="cmp body-gap" aria-label="Five years of payments. Renting at $2,520 a month: $151,200 paid out, $0 kept. Inside Clear at $2,350 a month: $141,000 paid in, $90,000 credited to your equity balance.">
+        <div class="cmp-col rent">
+          <div class="cmp-h"><span class="who">Renting</span><span class="fig">$2,520 a month</span></div>
+          <div class="cmp-m">
+            <div class="keep"><span class="ck">Yours to keep</span><span class="fig kept" id="rent-kept">$0</span></div>
+            <div class="bars" id="bars-rent" aria-hidden="true"><span class="cursor"></span></div>
+            <div class="axis" aria-hidden="true"><span>Year 1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+            <div class="legend" aria-hidden="true"><span><i class="gone"></i>$2,520 to the landlord</span></div>
+          </div>
+          <div class="cmp-f"><span class="ck">Paid out</span><span class="fig" id="rent-paid">$151,200</span></div>
+        </div>
+        <div class="cmp-col clear">
+          <div class="cmp-h"><span class="who">Inside Clear</span><span class="fig">$2,350 a month</span></div>
+          <div class="cmp-m">
+            <div class="keep"><span class="ck">Yours to keep</span><span class="fig kept" id="clear-kept">$90,000</span></div>
+            <div class="bars keeps" id="bars-clear" aria-hidden="true"><span class="cursor"></span></div>
+            <div class="axis" aria-hidden="true"><span>Year 1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+            <div class="legend" aria-hidden="true"><span><i></i>$1,500 to your equity</span><span><i class="fee"></i>$850 community fee</span></div>
+          </div>
+          <div class="cmp-f"><span class="ck">Paid in</span><span class="fig" id="clear-paid">$141,000</span></div>
+        </div>
+        <div class="cmp-foot"><span class="mo">Month <b id="mo">60</b> of 60</span><span class="label">Two-bedroom, Inland Empire. Illustration, not a quote.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section class="sec" id="path">
+    <div class="wrap">
+      <div class="head">
+        <div class="sec-label label"><b>02</b>Take the ClearPath</div>
+        <h2 class="h2">Renter, owner, earner.</h2>
+        <div class="aside"><p class="line">Three phases, each with a gate you can see from your first day.</p><a class="more" href="https://www.useclear.org/housing">How ClearPath works<svg><use href="#arrow"/></svg></a></div>
+      </div>
+      <div class="path3 body-gap" id="gates">
+        <span class="rail-fill" id="rail-fill" aria-hidden="true"></span>
+        <div class="ph reached">
+          <div class="ph-h"><span class="node" aria-hidden="true"></span><span class="who">Renter</span><span class="n">01</span></div>
+          <h3 class="ph-t">You rent, and save at the same time.</h3>
+          <div class="ph-v">
+            <div class="cred-n"><span class="fig" id="cred">15,000</span><span class="ck">credits</span></div>
+            <span class="ladder" aria-hidden="true"><i id="ladder"></i><b style="left:10%"></b><b style="left:26.7%"></b><b style="left:53.3%"></b></span>
+            <p class="ph-c">Every dollar saved is matched in credits. Protections unlock on the way.</p>
+          </div>
+          <div class="ph-f"><span class="ck">The gate</span><span class="fig">15,000 credits</span></div>
+        </div>
+        <div class="ph reached">
+          <div class="ph-h"><span class="node" aria-hidden="true"></span><span class="who">Owner</span><span class="n">02</span></div>
+          <h3 class="ph-t">You own the house. The land is held in common.</h3>
+          <div class="ph-v">
+            <ul class="ph-l">
+              <li class="ok"><svg aria-hidden="true"><use href="#check"/></svg><span>Your ELPA</span><span class="r">Signed</span></li>
+              <li class="ok"><svg aria-hidden="true"><use href="#check"/></svg><span>Your Clear Deed</span><span class="r">Signed</span></li>
+            </ul>
+            <p class="ph-c">The financing, then the title, recorded on the Deed Protocol.</p>
+          </div>
+          <div class="ph-f"><span class="ck">The gate</span><span class="fig">Two signatures</span></div>
+        </div>
+        <div class="ph reached">
+          <div class="ph-h"><span class="node" aria-hidden="true"></span><span class="who">Earner</span><span class="n">03</span></div>
+          <h3 class="ph-t">You redeem it, and the equity travels.</h3>
+          <div class="ph-v">
+            <ul class="ph-l">
+              <li><span>Move to another Clear home</span><svg aria-hidden="true"><use href="#arrow"/></svg></li>
+              <li><span>Recontribute it to Clear Capital</span><svg aria-hidden="true"><use href="#arrow"/></svg></li>
+              <li><span>Cash out at a fair, stable number</span><svg aria-hidden="true"><use href="#arrow"/></svg></li>
+            </ul>
+          </div>
+          <div class="ph-f"><span class="ck">The gate</span><span class="fig">Portable</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section class="sec" id="counter">
+    <div class="wrap">
+      <div class="head">
+        <div class="sec-label label"><b>03</b>If you run a shop, or shop at one</div>
+        <h2 class="h2">Whichever side of the counter you are on.</h2>
+        <div class="aside"><p class="line">The shop keys in the charge and shows a code. You pick how to clear it on your own phone. Try it.</p>
+          <div class="links"><a class="more" href="https://www.useclear.org/shops">For shops<svg><use href="#arrow"/></svg></a><a class="more" href="https://www.useclear.org/how">How the member side works<svg><use href="#arrow"/></svg></a></div></div>
+      </div>
+
+      <div class="duo3 body-gap" id="flow">
+        <!-- Left: the shop's side, one surface moving through its states -->
+        <div class="col shop active" id="col-shop">
+          <div class="c-h"><span class="who">The shop</span><span class="now" id="shop-now">Enter the charge</span><span class="prog" aria-hidden="true"><i></i><i></i><i></i></span></div>
+          <div class="c-stage">
+            <div class="state on" data-st="enter">
+              <span class="ck">Mike's Tire · ticket 2291</span>
+              <div class="amt-row"><span class="fig big-fig" id="m-amt">$940.00</span><span class="memo2">Front pads and rotors</span></div>
+              <dl class="pay">
+                <div><dt>Clear keeps 2.5%</dt><dd id="m-f">$23.50</dd></div>
+                <div class="pos"><dt>Paid to the shop, net-30</dt><dd id="m-r">$916.50</dd></div>
+              </dl>
+              <button type="button" class="btn btn-primary act" id="show-code">Show the code</button>
+            </div>
+            <div class="state mid" data-st="code">
+              <div class="scan" id="scan">
+                <svg id="qr" viewBox="0 0 29 29" shape-rendering="crispEdges" aria-hidden="true"></svg>
+                <span class="scanline" aria-hidden="true"></span>
+                <span class="okmark" id="okf" hidden><svg aria-hidden="true"><use href="#check"/></svg></span>
+              </div>
+              <div class="code-cap"><span class="fig">$940.00</span><p class="memo2" id="qr-cap">Scan it with your own phone. A new customer joins from this same code.</p></div>
+              <div class="clock2"><span class="ck">Elapsed</span><span class="fig" id="clock">0:00</span></div>
+            </div>
+            <div class="state" data-st="paid">
+              <span class="ok-l"><svg aria-hidden="true"><use href="#check"/></svg>Approved by the customer</span>
+              <div class="amt-row"><span class="fig big-fig">$916.50</span><span class="memo2">To Mike's Tire on net-30, whichever way the customer splits it. Clear carries the plan.</span></div>
+              <dl class="pay">
+                <div><dt>Ticket</dt><dd>$940.00</dd></div>
+                <div><dt>Customer's plan</dt><dd id="s-plan">Split in 4</dd></div>
+                <div class="pos"><dt>Code to approval</dt><dd id="s-time">0:00</dd></div>
+              </dl>
+            </div>
+          </div>
+          <div class="c-f"><span class="st" id="shop-st"><i></i><span>Entering the charge</span></span><span class="ck">Counter tablet</span></div>
+        </div>
+
+        <!-- Right: your side, which only starts when the shop hands off -->
+        <div class="col you" id="col-you">
+          <div class="c-h"><span class="who">You</span><span class="now" id="you-now">Waiting on the shop</span><span class="prog" aria-hidden="true"><i></i><i></i><i></i></span></div>
+          <div class="c-stage">
+            <div class="state mid on" data-st="idle">
+              <svg class="idle-mark" aria-hidden="true"><use href="#mark"/></svg>
+              <p class="memo2">Nothing to approve yet. When the shop shows its code, the charge lands here.</p>
+            </div>
+            <div class="state" data-st="notify">
+              <div class="notif3">
+                <span class="n-h"><svg aria-hidden="true"><use href="#mark"/></svg>Clear<span class="ck">now</span></span>
+                <span class="n-b"><b>Mike's Tire</b> sent you a charge for <b>$940.00</b>.</span>
+                <span class="ck">Front pads and rotors · you have not been charged</span>
+              </div>
+              <button type="button" class="btn btn-primary act" id="review">Review the charge</button>
+            </div>
+            <div class="state" data-st="pick">
+              <span class="ck">Mike's Tire · $940.00 · how do you want to clear it?</span>
+              <div class="choose" role="group" aria-label="How to clear it" id="choose">
+                <button type="button" aria-pressed="false" data-i="0">In full</button>
+                <button type="button" aria-pressed="false" data-i="1">In 2</button>
+                <button type="button" aria-pressed="true" data-i="2">In 4</button>
+                <button type="button" aria-pressed="false" data-i="3">In 12</button>
+              </div>
+              <div class="fsegs" id="segbar" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+              <div class="result" id="p-kv" aria-live="polite">
+                <div class="r-main"><span class="fig big-fig" id="v-each">$246.75</span><span class="r-unit" id="k-each">a cycle</span></div>
+                <div class="r-row">
+                  <div><span class="ck">Total</span><span class="fig" id="v-total">$987.00</span></div>
+                  <div><span class="ck">Carry</span><span class="fig" id="v-carry">$47.00</span></div>
+                  <div><span class="ck">Done by</span><span class="fig" id="v-done">January 2027</span></div>
+                </div>
+              </div>
+              <div class="act2">
+                <button type="button" class="btn btn-primary act" id="approve"><span class="dot"></span>Approve</button>
+                <span class="memo2">Clearing early always costs less.</span>
+              </div>
+            </div>
+            <div class="state" data-st="done">
+              <span class="ok-l"><svg aria-hidden="true"><use href="#check"/></svg>Approved</span>
+              <div class="r-main"><span class="fig big-fig" id="o-each">$246.75</span><span class="r-unit" id="o-k">a cycle</span></div>
+              <dl class="pay">
+                <div><dt>Plan</dt><dd id="o-plan">Split in 4</dd></div>
+                <div><dt>Total</dt><dd id="o-total">$987.00</dd></div>
+                <div><dt>Done by</dt><dd id="o-done">January 2027</dd></div>
+                <div><dt>Clears from</dt><dd>Chase 4471</dd></div>
+              </dl>
+              <div class="act2">
+                <button type="button" class="btn btn-ghost" id="again">Run it again</button>
+                <span class="memo2">On your term-plans shelf, and in the ledger below.</span>
+              </div>
+            </div>
+          </div>
+          <div class="c-f"><span class="st" id="you-st"><i></i><span>Nothing yet</span></span><span class="ck">Your phone</span></div>
+        </div>
+      </div>
+
+      <div class="kfigs">
+        <div><span class="fig">2.5%</span><p>of the ticket for the shop, paid on net‑30</p></div>
+        <div><span class="fig">3 min</span><p>from the code on screen to an approved plan</p></div>
+        <div><span class="fig">2%</span><p>a cycle on what you still owe, so clearing early costs less</p></div>
+        <div><span class="fig">0</span><p>credit-score pulls to approve your first plan</p></div>
+      </div>
+      <p class="flow-cap label">Sample charge · the figures are the real terms</p>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section class="sec" id="status">
+    <div class="wrap">
+      <div class="head">
+        <div class="sec-label label"><b>04</b>Before you trust us with anything</div>
+        <h2 class="h2">What exists today, plainly.</h2>
+        <div class="aside"><p class="line">A co-op that asks you to save with it should be straight about what it has built. Updated October 2026.</p></div>
+      </div>
+      <ul class="rows body-gap">
+        <li><span class="nm">Member app</span><span class="ds">Savings, credit, term plans and the card</span><span class="chip" data-tone="live"><span class="dot"></span>Invite-only</span></li>
+        <li><span class="nm">Merchant counter app</span><span class="ds">Tablet-first, installs from a browser</span><span class="chip" data-tone="live"><span class="dot"></span>Invite-only</span></li>
+        <li><span class="nm">Protocol contracts</span><span class="ds">Public and open source</span><span class="chip" data-tone="underway"><span class="dot"></span>In build</span></li>
+        <li><span class="nm">First merchant partners</span><span class="ds">Auto repair and tires, Inland Empire</span><span class="chip" data-tone="underway"><span class="dot"></span>Signing</span></li>
+        <li><span class="nm">First homes</span><span class="ds">Twelve detached homes, land first</span><span class="chip" data-tone="absent"><span class="dot"></span>Not yet</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 05 -->
+  <section class="sec band-ink" id="ledger">
+    <div class="wrap">
+      <div class="head">
+        <div class="sec-label label"><b>05</b>The public ledger</div>
+        <h2 class="h2">You should not have to take our word for the numbers.</h2>
+        <div class="aside"><div><p class="line">Balances, credit lines, deeds and titles run on an open-source protocol. The co-op uses it. It does not own it.</p><p class="src">github.com/Deed3Labs/Protocol-Contracts · AGPL-3.0</p></div><a class="more" href="https://www.useclear.org/coop">How the co-op is put together<svg><use href="#arrow"/></svg></a></div>
+      </div>
+      <div class="led body-gap">
+        <div class="led-head label"><span class="blk">Block</span><span>Contract</span><span class="ev2">Event</span><span>Amount</span></div>
+        <div class="led-body"><div id="stream"></div></div>
+        <div class="led-foot label"><span class="on"><span class="dot"></span>Sample entries, streaming</span><span>Contracts in build</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec close">
+    <div class="wrap head">
+      <h2 class="h2">Your money, kept in the neighborhood.</h2>
+      <div class="aside">
+        <p class="line">One member, one vote. Building in Inland Empire, California.</p>
+        <div class="hero-actions" style="margin-top:0">
+          <a class="btn btn-primary" href="https://www.useclear.org/join"><span class="dot"></span>Join the waitlist</a>
+          <a class="btn btn-ghost" href="https://www.useclear.org/shops">Bring Clear to your shop</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <div class="foot">
+    <div class="about"><a class="brand" href="https://www.useclear.org/"><svg aria-hidden="true"><use href="#mark"/></svg>Clear</a><p>A member-owned cooperative, building in Inland Empire, California.</p></div>
+    <div><h4>Members</h4><ul><li><a href="https://www.useclear.org/how">How it works</a></li><li><a href="https://www.useclear.org/housing">Housing</a></li><li><a href="https://www.useclear.org/join">Join the waitlist</a></li><li><a href="https://demo.useclear.org">Members app</a></li></ul></div>
+    <div><h4>Partners</h4><ul><li><a href="https://www.useclear.org/shops">For shops</a></li><li><a href="https://www.useclear.org/contribute">Contribute land</a></li><li><a href="https://www.useclear.org/capital">Clear Capital</a></li><li><a href="https://merchant.useclear.org">Merchant app</a></li></ul></div>
+    <div><h4>The co-op</h4><ul><li><a href="https://www.useclear.org/coop">Structure and governance</a></li><li><a href="https://github.com/Deed3Labs/Protocol-Contracts">Protocol source</a></li><li><a href="https://www.useclear.org/join?as=work">Work with us</a></li><li><a href="https://www.useclear.org/style">Brand and style guide</a></li></ul></div>
+    <div><h4>Community</h4><ul><li><a href="https://www.useclear.org/events">Events</a></li><li><a href="https://www.useclear.org/directory">Directory</a></li><li><a href="https://www.useclear.org/shop">Shop</a></li></ul></div>
+    <div class="legal">
+      <p>Clear is not a bank and deposits are not FDIC insured. Membership accounts are cooperative capital accounts, not deposit accounts.</p>
+      <p>Nothing here is an offer to sell or a solicitation to buy any security. Figures shown for housing, savings and credit are illustrations of how the model works, not quotes, offers or predictions. Credit is subject to the terms disclosed in the app before you draw.</p>
+      <p>We are not tax or legal advisers. Descriptions of property contributions are general and depend entirely on your own circumstances.</p>
+    </div>
+  </div>
+</footer>
+
+<div class="mock-flag">Mockup v15 · Home</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const G = typeof window.gsap !== 'undefined' && !reduce;
+  const money = (n, dp = 2) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: dp, maximumFractionDigits: dp });
+
+  /* Header */
+  const head = $('#site-head');
+  const onScroll = () => head.classList.toggle('scrolled', scrollY > 8);
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+  /* The Community menu: opens on click, and on hover for a mouse. */
+  const nm = $('#navmenu'), nb = $('#navmenu-btn'), np = $('#navmenu-panel');
+  let nmT = null, byHover = false;
+  const nmSet = o => { np.hidden = !o; nb.setAttribute('aria-expanded', String(o)); if (!o) byHover = false; };
+  /* A mouse already opened it by hovering, so a click keeps it open. */
+  nb.addEventListener('click', () => nmSet(byHover ? true : np.hidden));
+  nm.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') { clearTimeout(nmT); if (np.hidden) byHover = true; nmSet(true); } });
+  nm.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') nmT = setTimeout(() => nmSet(false), 180); });
+  document.addEventListener('pointerdown', e => { if (!nm.contains(e.target)) nmSet(false); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { nmSet(false); $('#sheet').close(); } });
+  /* The full-screen sheet, on <dialog>. */
+  const sheet = $('#sheet');
+  $('#menu-btn').addEventListener('click', () => sheet.showModal());
+  $('#sheet-close').addEventListener('click', () => sheet.close());
+
+  /* Screens: each app canvas is authored at its real width and scaled to fit,
+     so the product reads like a screenshot at every width. */
+  function fit() {
+    $$('.screen').forEach(sc => {
+      if (!sc.offsetParent) return;
+      const w = +sc.dataset.w, h = +sc.dataset.h || sc.firstElementChild.offsetHeight, s = sc.clientWidth / w;
+      sc.style.height = (h * s) + 'px';
+      sc.firstElementChild.style.transform = `scale(${s})`;
+    });
+  }
+  new ResizeObserver(fit).observe(document.body); fit();
+
+  /* ── 01 bars, built finished ─────────────────────────────────────────── */
+  const MONTHS = 60;
+  const mk = (el, h) => Array.from({ length: MONTHS }, () => { const b = document.createElement('span'); b.className = 'bar'; b.style.setProperty('--h', h); el.appendChild(b); return b; });
+  const rentBars = mk($('#bars-rent'), '100%'), clearBars = mk($('#bars-clear'), '93.25%');
+  const cursors = $$('.cursor');
+  let lastM = -1;
+  function setMonth(m) {
+    m = Math.max(0, Math.min(MONTHS, Math.round(m))); if (m === lastM) return; lastM = m;
+    for (let i = 0; i < MONTHS; i++) { const t = i < m ? '' : 'scaleY(0)'; rentBars[i].style.transform = t; clearBars[i].style.transform = t; }
+    cursors.forEach(c => { c.style.left = (m / MONTHS * 100) + '%'; c.style.opacity = m > 0 && m < MONTHS ? 1 : 0; });
+    $('#mo').textContent = m;
+    $('#rent-paid').textContent = money(m * 2520, 0);
+    $('#clear-paid').textContent = money(m * 2350, 0);
+    $('#clear-kept').textContent = money(m * 1500, 0);
+  }
+
+  /* ── 03 the counter ──────────────────────────────────────────────────── */
+  (function qr() {
+    const svg = $('#qr'), N = 29; let s = 7; const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
+    let out = ''; const sq = (x, y) => { out += `<rect x="${x}" y="${y}" width="1.02" height="1.02"/>`; };
+    const finder = (x, y) => { for (const [fx, fy] of [[0, 0], [N - 7, 0], [0, N - 7]]) { const ax = x - fx, ay = y - fy; if (ax >= 0 && ax < 7 && ay >= 0 && ay < 7) return [ax, ay]; } return null; };
+    for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+      const f = finder(x, y);
+      if (f) { const [ax, ay] = f; if (ax === 0 || ax === 6 || ay === 0 || ay === 6 || (ax > 1 && ax < 5 && ay > 1 && ay < 5)) sq(x, y); }
+      else if (!(x === 7 || y === 7 || x === N - 8 || y === N - 8) && (x === 6 || y === 6 ? (x + y) % 2 === 0 : rnd() > .52)) sq(x, y);
+    }
+    svg.innerHTML = out;
+  })();
+
+  const SPLITS = [
+    { label: 'In full', n: 1, each: 958.80, carry: 18.80, total: 958.80, done: 'October 2026' },
+    { label: 'In 2', n: 2, each: 484.10, carry: 28.20, total: 968.20, done: 'November 2026' },
+    { label: 'In 4', n: 4, each: 246.75, carry: 47.00, total: 987.00, done: 'January 2027' },
+    { label: 'In 12', n: 12, each: 88.52, carry: 122.20, total: 1062.20, done: 'September 2027' },
+  ];
+  let pick = 2;
+  function paint(i, animate) {
+    const t = SPLITS[i]; pick = i;
+    $$('#choose button').forEach((b, j) => b.setAttribute('aria-pressed', String(j === i)));
+    const apply = () => {
+      $('#v-each').textContent = money(t.each); $('#k-each').textContent = t.n === 1 ? 'once' : 'a cycle';
+      $('#v-total').textContent = money(t.total); $('#v-carry').textContent = money(t.carry); $('#v-done').textContent = t.done;
+      const sb = $('#segbar'); sb.innerHTML = '<span></span>'.repeat(t.n);
+      if (animate && G) gsap.from(sb.children, { scaleX: 0, duration: .45, stagger: .03, ease: 'power3.out' });
+    };
+    /* Swap, never count: a tween would pass through figures no split produces. */
+    if (animate && !reduce) { const kv = $('#p-kv'); kv.classList.add('swap'); setTimeout(() => { apply(); kv.classList.remove('swap'); }, 150); } else apply();
+  }
+
+  /* ── Light along the lines ──────────────────────────────────────────────
+     One engine. A path is built in an element's own pixels; a short lit
+     segment (soft halo + thin core) runs along it. Paths are rebuilt on resize. */
+  const NS = 'http://www.w3.org/2000/svg';
+  function traceLayer(host) {
+    const svg = document.createElementNS(NS, 'svg'); svg.classList.add('trace');
+    const halo = document.createElementNS(NS, 'path'); halo.classList.add('halo');
+    const core = document.createElementNS(NS, 'path'); core.classList.add('core');
+    svg.append(halo, core); host.appendChild(svg);
+    return { svg, halo, core };
+  }
+  /* Rounded rectangle, clockwise, starting at a chosen point on its edge. */
+  function rr(x, y, w, h, r, start = 'top') {
+    const L = x, T = y, R = x + w, B = y + h;
+    const seg = {
+      top:    `L ${R - r} ${T} A ${r} ${r} 0 0 1 ${R} ${T + r}`,
+      right:  `L ${R} ${B - r} A ${r} ${r} 0 0 1 ${R - r} ${B}`,
+      bottom: `L ${L + r} ${B} A ${r} ${r} 0 0 1 ${L} ${B - r}`,
+      left:   `L ${L} ${T + r} A ${r} ${r} 0 0 1 ${L + r} ${T}`,
+    };
+    const starts = { top: [L + w / 2, T], right: [R, T + h / 2], bottom: [L + w / 2, B], left: [L, T + h / 2] };
+    const order = ['top', 'right', 'bottom', 'left'];
+    const i = order.indexOf(start), [sx, sy] = starts[start];
+    let d = `M ${sx} ${sy} `;
+    for (let k = 0; k < 4; k++) d += seg[order[(i + k) % 4]] + ' ';
+    return d + `L ${sx} ${sy}`;
+  }
+  function makeTrace(host, build, { seg = 140, speed = 520 } = {}) {
+    if (!G) return { run(o = {}) { if (o.done) o.done(); } };
+    const t = traceLayer(host);
+    let len = 0, tw = null;
+    function layout() {
+      const w = host.clientWidth, h = host.clientHeight;
+      t.svg.setAttribute('width', w); t.svg.setAttribute('height', h); t.svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+      const d = build(w, h, host); t.halo.setAttribute('d', d); t.core.setAttribute('d', d);
+      len = t.core.getTotalLength();
+      [t.halo, t.core].forEach(p => { p.style.strokeDasharray = `${seg} ${len + seg}`; p.style.strokeDashoffset = seg; });
+    }
+    layout(); new ResizeObserver(layout).observe(host);
+    return {
+      run(opts = {}) {
+        if (tw) tw.kill(); layout();
+        const o = { v: seg };
+        tw = gsap.to(o, { v: -len, duration: len / speed, ease: opts.ease || 'power1.inOut', repeat: opts.repeat || 0, repeatDelay: opts.repeatDelay || 0,
+          onUpdate: () => { t.halo.style.strokeDashoffset = o.v; t.core.style.strokeDashoffset = o.v; }, onComplete: opts.done });
+      },
+      kill() { if (tw) tw.kill(); [t.halo, t.core].forEach(p => { p.style.strokeDashoffset = seg; }); },
+    };
+  }
+
+  /* ── 03 the counter: the shop's flow, handed across to yours ─────────── */
+  const flow = $('#flow');
+  const col = { shop: $('#col-shop'), you: $('#col-you') };
+  const NOW = { shop: ['Enter the charge', 'Show the code', 'Paid'], you: ['Get the charge', 'Pick a split', 'Approved'] };
+  const WAIT = { shop: 'Enter the charge', you: 'Waiting on the shop' };
+  /* One column holds the turn at a time; only its current step is cobalt. */
+  function side(s, state, step, final = false) {
+    $$('.state', col[s]).forEach(el => el.classList.toggle('on', el.dataset.st === state));
+    $$('.prog i', col[s]).forEach((i, k) => { i.classList.toggle('done', k < step - 1 || (final && k === step - 1)); i.classList.toggle('on', !final && k === step - 1); });
+    $('#' + s + '-now').textContent = step ? NOW[s][step - 1] : WAIT[s];
+  }
+  function turn(s) { col.shop.classList.toggle('active', s === 'shop'); col.you.classList.toggle('active', s === 'you'); }
+  function setSt(el, text, cls) { el.className = 'st ' + (cls || ''); el.lastElementChild.textContent = text; }
+
+  /* The hand-off runs along the header rules: from the end of the shop's
+     second step to the end of your first. Stacked, it runs down the wall. */
+  const rule = s => col[s].offsetTop + $('.c-h', col[s]).offsetHeight - .5;
+  const stacked = () => col.you.offsetTop > 0;
+  const handoff = makeTrace(flow, w => {
+    const ys = rule('shop'), yy = rule('you'), ws = col.shop.offsetWidth;
+    return stacked() ? `M ${w * 2 / 3} ${ys} L ${w + .5} ${ys} L ${w + .5} ${yy} L ${w / 3} ${yy}`
+                     : `M ${ws * 2 / 3} ${ys} L ${ws + col.you.offsetWidth / 3} ${yy}`;
+  }, { seg: 150, speed: 760 });
+  const handback = makeTrace(flow, w => {
+    const ys = rule('shop'), yy = rule('you'), ws = col.shop.offsetWidth;
+    return stacked() ? `M ${w * 2 / 3} ${yy} L ${w + .5} ${yy} L ${w + .5} ${ys} L ${w * 2 / 3} ${ys}`
+                     : `M ${w} ${yy} L ${ws * 2 / 3} ${ys}`;
+  }, { seg: 150, speed: 900 });
+
+  /* Timers belong to one run, so "Run it again" never inherits a stray step. */
+  let timers = [];
+  const later = (sec, fn) => timers.push(setTimeout(fn, sec * 1000));
+  const cancel = () => { timers.forEach(clearTimeout); timers = []; };
+  /* Your side only moves on its own while you can see it (stacked on a
+     phone, it waits until you scroll down to it). */
+  let youSeen = false;
+  new IntersectionObserver(es => es.forEach(e => { youSeen = e.isIntersecting; }), { threshold: .5 }).observe($('.c-stage', col.you));
+  const whenSeen = (sec, fn) => later(sec, () => (youSeen ? fn() : whenSeen(.5, fn)));
+  const press = (btn, fn) => { btn.classList.add('hit'); later(.16, () => { btn.classList.remove('hit'); fn(); }); };
+
+  const fee = v => Math.round(v * 2.5) / 100;
+  function ticket(v) { $('#m-amt').textContent = money(v); $('#m-f').textContent = money(fee(v)); $('#m-r').textContent = money(v - fee(v)); }
+  const fmt = s => Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+  /* The clock measures the visitor, and only while they are looking at it. */
+  let tick = null, elapsed = 0, last = 0, visible = true;
+  function clockOn() { elapsed = 0; last = Date.now(); clearInterval(tick); $('#clock').textContent = '0:00'; tick = setInterval(() => { const now = Date.now(); if (visible) elapsed += now - last; last = now; $('#clock').textContent = fmt(Math.floor(elapsed / 1000)); }, 250); }
+  new IntersectionObserver(es => es.forEach(e => { visible = e.isIntersecting; last = Date.now(); })).observe(flow);
+
+  let stage = 'enter', userTouched = false;
+  function reset() {
+    cancel(); clearInterval(tick); handoff.kill && handoff.kill(); handback.kill && handback.kill();
+    stage = 'enter'; userTouched = false;
+    ticket(0); $('#clock').textContent = '0:00';
+    $('#scan').classList.remove('scanning', 'spent'); $('#okf').hidden = true;
+    $('#qr-cap').textContent = 'Scan it with your own phone. A new customer joins from this same code.';
+    $$('#qr rect').forEach(r => { r.style.opacity = G ? 0 : 1; });
+    paint(2, false); $('#choose').classList.remove('ask');
+    side('shop', 'enter', 1); side('you', 'idle', 0); turn('shop');
+    setSt($('#shop-st'), 'Entering the charge'); setSt($('#you-st'), 'Nothing yet');
+  }
+  function toCode() {
+    if (stage !== 'enter') return; stage = 'code'; cancel(); ticket(940);
+    side('shop', 'code', 2); setSt($('#shop-st'), 'Code on screen', 'wait');
+    if (G) gsap.to('#qr rect', { opacity: 1, duration: .02, stagger: { each: .0012, from: 'random' }, delay: .25 });
+    else $$('#qr rect').forEach(r => { r.style.opacity = 1; });
+    later(.9, () => { $('#scan').classList.add('scanning'); clockOn(); });
+    later(G ? 3.3 : 0, scanned);
+  }
+  function scanned() {
+    $('#scan').classList.remove('scanning');
+    $('#qr-cap').textContent = 'Scanned on the customer’s phone. Waiting for them to approve.';
+    setSt($('#shop-st'), 'Waiting for approval', 'wait');
+    turn(null);
+    handoff.run({ ease: 'power2.inOut', done: toNotify });
+  }
+  function toNotify() {
+    stage = 'notify'; turn('you'); side('you', 'notify', 1); setSt($('#you-st'), 'Not charged yet', 'wait');
+    if (G) whenSeen(2.2, () => { if (stage === 'notify') press($('#review'), toPick); });
+  }
+  function toPick() {
+    if (stage !== 'notify') return; stage = 'pick'; cancel();
+    side('you', 'pick', 2); $('#choose').classList.add('ask');
+    if (G) gsap.from('#segbar span', { scaleX: 0, duration: .45, stagger: .04, ease: 'power3.out', delay: .3 });
+    /* If nobody touches it, it finishes on its own so the hand-back is seen. */
+    if (G) whenSeen(9, () => { if (stage === 'pick' && !userTouched) press($('#approve'), approve); });
+  }
+  function approve() {
+    if (stage !== 'pick') return; stage = 'done'; cancel(); clearInterval(tick);
+    const secs = Math.max(1, Math.round(elapsed / 1000)), t = SPLITS[pick];
+    $('#o-each').textContent = money(t.each); $('#o-k').textContent = t.n === 1 ? 'once' : 'a cycle';
+    $('#o-plan').textContent = t.n === 1 ? 'In full' : 'Split in ' + t.n; $('#o-total').textContent = money(t.total); $('#o-done').textContent = t.done;
+    $('#s-plan').textContent = t.n === 1 ? 'In full' : 'Split in ' + t.n; $('#s-time').textContent = fmt(secs);
+    side('you', 'done', 3, true); setSt($('#you-st'), 'Approved · first payment next cycle', 'ok'); turn(null);
+    $('#scan').classList.add('spent'); $('#okf').hidden = false;
+    mine('term plan approved, ' + t.label.toLowerCase());
+    handback.run({ ease: 'power2.inOut', done: () => { side('shop', 'paid', 3, true); setSt($('#shop-st'), 'Paid · $916.50 on net-30', 'ok'); } });
+  }
+  function run() {
+    reset();
+    [9, 94, 940, 94000].forEach((c, i) => later(.35 + i * .28, () => ticket(c / 100)));
+    later(1.9, () => { if (stage === 'enter') press($('#show-code'), toCode); });
+  }
+  $('#show-code').addEventListener('click', toCode);
+  $('#review').addEventListener('click', toPick);
+  $('#approve').addEventListener('click', approve);
+  $('#again').addEventListener('click', run);
+  col.you.addEventListener('pointerdown', () => { userTouched = true; });
+  $$('#choose button').forEach(b => b.addEventListener('click', () => { userTouched = true; paint(+b.dataset.i, true); $('#choose').classList.remove('ask'); }));
+
+  /* ── 05 ledger ───────────────────────────────────────────────────────── */
+  const EV = [
+    ['StableCredit', 'CLRUSD minted on deposit', 250, true],
+    ['CreditIssuer', 'credit line opened', 1500, false],
+    ['LendingPool', 'plan payment cleared', 246.75, true],
+    ['AssurancePool', 'reserve top-up from spread', 41.20, true],
+    ['StableCredit', 'CLRUSD redeemed to cash', 120, false],
+    ['CreditIssuer', 'cycle cleared in full', 312.40, true],
+    ['BurnerBond', 'bond issued, 12 months', 4367.19, false],
+    ['StableCredit', 'CLRUSD minted on deposit', 75, true],
+    ['LendingPool', 'plan payment cleared', 88.52, true],
+  ];
+  const stream = $('#stream'); let blk = 18204331, ei = 0;
+  function row(c, w, v, up, me) {
+    blk += 3 + (ei * 7) % 11;
+    const el = document.createElement('div'); el.className = 'ev' + (me ? ' mine' : '');
+    el.innerHTML = `<span class="blk">${me ? 'You, just now' : '#' + blk.toLocaleString('en-US')}</span><span>${c}</span><span class="ev2">${w}</span><span class="val${up ? ' up' : ''}">${money(v)}</span>`;
+    return el;
+  }
+  for (let i = 0; i < 10; i++) { const e = EV[ei++ % EV.length]; stream.appendChild(row(...e)); }
+  function trim() { const rs = $$('.ev', stream); for (let i = rs.length - 1; i >= 0 && $$('.ev', stream).length > 11; i--) if (!rs[i].classList.contains('mine')) rs[i].remove(); }
+  function push(el) { stream.prepend(el); if (G) gsap.from(el, { height: 0, paddingTop: 0, paddingBottom: 0, opacity: 0, duration: .55, ease: 'power3.out' }); trim(); }
+  function mine(what) { push(row('LendingPool', what + ', Mike’s Tire', 940, false, true)); }
+  let streamOn = false;
+  setInterval(() => { if (streamOn && G) { const e = EV[ei++ % EV.length]; push(row(...e)); } }, 2600);
+
+  paint(2, false);
+
+  /* Without motion: the counter rests mid-flow, with your turn open. */
+  if (!G) { reset(); toCode(); setTimeout(toPick, 60); return; }
+  gsap.registerPlugin(ScrollTrigger);
+
+  /* Hero: light runs once around the device's outline, then again every few seconds. */
+  const heroDev = $('#hero-device');
+  const heroTrace = makeTrace(heroDev, (w, h) => rr(.5, .5, w - 1, h - 1, 14, 'left'), { seg: 160, speed: 620 });
+  const _run = heroTrace.run; heroTrace.run = () => _run({ repeat: -1, repeatDelay: 4.5, ease: 'power2.inOut' });
+
+  /* ── Hero: words rise, then the product assembles ───────────────────── */
+  const h1 = $('#hero-h1');
+  $$('.ln', h1).forEach(ln => { ln.innerHTML = ln.textContent.split(' ').map(w => `<span class="w"><span>${w}</span></span>`).join(' '); });
+  gsap.timeline({ defaults: { ease: 'power3.out' } })
+    .from('#hero-h1 .w > span', { yPercent: 105, duration: 1, stagger: .07, onComplete: () => $('#hero-h1').classList.add('revealed') })
+    .from('[data-in]', { opacity: 0, y: 14, duration: .8, stagger: .1 }, '-=.6')
+    .from('#stagebox', { opacity: 0, y: 24, duration: 1.0 }, '-=.55')
+    .from('#stage [data-a]', { opacity: 0, y: 8, duration: .6, stagger: .06 }, '-=.6')
+    .from('#stage [data-grow]', { scaleX: 0, duration: 1.1, stagger: .05, ease: 'power2.inOut' }, '-=.2')
+    .call(() => { heroTrace.run(); }, null, '-=.2');
+
+  /* ── 01 scroll pays the months into both columns ──────────────────── */
+  setMonth(0);
+  ScrollTrigger.create({ trigger: '.cmp', start: 'top 72%', end: 'bottom 72%', scrub: .4, onUpdate: s => setMonth(s.progress * MONTHS) });
+
+  /* ── 02 the top rule is the path; the renter's credits count up to the
+        first gate, and each node darkens as the line reaches it ──────── */
+  const phs = $$('.ph'), gEl = $('#gates');
+  const vert = () => matchMedia('(max-width: 760px)').matches;
+  const atOf = ph => { const n = $('.node', ph); return vert() ? (ph.offsetTop + n.offsetTop) / gEl.offsetHeight : (ph.offsetLeft + n.offsetLeft) / gEl.offsetWidth; };
+  function setPath(p) {
+    gsap.set('#rail-fill', vert() ? { scaleY: p, scaleX: 1 } : { scaleX: p, scaleY: 1 });
+    phs.forEach(ph => ph.classList.toggle('reached', p >= atOf(ph) - .002));
+    const c = Math.round(Math.min(1, Math.max(0, p / atOf(phs[1]))) * 1500) * 10;
+    $('#cred').textContent = c.toLocaleString('en-US');
+    gsap.set('#ladder', { scaleX: c / 15000 });
+  }
+  setPath(0);
+  ScrollTrigger.create({ trigger: gEl, start: 'top 75%', end: 'bottom 75%', scrub: .4, onUpdate: s => setPath(s.progress) });
+
+  /* ── 03 on arrival: the shop keys it in, then hands it across ────────── */
+  reset();
+  ScrollTrigger.create({ trigger: '#flow', start: 'top 70%', once: true, onEnter: run });
+
+  /* Header follows the ground beneath it. */
+  $$('.band-ink').forEach(band => ScrollTrigger.create({ trigger: band, start: 'top 34px', end: 'bottom 34px', onToggle: s => head.classList.toggle('on-ink', s.isActive) }));
+
+  /* ── 05 ticks while on screen ───────────────────────────────────────── */
+  ScrollTrigger.create({ trigger: '#ledger', start: 'top 85%', end: 'bottom 15%', onToggle: s => { streamOn = s.isActive; } });
+})();
+</script>

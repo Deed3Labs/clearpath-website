@@ -1,0 +1,1007 @@
+<title>Clear Capital Redesign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: a constrained page (1280 max) with one rhythm per section —
+   label, a headline that answers itself, one line, one crafted figure, one
+   link. The product is shown on its own dark ground inside thin device
+   outlines (the guide's one radius exception); figures that explain the
+   model are drawn in the site's ink. Single look: paper with ink bands. */
+:root {
+  color-scheme: light;
+  --paper: #DFE3DE;
+  --paper-2: #E9ECE7;
+  --ink: #16211D;
+  --ground: #16211D;
+  --live: #24409E;
+  --settled: #0E6B4E;
+  --underway: #8A5512;
+  --absent: #9B2C22;
+  --sig-deep: #0E6B4E;
+  --sig-light: #6FCB9F;
+  --ink-70: #525B57;
+  --ink-50: #5A635F;
+  --ink-28: #A7ADA8;
+  --ink-13: #C5CAC5;
+
+  --f-display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --f-text: 'Instrument Sans', system-ui, sans-serif;
+  --f-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  --s1: 8px; --s2: 16px; --s3: 24px; --s4: 40px; --s5: 64px; --s6: 96px;
+  --inset: clamp(16px, 4vw, 56px);
+  --max: 1280px;
+  --sec: clamp(80px, 9vw, 144px);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+.band-ink {
+  background: var(--ground); color: var(--paper);
+  --ink: #DFE3DE; --ink-70: #ABB1AC; --ink-50: #939995;
+  --ink-28: rgb(223 227 222 / .32); --ink-13: rgb(223 227 222 / .16);
+  --live: #7C8CC5; --settled: #6FCB9F; --underway: #E3B667; --absent: #E58C7F;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--f-text); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+h1, h2, h3, p, dl, dd, figure { margin: 0; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+a { color: inherit; text-decoration: none; }
+svg { display: block; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--live); outline-offset: 3px; }
+::selection { background: var(--ink); color: var(--paper); }
+
+.wrap { width: 100%; max-width: calc(var(--max) + var(--inset) * 2); margin-inline: auto; padding-inline: var(--inset); }
+.fig { font-family: var(--f-text); font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.label { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-50); }
+
+/* ── Section rhythm ───────────────────────────────────────────────────── */
+.sec { padding-block: var(--sec); }
+/* A section opens with a full-width label rule, then the headline on the
+   left seven-twelfths and its one line plus link on the right, bottom-aligned
+   to the headline. Phones stack it. */
+.head { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: clamp(32px, 6vw, 112px); row-gap: clamp(28px, 3vw, 44px); align-items: end; }
+.head > .sec-label { grid-column: 1 / -1; }
+.head > .aside { display: grid; gap: var(--s3); align-content: end; padding-bottom: .4em; }
+@media (max-width: 900px) { .head { grid-template-columns: minmax(0, 1fr); } .head > .aside { padding-bottom: 0; gap: var(--s2); } }
+.sec-label { display: flex; gap: 14px; padding-bottom: var(--s2); border-bottom: 1px solid var(--ink-13); }
+.sec-label b { font-weight: 400; color: var(--live); }
+.h2 { font-family: var(--f-display); font-weight: 800; font-size: clamp(36px, 4.7vw, 72px); line-height: .98; letter-spacing: -0.038em; text-wrap: balance; }
+.line { font-size: clamp(17px, 1.35vw, 20px); line-height: 1.5; color: var(--ink-70); max-width: 42ch; text-wrap: pretty; }
+.more { display: inline-flex; align-items: center; gap: 10px; font-size: 15.5px; font-weight: 500; color: var(--ink); border-bottom: 1px solid var(--ink-28); padding-bottom: 3px; justify-self: start; transition: border-color 200ms var(--ease), gap 200ms var(--ease); }
+.more svg { width: 14px; height: 10px; transition: transform 200ms var(--ease); }
+.more:hover { border-color: var(--ink); }
+.more:hover svg { transform: translateX(3px); }
+.body-gap { margin-top: clamp(48px, 5.5vw, 80px); }
+
+/* ── Controls (guide) ─────────────────────────────────────────────────── */
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding-inline: var(--s3); border: 1px solid transparent; border-radius: 999px; font-size: 15px; font-weight: 500; line-height: 1; white-space: nowrap; transition: background-color 200ms var(--ease), border-color 200ms var(--ease), color 200ms var(--ease); }
+.btn-primary { background: var(--ink); color: var(--paper); }
+.btn-primary:hover { background: var(--live); }
+.band-ink .btn-primary { color: var(--ground); }
+.btn-ghost { border-color: var(--ink-28); color: var(--ink); }
+.btn-ghost:hover { border-color: var(--ink); }
+.dot { --dot: var(--sig-light); position: relative; flex: none; width: 7px; height: 7px; margin-right: 10px; border-radius: 999px; background: var(--dot); box-shadow: 0 0 6px 1px color-mix(in srgb, var(--dot) 55%, transparent); }
+.dot::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: var(--dot); animation: ping 2s cubic-bezier(0, 0, .2, 1) infinite; }
+.band-ink .btn-primary .dot { --dot: var(--sig-deep); }
+@keyframes ping { 0% { transform: scale(1); opacity: .6 } 75%, 100% { transform: scale(3.4); opacity: 0 } }
+.chip { --chip: var(--ink-70); display: inline-flex; align-items: center; font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .09em; text-transform: uppercase; line-height: 1; padding: 6px 11px 5px; border: 1px solid; border-radius: 999px; white-space: nowrap; color: var(--chip); border-color: color-mix(in srgb, var(--chip) 34%, transparent); background: color-mix(in srgb, var(--chip) 10%, transparent); }
+.chip .dot { --dot: var(--chip); width: 6px; height: 6px; margin-right: 7px; box-shadow: 0 0 4px color-mix(in srgb, var(--chip) 45%, transparent); }
+.chip[data-tone="live"] { --chip: var(--settled); }
+.chip[data-tone="underway"] { --chip: var(--underway); }
+.chip[data-tone="absent"] { --chip: var(--absent); }
+.chip:not([data-tone="live"]) .dot::after { animation: none; opacity: 0; }
+
+/* ── Header — the live site's shell, kept as it is: five links, the
+   Community menu and Join; below 1000px a Menu button that opens the
+   full-screen sheet. Only the colours follow the ground underneath. ─── */
+.site-head { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 30; background: color-mix(in srgb, var(--paper) 88%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-bottom: 1px solid transparent; transition: border-color 200ms var(--ease), background-color 300ms var(--ease), color 300ms var(--ease); }
+.site-head.scrolled { border-bottom-color: var(--ink-13); }
+.site-head.on-ink { background: color-mix(in srgb, var(--ground) 90%, transparent); color: #DFE3DE; border-bottom-color: rgb(223 227 222 / .14); }
+.site-head.on-ink .nav > ul > li > a, .site-head.on-ink .navmenu-button { color: #ABB1AC; }
+.site-head.on-ink .nav > ul > li > a:hover, .site-head.on-ink .navmenu-button:hover, .site-head.on-ink .nav > ul > li > a[aria-current="page"] { color: #DFE3DE; }
+.site-head.on-ink .btn-primary { background: #DFE3DE; color: var(--ground); }
+.site-head.on-ink .btn-primary .dot { --dot: var(--sig-deep); }
+.top { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); height: 68px; }
+.brand { display: flex; align-items: center; gap: 9px; font-family: var(--f-display); font-weight: 800; font-size: 19px; letter-spacing: -0.035em; }
+.brand svg { width: 21px; height: 21px; }
+.nav { display: flex; align-items: center; gap: clamp(20px, 2.4vw, 40px); font-size: 14.5px; }
+.nav > ul { display: flex; align-items: center; gap: clamp(16px, 1.8vw, 24px); }
+.nav > ul > li > a { display: inline-flex; align-items: center; min-height: 44px; white-space: nowrap; color: var(--ink-70); transition: color 200ms var(--ease); }
+.nav > ul > li > a:hover { color: var(--ink); }
+.nav > ul > li > a[aria-current="page"] { color: var(--ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 6px; }
+.nav .btn { min-height: 38px; padding-inline: 18px; font-size: 14px; }
+/* The Community menu: a nav link that opens a short sheet of paper. */
+.navmenu { position: relative; }
+.navmenu-button { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; white-space: nowrap; color: var(--ink-70); font-size: 14.5px; transition: color 200ms var(--ease); }
+.navmenu-button:hover { color: var(--ink); }
+.navmenu-button svg { width: 10px; height: 10px; transition: transform 200ms var(--ease); }
+.navmenu-button[aria-expanded="true"] svg { transform: rotate(180deg); }
+.navmenu-panel { position: absolute; z-index: 40; top: calc(100% + 10px); right: -12px; width: 320px; background: #DFE3DE; color: #16211D; border: 1px solid #C5CAC5; border-top: 2px solid #16211D; box-shadow: 0 18px 40px rgb(22 33 29 / .14); }
+.navmenu-panel::before { content: ''; position: absolute; left: 0; right: 0; top: -12px; height: 12px; }
+.navmenu-panel li + li { border-top: 1px solid #C5CAC5; }
+.navmenu-link { display: grid; grid-template-columns: 40px minmax(0, 1fr); align-items: center; gap: 14px; padding: 14px 16px; color: #16211D; transition: background-color 200ms var(--ease); }
+.navmenu-link:hover, .navmenu-link:focus-visible { background: #E9ECE7; }
+.navmenu-icon { display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid #C5CAC5; transition: border-color 200ms var(--ease); }
+.navmenu-link:hover .navmenu-icon { border-color: #16211D; }
+.navmenu-icon svg { width: 18px; height: 18px; }
+.navmenu-text { display: grid; gap: 2px; }
+.navmenu-label { font-size: 15px; font-weight: 600; letter-spacing: -0.005em; }
+.navmenu-note { font-size: 13px; line-height: 1.35; color: #525B57; }
+.menu-btn { display: none; min-height: 44px; min-width: 44px; align-items: center; justify-content: center; gap: 8px; font-size: 15px; }
+.menu-btn svg { width: 16px; height: 16px; }
+@media (max-width: 1000px) {
+  .nav > ul, .nav > .btn { display: none; }
+  .menu-btn { display: inline-flex; }
+}
+/* The sheet: a full-screen <dialog>, which traps focus and closes on Escape. */
+.sheet { width: 100%; max-width: none; height: 100%; max-height: none; margin: 0; padding: 0; border: 0; background: var(--paper); color: var(--ink); }
+.sheet::backdrop { background: #16211D; opacity: .28; }
+.sheet-inner { padding-bottom: var(--s3); }
+.sheet-top { display: flex; align-items: center; justify-content: space-between; height: 68px; margin-bottom: var(--s3); }
+.sheet-top .t-note { font-size: 15px; color: var(--ink-70); }
+.sheet-close { min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; justify-content: flex-end; }
+.sheet-close svg { width: 18px; height: 18px; }
+.sheet-nav { display: grid; gap: var(--s4); }
+.sheet-main { display: grid; gap: var(--s2); }
+.sheet-main a { display: block; padding-block: 9px; font-family: var(--f-display); font-weight: 600; font-size: clamp(23px, 2.1vw, 30px); letter-spacing: -0.024em; line-height: 1.12; }
+.sheet-main a[aria-current="page"] { color: var(--live); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 7px; }
+.sheet-community { display: grid; gap: var(--s1); }
+.sheet-label { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-50); }
+.sheet-tiles { border-top: 1px solid var(--ink-13); }
+.sheet-tiles li { border-bottom: 1px solid var(--ink-13); }
+.sheet-tile { display: grid; grid-template-columns: 44px minmax(0, 1fr); align-items: center; column-gap: 14px; padding: 12px 0; }
+.sheet-tile svg { grid-row: 1 / span 2; box-sizing: content-box; width: 20px; height: 20px; padding: 11px; border: 1px solid var(--ink-13); }
+.sheet-tile-label { font-family: var(--f-display); font-weight: 600; font-size: 20px; letter-spacing: -0.02em; line-height: 1.1; }
+.sheet-tile-note { font-size: 13px; line-height: 1.35; color: var(--ink-70); }
+.sheet-join { display: flex; width: 100%; min-height: 48px; }
+
+/* ── Hero ─────────────────────────────────────────────────────────────── */
+.hero { padding-top: clamp(40px, 6vw, 96px); padding-bottom: var(--sec); }
+.hero-h1 { font-family: var(--f-display); font-weight: 800; font-size: min(9.4vw, 132px); line-height: .92; letter-spacing: -0.045em; }
+/* Two set lines from tablet up; below that the words wrap on their own. */
+.hero-h1 .ln { display: block; white-space: nowrap; }
+@media (max-width: 699px) { .hero-h1 { font-size: clamp(46px, 13.4vw, 72px); } .hero-h1 .ln { display: inline; white-space: normal; } }
+.hero-h1 .w { display: inline-block; overflow: hidden; vertical-align: top; padding: .04em .1em .24em; margin: -.04em -.1em -.24em; }
+/* The mask is only for the rise. Once the words are up it comes off, so no
+   descender, overhang or tight-tracked edge is ever clipped. */
+.hero-h1.revealed .w { overflow: visible; }
+.hero-h1 .w > span { display: inline-block; }
+.hero-row { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); gap: var(--s4) clamp(24px, 6vw, 120px); margin-top: clamp(32px, 4vw, 56px); align-items: end; }
+.hero-lede { font-size: clamp(18px, 1.6vw, 22px); line-height: 1.45; color: var(--ink-70); max-width: 38ch; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: var(--s3); }
+.facts { border-top: 1px solid var(--ink); display: grid; }
+.facts li { padding-block: 12px; border-bottom: 1px solid var(--ink-13); font-size: 15px; display: flex; justify-content: space-between; gap: 12px; }
+.facts li span:last-child { color: var(--ink-50); font-family: var(--f-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; align-self: center; }
+@media (max-width: 860px) { .hero-row { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 560px) {
+  .hero-actions .btn { flex: 1 1 100%; min-height: 48px; }
+  .hero-row { gap: var(--s4); }
+}
+
+/* The product stage: flat on the page. */
+.stage { margin-top: clamp(56px, 7vw, 104px); position: relative; }
+.stage-cap { display: flex; justify-content: space-between; gap: 12px; margin-top: 14px; }
+.stagebox { position: relative; }
+
+/* ── Device outlines and scaled screens ───────────────────────────────── */
+/* A device is only its outline: one thin light line at the guide's 14px
+   radius, the screen pushed almost to it. Light travels along that line. */
+.device { position: relative; border: 1px solid var(--ink-28); border-radius: 14px; padding: 7px; }
+.screen { position: relative; overflow: hidden; background: #16211D; border-radius: 7px; }
+.trace { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; z-index: 4; }
+.trace path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.trace .halo { stroke: #6FCB9F; stroke-width: 7; opacity: .75; filter: url(#glow); }
+.trace .core { stroke: #0E6B4E; stroke-width: 1.6; }
+.trace .rest { stroke: var(--ink-28); stroke-width: 1; }
+.canvas { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+.screen-phone { display: none; }
+@media (max-width: 699px) {
+  .screen-desk { display: none; }
+  .screen-phone { display: block; }
+  .stage .device { max-width: 420px; margin-inline: auto; }
+}
+
+/* ── The app (member and merchant) — its own ground, same guide ──────── */
+.app {
+  --a-bg: #16211D; --a-2: #1E2C27; --a-line: rgb(223 227 222 / .14); --a-fg: #DFE3DE;
+  --a-70: #ABB1AC; --a-50: #939995; --a-live: #7C8CC5; --a-ok: #6FCB9F; --a-warn: #E3B667;
+  background: var(--a-bg); color: var(--a-fg); font-family: var(--f-text); font-size: 14px; line-height: 1.45;
+  -webkit-font-smoothing: antialiased; overflow: hidden;
+}
+.app .lbl { font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--a-50); }
+.app .num { font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.app .bar-top { height: 56px; display: flex; align-items: center; justify-content: space-between; padding-inline: 24px; border-bottom: 1px solid var(--a-line); }
+.app .bar-top .l { display: flex; align-items: center; gap: 28px; }
+.app .lock { display: flex; align-items: center; gap: 8px; font-family: var(--f-display); font-weight: 800; font-size: 17px; letter-spacing: -0.035em; }
+.app .lock svg { width: 18px; height: 18px; }
+.app .lock i { width: 1px; height: 16px; background: var(--a-line); margin-inline: 4px; }
+.app .lock em { font-style: normal; font-family: var(--f-text); font-weight: 500; font-size: 14px; letter-spacing: 0; color: var(--a-70); }
+.app .tabs { display: flex; gap: 22px; color: var(--a-50); font-size: 14px; }
+.app .tabs .on { color: var(--a-fg); }
+.app .ava { width: 30px; height: 30px; border-radius: 999px; border: 1px solid var(--a-line); display: grid; place-items: center; font-size: 11.5px; font-weight: 600; color: var(--a-70); }
+.app .pillb { display: inline-flex; align-items: center; justify-content: center; height: 32px; padding-inline: 14px; border-radius: 999px; border: 1px solid var(--a-line); font-size: 13px; font-weight: 500; color: var(--a-fg); white-space: nowrap; }
+.app .pillb.solid { background: var(--a-fg); color: var(--a-bg); border-color: var(--a-fg); }
+
+
+/* Shared bento vocabulary for this page: one line weight, padding on the
+   rows so every rule runs wall to wall, header / main / footer in a cell. */
+.who { font-size: 15px; font-weight: 500; letter-spacing: -0.01em; }
+.ck { font-size: 13.5px; color: var(--ink-50); }
+.bx { --line: var(--ink-28); --px: clamp(20px, 2.6vw, 36px); border: 1px solid var(--line); display: grid; }
+.bx + .bx { border-top: 0; }
+.cell { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; min-width: 0; }
+.c-h, .c-f { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 56px; padding: 0 var(--px); }
+.c-h { border-bottom: 1px solid var(--line); }
+.c-f { border-top: 1px solid var(--line); }
+.c-m { display: grid; align-content: start; gap: 18px; padding: clamp(26px, 3vw, 40px) var(--px); }
+.c-m h3 { font-family: var(--f-display); font-weight: 600; font-size: clamp(20px, 1.8vw, 26px); line-height: 1.15; letter-spacing: -0.022em; text-wrap: balance; max-width: 22ch; }
+.c-m p { font-size: 15px; line-height: 1.55; color: var(--ink-70); max-width: 44ch; }
+.note { font-size: 13.5px; color: var(--ink-50); }
+
+
+
+/* ── Hero ─────────────────────────────────────────────────────────────── */
+.phero { padding-bottom: var(--sec); }
+.phero .hero-h1 { font-size: min(7.6vw, 104px); }
+@media (max-width: 699px) { .phero .hero-h1 { font-size: clamp(28px, 7.8vw, 58px); letter-spacing: -0.045em; } .phero .hero-h1 .ln { display: block; white-space: nowrap; } }
+.page-label { display: flex; gap: 14px; margin-bottom: clamp(24px, 3vw, 40px); }
+.page-label b { font-weight: 400; color: var(--live); }
+/* The disclaimer meets the reader before anything else, in full. */
+.notice { border-top: 1px solid var(--ink); padding-top: 14px; display: grid; gap: 10px; }
+.notice .label { color: var(--ink); }
+.notice p { font-size: 14.5px; line-height: 1.55; color: var(--ink-70); }
+
+/* Two boards, side by side, a seam between them that neither crosses. */
+.boards { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto auto auto minmax(0, 1fr) auto; margin-top: clamp(56px, 7vw, 104px); }
+.boards .cell { grid-row: span 4; grid-template-rows: subgrid; }
+.boards .cell + .cell { border-left: 1px solid var(--line); }
+.boards .line2 { font-family: var(--f-display); font-weight: 800; font-size: clamp(28px, 3vw, 46px); line-height: 1.02; letter-spacing: -0.035em; padding: clamp(26px, 3vw, 40px) var(--px) 0; text-wrap: balance; }
+.boards .seats { padding: clamp(22px, 2.4vw, 32px) var(--px) 0; }
+.boards .c-m { padding-top: 20px; }
+.boards .c-m p { font-size: 15px; max-width: 46ch; }
+.boards .c-f { grid-column: 1 / -1; font-size: 14.5px; color: var(--ink-70); }
+.seats { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.seat { position: relative; display: grid; align-content: space-between; gap: 18px; height: 84px; padding: 10px 9px; border: 1px solid var(--ink-28); font-size: 12.5px; line-height: 1.2; color: var(--ink-70); min-width: 0; }
+.seat svg { width: 16px; height: 16px; color: var(--ink-50); }
+.seat b { font-weight: 500; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.seat small { display: block; font-size: 11.5px; color: var(--ink-50); }
+.seat.chair { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.seat.neu { background: repeating-linear-gradient(135deg, var(--ink-13) 0 5px, transparent 5px 10px); border-color: var(--ink-50); }
+.seat.open { border-style: dashed; border-color: var(--ink-50); }
+.seat.open svg { opacity: .5; }
+.seat.inv { background: var(--live); border-color: var(--live); color: var(--paper); }
+.seat.inv svg, .seat.inv b, .seat.inv small { color: var(--paper); }
+@media (max-width: 1000px) {
+  .boards { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
+  .boards .cell { grid-row: auto; grid-template-rows: auto auto auto auto; }
+  .boards .cell + .cell { border-left: 0; border-top: 1px solid var(--line); }
+}
+@media (max-width: 560px) {
+  .seats { gap: 4px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .seat { height: 64px; padding: 8px 7px; gap: 8px; }
+  .seat b { font-size: 11px; overflow: visible; }
+  .seat small { display: none; }
+  .boards .c-f { flex-wrap: wrap; padding-block: 14px; gap: 6px 16px; }
+}
+
+/* ── 01 The split, on ink: three holders on one ground line ──────────── */
+.split3 { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: auto auto auto minmax(0, 1fr); }
+.split3 .cell { grid-row: span 4; grid-template-rows: subgrid; }
+.split3 .cell + .cell { border-left: 1px solid var(--line); }
+.split3 .dw { padding: clamp(20px, 2.4vw, 32px) var(--px) 0; }
+.split3 .dw svg { width: 100%; height: auto; overflow: visible; }
+.split3 .line2 { font-family: var(--f-display); font-weight: 800; font-size: clamp(30px, 3.2vw, 50px); line-height: 1; letter-spacing: -0.035em; padding: 22px var(--px) 0; }
+.split3 .cell.co .line2 { color: var(--live); }
+.split3 .c-m { padding-top: 14px; }
+.split3 .c-m p { font-size: 15px; }
+/* drafting strokes */
+.dw .gl { stroke: var(--ink); stroke-width: 1.4; }
+.dw .ln1 { fill: none; stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; }
+.dw .ln2 { fill: none; stroke: var(--ink-50); stroke-width: 1; }
+.dw .gh { fill: none; stroke: var(--ink-28); stroke-width: 1; stroke-dasharray: 3 3; }
+.dw .ht { stroke: var(--ink-28); stroke-width: 1; }
+.dw .ht.live { stroke: var(--live); }
+.dw .ht.faint { stroke: var(--ink-13); }
+.dw .pin { fill: var(--ground); stroke: var(--live); stroke-width: 1.4; }
+.dw .blk { fill: none; stroke: var(--ink); stroke-width: 1.2; }
+.dw .blk.f { fill: var(--ink); }
+.dw text { font-family: var(--f-mono); font-size: 9px; letter-spacing: .08em; fill: var(--ink-50); text-transform: uppercase; }
+.dw .draw { stroke-dasharray: var(--L, 600); stroke-dashoffset: 0; }
+
+/* What backs what: the two balance sheets, as a ledger of edges */
+.backs { grid-template-columns: minmax(0, 1fr); }
+.backs .row { display: grid; grid-template-columns: minmax(0, 3fr) minmax(80px, 3fr) minmax(0, 3fr) 92px; align-items: center; gap: 20px; padding: 18px var(--px); }
+.backs .row + .row { border-top: 1px solid var(--ink-13); }
+.backs .from, .backs .to { font-size: clamp(16px, 1.3vw, 18px); font-weight: 500; letter-spacing: -0.01em; }
+.backs .to { color: var(--ink-70); }
+.backs .wire { position: relative; height: 12px; }
+.backs .wire i { position: absolute; left: 0; top: 50%; height: 1.5px; width: 100%; background: var(--ink); transform-origin: 0 50%; }
+.backs .wire::after { content: ''; position: absolute; right: -1px; top: 50%; width: 8px; height: 8px; border-top: 1.5px solid var(--ink); border-right: 1.5px solid var(--ink); transform: translateY(-50%) rotate(45deg); transform-origin: center; }
+.backs .row.no .wire i { width: 44%; background: var(--ink-50); }
+.backs .row.no .wire::after { content: ''; right: auto; left: calc(44% + 10px); width: 12px; height: 12px; border: 0; background: linear-gradient(45deg, transparent 45%, var(--absent) 45% 55%, transparent 55%), linear-gradient(-45deg, transparent 45%, var(--absent) 45% 55%, transparent 55%); transform: translateY(-50%); }
+.backs .vd { font-family: var(--f-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; text-align: right; color: var(--settled); }
+.backs .row.no .vd { color: var(--absent); }
+.backs .row.no .to { text-decoration: line-through; text-decoration-color: var(--ink-28); }
+@media (max-width: 1000px) {
+  .split3 { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
+  .split3 .cell { grid-row: auto; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); grid-template-rows: auto auto minmax(0, 1fr); }
+  .split3 .cell > .c-h { grid-column: 1 / -1; }
+  .split3 .dw { grid-row: span 2; padding-bottom: clamp(20px, 2.4vw, 32px); align-self: center; }
+  .split3 .cell + .cell { border-left: 0; border-top: 1px solid var(--line); }
+}
+@media (max-width: 640px) {
+  .split3 .cell { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
+  .split3 .dw { grid-row: auto; padding-bottom: 0; }
+  .backs .row { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'f v' 'w w' 't t'; row-gap: 8px; }
+  .backs .from { grid-area: f; } .backs .vd { grid-area: v; } .backs .wire { grid-area: w; } .backs .to { grid-area: t; }
+}
+
+/* ── 02 Contributions: the same terms at any size ─────────────────────── */
+.terms { grid-template-columns: minmax(0, 1fr); }
+.terms .c-h { min-height: 64px; }
+.seg { display: inline-flex; padding: 3px; border: 1px solid var(--ink-28); border-radius: 999px; }
+.seg button { height: 34px; padding-inline: 16px; border-radius: 999px; font-size: 14px; font-weight: 500; color: var(--ink-70); transition: background-color 250ms var(--ease), color 250ms var(--ease); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.sum { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 3fr) minmax(0, 6fr); border-bottom: 1px solid var(--line); }
+.sum > div { display: grid; gap: 8px; align-content: start; padding: clamp(22px, 2.6vw, 32px) var(--px); min-width: 0; }
+.sum > div + div { border-left: 1px solid var(--line); }
+.sum .k { font-size: 13.5px; color: var(--ink-50); }
+.sum .v { font-size: clamp(26px, 2.6vw, 38px); line-height: 1.05; letter-spacing: -0.03em; }
+.sum .s { font-size: 13.5px; color: var(--ink-70); }
+.sum .v.live { color: var(--live); }
+.pool { display: flex; height: 38px; gap: 3px; margin-top: 4px; }
+.pool span { display: flex; align-items: center; padding-inline: 10px; font-size: 12.5px; font-weight: 500; white-space: nowrap; overflow: hidden; min-width: 0; transition: flex-basis 900ms var(--ease); }
+.pool .cc { flex: 0 1 76%; background: var(--ink); color: var(--paper); }
+.pool b { font-weight: 500; }
+.pool .short { display: none; }
+.pool .tight .full { display: none; }
+.pool .tight .short { display: inline; }
+.pool span.tight { min-width: max-content; padding-inline: 9px; }
+.pool .ct { flex: 1 1 0; border: 1px solid var(--ink); color: var(--ink); background: repeating-linear-gradient(135deg, var(--ink-13) 0 5px, transparent 5px 10px); }
+.term { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 3fr) minmax(0, 6fr); align-items: baseline; }
+.term + .term { border-top: 1px solid var(--ink-13); }
+.term > * { padding: 20px var(--px); min-width: 0; }
+.term .tl { font-size: 14.5px; color: var(--ink-70); }
+.term .tv { font-size: clamp(17px, 1.4vw, 20px); font-weight: 600; letter-spacing: -0.015em; display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.term .tv i { font-style: normal; font-family: var(--f-mono); font-size: 10.5px; font-weight: 400; letter-spacing: .08em; text-transform: uppercase; color: var(--settled); opacity: 0; transition: opacity 300ms var(--ease); }
+.term.same .tv i { opacity: 1; }
+.term .td { font-size: 15px; line-height: 1.5; color: var(--ink-70); }
+.terms .c-f { display: flex; flex-wrap: wrap; gap: 14px 32px; padding-block: 18px; font-size: 14.5px; color: var(--ink-70); }
+@media (max-width: 900px) {
+  .sum { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .sum > div:nth-child(3) { grid-column: 1 / -1; border-left: 0; border-top: 1px solid var(--line); }
+  .term { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .term .td { grid-column: 1 / -1; padding-top: 0; }
+}
+@media (max-width: 560px) {
+  .terms .c-h { flex-direction: column; align-items: stretch; justify-content: center; gap: 10px; padding-block: 14px; }
+  .seg { display: flex; } .seg button { flex: 1; }
+  .term { grid-template-columns: minmax(0, 1fr); }
+  .term .tl { padding-bottom: 0; }
+  .term .tv { padding-block: 4px 8px; }
+}
+
+/* ── 03 Protections, on ink: four structural guards ──────────────────── */
+.prot { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto auto minmax(0, 1fr) auto auto minmax(0, 1fr); }
+.prot .cell { grid-row: span 3; grid-template-rows: subgrid; }
+.prot .cell:nth-child(even) { border-left: 1px solid var(--line); }
+.prot .cell:nth-child(n+3) { border-top: 1px solid var(--line); }
+.prot .c-h .ck { font-family: var(--f-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+.prot .fg { padding: clamp(22px, 2.6vw, 32px) var(--px) 0; display: grid; gap: 6px; align-content: start; }
+.prot .c-m { padding-top: 18px; }
+.prot .c-m h3 { max-width: none; }
+.prot .c-m p { font-size: 15px; max-width: 52ch; }
+/* 1 · no preferred return */
+.wf { display: grid; grid-template-columns: 132px minmax(0, 1fr); align-items: center; gap: 8px 14px; font-size: 13px; color: var(--ink-50); }
+.wf { row-gap: 10px; }
+.wf .bar { height: 34px; }
+.wf .pr .bar { height: 72px; }
+.wf .pr span:first-child small { display: block; font-size: 12px; color: var(--ink-50); }
+.wf .x .bar { border: 1px dashed var(--ink-28); position: relative; }
+.wf .x .bar::after { content: 'Not in the stack'; position: absolute; inset: 0; display: flex; align-items: center; padding-left: 10px; font-size: 12px; color: var(--ink-50); }
+.wf .x span:first-child { text-decoration: line-through; text-decoration-color: var(--absent); }
+.wf .row { display: contents; }
+.wf .pr .bar { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 2px; }
+.wf .pr .bar i { background: var(--ink); transform-origin: 0 100%; }
+.wf .pr span:first-child { color: var(--ink); }
+/* 2 · reserved matters */
+.rm li { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding-block: 7px; border-bottom: 1px solid var(--ink-13); font-size: 14px; color: var(--ink-70); transition: color 300ms var(--ease); }
+.rm li:first-child { border-top: 1px solid var(--ink-13); }
+.rm li em { font-style: normal; font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-50); white-space: nowrap; transition: color 300ms var(--ease); }
+.rm li.on { color: var(--ink); }
+.rm li.on em { color: var(--settled); }
+/* 3 · boards in miniature */
+.mini-b { display: grid; grid-template-columns: 112px minmax(0, 1fr); align-items: center; gap: 10px 14px; font-size: 13px; color: var(--ink-70); }
+.mini-b .ss { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; }
+.mini-b .ss i { height: 30px; border: 1px solid var(--ink-28); display: grid; place-items: center; font-style: normal; font-size: 11px; color: var(--ink-50); }
+.mini-b .ss i.c { border-color: var(--ink); color: var(--ink); }
+.mini-b .ss i.v { background: var(--ink); color: var(--ground); border-color: var(--ink); }
+.mini-b .k { grid-column: 2; font-size: 12px; color: var(--ink-50); }
+/* 4 · public ledger, streaming */
+.pl { position: relative; height: 150px; overflow: hidden; border-top: 1px solid var(--ink-13); }
+.pl-row { position: absolute; left: 0; right: 0; height: 37px; display: grid; grid-template-columns: 10px minmax(0, 1fr) auto 64px; align-items: center; gap: 12px; border-bottom: 1px solid var(--ink-13); font-size: 13.5px; color: var(--ink-70); transition: transform 600ms var(--ease), opacity 600ms var(--ease); }
+.pl-row b { font-weight: 500; color: var(--ink); }
+.pl-row .t { text-align: right; font-size: 12px; color: var(--ink-50); font-variant-numeric: tabular-nums; }
+.pl-row .d { width: 7px; height: 7px; border-radius: 999px; background: var(--ink-28); }
+.pl-row.new .d { background: var(--live); }
+@media (max-width: 860px) {
+  .prot { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
+  .prot .cell { grid-row: auto; grid-template-rows: auto auto auto; }
+  .prot .cell:nth-child(even) { border-left: 0; }
+  .prot .cell + .cell { border-top: 1px solid var(--line); }
+}
+@media (max-width: 460px) {
+  .wf, .mini-b { grid-template-columns: 1fr; gap: 6px; }
+  .mini-b .k { grid-column: 1; }
+  .pl-row { grid-template-columns: 10px minmax(0, 1fr) 54px; } .pl-row .s { display: none; }
+}
+
+/* ── 04 The downsides ─────────────────────────────────────────────────── */
+.down { grid-template-columns: minmax(0, 1fr); }
+.down ol { display: grid; }
+.down li { display: grid; grid-template-columns: 56px minmax(150px, 3fr) minmax(0, 9fr); align-items: baseline; gap: 16px; padding: 22px var(--px); }
+.down li + li { border-top: 1px solid var(--line); }
+.down li b { font-family: var(--f-mono); font-weight: 400; font-size: 11px; letter-spacing: .08em; color: var(--ink-50); }
+.down li em { font-style: normal; font-weight: 600; font-size: clamp(16px, 1.3vw, 18px); letter-spacing: -0.01em; color: var(--ink); }
+.down li span { font-size: clamp(16px, 1.3vw, 18px); line-height: 1.45; color: var(--ink-70); text-wrap: pretty; }
+.down li.other { background: var(--paper-2); }
+.down li.other b { color: var(--underway); }
+@media (max-width: 760px) {
+  .down li { grid-template-columns: 36px minmax(0, 1fr); row-gap: 4px; padding-block: 18px; }
+  .down li span { grid-column: 2; }
+}
+
+/* ── 05 Next, on ink: what we publish, and what we will not ──────────── */
+.ts { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.ts .cell + .cell { border-left: 1px solid var(--line); }
+.ts .c-m { padding-block: 8px 20px; gap: 0; }
+.ts-row { display: flex; justify-content: space-between; align-items: center; gap: 16px; min-height: 56px; border-bottom: 1px solid var(--ink-13); font-size: 15px; color: var(--ink-70); }
+.ts-row:last-child { border-bottom: 0; }
+.ts-row b { font-weight: 600; color: var(--ink); text-align: right; }
+.ts-row .rd { position: relative; display: inline-flex; align-items: center; height: 22px; padding-inline: 10px; font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-50); }
+.ts-row .rd::before { content: ''; position: absolute; inset: 0; background: var(--ink-13); transform-origin: 0 50%; transform: scaleX(var(--rd, 1)); }
+.ts-row .rd span { position: relative; }
+.ts .c-f { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px 32px; padding-block: 18px; }
+.ts .c-f p { font-size: 14.5px; color: var(--ink-70); max-width: 60ch; }
+@media (max-width: 760px) {
+  .ts { grid-template-columns: minmax(0, 1fr); }
+  .ts .cell + .cell { border-left: 0; border-top: 1px solid var(--line); }
+  .ts .c-f .btn { flex: 1 1 100%; min-height: 48px; }
+}
+
+/* ── Close + footer ───────────────────────────────────────────────────── */
+.close .h2 { font-size: clamp(40px, 5.6vw, 88px); max-width: 12ch; }
+.foot { border-top: 1px solid var(--ink); padding-block: var(--s5); display: grid; grid-template-columns: minmax(0, 1.4fr) repeat(4, minmax(0, 1fr)); gap: var(--s4) var(--s4); font-size: 14.5px; }
+.foot h4 { margin: 0 0 12px; font-family: var(--f-mono); font-weight: 400; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-50); }
+.foot li + li { margin-top: 6px; }
+.foot a { color: var(--ink-70); } .foot a:hover { color: var(--ink); }
+.foot .about { color: var(--ink-70); max-width: 30ch; display: grid; gap: var(--s2); align-content: start; }
+.legal { grid-column: 1 / -1; border-top: 1px solid var(--ink-13); padding-top: var(--s3); color: var(--ink-50); font-size: 12.5px; display: grid; gap: 8px; max-width: 110ch; }
+@media (max-width: 900px) { .foot { grid-template-columns: repeat(2, minmax(0, 1fr)); } .foot .about { grid-column: 1 / -1; } }
+
+.mock-flag { position: fixed; left: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); z-index: 40; font-family: var(--f-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; background: #24409E; color: #E9ECE7; padding: 6px 11px; border-radius: 999px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .dot::after { animation: none; opacity: 0; }
+  *, *::before, *::after { transition-duration: 0ms !important; }
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="mark" viewBox="-168 -168 336 336">
+    <path d="M 148.28 -64 A 161.5 161.5 0 1 0 148.28 64 L 74.22 64 A 98 98 0 1 1 74.22 -64 Z" fill="currentColor" stroke="currentColor" stroke-width="4"/>
+    <path d="M 0 -8 H 114 V 8 H 0 Z" fill="currentColor"/>
+    <circle cx="0" cy="0" r="34" fill="currentColor"/>
+    <circle cx="131.5" cy="0" r="25.25" fill="none" stroke="currentColor" stroke-width="15.5"/>
+  </symbol>
+  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3.2"/></filter>
+  <symbol id="i-events" viewBox="0 0 18 18"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="3.5" width="13" height="12"/><path d="M2.5 7h13M6 2v3M12 2v3"/><path d="M5.5 10h2M5.5 12.5h2M10.5 10h2"/></g></symbol>
+  <symbol id="i-directory" viewBox="0 0 18 18"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l1.2-4h10.6l1.2 4"/><path d="M2.5 7.5c0 1.1.9 2 2 2s2-.9 2-2c0 1.1.9 2 2 2s2-.9 2-2c0 1.1.9 2 2 2s2-.9 2-2"/><path d="M3.5 9.3V15.5h11V9.3M7.5 15.5v-3.5h3v3.5"/></g></symbol>
+  <symbol id="i-shop" viewBox="0 0 18 18"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6.5h12l-1 9H4z"/><path d="M6.5 6.5V5a2.5 2.5 0 0 1 5 0v1.5"/></g></symbol>
+  <symbol id="person" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="5" r="2.8"/><path d="M2.5 15c0-3.2 2.4-5 5.5-5s5.5 1.8 5.5 5"/></g></symbol>
+  <symbol id="arrow" viewBox="0 0 14 10"><path d="M0 5h12M8 1l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.4"/></symbol>
+  <symbol id="check" viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="back" viewBox="0 0 9 15"><path d="M8 1L2 7.5 8 14" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+  <symbol id="bell" viewBox="0 0 18 18"><path d="M4.5 12.5V8a4.5 4.5 0 0 1 9 0v4.5l1.5 1.5H3z M7.2 15.5a1.9 1.9 0 0 0 3.6 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></symbol>
+  <symbol id="plus" viewBox="0 0 18 18"><path d="M9 2v14M2 9h14" stroke="currentColor" stroke-width="1.8"/></symbol>
+  <symbol id="del" viewBox="0 0 24 16"><path d="M8 1h14v14H8L1 8z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M12 5l6 6M18 5l-6 6" stroke="currentColor" stroke-width="1.4"/></symbol>
+</svg>
+
+<header class="site-head" id="site-head">
+  <div class="wrap">
+    <div class="top">
+      <a class="brand" href="https://www.useclear.org/" aria-label="Clear, home"><svg aria-hidden="true"><use href="#mark"/></svg>Clear</a>
+      <nav class="nav" aria-label="Main">
+        <ul>
+          <li><a href="https://www.useclear.org/how">How it works</a></li>
+          <li><a href="https://www.useclear.org/shops">For shops</a></li>
+          <li><a href="https://www.useclear.org/housing">Housing</a></li>
+          <li><a href="https://www.useclear.org/contribute">Contribute land</a></li>
+          <li><a href="https://www.useclear.org/coop">The co-op</a></li>
+          <li class="navmenu" id="navmenu">
+            <button type="button" class="navmenu-button" id="navmenu-btn" aria-expanded="false" aria-controls="navmenu-panel">Community<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></button>
+            <div class="navmenu-panel" id="navmenu-panel" hidden><ul>
+              <li><a class="navmenu-link" href="https://www.useclear.org/events"><span class="navmenu-icon"><svg aria-hidden="true"><use href="#i-events"/></svg></span><span class="navmenu-text"><span class="navmenu-label">Events</span><span class="navmenu-note">Calls, town halls and local meetings</span></span></a></li>
+              <li><a class="navmenu-link" href="https://www.useclear.org/directory"><span class="navmenu-icon"><svg aria-hidden="true"><use href="#i-directory"/></svg></span><span class="navmenu-text"><span class="navmenu-label">Directory</span><span class="navmenu-note">Local businesses that take Clear Pay</span></span></a></li>
+              <li><a class="navmenu-link" href="https://www.useclear.org/shop"><span class="navmenu-icon"><svg aria-hidden="true"><use href="#i-shop"/></svg></span><span class="navmenu-text"><span class="navmenu-label">Shop</span><span class="navmenu-note">Goods with the Clear name on them</span></span></a></li>
+            </ul></div>
+          </li>
+        </ul>
+        <a class="btn btn-primary" href="https://www.useclear.org/join"><span class="dot"></span>Join</a>
+        <button type="button" class="menu-btn" id="menu-btn" aria-haspopup="dialog">Menu<svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 4h14M1 8h14M1 12h14"/></svg></button>
+      </nav>
+    </div>
+  </div>
+</header>
+<dialog class="sheet" id="sheet" aria-label="Main">
+  <div class="sheet-inner wrap">
+    <div class="sheet-top"><span class="t-note">Menu</span><button type="button" class="sheet-close" id="sheet-close" aria-label="Close menu"><svg viewBox="0 0 18 18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 2l14 14M16 2L2 16"/></svg></button></div>
+    <nav class="sheet-nav">
+      <ul class="sheet-main">
+          <li><a href="https://www.useclear.org/">Home</a></li>
+          <li><a href="https://www.useclear.org/how">How it works</a></li>
+          <li><a href="https://www.useclear.org/shops">For shops</a></li>
+          <li><a href="https://www.useclear.org/housing">Housing</a></li>
+          <li><a href="https://www.useclear.org/contribute">Contribute land</a></li>
+          <li><a href="https://www.useclear.org/coop">The co-op</a></li>
+          <li><a href="https://www.useclear.org/capital" aria-current="page">Clear Capital</a></li>
+      </ul>
+      <section class="sheet-community" aria-labelledby="sheet-community-label">
+        <p class="sheet-label" id="sheet-community-label">Community</p>
+        <ul class="sheet-tiles">
+            <li><a class="sheet-tile" href="https://www.useclear.org/events"><svg aria-hidden="true"><use href="#i-events"/></svg><span class="sheet-tile-label">Events</span><span class="sheet-tile-note">Calls, town halls and local meetings</span></a></li>
+            <li><a class="sheet-tile" href="https://www.useclear.org/directory"><svg aria-hidden="true"><use href="#i-directory"/></svg><span class="sheet-tile-label">Directory</span><span class="sheet-tile-note">Local businesses that take Clear Pay</span></a></li>
+            <li><a class="sheet-tile" href="https://www.useclear.org/shop"><svg aria-hidden="true"><use href="#i-shop"/></svg><span class="sheet-tile-label">Shop</span><span class="sheet-tile-note">Goods with the Clear name on them</span></a></li>
+        </ul>
+      </section>
+      <a class="btn btn-primary sheet-join" href="https://www.useclear.org/join"><span class="dot"></span>Join</a>
+    </nav>
+  </div>
+</dialog>
+
+<main>
+  <!-- HERO -->
+  <section class="hero phero wrap">
+    <div class="page-label label"><b>Partners</b>Clear Capital</div>
+    <h1 class="hero-h1" id="hero-h1"><span class="ln">Outside money sits here.</span> <span class="ln">Not on the members’ side.</span></h1>
+    <div class="hero-row">
+      <div data-in>
+        <p class="hero-lede">Clear Capital Holdings is the company through which investors and property contributors take part in the cooperative’s assets.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="https://www.useclear.org/join?as=land"><span class="dot"></span>Start a conversation</a>
+          <a class="btn btn-ghost" href="#split">How it is split</a>
+        </div>
+      </div>
+      <aside class="notice" data-in>
+        <span class="label">Not an offer</span>
+        <p>Nothing on this page is an offer. No terms, no rate, no subscription. This page describes how the structure is built; anything further happens in a private conversation and under the applicable exemption.</p>
+      </aside>
+    </div>
+
+    <div class="bx boards" id="boards">
+      <div class="cell">
+        <div class="c-h"><span class="who">The co-op board</span><span class="ck">Elected by members</span></div>
+        <div class="line2">Member-only.</div>
+        <div class="seats" id="seats-co">
+          <span class="seat"><svg><use href="#person"/></svg><b>Member<small>Chair</small></b></span>
+          <span class="seat"><svg><use href="#person"/></svg><b>Member<small>Elected</small></b></span>
+          <span class="seat"><svg><use href="#person"/></svg><b>Member<small>Elected</small></b></span>
+          <span class="seat"><svg><use href="#person"/></svg><b>Member<small>Elected</small></b></span>
+          <span class="seat"><svg><use href="#person"/></svg><b>Member<small>Elected</small></b></span>
+          <span class="seat"><svg><use href="#person"/></svg><b>Member<small>Elected</small></b></span>
+          <span class="seat"><svg><use href="#person"/></svg><b>Member<small>Elected</small></b></span>
+        </div>
+        <div class="c-m"><p>What protects a member is written here, and it is not up for negotiation with anyone outside the membership.</p></div>
+      </div>
+      <div class="cell">
+        <div class="c-h"><span class="who">The Holdings board</span><span class="ck">Clear Capital Holdings</span></div>
+        <div class="line2">Its own company. Its own board.</div>
+        <div class="seats" id="seats-h">
+          <span class="seat chair"><svg><use href="#person"/></svg><b>Chair<small>Elected</small></b></span>
+          <span class="seat"><svg><use href="#person"/></svg><b>Co-op<small>Reserved</small></b></span>
+          <span class="seat"><svg><use href="#person"/></svg><b>Co-op<small>Reserved</small></b></span>
+          <span class="seat neu"><svg><use href="#person"/></svg><b>Neutral<small>Joint</small></b></span>
+          <span class="seat open"><svg><use href="#person"/></svg><b>Open<small>Free</small></b></span>
+          <span class="seat inv" id="seat-inv"><svg><use href="#person"/></svg><b>Investor<small>Financial</small></b></span>
+          <span class="seat inv"><svg><use href="#person"/></svg><b>Investor<small>Financial</small></b></span>
+        </div>
+        <div class="c-m"><p>Two investor seats, two reserved for the co-op, a neutral seat named jointly, one open seat, and a chair who is directly elected.</p></div>
+      </div>
+      <div class="c-f"><span>Neither board can quietly become the other, which is the point of there being two.</span><span class="ck">Co-op seat count illustrative</span></div>
+    </div>
+  </section>
+
+  <!-- 01 -->
+  <section class="sec band-ink" id="split">
+    <div class="wrap">
+      <div class="head">
+        <div class="sec-label label"><b>01</b>The split</div>
+        <h2 class="h2">The land is why this works for both sides.</h2>
+        <div class="aside"><p class="line">Member equity accrues in the structure. Appreciation accrues to the land, which backs construction borrowing as the portfolio grows.</p></div>
+      </div>
+      <div class="bx split3 body-gap" id="split3">
+        <div class="cell">
+          <div class="c-h"><span class="who">Members hold</span><span class="ck">01</span></div>
+          <div class="dw"><svg viewBox="0 0 300 146" aria-hidden="true"><clipPath id="hc1"><rect x="0" y="100" width="300" height="24"/></clipPath><g clip-path="url(#hc1)"><line class="ht faint" x1="-44" y1="124" x2="-20" y2="100"/><line class="ht faint" x1="-36" y1="124" x2="-12" y2="100"/><line class="ht faint" x1="-28" y1="124" x2="-4" y2="100"/><line class="ht faint" x1="-20" y1="124" x2="4" y2="100"/><line class="ht faint" x1="-12" y1="124" x2="12" y2="100"/><line class="ht faint" x1="-4" y1="124" x2="20" y2="100"/><line class="ht faint" x1="4" y1="124" x2="28" y2="100"/><line class="ht faint" x1="12" y1="124" x2="36" y2="100"/><line class="ht faint" x1="20" y1="124" x2="44" y2="100"/><line class="ht faint" x1="28" y1="124" x2="52" y2="100"/><line class="ht faint" x1="36" y1="124" x2="60" y2="100"/><line class="ht faint" x1="44" y1="124" x2="68" y2="100"/><line class="ht faint" x1="52" y1="124" x2="76" y2="100"/><line class="ht faint" x1="60" y1="124" x2="84" y2="100"/><line class="ht faint" x1="68" y1="124" x2="92" y2="100"/><line class="ht faint" x1="76" y1="124" x2="100" y2="100"/><line class="ht faint" x1="84" y1="124" x2="108" y2="100"/><line class="ht faint" x1="92" y1="124" x2="116" y2="100"/><line class="ht faint" x1="100" y1="124" x2="124" y2="100"/><line class="ht faint" x1="108" y1="124" x2="132" y2="100"/><line class="ht faint" x1="116" y1="124" x2="140" y2="100"/><line class="ht faint" x1="124" y1="124" x2="148" y2="100"/><line class="ht faint" x1="132" y1="124" x2="156" y2="100"/><line class="ht faint" x1="140" y1="124" x2="164" y2="100"/><line class="ht faint" x1="148" y1="124" x2="172" y2="100"/><line class="ht faint" x1="156" y1="124" x2="180" y2="100"/><line class="ht faint" x1="164" y1="124" x2="188" y2="100"/><line class="ht faint" x1="172" y1="124" x2="196" y2="100"/><line class="ht faint" x1="180" y1="124" x2="204" y2="100"/><line class="ht faint" x1="188" y1="124" x2="212" y2="100"/><line class="ht faint" x1="196" y1="124" x2="220" y2="100"/><line class="ht faint" x1="204" y1="124" x2="228" y2="100"/><line class="ht faint" x1="212" y1="124" x2="236" y2="100"/><line class="ht faint" x1="220" y1="124" x2="244" y2="100"/><line class="ht faint" x1="228" y1="124" x2="252" y2="100"/><line class="ht faint" x1="236" y1="124" x2="260" y2="100"/><line class="ht faint" x1="244" y1="124" x2="268" y2="100"/><line class="ht faint" x1="252" y1="124" x2="276" y2="100"/><line class="ht faint" x1="260" y1="124" x2="284" y2="100"/><line class="ht faint" x1="268" y1="124" x2="292" y2="100"/><line class="ht faint" x1="276" y1="124" x2="300" y2="100"/><line class="ht faint" x1="284" y1="124" x2="308" y2="100"/><line class="ht faint" x1="292" y1="124" x2="316" y2="100"/><line class="ht faint" x1="300" y1="124" x2="324" y2="100"/></g><path class="ln1 draw" d="M95 100 V56 H205 V100"/><path class="ln1 draw" d="M84 61 L150 22 L216 61"/><path class="ln1 draw" d="M141 100 V74 H159 V100"/><rect class="ln2" x="108" y="66" width="20" height="15"/><rect class="ln2" x="172" y="66" width="20" height="15"/><path class="ln2" d="M118 66v15M182 66v15"/><line class="gl draw" x1="0" y1="100" x2="300" y2="100"/></svg></div>
+          <div class="line2">The structure.</div>
+          <div class="c-m"><p>Bought down through an Equity-Lease Participation Agreement, ending in a Clear Deed.</p></div>
+        </div>
+        <div class="cell co">
+          <div class="c-h"><span class="who">The co-op holds</span><span class="ck">02</span></div>
+          <div class="dw"><svg viewBox="0 0 300 146" aria-hidden="true"><path class="gh" d="M95 100 V56 H205 V100"/><path class="gh" d="M84 61 L150 22 L216 61"/><path class="gh" d="M141 100 V74 H159 V100"/><clipPath id="hc2"><rect x="0" y="100" width="300" height="24"/></clipPath><g clip-path="url(#hc2)"><line class="ht live" x1="-44" y1="124" x2="-20" y2="100"/><line class="ht live" x1="-36" y1="124" x2="-12" y2="100"/><line class="ht live" x1="-28" y1="124" x2="-4" y2="100"/><line class="ht live" x1="-20" y1="124" x2="4" y2="100"/><line class="ht live" x1="-12" y1="124" x2="12" y2="100"/><line class="ht live" x1="-4" y1="124" x2="20" y2="100"/><line class="ht live" x1="4" y1="124" x2="28" y2="100"/><line class="ht live" x1="12" y1="124" x2="36" y2="100"/><line class="ht live" x1="20" y1="124" x2="44" y2="100"/><line class="ht live" x1="28" y1="124" x2="52" y2="100"/><line class="ht live" x1="36" y1="124" x2="60" y2="100"/><line class="ht live" x1="44" y1="124" x2="68" y2="100"/><line class="ht live" x1="52" y1="124" x2="76" y2="100"/><line class="ht live" x1="60" y1="124" x2="84" y2="100"/><line class="ht live" x1="68" y1="124" x2="92" y2="100"/><line class="ht live" x1="76" y1="124" x2="100" y2="100"/><line class="ht live" x1="84" y1="124" x2="108" y2="100"/><line class="ht live" x1="92" y1="124" x2="116" y2="100"/><line class="ht live" x1="100" y1="124" x2="124" y2="100"/><line class="ht live" x1="108" y1="124" x2="132" y2="100"/><line class="ht live" x1="116" y1="124" x2="140" y2="100"/><line class="ht live" x1="124" y1="124" x2="148" y2="100"/><line class="ht live" x1="132" y1="124" x2="156" y2="100"/><line class="ht live" x1="140" y1="124" x2="164" y2="100"/><line class="ht live" x1="148" y1="124" x2="172" y2="100"/><line class="ht live" x1="156" y1="124" x2="180" y2="100"/><line class="ht live" x1="164" y1="124" x2="188" y2="100"/><line class="ht live" x1="172" y1="124" x2="196" y2="100"/><line class="ht live" x1="180" y1="124" x2="204" y2="100"/><line class="ht live" x1="188" y1="124" x2="212" y2="100"/><line class="ht live" x1="196" y1="124" x2="220" y2="100"/><line class="ht live" x1="204" y1="124" x2="228" y2="100"/><line class="ht live" x1="212" y1="124" x2="236" y2="100"/><line class="ht live" x1="220" y1="124" x2="244" y2="100"/><line class="ht live" x1="228" y1="124" x2="252" y2="100"/><line class="ht live" x1="236" y1="124" x2="260" y2="100"/><line class="ht live" x1="244" y1="124" x2="268" y2="100"/><line class="ht live" x1="252" y1="124" x2="276" y2="100"/><line class="ht live" x1="260" y1="124" x2="284" y2="100"/><line class="ht live" x1="268" y1="124" x2="292" y2="100"/><line class="ht live" x1="276" y1="124" x2="300" y2="100"/><line class="ht live" x1="284" y1="124" x2="308" y2="100"/><line class="ht live" x1="292" y1="124" x2="316" y2="100"/><line class="ht live" x1="300" y1="124" x2="324" y2="100"/></g><line class="gl draw" x1="0" y1="100" x2="300" y2="100"/><circle class="pin" cx="22" cy="100" r="4"/><circle class="pin" cx="278" cy="100" r="4"/><path class="ln2" d="M22 130v12M278 130v12M22 136H278"/></svg></div>
+          <div class="line2">The land.</div>
+          <div class="c-m"><p>Permanently. Selling it is a reserved matter that cannot pass without the co-op.</p></div>
+        </div>
+        <div class="cell">
+          <div class="c-h"><span class="who">Contributors hold</span><span class="ck">03</span></div>
+          <div class="dw"><svg viewBox="0 0 300 146" aria-hidden="true"><clipPath id="hc3"><rect x="0" y="100" width="300" height="24"/></clipPath><g clip-path="url(#hc3)"><line class="ht faint" x1="-44" y1="124" x2="-20" y2="100"/><line class="ht faint" x1="-36" y1="124" x2="-12" y2="100"/><line class="ht faint" x1="-28" y1="124" x2="-4" y2="100"/><line class="ht faint" x1="-20" y1="124" x2="4" y2="100"/><line class="ht faint" x1="-12" y1="124" x2="12" y2="100"/><line class="ht faint" x1="-4" y1="124" x2="20" y2="100"/><line class="ht faint" x1="4" y1="124" x2="28" y2="100"/><line class="ht faint" x1="12" y1="124" x2="36" y2="100"/><line class="ht faint" x1="20" y1="124" x2="44" y2="100"/><line class="ht faint" x1="28" y1="124" x2="52" y2="100"/><line class="ht faint" x1="36" y1="124" x2="60" y2="100"/><line class="ht faint" x1="44" y1="124" x2="68" y2="100"/><line class="ht faint" x1="52" y1="124" x2="76" y2="100"/><line class="ht faint" x1="60" y1="124" x2="84" y2="100"/><line class="ht faint" x1="68" y1="124" x2="92" y2="100"/><line class="ht faint" x1="76" y1="124" x2="100" y2="100"/><line class="ht faint" x1="84" y1="124" x2="108" y2="100"/><line class="ht faint" x1="92" y1="124" x2="116" y2="100"/><line class="ht faint" x1="100" y1="124" x2="124" y2="100"/><line class="ht faint" x1="108" y1="124" x2="132" y2="100"/><line class="ht faint" x1="116" y1="124" x2="140" y2="100"/><line class="ht faint" x1="124" y1="124" x2="148" y2="100"/><line class="ht faint" x1="132" y1="124" x2="156" y2="100"/><line class="ht faint" x1="140" y1="124" x2="164" y2="100"/><line class="ht faint" x1="148" y1="124" x2="172" y2="100"/><line class="ht faint" x1="156" y1="124" x2="180" y2="100"/><line class="ht faint" x1="164" y1="124" x2="188" y2="100"/><line class="ht faint" x1="172" y1="124" x2="196" y2="100"/><line class="ht faint" x1="180" y1="124" x2="204" y2="100"/><line class="ht faint" x1="188" y1="124" x2="212" y2="100"/><line class="ht faint" x1="196" y1="124" x2="220" y2="100"/><line class="ht faint" x1="204" y1="124" x2="228" y2="100"/><line class="ht faint" x1="212" y1="124" x2="236" y2="100"/><line class="ht faint" x1="220" y1="124" x2="244" y2="100"/><line class="ht faint" x1="228" y1="124" x2="252" y2="100"/><line class="ht faint" x1="236" y1="124" x2="260" y2="100"/><line class="ht faint" x1="244" y1="124" x2="268" y2="100"/><line class="ht faint" x1="252" y1="124" x2="276" y2="100"/><line class="ht faint" x1="260" y1="124" x2="284" y2="100"/><line class="ht faint" x1="268" y1="124" x2="292" y2="100"/><line class="ht faint" x1="276" y1="124" x2="300" y2="100"/><line class="ht faint" x1="284" y1="124" x2="308" y2="100"/><line class="ht faint" x1="292" y1="124" x2="316" y2="100"/><line class="ht faint" x1="300" y1="124" x2="324" y2="100"/></g><rect class="blk" x="24" y="88" width="32" height="8"/><rect class="blk" x="24" y="78" width="32" height="8"/><rect class="blk" x="24" y="68" width="32" height="8"/><rect class="blk" x="24" y="58" width="32" height="8"/><rect class="blk" x="24" y="48" width="32" height="8"/><rect class="blk" x="68" y="88" width="32" height="8"/><rect class="blk" x="68" y="78" width="32" height="8"/><rect class="blk" x="68" y="68" width="32" height="8"/><rect class="blk f" x="112" y="88" width="32" height="8"/><rect class="blk f" x="112" y="78" width="32" height="8"/><rect class="blk f" x="112" y="68" width="32" height="8"/><rect class="blk f" x="112" y="58" width="32" height="8"/><rect class="blk f" x="112" y="48" width="32" height="8"/><rect class="blk f" x="112" y="38" width="32" height="8"/><rect class="blk f" x="112" y="28" width="32" height="8"/><rect class="blk" x="156" y="88" width="32" height="8"/><rect class="blk" x="156" y="78" width="32" height="8"/><rect class="blk" x="200" y="88" width="32" height="8"/><rect class="blk" x="200" y="78" width="32" height="8"/><rect class="blk" x="200" y="68" width="32" height="8"/><rect class="blk" x="200" y="58" width="32" height="8"/><rect class="blk" x="244" y="88" width="32" height="8"/><rect class="blk" x="244" y="78" width="32" height="8"/><rect class="blk" x="244" y="68" width="32" height="8"/><rect class="blk" x="244" y="58" width="32" height="8"/><rect class="blk" x="244" y="48" width="32" height="8"/><rect class="blk" x="244" y="38" width="32" height="8"/><line class="gl draw" x1="0" y1="100" x2="300" y2="100"/></svg></div>
+          <div class="line2">Shares.</div>
+          <div class="c-m"><p>Yield-bearing shares in Clear Properties, pro rata, on the same terms as everyone in the pool.</p></div>
+        </div>
+      </div>
+      <div class="bx backs" id="backs">
+        <div class="c-h"><span class="who">Two balance sheets</span><span class="ck">They do not touch</span></div>
+        <div class="row"><span class="from">The land</span><span class="wire"><i></i></span><span class="to">Construction borrowing</span><span class="vd">Backs</span></div>
+        <div class="row no"><span class="from">The land</span><span class="wire"><i></i></span><span class="to">Credit losses</span><span class="vd">Never</span></div>
+        <div class="row no"><span class="from">A member’s savings</span><span class="wire"><i></i></span><span class="to">Another member’s credit</span><span class="vd">Never</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section class="sec" id="contributions">
+    <div class="wrap">
+      <div class="head">
+        <div class="sec-label label"><b>02</b>Contributions</div>
+        <h2 class="h2">Not a sale, and not a fund raise.</h2>
+        <div class="aside"><p class="line">Property comes in under section 721 for yield-bearing shares issued by value. Nothing is trued up with cash, so there is no boot.</p></div>
+      </div>
+      <div class="bx terms body-gap" id="terms">
+        <div class="c-h">
+          <div class="seg" role="group" aria-label="Size of the contribution">
+            <button type="button" data-k="one" aria-pressed="true">One duplex</button>
+            <button type="button" data-k="port" aria-pressed="false">A portfolio</button>
+          </div>
+          <span class="ck">Figures illustrative</span>
+        </div>
+        <div class="sum">
+          <div><span class="k">Property in</span><span class="fig v" id="sum-prop">$640,000</span><span class="s" id="sum-propn">One duplex, at appraised value</span></div>
+          <div><span class="k">Shares issued</span><span class="fig v live" id="sum-sh">640,000</span><span class="s">One for each dollar of value</span></div>
+          <div><span class="k">The pool</span><div class="pool" aria-hidden="true"><span class="cc" id="pool-cc"><b class="full">Clear Capital</b><b class="short">Clear Co.</b></span><span class="ct"><b class="full">Contributed property</b><b class="short">Contributed</b></span></div><span class="s">Clear Capital’s position shrinks as more property comes in.</span></div>
+        </div>
+        <div class="term"><span class="tl">Issued by</span><span class="tv">Value<i>Same</i></span><span class="td">Contribute at appraised value, receive shares one-for-one against it.</span></div>
+        <div class="term"><span class="tl">Clear Capital’s own position</span><span class="tv">Same pool, no priority<i>Same</i></span><span class="td">Exactly the terms every contributor gets. No preferred return, and no priority.</span></div>
+        <div class="term"><span class="tl">Distributions</span><span class="tv">Pro rata<i>Same</i></span><span class="td">The project pays taxes, insurance, upkeep and management. The fund sets reserves, takes its fee and distributes the rest.</span></div>
+        <div class="term"><span class="tl">Tax distributions</span><span class="tv">Mandatory<i>Same</i></span><span class="td">Required by the agreement, so no holder gets a K-1 for income they did not receive in cash.</span></div>
+        <div class="c-f"><span>The mechanics are identical at any size. What changes at scale is the diligence, not the structure.</span><a class="more" href="https://www.useclear.org/contribute">How a single-property contribution works<svg><use href="#arrow"/></svg></a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section class="sec band-ink" id="protections">
+    <div class="wrap">
+      <div class="head">
+        <div class="sec-label label"><b>03</b>Protections</div>
+        <h2 class="h2">Structural, not promises.</h2>
+        <div class="aside"><p class="line">A promise is a policy, and a board reverses a policy in an afternoon. These are written where a future board cannot.</p></div>
+      </div>
+      <div class="bx prot body-gap" id="prot">
+        <div class="cell">
+          <div class="c-h"><span class="who">No preferred return</span><span class="ck">Anywhere in the stack</span></div>
+          <div class="fg">
+            <div class="wf">
+              <div class="row x"><span>Preferred return</span><span class="bar"></span></div>
+              <div class="row x"><span>Sponsor catch-up</span><span class="bar"></span></div>
+              <div class="row pr"><span>Every holder<small>Clear Capital included</small></span><span class="bar" id="wf-bar"></span></div>
+            </div>
+          </div>
+          <div class="c-m"><p>Including for the sponsor. There is no waterfall in which somebody is paid before you.</p></div>
+        </div>
+        <div class="cell">
+          <div class="c-h"><span class="who">Reserved matters</span><span class="ck">Five of them</span></div>
+          <div class="fg">
+            <ul class="rm" id="rm">
+              <li>Selling land<em>Needs the co-op</em></li>
+              <li>Diluting members<em>Needs the co-op</em></li>
+              <li>Amending the purpose<em>Needs the co-op</em></li>
+              <li>Replacing the manager<em>Needs the co-op</em></li>
+              <li>Related-party deals above a threshold<em>Needs the co-op</em></li>
+            </ul>
+          </div>
+          <div class="c-m"><p>None of the five can pass on a Holdings vote alone.</p></div>
+        </div>
+        <div class="cell">
+          <div class="c-h"><span class="who">Board composition</span><span class="ck">Fixed by kind</span></div>
+          <div class="fg">
+            <ul class="rm sc">
+              <li>Two reserved seats<em>Co-op class</em></li>
+              <li>The reserved matters<em>Co-op class</em></li>
+              <li>Two investor seats<em>Financial class</em></li>
+              <li>A neutral seat<em>Named jointly</em></li>
+              <li>The chair<em>Directly elected</em></li>
+            </ul>
+                    </div>
+          <div class="c-m"><p>Investors hold two Holdings seats. The co-op board is elected by members and stays member-only.</p></div>
+        </div>
+        <div class="cell">
+          <div class="c-h"><span class="who">The ledger is public</span><span class="ck">Open source</span></div>
+          <div class="fg"><div class="pl" id="pl" aria-hidden="true"></div></div>
+          <div class="c-m"><p>Balances, credit lines and title records run on contracts held by an ownerless foundation.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section class="sec" id="downsides">
+    <div class="wrap">
+      <div class="head">
+        <div class="sec-label label"><b>04</b>The downsides</div>
+        <h2 class="h2">The honest downsides.</h2>
+        <div class="aside"><p class="line">The same five as a single property, and none is softened because the contribution is larger.</p></div>
+      </div>
+      <div class="bx down body-gap">
+        <div class="c-h"><span class="who">Five costs, and one more</span><span class="ck">Read before you sign</span></div>
+        <ol>
+          <li><b>01</b><em>Liquidity</em><span>Shares are illiquid compared with cash.</span></li>
+          <li><b>02</b><em>Control</em><span>You do not control the properties.</span></li>
+          <li><b>03</b><em>Paperwork</em><span>You get a K-1, which arrives later than a 1099, and your accountant will charge for it.</span></li>
+          <li><b>04</b><em>Deferred tax</em><span>The deferred gain still exists, and comes due if you ever sell the shares.</span></li>
+          <li><b>05</b><em>Concentration</em><span>Risk moves from your one building to a fund. Usually better, but a change, not a removal.</span></li>
+          <li class="other"><b>06</b><em>One corridor</em><span>Early cohorts sit in one corridor by design, because that is what makes the merchant and housing sides compound. Anyone underwriting this should price that.</span></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 -->
+  <section class="sec band-ink" id="next">
+    <div class="wrap">
+      <div class="head">
+        <div class="sec-label label"><b>05</b>Next</div>
+        <h2 class="h2">We do not publish terms, rates or projected returns.</h2>
+        <div class="aside"><p class="line">You should be sceptical of a housing cooperative that does.</p></div>
+      </div>
+      <div class="bx ts body-gap" id="ts">
+        <div class="cell">
+          <div class="c-h"><span class="who">What you get from us</span><span class="ck">In a private conversation</span></div>
+          <div class="c-m">
+            <div class="ts-row"><span>The structure</span><b>Walked through with you</b></div>
+            <div class="ts-row"><span>The documents</span><b>Sent to your advisers</b></div>
+            <div class="ts-row"><span>Your CPA and counsel</span><b>Every question answered</b></div>
+          </div>
+        </div>
+        <div class="cell">
+          <div class="c-h"><span class="who">What you will not find here</span><span class="ck">By design</span></div>
+          <div class="c-m">
+            <div class="ts-row"><span>Rate</span><span class="rd"><span>Not published</span></span></div>
+            <div class="ts-row"><span>Terms</span><span class="rd"><span>Not published</span></span></div>
+            <div class="ts-row"><span>Projected return</span><span class="rd"><span>Not published</span></span></div>
+          </div>
+        </div>
+        <div class="c-f">
+          <p>We are not your tax or legal advisers, and nothing here is advice about your situation.</p>
+          <a class="btn btn-primary" href="https://www.useclear.org/join?as=land"><span class="dot"></span>Start a conversation</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <div class="foot">
+    <div class="about"><a class="brand" href="https://www.useclear.org/"><svg aria-hidden="true"><use href="#mark"/></svg>Clear</a><p>A member-owned cooperative, building in Inland Empire, California.</p></div>
+    <div><h4>Members</h4><ul><li><a href="https://www.useclear.org/how">How it works</a></li><li><a href="https://www.useclear.org/housing">Housing</a></li><li><a href="https://www.useclear.org/join">Join the waitlist</a></li><li><a href="https://demo.useclear.org">Members app</a></li></ul></div>
+    <div><h4>Partners</h4><ul><li><a href="https://www.useclear.org/shops">For shops</a></li><li><a href="https://www.useclear.org/contribute">Contribute land</a></li><li><a href="https://www.useclear.org/capital">Clear Capital</a></li><li><a href="https://merchant.useclear.org">Merchant app</a></li></ul></div>
+    <div><h4>The co-op</h4><ul><li><a href="https://www.useclear.org/coop">Structure and governance</a></li><li><a href="https://github.com/Deed3Labs/Protocol-Contracts">Protocol source</a></li><li><a href="https://www.useclear.org/join?as=work">Work with us</a></li><li><a href="https://www.useclear.org/style">Brand and style guide</a></li></ul></div>
+    <div><h4>Community</h4><ul><li><a href="https://www.useclear.org/events">Events</a></li><li><a href="https://www.useclear.org/directory">Directory</a></li><li><a href="https://www.useclear.org/shop">Shop</a></li></ul></div>
+    <div class="legal">
+      <p>Clear is not a bank and deposits are not FDIC insured. Membership accounts are cooperative capital accounts, not deposit accounts.</p>
+      <p>Nothing here is an offer to sell or a solicitation to buy any security. Figures shown for housing, savings and credit are illustrations of how the model works, not quotes, offers or predictions. Credit is subject to the terms disclosed in the app before you draw.</p>
+      <p>We are not tax or legal advisers. Descriptions of property contributions are general and depend entirely on your own circumstances.</p>
+    </div>
+  </div>
+</footer>
+
+<div class="mock-flag">Mockup v1 · Clear Capital</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const G = typeof window.gsap !== 'undefined' && !reduce;
+  const money = (n, dp = 2) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: dp, maximumFractionDigits: dp });
+
+  /* Header */
+  const head = $('#site-head');
+  const onScroll = () => head.classList.toggle('scrolled', scrollY > 8);
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+  /* The Community menu: opens on click, and on hover for a mouse. */
+  const nm = $('#navmenu'), nb = $('#navmenu-btn'), np = $('#navmenu-panel');
+  let nmT = null, byHover = false;
+  const nmSet = o => { np.hidden = !o; nb.setAttribute('aria-expanded', String(o)); if (!o) byHover = false; };
+  /* A mouse already opened it by hovering, so a click keeps it open. */
+  nb.addEventListener('click', () => nmSet(byHover ? true : np.hidden));
+  nm.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') { clearTimeout(nmT); if (np.hidden) byHover = true; nmSet(true); } });
+  nm.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') nmT = setTimeout(() => nmSet(false), 180); });
+  document.addEventListener('pointerdown', e => { if (!nm.contains(e.target)) nmSet(false); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { nmSet(false); $('#sheet').close(); } });
+  /* The full-screen sheet, on <dialog>. */
+  const sheet = $('#sheet');
+  $('#menu-btn').addEventListener('click', () => sheet.showModal());
+  $('#sheet-close').addEventListener('click', () => sheet.close());
+
+  /* Screens: each app canvas is authored at its real width and scaled to fit,
+     so the product reads like a screenshot at every width. */
+  function fit() {
+    $$('.screen').forEach(sc => {
+      if (!sc.offsetParent) return;
+      const w = +sc.dataset.w, h = +sc.dataset.h || sc.firstElementChild.offsetHeight, s = sc.clientWidth / w;
+      sc.style.height = (h * s) + 'px';
+      sc.firstElementChild.style.transform = `scale(${s})`;
+    });
+  }
+  new ResizeObserver(fit).observe(document.body); fit();
+
+  /* ── Light along the lines ──────────────────────────────────────────────
+     One engine. A path is built in an element's own pixels; a short lit
+     segment (soft halo + thin core) runs along it. Paths are rebuilt on resize. */
+  const NS = 'http://www.w3.org/2000/svg';
+  function traceLayer(host) {
+    const svg = document.createElementNS(NS, 'svg'); svg.classList.add('trace');
+    const halo = document.createElementNS(NS, 'path'); halo.classList.add('halo');
+    const core = document.createElementNS(NS, 'path'); core.classList.add('core');
+    svg.append(halo, core); host.appendChild(svg);
+    return { svg, halo, core };
+  }
+  /* Rounded rectangle, clockwise, starting at a chosen point on its edge. */
+  function rr(x, y, w, h, r, start = 'top') {
+    const L = x, T = y, R = x + w, B = y + h;
+    const seg = {
+      top:    `L ${R - r} ${T} A ${r} ${r} 0 0 1 ${R} ${T + r}`,
+      right:  `L ${R} ${B - r} A ${r} ${r} 0 0 1 ${R - r} ${B}`,
+      bottom: `L ${L + r} ${B} A ${r} ${r} 0 0 1 ${L} ${B - r}`,
+      left:   `L ${L} ${T + r} A ${r} ${r} 0 0 1 ${L + r} ${T}`,
+    };
+    const starts = { top: [L + w / 2, T], right: [R, T + h / 2], bottom: [L + w / 2, B], left: [L, T + h / 2] };
+    const order = ['top', 'right', 'bottom', 'left'];
+    const i = order.indexOf(start), [sx, sy] = starts[start];
+    let d = `M ${sx} ${sy} `;
+    for (let k = 0; k < 4; k++) d += seg[order[(i + k) % 4]] + ' ';
+    return d + `L ${sx} ${sy}`;
+  }
+  function makeTrace(host, build, { seg = 140, speed = 520 } = {}) {
+    if (!G) return { run(o = {}) { if (o.done) o.done(); }, kill() {} };
+    const t = traceLayer(host);
+    let len = 0, tw = null;
+    function layout() {
+      const w = host.clientWidth, h = host.clientHeight;
+      t.svg.setAttribute('width', w); t.svg.setAttribute('height', h); t.svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+      const d = build(w, h, host); t.halo.setAttribute('d', d); t.core.setAttribute('d', d);
+      len = t.core.getTotalLength();
+      [t.halo, t.core].forEach(p => { p.style.strokeDasharray = `${seg} ${len + seg}`; p.style.strokeDashoffset = seg; });
+    }
+    layout(); new ResizeObserver(layout).observe(host);
+    return {
+      run(opts = {}) {
+        if (tw) tw.kill(); layout();
+        const o = { v: seg };
+        tw = gsap.to(o, { v: -len, duration: len / speed, ease: opts.ease || 'power1.inOut', repeat: opts.repeat || 0, repeatDelay: opts.repeatDelay || 0,
+          onUpdate: () => { t.halo.style.strokeDashoffset = o.v; t.core.style.strokeDashoffset = o.v; }, onComplete: opts.done });
+      },
+      kill() { if (tw) tw.kill(); [t.halo, t.core].forEach(p => { p.style.strokeDashoffset = seg; }); },
+    };
+  }
+
+
+
+
+  /* ── 02 the same terms at any size ───────────────────────────────────── */
+  const SC = {
+    one:  { prop: 640000,  name: 'One duplex, at appraised value', cc: 76 },
+    port: { prop: 9200000, name: 'Fourteen properties, at appraised value', cc: 18 },
+  };
+  const segB = $$('#terms .seg button'), terms = $$('#terms .term');
+  const shEl = $('#sum-sh'), prEl = $('#sum-prop');
+  let cur = 'one', sameT = null;
+  function setScale(k) {
+    if (k === cur) return;
+    const from = SC[cur].prop, to = SC[k].prop; cur = k;
+    segB.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.k === k)));
+    $('#sum-propn').textContent = SC[k].name;
+    $('#pool-cc').style.flexBasis = SC[k].cc + '%';
+    const paint = v => { prEl.textContent = money(Math.round(v), 0); shEl.textContent = Math.round(v).toLocaleString('en-US'); };
+    if (G) { const o = { v: from }; gsap.to(o, { v: to, duration: .9, ease: 'power3.out', onUpdate: () => paint(o.v) }); } else paint(to);
+    /* every term row confirms it did not move */
+    clearTimeout(sameT);
+    terms.forEach((t, i) => { t.classList.remove('same'); setTimeout(() => t.classList.add('same'), 160 + i * 110); });
+    sameT = setTimeout(() => terms.forEach(t => t.classList.remove('same')), 2600);
+  }
+  segB.forEach(b => b.addEventListener('click', () => setScale(b.dataset.k)));
+    /* Either slice of the pool bar drops to its short name when the full one will not fit. */
+  const slices = $$('#terms .pool > span');
+  const fitSlices = () => slices.forEach(sl => { sl.classList.remove('tight'); sl.classList.toggle('tight', $('.full', sl).offsetWidth + 20 > sl.clientWidth); });
+  const slRO = new ResizeObserver(fitSlices); slices.forEach(sl => slRO.observe(sl)); fitSlices();
+
+  /* ── 03 the public ledger, streaming ─────────────────────────────────── */
+  const LEDGER = [
+    ['Balance', 'Updated'], ['Credit line', 'Drawn'], ['Title record', 'Recorded'], ['Distribution', 'Paid pro rata'],
+    ['Credit line', 'Repaid'], ['Balance', 'Updated'], ['Title record', 'Transferred'], ['Reserve', 'Funded'],
+  ];
+  const pl = $('#pl'), RH = 37;
+  let li = 0, plRows = [];
+  const plRow = (age) => { const [a, b] = LEDGER[li++ % LEDGER.length]; const r = document.createElement('div'); r.className = 'pl-row'; r.innerHTML = `<i class="d"></i><b>${a}</b><span class="s">${b}</span><span class="t">${age}</span>`; return r; };
+  const ages = ['just now', '4s ago', '9s ago', '15s ago', '22s ago'];
+  for (let i = 0; i < 5; i++) { const r = plRow(ages[i]); r.style.transform = `translateY(${i * RH}px)`; pl.appendChild(r); plRows.push(r); }
+  plRows[0].classList.add('new');
+  function plTick() {
+    const r = plRow('just now'); r.classList.add('new'); r.style.transform = `translateY(${-RH}px)`; r.style.opacity = 0;
+    pl.prepend(r); plRows.unshift(r);
+    plRows.forEach((x, i) => { if (i) x.classList.remove('new'); const t = $('.t', x); if (i) t.textContent = ages[Math.min(i, 4)]; });
+    requestAnimationFrame(() => requestAnimationFrame(() => plRows.forEach((x, i) => { x.style.transform = `translateY(${i * RH}px)`; x.style.opacity = i > 4 ? 0 : 1; })));
+    setTimeout(() => { while (plRows.length > 5) plRows.pop().remove(); }, 700);
+  }
+
+  /* the pro rata bar in the no-preferred-return cell */
+  $('#wf-bar').innerHTML = '<i></i>'.repeat(12);
+
+  if (!G) return;
+  gsap.registerPlugin(ScrollTrigger);
+
+  /* Hero: two lines rise, then the two boards seat themselves. */
+  const h1 = $('#hero-h1');
+  $$('.ln', h1).forEach(ln => { ln.innerHTML = ln.textContent.split(' ').map(w => `<span class="w"><span>${w}</span></span>`).join(' '); });
+  const invTrace = makeTrace($('#seat-inv'), (w, h) => rr(.5, .5, w - 1, h - 1, 0.01, 'top'), { seg: 70, speed: 220 });
+  gsap.timeline({ defaults: { ease: 'power3.out' } })
+    .from('#hero-h1 .w > span', { yPercent: 105, duration: 1, stagger: .06, onComplete: () => $('#hero-h1').classList.add('revealed') })
+    .from('[data-in]', { opacity: 0, y: 14, duration: .8, stagger: .1 }, '-=.6')
+    .from('#boards', { opacity: 0, y: 20, duration: .9 }, '-=.5')
+    .from('#seats-co .seat', { opacity: 0, y: 10, duration: .5, stagger: .07 }, '-=.4')
+    .from('#seats-h .seat', { opacity: 0, y: 10, duration: .5, stagger: .07 }, '<.15')
+    .add(() => invTrace.run({ repeat: -1, repeatDelay: 2.4 }), '+=.2');
+
+  /* 01: the three drawings draw themselves on one ground line. */
+  $$('#split3 .draw').forEach(p => { const L = Math.ceil(p.getTotalLength()); p.style.setProperty('--L', L); p.style.strokeDashoffset = L; });
+  ScrollTrigger.create({ trigger: '#split3', start: 'top 72%', once: true, onEnter: () => {
+    gsap.to('#split3 .draw', { strokeDashoffset: 0, duration: 1.3, stagger: .05, ease: 'power2.inOut' });
+    gsap.from('#split3 .ht', { opacity: 0, duration: .5, stagger: .01, delay: .6 });
+    gsap.from('#split3 .blk', { opacity: 0, y: 6, duration: .35, stagger: .025, delay: .7 });
+    gsap.from('#split3 .pin', { scale: 0, transformOrigin: 'center', duration: .4, stagger: .1, delay: 1.1, ease: 'back.out(2)' });
+  } });
+  /* the edges: one connects, two stop short */
+  gsap.set('#backs .wire i', { scaleX: 0 }); gsap.set('#backs .vd, #backs .wire', { opacity: 0 });
+  ScrollTrigger.create({ trigger: '#backs', start: 'top 80%', once: true, onEnter: () => {
+    $$('#backs .row').forEach((r, i) => {
+      const tl = gsap.timeline({ delay: i * .35 });
+      tl.to($('.wire', r), { opacity: 1, duration: .01 }).to($('.wire i', r), { scaleX: 1, duration: .7, ease: 'power2.inOut' }).to($('.vd', r), { opacity: 1, duration: .4 }, '-=.1');
+    });
+  } });
+
+  /* 02: the toggle flips once on its own the first time it is seen. */
+  ScrollTrigger.create({ trigger: '#terms', start: 'top 60%', once: true, onEnter: () => { setTimeout(() => setScale('port'), 700); } });
+
+  /* 03: the pro rata bar fills, the reserved matters check in, the ledger runs. */
+  gsap.set('#wf-bar i', { scaleY: 0 });
+  ScrollTrigger.create({ trigger: '#prot', start: 'top 72%', once: true, onEnter: () => {
+    gsap.to('#wf-bar i', { scaleY: 1, duration: .5, stagger: .04, ease: 'power2.out' });
+    const items = $$('#rm li');
+    items.forEach((x, i) => setTimeout(() => x.classList.add('on'), 400 + i * 260));
+  } });
+  let plT = null;
+  ScrollTrigger.create({ trigger: '#pl', start: 'top 90%', end: 'bottom 10%', onToggle: s => { clearInterval(plT); if (s.isActive) plT = setInterval(plTick, 2200); } });
+
+  /* 05: the redactions sweep in. */
+  gsap.set('#ts .rd', { '--rd': 0 });
+  ScrollTrigger.create({ trigger: '#ts', start: 'top 75%', once: true, onEnter: () => gsap.to('#ts .rd', { '--rd': 1, duration: .6, stagger: .18, ease: 'power3.inOut' }) });
+
+  /* Header follows the ground beneath it. */
+  $$('.band-ink').forEach(band => ScrollTrigger.create({ trigger: band, start: 'top 34px', end: 'bottom 34px', onToggle: s => head.classList.toggle('on-ink', s.isActive) }));
+})();
+</script>
