@@ -1,14 +1,18 @@
 import { BagProvider } from '@/components/shop/BagProvider';
 import { ShopBar } from '@/components/shop/ShopBar';
-import { visibleProducts } from '@/lib/shop/catalog';
+import { toItem } from '@/components/shop/item';
+import { isShopOpen, visibleProducts } from '@/lib/shop/catalog';
+import './shop.css';
 
 /* The bag's state is scoped to /shop. Nothing else on the site is a client
-   tree, and a provider in the root layout would make it one. */
+   tree, and a provider in the root layout would make it one. The bar is a
+   client component and cannot read the catalog, so it is handed what it
+   shows: names for the breadcrumb, and the drawing, name and price of
+   whatever just went in the bag. */
 export default function ShopLayout({ children }: { children: React.ReactNode }) {
   return (
     <BagProvider>
-      {/* Names for the breadcrumb; the bar is a client component and cannot read the catalog. */}
-      <ShopBar names={Object.fromEntries(visibleProducts().map((p) => [p.slug, p.name]))} />
+      <ShopBar catalog={visibleProducts().map(toItem)} closed={!isShopOpen()} />
       {children}
     </BagProvider>
   );

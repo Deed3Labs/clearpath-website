@@ -1,5 +1,4 @@
 import { BagView } from '@/components/shop/BagView';
-import { BAG } from '@/content/shop';
 import { isShopOpen, visibleProducts } from '@/lib/shop/catalog';
 
 export const metadata = {
@@ -9,14 +8,11 @@ export const metadata = {
 
 export default function Bag() {
   return (
-    <div className="hx">
-      <section className="hx-band hx-wrap" data-pad="tight">
-        <div className="hx-grid">
-          <h1 className="hx-h2 c-full">{BAG.heading}</h1>
-          {/* The catalog is handed down for display only. What gets charged is
-              priced again on the server. */}
-          <BagView products={visibleProducts()} open={isShopOpen()} />
-        </div>
+    <div className="pg-shop">
+      <section className="wrap vsec">
+        {/* The catalog is handed down for display only. What gets charged is
+            priced again on the server. */}
+        <BagView products={visibleProducts()} open={isShopOpen()} />
       </section>
     </div>
   );
