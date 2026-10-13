@@ -16,6 +16,8 @@ import { pacificToDate, parseClock } from './time';
 /* Every source, normalised to one shape. */
 export type CalEvent = {
   slug: string;
+  /* Set on a hand-written backup of a Luma event: that event's feed UID. */
+  backupOf?: string;
   source: 'clear' | 'feed' | 'local';
   title: string;
   type: EventType;
@@ -75,7 +77,9 @@ async function getText(url: string, accept: string, revalidate = REVALIDATE_SECO
   for (let attempt = 1; ; attempt++) {
     try {
       const res = await fetch(url, {
-        headers: { Accept: accept },
+        /* Say who is asking. A bare server fetch looks like a scraper, and
+           Luma answered Vercel's with 429s. */
+        headers: { Accept: accept, 'User-Agent': 'useclear.org events (+https://www.useclear.org/events)' },
         signal: AbortSignal.timeout(TIMEOUT_MS),
         next: { revalidate },
       });
@@ -109,7 +113,10 @@ async function settled(jobs: Promise<CalEvent[]>[]): Promise<CalEvent[]> {
 function clearEvents(): CalEvent[] {
   const drafts = showDrafts();
   return EVENTS.filter((e) => e.status !== 'draft' || drafts).map((e) => ({
-    slug: e.slug,
+    /* A Luma backup answers at the Luma event's own address, so links to it
+       never change whichever version is showing. */
+    slug: e.lumaUid ? `cal-${shortHash(e.lumaUid)}` : e.slug,
+    backupOf: e.lumaUid,
     source: 'clear',
     title: e.title,
     type: e.type,
@@ -236,8 +243,22 @@ function feedUrls(): string[] {
   return [...new Set([...CLEAR_FEEDS, ...extra].filter(Boolean))];
 }
 
-async function feedEvents(): Promise<CalEvent[]> {
-  return settled(feedUrls().map((url) => getIcs(url, CLEAR_FEED_REVALIDATE_SECONDS)));
+/* The feeds, and whether any of them failed. The listing needs to know: a
+   failed Clear feed is not the same as Clear having nothing posted. */
+async function feedEventsChecked(): Promise<{ events: CalEvent[]; failed: boolean }> {
+  const results = await Promise.allSettled(feedUrls().map((url) => getIcs(url, CLEAR_FEED_REVALIDATE_SECONDS)));
+  return {
+    events: results.flatMap((r) => (r.status === 'fulfilled' ? r.value : [])),
+    failed: results.some((r) => r.status === 'rejected'),
+  };
+}
+
+/* Every event a Clear feed lists, for building their pages ahead. Throws if
+   a feed fails, so the caller decides what a failure means. */
+export async function feedEventSlugs(): Promise<string[]> {
+  const { events, failed } = await feedEventsChecked();
+  if (failed) throw new Error('a Clear feed failed');
+  return events.map((e) => e.slug);
 }
 
 /* ── Local government ───────────────────────────────────────────────────── */
@@ -489,9 +510,27 @@ async function localEvents(): Promise<CalEvent[]> {
 
 /* ── Together ───────────────────────────────────────────────────────────── */
 
+/* Hand-written events plus the feeds, with the Luma backups resolved. While
+   the feeds answer they are the truth: every backup is dropped (Luma's own
+   version shows, and an event removed from Luma goes with its backup). When
+   a feed fails, the backups stand in for what it would have listed. */
+function withBackups(hand: CalEvent[], feed: { events: CalEvent[]; failed: boolean }): CalEvent[] {
+  if (!feed.failed) return [...hand.filter((e) => !e.backupOf), ...feed.events];
+  const listed = new Set(feed.events.map((e) => e.slug));
+  return [...hand.filter((e) => !e.backupOf || !listed.has(e.slug)), ...feed.events];
+}
+
 export async function allEvents(): Promise<CalEvent[]> {
-  const [feed, local] = await Promise.all([feedEvents(), localEvents()]);
-  return [...clearEvents(), ...feed, ...local].sort((a, b) => a.start.getTime() - b.start.getTime());
+  return (await allEventsChecked()).events;
+}
+
+/* allEvents, plus whether a Clear feed failed to answer. A city calendar
+   being down costs only its own rows, but the listing must not publish an
+   empty Clear section just because Luma refused one request. */
+export async function allEventsChecked(): Promise<{ events: CalEvent[]; feedFailed: boolean }> {
+  const [feed, local] = await Promise.all([feedEventsChecked(), localEvents()]);
+  const events = [...withBackups(clearEvents(), feed), ...local].sort((a, b) => a.start.getTime() - b.start.getTime());
+  return { events, feedFailed: feed.failed };
 }
 
 /* Still worth showing: not over. An event without an end is treated as two
@@ -515,9 +554,22 @@ export async function getEvent(slug: string): Promise<CalEvent | undefined> {
   if (local) return find((await fromSource(local)).filter(isPublic));
 
   if (slug.startsWith('cal-')) {
+    /* A feed that answers is the truth. One that fails falls back to the
+       hand-written backup of this event, if there is one; without one the
+       failure propagates as before (never a cached "not found"). */
+    const backup = clearEvents().find((e) => e.backupOf && e.slug === slug);
+    let failure: unknown;
     for (const url of feedUrls()) {
-      const hit = find(await getIcs(url, CLEAR_FEED_REVALIDATE_SECONDS));
-      if (hit) return hit;
+      try {
+        const hit = find(await getIcs(url, CLEAR_FEED_REVALIDATE_SECONDS));
+        if (hit) return hit;
+      } catch (err) {
+        failure = err;
+      }
+    }
+    if (failure) {
+      if (backup) return backup;
+      throw failure;
     }
     return undefined;
   }

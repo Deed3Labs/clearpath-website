@@ -72,7 +72,7 @@ export type ClearEventInput = {
   format: EventFormat;
   /* A place for in-person, or "Online" details for online. */
   location?: string;
-  summary: string;
+  summary?: string;
   description: string[];
   agenda?: string[];
   host?: string;
@@ -81,12 +81,73 @@ export type ClearEventInput = {
   /* Free unless a price label is given, e.g. "$10". */
   price?: string;
   status: 'draft' | 'scheduled' | 'cancelled';
+  /* The event's UID in the Luma feed (the ics file's UID line). Makes this
+     entry the BACKUP of that Luma event: it takes the Luma event's address,
+     stays hidden while the feed answers (Luma's own version shows, and a
+     backup Luma no longer lists disappears with it), and shows only when the
+     feed fails, so a Luma outage or rate limit never empties the calendar.
+     When you add an event on Luma, add its backup here too. */
+  lumaUid?: string;
 };
 
 /* TODO(owner): the drafts below are layout stand-ins — titles, dates and
    descriptions are placeholders, and drafts render only in `next dev` or
    with EVENTS_SHOW_DRAFTS=true. */
 export const EVENTS: ClearEventInput[] = [
+  /* ── Backups of the Luma calendar (see lumaUid) ───────────────────────
+     Copied from the feed as it stands on 2026-10-13. Times are Pacific. */
+  {
+    slug: 'luma-coop-board-2026',
+    lumaUid: 'evt-2XlY1B7ALKFKnCt@events.lu.ma',
+    title: 'Clear Co-op: 1st Annual Board Meeting',
+    type: 'board-meeting',
+    startsAt: '2026-11-01T18:00:00-08:00',
+    endsAt: '2026-11-01T21:00:00-08:00',
+    format: 'online',
+    location: 'Online',
+    description: [
+      'Get up-to-date information at: https://luma.com/fmtqd530',
+      'Address: Check event page for more details.',
+      'Hosted by Isaiah “KyngKai” Litt',
+    ],
+    registerUrl: 'https://luma.com/event/evt-2XlY1B7ALKFKnCt',
+    status: 'scheduled',
+  },
+  {
+    slug: 'luma-community-capital-2026',
+    lumaUid: 'evt-WNighLCU2KuSRMr@events.lu.ma',
+    title: '🌱 Community & Capital',
+    type: 'community-call',
+    startsAt: '2026-12-05T18:00:00-08:00',
+    endsAt: '2026-12-05T19:00:00-08:00',
+    format: 'online',
+    location: 'Online',
+    description: [
+      'Get up-to-date information at: https://luma.com/650d3kxw',
+      'Address: Check event page for more details.',
+      'Hosted by Isaiah “KyngKai” Litt',
+    ],
+    registerUrl: 'https://luma.com/event/evt-WNighLCU2KuSRMr',
+    status: 'scheduled',
+  },
+  {
+    slug: 'luma-capital-board-2027',
+    lumaUid: 'evt-6TZVOQbN9tDorPR@events.lu.ma',
+    title: 'Clear Capital: 1st Annual Board Meeting',
+    type: 'board-meeting',
+    alsoIn: ['investors'],
+    startsAt: '2027-02-15T10:00:00-08:00',
+    endsAt: '2027-02-15T12:00:00-08:00',
+    format: 'online',
+    location: 'Online',
+    description: [
+      'Get up-to-date information at: https://luma.com/rxbyb4he',
+      'Address: Check event page for more details.',
+      'Hosted by Isaiah “KyngKai” Litt',
+    ],
+    registerUrl: 'https://luma.com/event/evt-6TZVOQbN9tDorPR',
+    status: 'scheduled',
+  },
   {
     slug: 'community-call-how-clear-works',
     title: 'Community call: how Clear works',
