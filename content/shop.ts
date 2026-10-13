@@ -269,7 +269,6 @@ export const STATES: readonly (readonly [string, string])[] = 'AL Alabama|AK Ala
 
 export const THANKS = {
   who: 'Order placed',
-  chip: 'Paid',
   heading: 'Thank you.',
   lede: 'Your order is in. Stripe is emailing a receipt, and we will send tracking once it ships.',
   steps: [
