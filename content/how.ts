@@ -219,7 +219,7 @@ export const COMPARE = {
 } as const;
 
 export const CLOSE = {
-  title: 'Your money, kept in the neighborhood.',
+  title: 'Your money kept in your neighborhood.',
   line: 'One member, one vote. Building in Inland Empire, California.',
   primary: { href: '/join', label: 'Join the waitlist' },
   ghost: { href: '/shops', label: 'Bring Clear to your shop' },
