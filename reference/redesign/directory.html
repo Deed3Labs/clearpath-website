@@ -627,8 +627,9 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .pp2 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .pp2 .prose { font-size: 16.5px; line-height: 1.6; color: var(--ink-70); max-width: 52ch; }
 .pp2 .note2 { font-size: 14px; padding: 12px 16px; border-left: 2px solid var(--ink); background: var(--paper-2); max-width: 52ch; }
-.pmap { margin-top: 10px; border: 1px solid var(--ink-28); max-width: 560px; }
-.pmap .mapw svg { aspect-ratio: 16 / 9; }
+.pmap { margin-top: 10px; border: 1px solid var(--ink-28); width: 100%; }
+.pmap .mapw svg { aspect-ratio: 2 / 1; width: 100%; }
+.pmap .mapw .town text { font-size: 9px; }
 .pmap figcaption { display: flex; justify-content: space-between; gap: 12px; padding: 10px 14px; border-top: 1px solid var(--ink-13); font-size: 13px; color: var(--ink-50); }
 @media (max-width: 1000px) { .pp2 { grid-template-columns: minmax(0, 1fr); } .pp2 > .cell + .cell { border-left: 0; border-top: 1px solid var(--line); } }
 .near { --px: clamp(18px, 2vw, 28px); margin-top: clamp(56px, 6vw, 88px); }
@@ -1039,11 +1040,11 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   };
   const LBL = { 'Rancho Cucamonga': [0, 22, 'middle'], Fontana: [0, 24, 'middle'], Rialto: [0, 22, 'middle'], 'San Bernardino': [0, -32, 'middle'], Redlands: [0, 30, 'middle'], Riverside: [0, 24, 'middle'], Ontario: [0, -12, 'middle'], Chino: [0, 22, 'middle'] };
   const ROADS = [
-    ['M10 214 L111 210 L220 204 L330 200 L446 192 L544 210 L630 216', '10', 604, 214],
+    ['M-20 214 L111 210 L220 204 L330 200 L446 192 L544 210 L660 216', '10', 604, 214],
     ['M120 128 L165 132 L311 146 L380 128 L446 116 L520 150 L560 192', '210', 240, 132],
-    ['M347 340 L380 270 L420 200 L446 150 L460 80 L470 14', '215', 470, 28],
-    ['M300 10 L258 90 L238 150 L226 230 L214 320 L206 410', '15', 296, 24],
-    ['M10 268 L180 286 L300 320 L347 326 L460 310 L630 300', '60', 604, 300],
+    ['M347 340 L380 270 L420 200 L446 150 L460 80 L476 -20', '215', 470, 28],
+    ['M318 -20 L258 90 L238 150 L226 230 L214 320 L202 440', '15', 296, 24],
+    ['M-20 268 L180 286 L300 320 L347 326 L460 310 L660 300', '60', 604, 300],
   ];
   /* Pins in the same town fan out a little so none hide another. */
   function pinPos(p, i, all) {
@@ -1051,9 +1052,10 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
     if (same.length < 2) return [x, y - 14];
     return [x + (k - (same.length - 1) / 2) * 16, y - 14];
   }
-  function mapSVG(ps, vb = '0 0 640 420', small = false) {
+  function mapSVG(ps, vb = '0 0 640 420', small = false, crop = null) {
     const roads = ROADS.map(([d, n, sx, sy]) => `<path class="fw2" d="${d}"/>${small ? '' : `<rect class="shd-b" x="${sx - 13}" y="${sy - 9}" width="26" height="15"/><text class="shd" x="${sx}" y="${sy + 2}" text-anchor="middle">${n}</text>`}`).join('');
-    const towns = Object.entries(TOWNS).map(([t, [x, y]]) => { const [dx, dy, an] = LBL[t]; return `<g class="town${ps.some(p => p.city === t) ? '' : ' empty'}"><circle cx="${x}" cy="${y}" r="3.5"/><text x="${x + dx}" y="${y + dy}" text-anchor="${an}">${t}</text></g>`; }).join('');
+    const fits = (t, x, y) => { if (!crop) return true; const [cx, cy, cw, ch] = crop, [dx, dy] = LBL[t], hw = t.length * 3.4 + 4, lx = x + dx; return lx - hw >= cx && lx + hw <= cx + cw && y + dy - 10 >= cy && y + dy + 4 <= cy + ch; };
+    const towns = Object.entries(TOWNS).map(([t, [x, y]]) => { const [dx, dy, an] = LBL[t]; if (!fits(t, x, y)) return `<g class="town"><circle cx="${x}" cy="${y}" r="3.5"/></g>`; return `<g class="town${ps.some(p => p.city === t) ? '' : ' empty'}"><circle cx="${x}" cy="${y}" r="3.5"/><text x="${x + dx}" y="${y + dy}" text-anchor="${an}">${t}</text></g>`; }).join('');
     const pins = ps.map((p, i) => { const [x, y] = pinPos(p, i, ps); return `<g class="pin${p.splitPlans ? ' split' : ''}" data-slug="${p.slug}" tabindex="-1"><circle class="pr2" cx="${x}" cy="${y}" r="12"/><circle class="pc2" cx="${x}" cy="${y}" r="6"/></g>`; }).join('');
     return `<rect width="640" height="420" fill="none"/>${roads}${towns}${pins}`;
   }
@@ -1158,6 +1160,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   const mapsUrl = a => '#';
   function renderPartner(slug) {
     const p = BY[slug], [x, y] = TOWNS[p.city];
+    const crop = [Math.min(Math.max(x - 220, 0), 640 - 440), Math.min(Math.max(y - 110, 0), 420 - 220), 440, 220];
     $('#crumbs').innerHTML = `<li><a href="#list">Directory</a></li><li class="sep" aria-hidden="true">/</li><li><span aria-current="page">${esc(p.category)}</span></li>`;
     const facts = [p.address && ['Address', p.address], p.hours && ['Hours', p.hours], p.phone && ['Phone', `<a class="inl" href="tel:${p.phone.replace(/[^\d+]/g, '')}">${p.phone}</a>`], ['Takes', p.splitPlans ? 'Clear Pay, split plans' : 'Clear Pay'], p.since && ['Partner since', p.since]].filter(Boolean);
     $('#pp').innerHTML = `<div class="cell body">
@@ -1165,7 +1168,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
         <div class="chips"><span class="chip" data-tone="live"><span class="dot"></span>Clear Pay</span>${p.splitPlans ? '<span class="chip">Split plans</span>' : ''}</div>
         ${p.about ? `<p class="prose">${esc(p.about)}</p>` : ''}
         ${p.splitPlans ? '<p class="note2">Members can split a purchase here into a plan.</p>' : ''}
-        <figure class="pmap"><div class="mapw"><svg viewBox="${x - 210} ${y - 118} 420 236" aria-hidden="true">${mapSVG([p], undefined, true)}</svg></div><figcaption><span>${esc(p.city)}</span><span>Drawn, not to scale</span></figcaption></figure>
+        <figure class="pmap"><div class="mapw"><svg viewBox="${crop.join(' ')}" aria-hidden="true">${mapSVG([p], undefined, true, crop)}</svg></div><figcaption><span>${esc(p.city)}</span><span>Drawn, not to scale</span></figcaption></figure>
       </div>
       <aside class="cell tk">
         <div class="c-h"><span class="who">Visit</span><span class="ck">${esc(p.city)}</span></div>
