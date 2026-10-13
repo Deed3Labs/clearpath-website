@@ -69,6 +69,8 @@ All in `components/system/` (import from `@/components/system`) and `lib/anim/`.
 | `Screen` | `w`, `h`, `variant?: 'desk'\|'phone'`, `className?`, `canvasClassName?`, `children` | `.screen` + `.canvas.app` at its real size, scaled to fit **in CSS** (`container-type` + `tan(atan2(100cqw, w))`), so it works with JS off and never shifts |
 | icons | `Arrow`, `Check`, `Back`, `Bell`, `Plus`, `Del`, `Mark` | the mockups' `<symbol>`s as components (`aria-hidden`) |
 | `Qr` | `id?`, `className?`, `seed?=7` | the mockups' seeded decorative QR, rendered on the server |
+| `HeroBeat` | `beats: {sel, from, at?}[]` | appends `gsap.from` beats to the hero intro (added in Phase 3) |
+| `Person` | icon | a board seat (added in Phase 3) |
 
 `lib/anim`:
 
@@ -81,6 +83,7 @@ All in `components/system/` (import from `@/components/system`) and `lib/anim/`.
   `useHeroIntro(ref, (tl, hero) => …)`: append beats to the intro timeline from a component
   rendered inside the hero.
 - `useRail(ref, {vertical, start, end, onProgress})`: the rail logic without the component.
+- `headRuleY(cell)`: the y of a cell's header rule, where hand-off traces run (Phase 3).
 - `rr(x,y,w,h,r,start)` and `useTrace(hostRef, build(w,h,host), {seg, speed})` returning
   `{ run(opts), kill() }`: the mockups' `makeTrace` (halo + core, rebuilt on resize, uses the
   global `#glow` filter rendered in the layout).
