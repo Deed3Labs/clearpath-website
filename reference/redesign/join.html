@@ -1,0 +1,760 @@
+<title>Clear Join Redesign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: a constrained page (1280 max) with one rhythm per section —
+   label, a headline that answers itself, one line, one crafted figure, one
+   link. The product is shown on its own dark ground inside thin device
+   outlines (the guide's one radius exception); figures that explain the
+   model are drawn in the site's ink. Single look: paper with ink bands. */
+:root {
+  color-scheme: light;
+  --paper: #DFE3DE;
+  --paper-2: #E9ECE7;
+  --ink: #16211D;
+  --ground: #16211D;
+  --live: #24409E;
+  --settled: #0E6B4E;
+  --underway: #8A5512;
+  --absent: #9B2C22;
+  --sig-deep: #0E6B4E;
+  --sig-light: #6FCB9F;
+  --ink-70: #525B57;
+  --ink-50: #5A635F;
+  --ink-28: #A7ADA8;
+  --ink-13: #C5CAC5;
+
+  --f-display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --f-text: 'Instrument Sans', system-ui, sans-serif;
+  --f-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  --s1: 8px; --s2: 16px; --s3: 24px; --s4: 40px; --s5: 64px; --s6: 96px;
+  --inset: clamp(16px, 4vw, 56px);
+  --max: 1280px;
+  --sec: clamp(80px, 9vw, 144px);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+.band-ink {
+  background: var(--ground); color: var(--paper);
+  --ink: #DFE3DE; --ink-70: #ABB1AC; --ink-50: #939995;
+  --ink-28: rgb(223 227 222 / .32); --ink-13: rgb(223 227 222 / .16);
+  --live: #7C8CC5; --settled: #6FCB9F; --underway: #E3B667; --absent: #E58C7F;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--f-text); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+h1, h2, h3, p, dl, dd, figure { margin: 0; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+a { color: inherit; text-decoration: none; }
+svg { display: block; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--live); outline-offset: 3px; }
+::selection { background: var(--ink); color: var(--paper); }
+
+.wrap { width: 100%; max-width: calc(var(--max) + var(--inset) * 2); margin-inline: auto; padding-inline: var(--inset); }
+.fig { font-family: var(--f-text); font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.label { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-50); }
+
+/* ── Section rhythm ───────────────────────────────────────────────────── */
+.sec { padding-block: var(--sec); }
+/* A section opens with a full-width label rule, then the headline on the
+   left seven-twelfths and its one line plus link on the right, bottom-aligned
+   to the headline. Phones stack it. */
+.head { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: clamp(32px, 6vw, 112px); row-gap: clamp(28px, 3vw, 44px); align-items: end; }
+.head > .sec-label { grid-column: 1 / -1; }
+.head > .aside { display: grid; gap: var(--s3); align-content: end; padding-bottom: .4em; }
+@media (max-width: 900px) { .head { grid-template-columns: minmax(0, 1fr); } .head > .aside { padding-bottom: 0; gap: var(--s2); } }
+.sec-label { display: flex; gap: 14px; padding-bottom: var(--s2); border-bottom: 1px solid var(--ink-13); }
+.sec-label b { font-weight: 400; color: var(--live); }
+.h2 { font-family: var(--f-display); font-weight: 800; font-size: clamp(36px, 4.7vw, 72px); line-height: .98; letter-spacing: -0.038em; text-wrap: balance; }
+.line { font-size: clamp(17px, 1.35vw, 20px); line-height: 1.5; color: var(--ink-70); max-width: 42ch; text-wrap: pretty; }
+.more { display: inline-flex; align-items: center; gap: 10px; font-size: 15.5px; font-weight: 500; color: var(--ink); border-bottom: 1px solid var(--ink-28); padding-bottom: 3px; justify-self: start; transition: border-color 200ms var(--ease), gap 200ms var(--ease); }
+.more svg { width: 14px; height: 10px; transition: transform 200ms var(--ease); }
+.more:hover { border-color: var(--ink); }
+.more:hover svg { transform: translateX(3px); }
+.body-gap { margin-top: clamp(48px, 5.5vw, 80px); }
+
+/* ── Controls (guide) ─────────────────────────────────────────────────── */
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding-inline: var(--s3); border: 1px solid transparent; border-radius: 999px; font-size: 15px; font-weight: 500; line-height: 1; white-space: nowrap; transition: background-color 200ms var(--ease), border-color 200ms var(--ease), color 200ms var(--ease); }
+.btn-primary { background: var(--ink); color: var(--paper); }
+.btn-primary:hover { background: var(--live); }
+.band-ink .btn-primary { color: var(--ground); }
+.btn-ghost { border-color: var(--ink-28); color: var(--ink); }
+.btn-ghost:hover { border-color: var(--ink); }
+.dot { --dot: var(--sig-light); position: relative; flex: none; width: 7px; height: 7px; margin-right: 10px; border-radius: 999px; background: var(--dot); box-shadow: 0 0 6px 1px color-mix(in srgb, var(--dot) 55%, transparent); }
+.dot::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: var(--dot); animation: ping 2s cubic-bezier(0, 0, .2, 1) infinite; }
+.band-ink .btn-primary .dot { --dot: var(--sig-deep); }
+@keyframes ping { 0% { transform: scale(1); opacity: .6 } 75%, 100% { transform: scale(3.4); opacity: 0 } }
+.chip { --chip: var(--ink-70); display: inline-flex; align-items: center; font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .09em; text-transform: uppercase; line-height: 1; padding: 6px 11px 5px; border: 1px solid; border-radius: 999px; white-space: nowrap; color: var(--chip); border-color: color-mix(in srgb, var(--chip) 34%, transparent); background: color-mix(in srgb, var(--chip) 10%, transparent); }
+.chip .dot { --dot: var(--chip); width: 6px; height: 6px; margin-right: 7px; box-shadow: 0 0 4px color-mix(in srgb, var(--chip) 45%, transparent); }
+.chip[data-tone="live"] { --chip: var(--settled); }
+.chip[data-tone="underway"] { --chip: var(--underway); }
+.chip[data-tone="absent"] { --chip: var(--absent); }
+.chip:not([data-tone="live"]) .dot::after { animation: none; opacity: 0; }
+
+/* ── Header — the live site's shell, kept as it is: five links, the
+   Community menu and Join; below 1000px a Menu button that opens the
+   full-screen sheet. Only the colours follow the ground underneath. ─── */
+.site-head { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 30; background: color-mix(in srgb, var(--paper) 88%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-bottom: 1px solid transparent; transition: border-color 200ms var(--ease), background-color 300ms var(--ease), color 300ms var(--ease); }
+.site-head.scrolled { border-bottom-color: var(--ink-13); }
+.site-head.on-ink { background: color-mix(in srgb, var(--ground) 90%, transparent); color: #DFE3DE; border-bottom-color: rgb(223 227 222 / .14); }
+.site-head.on-ink .nav > ul > li > a, .site-head.on-ink .navmenu-button { color: #ABB1AC; }
+.site-head.on-ink .nav > ul > li > a:hover, .site-head.on-ink .navmenu-button:hover, .site-head.on-ink .nav > ul > li > a[aria-current="page"] { color: #DFE3DE; }
+.site-head.on-ink .btn-primary { background: #DFE3DE; color: var(--ground); }
+.site-head.on-ink .btn-primary .dot { --dot: var(--sig-deep); }
+.top { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); height: 68px; }
+.brand { display: flex; align-items: center; gap: 9px; font-family: var(--f-display); font-weight: 800; font-size: 19px; letter-spacing: -0.035em; }
+.brand svg { width: 21px; height: 21px; }
+.nav { display: flex; align-items: center; gap: clamp(20px, 2.4vw, 40px); font-size: 14.5px; }
+.nav > ul { display: flex; align-items: center; gap: clamp(16px, 1.8vw, 24px); }
+.nav > ul > li > a { display: inline-flex; align-items: center; min-height: 44px; white-space: nowrap; color: var(--ink-70); transition: color 200ms var(--ease); }
+.nav > ul > li > a:hover { color: var(--ink); }
+.nav > ul > li > a[aria-current="page"] { color: var(--ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 6px; }
+.nav .btn { min-height: 38px; padding-inline: 18px; font-size: 14px; }
+/* The Community menu: a nav link that opens a short sheet of paper. */
+.navmenu { position: relative; }
+.navmenu-button { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; white-space: nowrap; color: var(--ink-70); font-size: 14.5px; transition: color 200ms var(--ease); }
+.navmenu-button:hover { color: var(--ink); }
+.navmenu-button svg { width: 10px; height: 10px; transition: transform 200ms var(--ease); }
+.navmenu-button[aria-expanded="true"] svg { transform: rotate(180deg); }
+.navmenu-panel { position: absolute; z-index: 40; top: calc(100% + 10px); right: -12px; width: 320px; background: #DFE3DE; color: #16211D; border: 1px solid #C5CAC5; border-top: 2px solid #16211D; box-shadow: 0 18px 40px rgb(22 33 29 / .14); }
+.navmenu-panel::before { content: ''; position: absolute; left: 0; right: 0; top: -12px; height: 12px; }
+.navmenu-panel li + li { border-top: 1px solid #C5CAC5; }
+.navmenu-link { display: grid; grid-template-columns: 40px minmax(0, 1fr); align-items: center; gap: 14px; padding: 14px 16px; color: #16211D; transition: background-color 200ms var(--ease); }
+.navmenu-link:hover, .navmenu-link:focus-visible { background: #E9ECE7; }
+.navmenu-icon { display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid #C5CAC5; transition: border-color 200ms var(--ease); }
+.navmenu-link:hover .navmenu-icon { border-color: #16211D; }
+.navmenu-icon svg { width: 18px; height: 18px; }
+.navmenu-text { display: grid; gap: 2px; }
+.navmenu-label { font-size: 15px; font-weight: 600; letter-spacing: -0.005em; }
+.navmenu-note { font-size: 13px; line-height: 1.35; color: #525B57; }
+.menu-btn { display: none; min-height: 44px; min-width: 44px; align-items: center; justify-content: center; gap: 8px; font-size: 15px; }
+.menu-btn svg { width: 16px; height: 16px; }
+@media (max-width: 1000px) {
+  .nav > ul, .nav > .btn { display: none; }
+  .menu-btn { display: inline-flex; }
+}
+/* The sheet: a full-screen <dialog>, which traps focus and closes on Escape. */
+.sheet { width: 100%; max-width: none; height: 100%; max-height: none; margin: 0; padding: 0; border: 0; background: var(--paper); color: var(--ink); }
+.sheet::backdrop { background: #16211D; opacity: .28; }
+.sheet-inner { padding-bottom: var(--s3); }
+.sheet-top { display: flex; align-items: center; justify-content: space-between; height: 68px; margin-bottom: var(--s3); }
+.sheet-top .t-note { font-size: 15px; color: var(--ink-70); }
+.sheet-close { min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; justify-content: flex-end; }
+.sheet-close svg { width: 18px; height: 18px; }
+.sheet-nav { display: grid; gap: var(--s4); }
+.sheet-main { display: grid; gap: var(--s2); }
+.sheet-main a { display: block; padding-block: 9px; font-family: var(--f-display); font-weight: 600; font-size: clamp(23px, 2.1vw, 30px); letter-spacing: -0.024em; line-height: 1.12; }
+.sheet-main a[aria-current="page"] { color: var(--live); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 7px; }
+.sheet-community { display: grid; gap: var(--s1); }
+.sheet-label { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-50); }
+.sheet-tiles { border-top: 1px solid var(--ink-13); }
+.sheet-tiles li { border-bottom: 1px solid var(--ink-13); }
+.sheet-tile { display: grid; grid-template-columns: 44px minmax(0, 1fr); align-items: center; column-gap: 14px; padding: 12px 0; }
+.sheet-tile svg { grid-row: 1 / span 2; box-sizing: content-box; width: 20px; height: 20px; padding: 11px; border: 1px solid var(--ink-13); }
+.sheet-tile-label { font-family: var(--f-display); font-weight: 600; font-size: 20px; letter-spacing: -0.02em; line-height: 1.1; }
+.sheet-tile-note { font-size: 13px; line-height: 1.35; color: var(--ink-70); }
+.sheet-join { display: flex; width: 100%; min-height: 48px; }
+
+/* ── Hero ─────────────────────────────────────────────────────────────── */
+.hero { padding-top: clamp(40px, 6vw, 96px); padding-bottom: var(--sec); }
+.hero-h1 { font-family: var(--f-display); font-weight: 800; font-size: min(9.4vw, 132px); line-height: .92; letter-spacing: -0.045em; }
+/* Two set lines from tablet up; below that the words wrap on their own. */
+.hero-h1 .ln { display: block; white-space: nowrap; }
+@media (max-width: 699px) { .hero-h1 { font-size: clamp(46px, 13.4vw, 72px); } .hero-h1 .ln { display: inline; white-space: normal; } }
+.hero-h1 .w { display: inline-block; overflow: hidden; vertical-align: top; padding: .04em .1em .24em; margin: -.04em -.1em -.24em; }
+/* The mask is only for the rise. Once the words are up it comes off, so no
+   descender, overhang or tight-tracked edge is ever clipped. */
+.hero-h1.revealed .w { overflow: visible; }
+.hero-h1 .w > span { display: inline-block; }
+.hero-row { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); gap: var(--s4) clamp(24px, 6vw, 120px); margin-top: clamp(32px, 4vw, 56px); align-items: end; }
+.hero-lede { font-size: clamp(18px, 1.6vw, 22px); line-height: 1.45; color: var(--ink-70); max-width: 38ch; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: var(--s3); }
+.facts { border-top: 1px solid var(--ink); display: grid; }
+.facts li { padding-block: 12px; border-bottom: 1px solid var(--ink-13); font-size: 15px; display: flex; justify-content: space-between; gap: 12px; }
+.facts li span:last-child { color: var(--ink-50); font-family: var(--f-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; align-self: center; }
+@media (max-width: 860px) { .hero-row { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 560px) {
+  .hero-actions .btn { flex: 1 1 100%; min-height: 48px; }
+  .hero-row { gap: var(--s4); }
+}
+
+/* The product stage: flat on the page. */
+.stage { margin-top: clamp(56px, 7vw, 104px); position: relative; }
+.stage-cap { display: flex; justify-content: space-between; gap: 12px; margin-top: 14px; }
+.stagebox { position: relative; }
+
+/* ── Device outlines and scaled screens ───────────────────────────────── */
+/* A device is only its outline: one thin light line at the guide's 14px
+   radius, the screen pushed almost to it. Light travels along that line. */
+.device { position: relative; border: 1px solid var(--ink-28); border-radius: 14px; padding: 7px; }
+.screen { position: relative; overflow: hidden; background: #16211D; border-radius: 7px; }
+.trace { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; z-index: 4; }
+.trace path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.trace .halo { stroke: #6FCB9F; stroke-width: 7; opacity: .75; filter: url(#glow); }
+.trace .core { stroke: #0E6B4E; stroke-width: 1.6; }
+.trace .rest { stroke: var(--ink-28); stroke-width: 1; }
+.canvas { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+.screen-phone { display: none; }
+@media (max-width: 699px) {
+  .screen-desk { display: none; }
+  .screen-phone { display: block; }
+  .stage .device { max-width: 420px; margin-inline: auto; }
+}
+
+/* ── The app (member and merchant) — its own ground, same guide ──────── */
+.app {
+  --a-bg: #16211D; --a-2: #1E2C27; --a-line: rgb(223 227 222 / .14); --a-fg: #DFE3DE;
+  --a-70: #ABB1AC; --a-50: #939995; --a-live: #7C8CC5; --a-ok: #6FCB9F; --a-warn: #E3B667;
+  background: var(--a-bg); color: var(--a-fg); font-family: var(--f-text); font-size: 14px; line-height: 1.45;
+  -webkit-font-smoothing: antialiased; overflow: hidden;
+}
+.app .lbl { font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--a-50); }
+.app .num { font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.app .bar-top { height: 56px; display: flex; align-items: center; justify-content: space-between; padding-inline: 24px; border-bottom: 1px solid var(--a-line); }
+.app .bar-top .l { display: flex; align-items: center; gap: 28px; }
+.app .lock { display: flex; align-items: center; gap: 8px; font-family: var(--f-display); font-weight: 800; font-size: 17px; letter-spacing: -0.035em; }
+.app .lock svg { width: 18px; height: 18px; }
+.app .lock i { width: 1px; height: 16px; background: var(--a-line); margin-inline: 4px; }
+.app .lock em { font-style: normal; font-family: var(--f-text); font-weight: 500; font-size: 14px; letter-spacing: 0; color: var(--a-70); }
+.app .tabs { display: flex; gap: 22px; color: var(--a-50); font-size: 14px; }
+.app .tabs .on { color: var(--a-fg); }
+.app .ava { width: 30px; height: 30px; border-radius: 999px; border: 1px solid var(--a-line); display: grid; place-items: center; font-size: 11.5px; font-weight: 600; color: var(--a-70); }
+.app .pillb { display: inline-flex; align-items: center; justify-content: center; height: 32px; padding-inline: 14px; border-radius: 999px; border: 1px solid var(--a-line); font-size: 13px; font-weight: 500; color: var(--a-fg); white-space: nowrap; }
+.app .pillb.solid { background: var(--a-fg); color: var(--a-bg); border-color: var(--a-fg); }
+
+
+/* Shared bento vocabulary for this page: one line weight, padding on the
+   rows so every rule runs wall to wall, header / main / footer in a cell. */
+.who { font-size: 15px; font-weight: 500; letter-spacing: -0.01em; }
+.ck { font-size: 13.5px; color: var(--ink-50); }
+.bx { --line: var(--ink-28); --px: clamp(20px, 2.6vw, 36px); border: 1px solid var(--line); display: grid; }
+.bx + .bx { border-top: 0; }
+.cell { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; min-width: 0; }
+.c-h, .c-f { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 56px; padding: 0 var(--px); }
+.c-h { border-bottom: 1px solid var(--line); }
+.c-f { border-top: 1px solid var(--line); }
+.c-m { display: grid; align-content: start; gap: 18px; padding: clamp(26px, 3vw, 40px) var(--px); }
+.c-m h3 { font-family: var(--f-display); font-weight: 600; font-size: clamp(20px, 1.8vw, 26px); line-height: 1.15; letter-spacing: -0.022em; text-wrap: balance; max-width: 22ch; }
+.c-m p { font-size: 15px; line-height: 1.55; color: var(--ink-70); max-width: 44ch; }
+.note { font-size: 13.5px; color: var(--ink-50); }
+
+
+
+/* ── Hero ─────────────────────────────────────────────────────────────── */
+.phero { padding-bottom: var(--sec); }
+.phero .hero-h1 { font-size: min(7.8vw, 108px); }
+@media (max-width: 699px) { .phero .hero-h1 { font-size: clamp(44px, 13vw, 72px); } .phero .hero-h1 .ln { display: block; white-space: normal; } }
+.page-label { display: flex; gap: 14px; margin-bottom: clamp(24px, 3vw, 40px); }
+.page-label b { font-weight: 400; color: var(--live); }
+.facts.figs li { align-items: baseline; }
+.facts.figs li span:last-child { font-family: var(--f-text); font-size: 16px; font-weight: 600; letter-spacing: -0.01em; text-transform: none; color: var(--ink); }
+
+/* ── The form: four answers, one set of fields, two notes ────────────── */
+.joinf { grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); margin-top: clamp(48px, 6vw, 88px); }
+/* the four modes, as the bento's header row */
+.modes { grid-column: 1 / -1; position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-bottom: 1px solid var(--line); }
+.mode { position: relative; display: grid; gap: 6px; align-content: start; text-align: left; padding: 20px var(--px) 22px; min-width: 0; color: var(--ink-50); transition: color 250ms var(--ease), background-color 250ms var(--ease); }
+.mode + .mode { border-left: 1px solid var(--line); }
+.mode b { font-family: var(--f-mono); font-weight: 400; font-size: 11px; letter-spacing: .08em; }
+.mode span { font-size: clamp(16px, 1.4vw, 19px); font-weight: 600; letter-spacing: -0.015em; line-height: 1.2; color: var(--ink-70); transition: color 250ms var(--ease); }
+.mode small { font-size: 13px; color: var(--ink-50); }
+.mode:hover span { color: var(--ink); }
+.mode[aria-selected="true"] { background: var(--paper-2); }
+.mode[aria-selected="true"] span { color: var(--ink); }
+.mode[aria-selected="true"] b { color: var(--live); }
+.modes .bar { position: absolute; top: -1px; left: 0; height: 3px; background: var(--live); transition: transform 500ms var(--ease), width 500ms var(--ease); pointer-events: none; }
+/* fields */
+.fields { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 clamp(20px, 2.4vw, 36px); align-content: start; padding: clamp(24px, 2.8vw, 40px) var(--px) clamp(28px, 3vw, 40px); }
+.f { display: grid; gap: 8px; padding-block: 14px; min-width: 0; }
+.f.wide { grid-column: 1 / -1; }
+.f label, .f .lb { display: flex; justify-content: space-between; gap: 12px; font-size: 13.5px; color: var(--ink-70); }
+.f .lb output { font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+.f input[type="text"], .f input[type="email"], .f select, .f textarea { width: 100%; font: inherit; font-size: 17px; color: var(--ink); background: transparent; border: 0; border-bottom: 1px solid var(--ink-28); border-radius: 0; padding: 8px 0 10px; outline: none; transition: border-color 200ms var(--ease); -webkit-appearance: none; appearance: none; }
+.f textarea { resize: vertical; min-height: 96px; border: 1px solid var(--ink-28); padding: 10px 12px; }
+.f select { background-image: linear-gradient(45deg, transparent 50%, var(--ink-50) 50%), linear-gradient(-45deg, transparent 50%, var(--ink-50) 50%); background-position: calc(100% - 10px) 55%, calc(100% - 5px) 55%; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 24px; }
+.f select:invalid { color: var(--ink-50); }
+.f input:focus, .f select:focus, .f textarea:focus { border-color: var(--ink); }
+.f input::placeholder, .f textarea::placeholder { color: var(--ink-28); }
+/* the listbox: drawn like the other fields, its menu the one floating thing on the page */
+.fs { position: relative; }
+.fs-btn { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-width: 0; font: inherit; font-size: 17px; color: var(--ink); text-align: left; border-bottom: 1px solid var(--ink-28); padding: 8px 0 10px; transition: border-color 200ms var(--ease); }
+.fs-btn:hover, .fs.open .fs-btn { border-color: var(--ink); }
+.fs-btn:focus-visible { outline-offset: 5px; }
+.fs-v { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.fs-v[data-empty] { color: var(--ink-50); }
+.fs-caret { flex: none; width: 8px; height: 8px; border-right: 1.5px solid var(--ink-70); border-bottom: 1.5px solid var(--ink-70); transform: translateY(-2px) rotate(45deg); transition: transform 250ms var(--ease); }
+.fs.open .fs-caret { transform: translateY(2px) rotate(-135deg); }
+.fs-list { position: absolute; z-index: 20; top: calc(100% - 6px); left: 0; right: 0; max-height: 264px; overflow-y: auto; margin: 0; padding: 4px 0; list-style: none; background: var(--paper-2); color: var(--ink); border: 1px solid var(--ink); box-shadow: 0 12px 28px rgb(0 0 0 / .18); }
+.fs-list li { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 14px; font-size: 15.5px; cursor: pointer; }
+.fs-list li[data-cursor] { background: var(--ink-13); }
+.fs-list li[aria-selected="true"] { font-weight: 600; }
+.fs-list li[aria-selected="true"]::after { content: ''; width: 9px; height: 5px; border-left: 1.6px solid var(--live); border-bottom: 1.6px solid var(--live); transform: translateY(-2px) rotate(-45deg); }
+/* ranges: one rule, a filled span, round handles (they are the thing you move) */
+.rg { position: relative; height: 28px; margin-top: 4px; }
+.rg .tr { position: absolute; left: 0; right: 0; top: 13px; height: 2px; background: var(--ink-13); }
+.rg .fl { position: absolute; top: 13px; height: 2px; background: var(--live); }
+.rg input { position: absolute; inset: 0; width: 100%; margin: 0; background: none; pointer-events: none; -webkit-appearance: none; appearance: none; }
+.rg input::-webkit-slider-thumb { -webkit-appearance: none; pointer-events: auto; width: 22px; height: 22px; border-radius: 999px; background: var(--paper); border: 2px solid var(--live); cursor: grab; box-shadow: 0 1px 2px rgb(0 0 0 / .12); }
+.rg input::-moz-range-thumb { pointer-events: auto; width: 18px; height: 18px; border-radius: 999px; background: var(--paper); border: 2px solid var(--live); cursor: grab; }
+.rg input::-webkit-slider-runnable-track { background: none; }
+.rg .ax { position: absolute; left: 0; right: 0; top: 30px; display: flex; justify-content: space-between; font-size: 11.5px; color: var(--ink-50); font-variant-numeric: tabular-nums; }
+.f.range { padding-bottom: 30px; }
+.sub { grid-column: 1 / -1; display: flex; align-items: center; flex-wrap: wrap; gap: 14px 24px; padding-top: 22px; }
+.sub .btn { min-height: 48px; padding-inline: 28px; }
+.sub .st { font-size: 14px; color: var(--ink-50); }
+/* the two notes, and the confirmation that replaces them */
+.aside2 { border-left: 1px solid var(--line); display: flex; flex-direction: column; background: var(--paper-2); min-width: 0; }
+.aside2 > div { padding: clamp(24px, 2.8vw, 36px) var(--px); display: grid; gap: 10px; align-content: start; }
+.aside2 > .n2, .aside2 > .n3 { border-top: 1px solid var(--line); }
+.prog { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 3px; height: 8px; }
+.prog i { background: var(--ink-13); transition: background-color 300ms var(--ease); }
+.prog i.on { background: var(--ink); }
+.prog.all i { background: var(--settled); }
+.pc { font-size: 13.5px; color: var(--ink-50); font-variant-numeric: tabular-nums; }
+.aside2 .label { color: var(--ink-50); }
+.aside2 .nx { font-family: var(--f-display); font-weight: 600; font-size: clamp(20px, 1.8vw, 25px); line-height: 1.2; letter-spacing: -0.02em; text-wrap: pretty; }
+.aside2 .cv { font-size: 15.5px; line-height: 1.5; color: var(--ink-70); text-wrap: pretty; }
+.aside2 .where { margin-top: auto; border-top: 1px solid var(--line); }
+.where .pin { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--ink-70); }
+.where .pin i { position: relative; width: 9px; height: 9px; border-radius: 999px; background: var(--live); flex: none; }
+.where .pin i::after { content: ''; position: absolute; inset: -5px; border-radius: 999px; border: 1px solid var(--live); opacity: 0; animation: ping 2.4s var(--ease) infinite; }
+@keyframes ping { 0% { transform: scale(.4); opacity: .9; } 100% { transform: scale(1.6); opacity: 0; } }
+.swap { transition: opacity 220ms var(--ease), transform 220ms var(--ease); }
+.swap.out { opacity: 0; transform: translateY(6px); }
+/* confirmation */
+.aside2 > .done { display: none; }
+.joinf.sent .aside2 > .n1, .joinf.sent .aside2 > .n2, .joinf.sent .aside2 > .n3 { display: none; }
+.joinf.sent .aside2 > .done { display: grid; }
+.done .ok { display: flex; align-items: center; gap: 10px; font-family: var(--f-display); font-weight: 600; font-size: 22px; letter-spacing: -0.02em; }
+.done .ok svg { width: 22px; height: 22px; color: var(--settled); }
+.rc { display: grid; border-top: 1px solid var(--ink-13); margin-top: 6px; }
+.rc div { display: flex; justify-content: space-between; gap: 12px; padding-block: 10px; border-bottom: 1px solid var(--ink-13); font-size: 14px; color: var(--ink-70); }
+.rc b { font-weight: 600; color: var(--ink); text-align: right; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.done .flag { font-size: 12.5px; color: var(--ink-50); }
+.done button { justify-self: start; font-size: 14px; color: var(--ink); border-bottom: 1px solid var(--ink-28); padding-bottom: 2px; }
+@media (max-width: 1000px) {
+  .joinf { grid-template-columns: minmax(0, 1fr); }
+  .aside2 { border-left: 0; border-top: 1px solid var(--line); }
+}
+@media (max-width: 760px) {
+  .modes { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .mode:nth-child(odd) { border-left: 0; }
+  .mode:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .mode { padding-block: 16px; }
+  .modes .bar { display: none; }
+  .mode[aria-selected="true"] { box-shadow: inset 0 3px 0 var(--live); }
+}
+@media (max-width: 560px) {
+  .fields { grid-template-columns: minmax(0, 1fr); }
+  .f { grid-column: 1 / -1; }
+  .sub .btn { flex: 1 1 100%; }
+  .mode small { display: none; }
+}
+/* ── Close + footer ───────────────────────────────────────────────────── */
+.close .h2 { font-size: clamp(40px, 5.6vw, 88px); max-width: 12ch; }
+.foot { border-top: 1px solid var(--ink); padding-block: var(--s5); display: grid; grid-template-columns: minmax(0, 1.4fr) repeat(4, minmax(0, 1fr)); gap: var(--s4) var(--s4); font-size: 14.5px; }
+.foot h4 { margin: 0 0 12px; font-family: var(--f-mono); font-weight: 400; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-50); }
+.foot li + li { margin-top: 6px; }
+.foot a { color: var(--ink-70); } .foot a:hover { color: var(--ink); }
+.foot .about { color: var(--ink-70); max-width: 30ch; display: grid; gap: var(--s2); align-content: start; }
+.legal { grid-column: 1 / -1; border-top: 1px solid var(--ink-13); padding-top: var(--s3); color: var(--ink-50); font-size: 12.5px; display: grid; gap: 8px; max-width: 110ch; }
+@media (max-width: 900px) { .foot { grid-template-columns: repeat(2, minmax(0, 1fr)); } .foot .about { grid-column: 1 / -1; } }
+
+.mock-flag { position: fixed; left: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); z-index: 40; font-family: var(--f-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; background: #24409E; color: #E9ECE7; padding: 6px 11px; border-radius: 999px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .dot::after { animation: none; opacity: 0; }
+  *, *::before, *::after { transition-duration: 0ms !important; }
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="mark" viewBox="-168 -168 336 336">
+    <path d="M 148.28 -64 A 161.5 161.5 0 1 0 148.28 64 L 74.22 64 A 98 98 0 1 1 74.22 -64 Z" fill="currentColor" stroke="currentColor" stroke-width="4"/>
+    <path d="M 0 -8 H 114 V 8 H 0 Z" fill="currentColor"/>
+    <circle cx="0" cy="0" r="34" fill="currentColor"/>
+    <circle cx="131.5" cy="0" r="25.25" fill="none" stroke="currentColor" stroke-width="15.5"/>
+  </symbol>
+  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3.2"/></filter>
+  <symbol id="i-events" viewBox="0 0 18 18"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="3.5" width="13" height="12"/><path d="M2.5 7h13M6 2v3M12 2v3"/><path d="M5.5 10h2M5.5 12.5h2M10.5 10h2"/></g></symbol>
+  <symbol id="i-directory" viewBox="0 0 18 18"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l1.2-4h10.6l1.2 4"/><path d="M2.5 7.5c0 1.1.9 2 2 2s2-.9 2-2c0 1.1.9 2 2 2s2-.9 2-2c0 1.1.9 2 2 2s2-.9 2-2"/><path d="M3.5 9.3V15.5h11V9.3M7.5 15.5v-3.5h3v3.5"/></g></symbol>
+  <symbol id="i-shop" viewBox="0 0 18 18"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6.5h12l-1 9H4z"/><path d="M6.5 6.5V5a2.5 2.5 0 0 1 5 0v1.5"/></g></symbol>
+  <symbol id="person" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="5" r="2.8"/><path d="M2.5 15c0-3.2 2.4-5 5.5-5s5.5 1.8 5.5 5"/></g></symbol>
+  <symbol id="arrow" viewBox="0 0 14 10"><path d="M0 5h12M8 1l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.4"/></symbol>
+  <symbol id="check" viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="back" viewBox="0 0 9 15"><path d="M8 1L2 7.5 8 14" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+  <symbol id="bell" viewBox="0 0 18 18"><path d="M4.5 12.5V8a4.5 4.5 0 0 1 9 0v4.5l1.5 1.5H3z M7.2 15.5a1.9 1.9 0 0 0 3.6 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></symbol>
+  <symbol id="plus" viewBox="0 0 18 18"><path d="M9 2v14M2 9h14" stroke="currentColor" stroke-width="1.8"/></symbol>
+  <symbol id="del" viewBox="0 0 24 16"><path d="M8 1h14v14H8L1 8z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M12 5l6 6M18 5l-6 6" stroke="currentColor" stroke-width="1.4"/></symbol>
+</svg>
+
+<header class="site-head" id="site-head">
+  <div class="wrap">
+    <div class="top">
+      <a class="brand" href="https://www.useclear.org/" aria-label="Clear, home"><svg aria-hidden="true"><use href="#mark"/></svg>Clear</a>
+      <nav class="nav" aria-label="Main">
+        <ul>
+          <li><a href="https://www.useclear.org/how">How it works</a></li>
+          <li><a href="https://www.useclear.org/shops">For shops</a></li>
+          <li><a href="https://www.useclear.org/housing">Housing</a></li>
+          <li><a href="https://www.useclear.org/contribute">Contribute land</a></li>
+          <li><a href="https://www.useclear.org/coop">The co-op</a></li>
+          <li class="navmenu" id="navmenu">
+            <button type="button" class="navmenu-button" id="navmenu-btn" aria-expanded="false" aria-controls="navmenu-panel">Community<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></button>
+            <div class="navmenu-panel" id="navmenu-panel" hidden><ul>
+              <li><a class="navmenu-link" href="https://www.useclear.org/events"><span class="navmenu-icon"><svg aria-hidden="true"><use href="#i-events"/></svg></span><span class="navmenu-text"><span class="navmenu-label">Events</span><span class="navmenu-note">Calls, town halls and local meetings</span></span></a></li>
+              <li><a class="navmenu-link" href="https://www.useclear.org/directory"><span class="navmenu-icon"><svg aria-hidden="true"><use href="#i-directory"/></svg></span><span class="navmenu-text"><span class="navmenu-label">Directory</span><span class="navmenu-note">Local businesses that take Clear Pay</span></span></a></li>
+              <li><a class="navmenu-link" href="https://www.useclear.org/shop"><span class="navmenu-icon"><svg aria-hidden="true"><use href="#i-shop"/></svg></span><span class="navmenu-text"><span class="navmenu-label">Shop</span><span class="navmenu-note">Goods with the Clear name on them</span></span></a></li>
+            </ul></div>
+          </li>
+        </ul>
+        <a class="btn btn-primary" href="https://www.useclear.org/join" aria-current="page"><span class="dot"></span>Join</a>
+        <button type="button" class="menu-btn" id="menu-btn" aria-haspopup="dialog">Menu<svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 4h14M1 8h14M1 12h14"/></svg></button>
+      </nav>
+    </div>
+  </div>
+</header>
+<dialog class="sheet" id="sheet" aria-label="Main">
+  <div class="sheet-inner wrap">
+    <div class="sheet-top"><span class="t-note">Menu</span><button type="button" class="sheet-close" id="sheet-close" aria-label="Close menu"><svg viewBox="0 0 18 18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 2l14 14M16 2L2 16"/></svg></button></div>
+    <nav class="sheet-nav">
+      <ul class="sheet-main">
+          <li><a href="https://www.useclear.org/">Home</a></li>
+          <li><a href="https://www.useclear.org/how">How it works</a></li>
+          <li><a href="https://www.useclear.org/shops">For shops</a></li>
+          <li><a href="https://www.useclear.org/housing">Housing</a></li>
+          <li><a href="https://www.useclear.org/contribute">Contribute land</a></li>
+          <li><a href="https://www.useclear.org/coop">The co-op</a></li>
+          <li><a href="https://www.useclear.org/capital">Clear Capital</a></li>
+      </ul>
+      <section class="sheet-community" aria-labelledby="sheet-community-label">
+        <p class="sheet-label" id="sheet-community-label">Community</p>
+        <ul class="sheet-tiles">
+            <li><a class="sheet-tile" href="https://www.useclear.org/events"><svg aria-hidden="true"><use href="#i-events"/></svg><span class="sheet-tile-label">Events</span><span class="sheet-tile-note">Calls, town halls and local meetings</span></a></li>
+            <li><a class="sheet-tile" href="https://www.useclear.org/directory"><svg aria-hidden="true"><use href="#i-directory"/></svg><span class="sheet-tile-label">Directory</span><span class="sheet-tile-note">Local businesses that take Clear Pay</span></a></li>
+            <li><a class="sheet-tile" href="https://www.useclear.org/shop"><svg aria-hidden="true"><use href="#i-shop"/></svg><span class="sheet-tile-label">Shop</span><span class="sheet-tile-note">Goods with the Clear name on them</span></a></li>
+        </ul>
+      </section>
+      <a class="btn btn-primary sheet-join" href="https://www.useclear.org/join"><span class="dot"></span>Join</a>
+    </nav>
+  </div>
+</dialog>
+
+<main>
+  <!-- HERO + FORM: one composition, nothing to scroll past -->
+  <section class="hero phero wrap">
+    <div class="page-label label"><b>Join</b>The waitlist</div>
+    <h1 class="hero-h1" id="hero-h1"><span class="ln">Tell us which</span> <span class="ln">one you are.</span></h1>
+    <div class="hero-row">
+      <div data-in>
+        <p class="hero-lede">We are onboarding a small number of members and shops in the Inland Empire first. If you are somewhere else, say so. The waitlist is how we decide where to go next.</p>
+      </div>
+      <ul class="facts figs" data-in>
+        <li><span>Where we start</span><span>Inland Empire</span></li>
+        <li><span>Somewhere else</span><span>Tell us</span></li>
+        <li><span>Who reads it</span><span>A founder</span></li>
+      </ul>
+    </div>
+
+    <form class="bx joinf" id="joinf" novalidate>
+      <div class="modes" role="tablist" aria-label="What are you getting in touch about?">
+        <button type="button" class="mode" role="tab" data-k="member" aria-selected="true"><b>01</b><span>I want to join</span><small>Housing and credit</small></button>
+        <button type="button" class="mode" role="tab" data-k="shop" aria-selected="false"><b>02</b><span>I run a shop</span><small>Take Clear Pay</small></button>
+        <button type="button" class="mode" role="tab" data-k="land" aria-selected="false"><b>03</b><span>I own property</span><small>Contribute it</small></button>
+        <button type="button" class="mode" role="tab" data-k="work" aria-selected="false"><b>04</b><span>I want to work on it</span><small>Equity-only</small></button>
+        <span class="bar" id="mode-bar" aria-hidden="true"></span>
+      </div>
+      <div class="fields swap" id="fields" role="tabpanel"></div>
+      <aside class="aside2">
+        <div class="n1 swap"><span class="label">What happens next</span><p class="nx" id="nx"></p></div>
+        <div class="n2 swap"><span class="label" id="cvl"></span><p class="cv" id="cv"></p></div>
+        <div class="n3 swap"><span class="label">Your answers</span><div class="prog" id="prog"></div><span class="pc" id="pc"></span></div>
+        <div class="done" id="done">
+          <span class="ok"><svg><use href="#check"/></svg>We have it.</span>
+          <div class="rc" id="rc"></div>
+          <p class="cv" id="done-nx"></p>
+          <p class="flag">Preview of the confirmed state. This mockup sends nothing; the live form only shows this after the endpoint says yes.</p>
+          <button type="button" id="again">Send another</button>
+        </div>
+        <div class="where">
+          <span class="pin"><i></i>Onboarding first in the Inland Empire</span>
+        </div>
+      </aside>
+    </form>
+  </section>
+</main>
+
+<footer class="wrap">
+  <div class="foot">
+    <div class="about"><a class="brand" href="https://www.useclear.org/"><svg aria-hidden="true"><use href="#mark"/></svg>Clear</a><p>A member-owned cooperative, building in Inland Empire, California.</p></div>
+    <div><h4>Members</h4><ul><li><a href="https://www.useclear.org/how">How it works</a></li><li><a href="https://www.useclear.org/housing">Housing</a></li><li><a href="https://www.useclear.org/join">Join the waitlist</a></li><li><a href="https://demo.useclear.org">Members app</a></li></ul></div>
+    <div><h4>Partners</h4><ul><li><a href="https://www.useclear.org/shops">For shops</a></li><li><a href="https://www.useclear.org/contribute">Contribute land</a></li><li><a href="https://www.useclear.org/capital">Clear Capital</a></li><li><a href="https://merchant.useclear.org">Merchant app</a></li></ul></div>
+    <div><h4>The co-op</h4><ul><li><a href="https://www.useclear.org/coop">Structure and governance</a></li><li><a href="https://github.com/Deed3Labs/Protocol-Contracts">Protocol source</a></li><li><a href="https://www.useclear.org/join?as=work">Work with us</a></li><li><a href="https://www.useclear.org/style">Brand and style guide</a></li></ul></div>
+    <div><h4>Community</h4><ul><li><a href="https://www.useclear.org/events">Events</a></li><li><a href="https://www.useclear.org/directory">Directory</a></li><li><a href="https://www.useclear.org/shop">Shop</a></li></ul></div>
+    <div class="legal">
+      <p>Clear is not a bank and deposits are not FDIC insured. Membership accounts are cooperative capital accounts, not deposit accounts.</p>
+      <p>Nothing here is an offer to sell or a solicitation to buy any security. Figures shown for housing, savings and credit are illustrations of how the model works, not quotes, offers or predictions. Credit is subject to the terms disclosed in the app before you draw.</p>
+      <p>We are not tax or legal advisers. Descriptions of property contributions are general and depend entirely on your own circumstances.</p>
+    </div>
+  </div>
+</footer>
+
+<div class="mock-flag">Mockup v1 · Join</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const G = typeof window.gsap !== 'undefined' && !reduce;
+  const money = (n, dp = 2) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: dp, maximumFractionDigits: dp });
+
+  /* Header */
+  const head = $('#site-head');
+  const onScroll = () => head.classList.toggle('scrolled', scrollY > 8);
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+  /* The Community menu: opens on click, and on hover for a mouse. */
+  const nm = $('#navmenu'), nb = $('#navmenu-btn'), np = $('#navmenu-panel');
+  let nmT = null, byHover = false;
+  const nmSet = o => { np.hidden = !o; nb.setAttribute('aria-expanded', String(o)); if (!o) byHover = false; };
+  /* A mouse already opened it by hovering, so a click keeps it open. */
+  nb.addEventListener('click', () => nmSet(byHover ? true : np.hidden));
+  nm.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') { clearTimeout(nmT); if (np.hidden) byHover = true; nmSet(true); } });
+  nm.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') nmT = setTimeout(() => nmSet(false), 180); });
+  document.addEventListener('pointerdown', e => { if (!nm.contains(e.target)) nmSet(false); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { nmSet(false); $('#sheet').close(); } });
+  /* The full-screen sheet, on <dialog>. */
+  const sheet = $('#sheet');
+  $('#menu-btn').addEventListener('click', () => sheet.showModal());
+  $('#sheet-close').addEventListener('click', () => sheet.close());
+
+  /* Screens: each app canvas is authored at its real width and scaled to fit,
+     so the product reads like a screenshot at every width. */
+  function fit() {
+    $$('.screen').forEach(sc => {
+      if (!sc.offsetParent) return;
+      const w = +sc.dataset.w, h = +sc.dataset.h || sc.firstElementChild.offsetHeight, s = sc.clientWidth / w;
+      sc.style.height = (h * s) + 'px';
+      sc.firstElementChild.style.transform = `scale(${s})`;
+    });
+  }
+  new ResizeObserver(fit).observe(document.body); fit();
+
+  /* ── Light along the lines ──────────────────────────────────────────────
+     One engine. A path is built in an element's own pixels; a short lit
+     segment (soft halo + thin core) runs along it. Paths are rebuilt on resize. */
+  const NS = 'http://www.w3.org/2000/svg';
+  function traceLayer(host) {
+    const svg = document.createElementNS(NS, 'svg'); svg.classList.add('trace');
+    const halo = document.createElementNS(NS, 'path'); halo.classList.add('halo');
+    const core = document.createElementNS(NS, 'path'); core.classList.add('core');
+    svg.append(halo, core); host.appendChild(svg);
+    return { svg, halo, core };
+  }
+  /* Rounded rectangle, clockwise, starting at a chosen point on its edge. */
+  function rr(x, y, w, h, r, start = 'top') {
+    const L = x, T = y, R = x + w, B = y + h;
+    const seg = {
+      top:    `L ${R - r} ${T} A ${r} ${r} 0 0 1 ${R} ${T + r}`,
+      right:  `L ${R} ${B - r} A ${r} ${r} 0 0 1 ${R - r} ${B}`,
+      bottom: `L ${L + r} ${B} A ${r} ${r} 0 0 1 ${L} ${B - r}`,
+      left:   `L ${L} ${T + r} A ${r} ${r} 0 0 1 ${L + r} ${T}`,
+    };
+    const starts = { top: [L + w / 2, T], right: [R, T + h / 2], bottom: [L + w / 2, B], left: [L, T + h / 2] };
+    const order = ['top', 'right', 'bottom', 'left'];
+    const i = order.indexOf(start), [sx, sy] = starts[start];
+    let d = `M ${sx} ${sy} `;
+    for (let k = 0; k < 4; k++) d += seg[order[(i + k) % 4]] + ' ';
+    return d + `L ${sx} ${sy}`;
+  }
+  function makeTrace(host, build, { seg = 140, speed = 520 } = {}) {
+    if (!G) return { run(o = {}) { if (o.done) o.done(); }, kill() {} };
+    const t = traceLayer(host);
+    let len = 0, tw = null;
+    function layout() {
+      const w = host.clientWidth, h = host.clientHeight;
+      t.svg.setAttribute('width', w); t.svg.setAttribute('height', h); t.svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+      const d = build(w, h, host); t.halo.setAttribute('d', d); t.core.setAttribute('d', d);
+      len = t.core.getTotalLength();
+      [t.halo, t.core].forEach(p => { p.style.strokeDasharray = `${seg} ${len + seg}`; p.style.strokeDashoffset = seg; });
+    }
+    layout(); new ResizeObserver(layout).observe(host);
+    return {
+      run(opts = {}) {
+        if (tw) tw.kill(); layout();
+        const o = { v: seg };
+        tw = gsap.to(o, { v: -len, duration: len / speed, ease: opts.ease || 'power1.inOut', repeat: opts.repeat || 0, repeatDelay: opts.repeatDelay || 0,
+          onUpdate: () => { t.halo.style.strokeDashoffset = o.v; t.core.style.strokeDashoffset = o.v; }, onComplete: opts.done });
+      },
+      kill() { if (tw) tw.kill(); [t.halo, t.core].forEach(p => { p.style.strokeDashoffset = seg; }); },
+    };
+  }
+
+
+
+
+  /* ── The form ────────────────────────────────────────────────────────── */
+  const IND = ['Auto repair', 'Tires and wheels', 'Plumbing, electrical or HVAC', 'Appliance and home repair', 'Dental or medical', 'Veterinary', 'Furniture and mattress', 'Something else'];
+  const PROP = ['Single-family home', 'Duplex or fourplex', 'Vacant land', 'Commercial building', 'Mixed-use building', 'Something else'];
+  const ZIP = { kind: 'text', name: 'zip', label: 'ZIP', ac: 'postal-code', numeric: true };
+  const MODES = {
+    member: { nameLabel: 'Your name', fields: [ZIP], button: 'Join the waitlist', noteLabel: 'Anything we should know',
+      next: 'You will hear from us before we open in your area, and we will not email you about anything else.', caveatLabel: 'What this is not',
+      caveat: 'Joining the waitlist is not an application and does not affect your credit.' },
+    shop: { nameLabel: 'Contact person', fields: [
+        { kind: 'text', name: 'business', label: 'Business name', wide: true, ac: 'organization' }, ZIP,
+        { kind: 'select', name: 'industry', label: 'What do you do', placeholder: 'Choose a trade', options: IND },
+        { kind: 'range2', label: 'Typical ticket', min: 100, max: 5000, step: 50, lo: 350, hi: 1500, fmt: 'usd', top: '$5,000+' },
+        { kind: 'range', name: 'jobs', label: 'Jobs a week, roughly', min: 5, max: 200, step: 5, v: 40, fmt: 'count', top: '200+' }],
+      button: 'Request a call', noteLabel: 'Anything else we should know?', next: 'A founder calls you, not a sales team.', caveatLabel: 'The first question',
+      caveat: 'Whether you can wait thirty days for the money. If the answer is no, we will say this is not a fit rather than sign you.' },
+    land: { nameLabel: 'Your name', fields: [ZIP,
+        { kind: 'select', name: 'propertyType', label: 'What do you own', placeholder: 'Choose a property type', options: PROP },
+        { kind: 'range2', label: 'Estimated value', min: 1000, max: 2000000, step: 1000, lo: 400000, hi: 750000, fmt: 'usdCompact', top: '$2M+' }],
+      button: 'Send the details', noteLabel: 'Where is it, and is there a mortgage on it?', next: 'We will walk through what a contribution would look like and what it would not.',
+      caveatLabel: 'Bring your CPA', caveat: 'To the second conversation, not the first. We will send them the documents.' },
+    work: { nameLabel: 'Your name', fields: [], button: 'Get in touch', noteLabel: 'What would you want to work on?',
+      next: 'Everything at this stage is equity-only with no salary, and we say that in the first conversation.', caveatLabel: 'Before you write',
+      caveat: 'If you need income in the next three months, this is the wrong thing for you.' },
+  };
+  const fmt = (v, f, top, max) => {
+    if (v >= max && top) return top;
+    if (f === 'count') return String(v);
+    if (f === 'usdCompact') return v >= 1e6 ? '$' + (v / 1e6).toFixed(v % 1e6 ? 2 : 0).replace(/\.?0+$/, '') + 'M' : '$' + Math.round(v / 1000) + 'K';
+    return money(v, 0);
+  };
+  const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  function fieldHTML(f, wide) {
+    const w = wide ? ' wide' : '';
+    if (f.kind === 'text') return `<div class="f${w}"><label for="j-${f.name}">${f.label}</label><input id="j-${f.name}" name="${f.name}" type="text" autocomplete="${f.ac || 'off'}"${f.numeric ? ' inputmode="numeric" maxlength="5"' : ''} required></div>`;
+    /* A listbox, not a styled <select>: the native menu draws in the platform's
+       type, so it is the one control that would not be in the site's voice. A
+       hidden input carries the value, so the form reads it like any field. */
+    if (f.kind === 'select') return `<div class="f fs${w}"><span class="lb" id="j-${f.name}-l">${f.label}</span><input type="hidden" id="j-${f.name}" name="${f.name}" required><button type="button" class="fs-btn" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="j-${f.name}-l j-${f.name}-v"><span class="fs-v" id="j-${f.name}-v" data-empty>${f.placeholder}</span><span class="fs-caret" aria-hidden="true"></span></button><ul class="fs-list" role="listbox" aria-labelledby="j-${f.name}-l" hidden>${f.options.map(o => `<li role="option" aria-selected="false">${esc(o)}</li>`).join('')}</ul></div>`;
+    if (f.kind === 'range') return `<div class="f range wide" data-r="1"><span class="lb">${f.label}<output>${fmt(f.v, f.fmt, f.top, f.max)}</output></span><div class="rg"><span class="tr"></span><span class="fl"></span><input type="range" min="${f.min}" max="${f.max}" step="${f.step}" value="${f.v}" aria-label="${f.label}"><span class="ax"><span>${fmt(f.min, f.fmt, '', Infinity)}</span><span>${f.top}</span></span></div></div>`;
+    return `<div class="f range wide" data-r="2"><span class="lb">${f.label}<output></output></span><div class="rg"><span class="tr"></span><span class="fl"></span><input type="range" min="${f.min}" max="${f.max}" step="${f.step}" value="${f.lo}" aria-label="${f.label}, low"><input type="range" min="${f.min}" max="${f.max}" step="${f.step}" value="${f.hi}" aria-label="${f.label}, high"><span class="ax"><span>${fmt(f.min, f.fmt, '', Infinity)}</span><span>${f.top}</span></span></div></div>`;
+  }
+  /* The keyboard behaves as a select's does: arrows move a cursor without
+     committing, Enter or Space chooses, Escape and Tab close. */
+  function wireSelect(fs) {
+    const btn = $('.fs-btn', fs), list = $('.fs-list', fs), hid = $('input', fs), val = $('.fs-v', fs), opts = $$('li', list);
+    let cur = 0;
+    const paintCur = () => { opts.forEach((o, i) => o.toggleAttribute('data-cursor', i === cur)); opts[cur].scrollIntoView({ block: 'nearest' }); };
+    const setOpen = o => { list.hidden = !o; btn.setAttribute('aria-expanded', String(o)); fs.classList.toggle('open', o); if (o) paintCur(); };
+    const choose = i => {
+      cur = i; hid.value = opts[i].textContent; val.textContent = hid.value; val.removeAttribute('data-empty');
+      opts.forEach((o, k) => o.setAttribute('aria-selected', String(k === i)));
+      setOpen(false); hid.dispatchEvent(new Event('change', { bubbles: true }));
+    };
+    btn.addEventListener('click', () => setOpen(list.hidden));
+    opts.forEach((o, i) => { o.addEventListener('mousedown', e => { e.preventDefault(); choose(i); }); o.addEventListener('mouseenter', () => { cur = i; paintCur(); }); });
+    btn.addEventListener('keydown', e => {
+      const open = !list.hidden;
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); if (!open) return setOpen(true); cur = (cur + (e.key === 'ArrowDown' ? 1 : -1) + opts.length) % opts.length; paintCur(); }
+      else if (e.key === 'Home' && open) { e.preventDefault(); cur = 0; paintCur(); }
+      else if (e.key === 'End' && open) { e.preventDefault(); cur = opts.length - 1; paintCur(); }
+      else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open ? choose(cur) : setOpen(true); }
+      else if (e.key === 'Escape' && open) { e.preventDefault(); setOpen(false); }
+      else if (e.key === 'Tab') setOpen(false);
+    });
+    document.addEventListener('mousedown', e => { if (!fs.contains(e.target)) setOpen(false); });
+  }
+  const form = $('#joinf'), fieldsEl = $('#fields');
+  let mode = 'member';
+  function wire(fd, f) {
+    const ins = $$('input[type=range]', fd), out = $('output', fd), fl = $('.fl', fd);
+    const pct = v => (v - f.min) / (f.max - f.min) * 100;
+    const paint = () => {
+      if (ins.length === 1) { const v = +ins[0].value; out.textContent = fmt(v, f.fmt, f.top, f.max); fl.style.left = '0%'; fl.style.width = pct(v) + '%'; return; }
+      let a = +ins[0].value, b = +ins[1].value;
+      if (a > b - f.step) { if (document.activeElement === ins[0]) { a = b - f.step; ins[0].value = a; } else { b = a + f.step; ins[1].value = b; } }
+      out.textContent = `${fmt(a, f.fmt, '', Infinity)} – ${fmt(b, f.fmt, f.top, f.max)}`;
+      fl.style.left = pct(a) + '%'; fl.style.width = (pct(b) - pct(a)) + '%';
+    };
+    ins.forEach(i => i.addEventListener('input', paint)); paint();
+  }
+  function render(k) {
+    const m = MODES[k];
+    /* Name and email lead. A narrow field pairs with the next narrow one; a
+       narrow field left alone on its row takes the row. */
+    const list = [{ kind: 'text', name: 'name', label: m.nameLabel, ac: 'name' }, { kind: 'email' }, ...m.fields];
+    let html = '', run = [];
+    const flush = () => { run.forEach((f, i) => html += f.kind === 'email' ? `<div class="f${run.length === 1 ? ' wide' : ''}"><label for="j-email">Email</label><input id="j-email" name="email" type="email" autocomplete="email" required></div>` : fieldHTML(f, run.length === 1)); run = []; };
+    list.forEach(f => {
+      const wide = f.wide || f.kind === 'range' || f.kind === 'range2';
+      if (wide) { flush(); html += fieldHTML(f, true); }
+      else { run.push(f); if (run.length === 2) flush(); }
+    });
+    flush();
+    html += `<div class="f wide"><label for="j-note">${m.noteLabel}</label><textarea id="j-note" name="note" rows="3"></textarea></div>`;
+    html += `<div class="sub"><button class="btn btn-primary" type="submit"><span class="dot"></span>${m.button}</button><span class="st" id="st"></span></div>`;
+    fieldsEl.innerHTML = html;
+    $$('.f[data-r]', fieldsEl).forEach((fd, i) => wire(fd, m.fields.filter(f => f.kind.startsWith('range'))[i]));
+    $$('.fs', fieldsEl).forEach(wireSelect);
+    const req = $$('input[required], select[required]', fieldsEl);
+    $('#prog').innerHTML = '<i></i>'.repeat(req.length);
+    const tally = () => { const n = req.filter(i => i.value.trim()).length; $$('#prog i').forEach((x, k) => x.classList.toggle('on', k < n)); $('#prog').classList.toggle('all', n === req.length); $('#pc').textContent = n === req.length ? 'Ready to send' : `${n} of ${req.length} answered`; };
+    req.forEach(i => { i.addEventListener('input', tally); i.addEventListener('change', tally); }); tally();
+    $('#nx').textContent = m.next; $('#cvl').textContent = m.caveatLabel; $('#cv').textContent = m.caveat;
+  }
+  function moveBar() {
+    const on = $('.mode[aria-selected="true"]'), bar = $('#mode-bar');
+    bar.style.width = on.offsetWidth + 'px'; bar.style.transform = `translateX(${on.offsetLeft}px)`;
+  }
+  function setMode(k, anim = true) {
+    if (!MODES[k]) return;
+    mode = k; form.classList.remove('sent');
+    $$('.mode').forEach(b => b.setAttribute('aria-selected', String(b.dataset.k === k)));
+    moveBar();
+    const sw = $$('#joinf .swap');
+    if (!anim || reduce) { render(k); return; }
+    sw.forEach(s => s.classList.add('out'));
+    setTimeout(() => { render(k); sw.forEach(s => s.classList.remove('out')); }, 200);
+  }
+  $$('.mode').forEach(b => b.addEventListener('click', () => setMode(b.dataset.k)));
+  /* Arrow keys move between the four answers, as a tab list should. */
+  $('.modes').addEventListener('keydown', e => {
+    const ks = Object.keys(MODES), i = ks.indexOf(mode);
+    if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { const n = ks[(i + (e.key === 'ArrowRight' ? 1 : 3)) % 4]; setMode(n); $(`.mode[data-k="${n}"]`).focus(); }
+  });
+  new ResizeObserver(moveBar).observe($('.modes'));
+  /* Links from the other pages arrive with ?as=shop, ?as=land, ?as=work. */
+  const as = new URLSearchParams(location.search).get('as');
+  render(MODES[as] ? as : 'member'); setMode(MODES[as] ? as : 'member', false);
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const bad = $$('input[required], select[required]', form).filter(i => !i.value.trim() || (i.type === 'email' && !/^\S+@\S+\.\S+$/.test(i.value)));
+    $$('.f', form).forEach(f => f.style.removeProperty('--bad'));
+    if (bad.length) { $('#st').textContent = `${bad.length === 1 ? 'One field needs' : bad.length + ' fields need'} an answer.`; const vis = i => i.type === 'hidden' ? $('.fs-btn', i.parentElement) : i; vis(bad[0]).focus(); bad.forEach(i => vis(i).style.borderColor = 'var(--absent)'); setTimeout(() => bad.forEach(i => vis(i).style.removeProperty('border-color')), 2400); return; }
+    const btn = $('button[type=submit]', form); btn.disabled = true; btn.lastChild.textContent = 'Sending…';
+    setTimeout(() => {
+      const m = MODES[mode], tab = $(`.mode[data-k="${mode}"] span`).textContent;
+      const rows = [['You said', tab], [m.nameLabel, $('#j-name').value], ['Email', $('#j-email').value]];
+      const z = $('#j-zip'); if (z) rows.push(['ZIP', z.value]);
+      $('#rc').innerHTML = rows.map(([a, b]) => `<div><span>${a}</span><b>${esc(b)}</b></div>`).join('');
+      $('#done-nx').textContent = m.next;
+      form.classList.add('sent'); btn.disabled = false; btn.lastChild.textContent = m.button;
+      if (G) gsap.from('#done > *', { opacity: 0, y: 8, duration: .45, stagger: .07, ease: 'power3.out' });
+      /* Below 1000px the confirmation sits under the form, so bring it into view. */
+      if (matchMedia('(max-width: 1000px)').matches) $('#done').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+    }, 900);
+  });
+  $('#again').addEventListener('click', () => { form.reset(); setMode(mode, false); });
+
+  if (!G) return;
+  gsap.registerPlugin(ScrollTrigger);
+  const h1 = $('#hero-h1');
+  $$('.ln', h1).forEach(ln => { ln.innerHTML = ln.textContent.split(' ').map(w => `<span class="w"><span>${w}</span></span>`).join(' '); });
+  gsap.timeline({ defaults: { ease: 'power3.out' } })
+    .from('#hero-h1 .w > span', { yPercent: 105, duration: 1, stagger: .06, onComplete: () => $('#hero-h1').classList.add('revealed') })
+    .from('[data-in]', { opacity: 0, y: 14, duration: .8, stagger: .1 }, '-=.6')
+    .from('#joinf', { opacity: 0, y: 20, duration: .9 }, '-=.5')
+    .from('.mode', { opacity: 0, y: 8, duration: .45, stagger: .07 }, '-=.5');
+})();
+</script>

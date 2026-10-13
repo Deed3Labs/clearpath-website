@@ -1,202 +1,279 @@
-import { Ledger, Note, Button, TextLink } from '@/components/primitives';
+import { PageHero, Section, SectionHead, Bento, Button } from '@/components/system';
+import { Boards } from './_parts/Boards';
+import { HouseDrawing, LandDrawing, SharesDrawing } from './_parts/Drawings';
+import { SplitMotion, ProtMotion, RedactMotion } from './_parts/Motion';
+import { Terms } from './_parts/Terms';
+import { PublicLedger } from './_parts/PublicLedger';
+import './page.css';
 import {
-  OPENING,
+  META,
+  HERO,
   SPLIT,
-  SCALE,
+  CONTRIBUTIONS,
   PROTECTIONS,
   DOWNSIDES,
   DOWNSIDES_SECTION,
   NEXT,
 } from '@/content/capital';
 
-export const metadata = {
-  title: 'Clear Capital',
-  description:
-    'Clear Capital Holdings is the separate company through which investors and property contributors participate in the cooperative’s assets — and what stops it ending up on the opposite side of the members.',
-};
+export const metadata = { title: META.title, description: META.description };
 
-/* Migrated to the .hx layout system. The numbered rail is gone; the section
- * number is an inline label.
+/* Clear Capital, ported from reference/redesign/capital.html.
  *
- * §7 Legal is the binding constraint on this page and nothing about it
- * changed: no terms, no rate, no projected return, no yield, and the "nothing
- * here is an offer" disclaimer stays at the top, in full, where a reader meets
- * it before anything else.
+ * Legal is the binding constraint on this page: no terms, no rate, no
+ * projected return and no yield figure anywhere, and the "Nothing on this
+ * page is an offer" notice sits in the hero, in full, beside the lede.
  *
- * The page was six sections of heading, paragraph and table. Its argument —
- * that the two sides are separated by structure rather than by promise — was
- * the second half of a 300-character lede; it opens the page.
- *
- * Rhythm: a pair of boards -> three holders on full-bleed ink -> a table ->
- * four equal cells edge to edge -> a list -> one sentence. No two consecutive
- * sections share a shape. */
+ * Hero: two boards. 01, on ink: three holders on one ground line and the two
+ * balance sheets as a ledger of edges. 02: the same terms at any size. 03, on
+ * ink: four structural protections. 04: the downsides plus the corridor. 05,
+ * on ink: what we publish and what we will not. */
+
+const DRAW = { house: HouseDrawing, land: LandDrawing, shares: SharesDrawing } as const;
 
 export default function Capital() {
   return (
-    <div className="hx">
-      {/* S1 - Two boards, which is the whole answer to "whose side are you
-          on". §7 Legal: the offer disclaimer runs the full band. */}
-      <section className="hx-band hx-wrap" data-pad="tight">
-        <p className="hx-label">
-          <b>01</b> {OPENING.kicker}
-        </p>
-        <div className="hx-grid">
-          <h1 className="hx-h2 c-two-thirds">{OPENING.heading}</h1>
-          <p className="hx-lede c-third">{OPENING.lede}</p>
+    <div className="pg-capital">
+      <PageHero
+        label={HERO.label}
+        lines={HERO.lines}
+        size="min(7.6vw, 104px)"
+        phoneSize="clamp(28px, 7.8vw, 58px)"
+        phone="set"
+        lede={HERO.lede}
+        actions={
+          <>
+            <Button href={HERO.primary.href} live>
+              {HERO.primary.label}
+            </Button>
+            <Button href={HERO.ghost.href} variant="ghost">
+              {HERO.ghost.label}
+            </Button>
+          </>
+        }
+        side={
+          <aside className="notice" data-in>
+            <span className="label">{HERO.notice.label}</span>
+            <p>{HERO.notice.text}</p>
+          </aside>
+        }
+      >
+        <Boards />
+      </PageHero>
 
-          <div className="c-full hx-cols" data-n="2" data-rows="3">
-            {OPENING.sides.map((side) => (
-              <div
-                className="side"
-                key={side.label}
-                data-live={'live' in side && side.live ? '' : undefined}
-              >
-                <p className="side-label">{side.label}</p>
-                <p className="side-line">{side.line}</p>
-                <p className="t-sm side-note">{side.note}</p>
+      {/* 01 · The split. */}
+      <Section ink id="split">
+        <SectionHead n={SPLIT.n} label={SPLIT.label} title={SPLIT.title} line={SPLIT.line} />
+        <SplitMotion>
+          <Bento className="split3 body-gap">
+            {SPLIT.holders.map((h) => {
+              const Draw = DRAW[h.draw];
+              return (
+                <div className={h.draw === 'land' ? 'cell co' : 'cell'} key={h.n}>
+                  <div className="c-h">
+                    <span className="who">{h.who}</span>
+                    <span className="ck">{h.n}</span>
+                  </div>
+                  <div className="dw">
+                    <Draw />
+                  </div>
+                  <div className="line2">{h.line}</div>
+                  <div className="c-m">
+                    <p>{h.body}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </Bento>
+          <Bento className="backs">
+            <div className="c-h">
+              <span className="who">{SPLIT.backs.who}</span>
+              <span className="ck">{SPLIT.backs.ck}</span>
+            </div>
+            {SPLIT.backs.rows.map((r) => (
+              <div className={r.ok ? 'row' : 'row no'} key={r.to}>
+                <span className="from">{r.from}</span>
+                <span className="wire" aria-hidden="true">
+                  <i />
+                </span>
+                <span className="to">{r.to}</span>
+                <span className="vd">{r.verdict}</span>
               </div>
             ))}
-          </div>
+          </Bento>
+        </SplitMotion>
+      </Section>
 
-          <div className="c-full note-wide">
-            <Note>{OPENING.note}</Note>
-          </div>
-        </div>
-      </section>
+      {/* 02 · Contributions: the same terms at any size. */}
+      <Section id="contributions">
+        <SectionHead n={CONTRIBUTIONS.n} label={CONTRIBUTIONS.label} title={CONTRIBUTIONS.title} line={CONTRIBUTIONS.line} />
+        <Terms />
+      </Section>
 
-      {/* S2 - Three holders, on this page's one ink band. */}
-      <section className="hx-band" data-tone="ink" id="the-split">
-        <div className="hx-wrap">
-          <p className="hx-label">
-            <b>02</b> {SPLIT.kicker}
-          </p>
-          <div className="hx-grid">
-            <h2 className="hx-h2 c-two-thirds">{SPLIT.heading}</h2>
-            <p className="hx-lede c-third">{SPLIT.sub}</p>
-
-            <div className="c-full hx-cols" data-n="3" data-rows="3">
-              {SPLIT.columns.map((col) => (
-                <div
-                  className="side"
-                  key={col.label}
-                  data-live={'live' in col && col.live ? '' : undefined}
-                >
-                  <p className="side-label">{col.label}</p>
-                  <p className="side-line">{col.line}</p>
-                  <p className="t-sm side-note">{col.note}</p>
+      {/* 03 · Protections, a 2×2 on subgrid rows. */}
+      <Section ink id="protections">
+        <SectionHead n={PROTECTIONS.n} label={PROTECTIONS.label} title={PROTECTIONS.title} line={PROTECTIONS.line} />
+        <ProtMotion>
+          <Bento className="prot body-gap">
+            <div className="cell">
+              <div className="c-h">
+                <span className="who">{PROTECTIONS.noPref.who}</span>
+                <span className="ck">{PROTECTIONS.noPref.ck}</span>
+              </div>
+              <div className="fg">
+                <div className="wf">
+                  {PROTECTIONS.noPref.struck.map((k) => (
+                    <div className="row x" key={k}>
+                      <span>{k}</span>
+                      <span className="bar">
+                        <em>{PROTECTIONS.noPref.notInStack}</em>
+                      </span>
+                    </div>
+                  ))}
+                  <div className="row pr">
+                    <span>
+                      {PROTECTIONS.noPref.holder.k}
+                      <small>{PROTECTIONS.noPref.holder.small}</small>
+                    </span>
+                    <span className="bar wf-bar" aria-hidden="true">
+                      {Array.from({ length: 12 }, (_, i) => (
+                        <i key={i} />
+                      ))}
+                    </span>
+                  </div>
                 </div>
-              ))}
+              </div>
+              <div className="c-m">
+                <p>{PROTECTIONS.noPref.body}</p>
+              </div>
             </div>
 
-            <div className="c-two-thirds">
-              <p className="t-body hx-prose">{SPLIT.close}</p>
+            <div className="cell">
+              <div className="c-h">
+                <span className="who">{PROTECTIONS.reserved.who}</span>
+                <span className="ck">{PROTECTIONS.reserved.ck}</span>
+              </div>
+              <div className="fg">
+                <ul className="rm rm-lit">
+                  {PROTECTIONS.reserved.items.map((m) => (
+                    <li className="on" key={m}>
+                      {m}
+                      <em>{PROTECTIONS.reserved.tag}</em>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="c-m">
+                <p>{PROTECTIONS.reserved.body}</p>
+              </div>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* S3 - The four terms, as a table, because that is what they are. */}
-      <section className="hx-band hx-wrap" data-pad="tight">
-        <p className="hx-label">
-          <b>03</b> {SCALE.kicker}
-        </p>
-        <div className="hx-grid">
-          <h2 className="hx-h2 c-two-thirds">{SCALE.heading}</h2>
-          <p className="hx-lede c-third">{SCALE.sub}</p>
-
-          <div className="c-full">
-            <Ledger items={[...SCALE.ledger]} />
-          </div>
-
-          <div className="c-full hx-cols" data-n="2" data-rows="2">
-            <div>
-              <p className="d4">One duplex or a portfolio.</p>
-              <p className="t-sm hx-prose">{SCALE.scale}</p>
+            <div className="cell">
+              <div className="c-h">
+                <span className="who">{PROTECTIONS.board.who}</span>
+                <span className="ck">{PROTECTIONS.board.ck}</span>
+              </div>
+              <div className="fg">
+                <ul className="rm sc">
+                  {PROTECTIONS.board.rows.map((r) => (
+                    <li key={r.k}>
+                      {r.k}
+                      <em>{r.v}</em>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="c-m">
+                <p>{PROTECTIONS.board.body}</p>
+              </div>
             </div>
-            <div>
-              <p className="d4">A single property works the same way.</p>
-              <p className="t-sm hx-prose">
-                <TextLink href={SCALE.link.href}>{SCALE.link.label}</TextLink>
-              </p>
+
+            <div className="cell">
+              <div className="c-h">
+                <span className="who">{PROTECTIONS.ledger.who}</span>
+                <span className="ck">{PROTECTIONS.ledger.ck}</span>
+              </div>
+              <div className="fg">
+                <PublicLedger />
+              </div>
+              <div className="c-m">
+                <p>{PROTECTIONS.ledger.body}</p>
+              </div>
             </div>
+          </Bento>
+        </ProtMotion>
+      </Section>
+
+      {/* 04 · The downsides: the five from /contribute, verbatim, and the
+          corridor. */}
+      <Section id="downsides">
+        <SectionHead
+          n={DOWNSIDES_SECTION.n}
+          label={DOWNSIDES_SECTION.label}
+          title={DOWNSIDES_SECTION.title}
+          line={DOWNSIDES_SECTION.line}
+        />
+        <Bento className="down body-gap">
+          <div className="c-h">
+            <span className="who">{DOWNSIDES_SECTION.who}</span>
+            <span className="ck">{DOWNSIDES_SECTION.ck}</span>
           </div>
-        </div>
-      </section>
+          <ol>
+            {[...DOWNSIDES, DOWNSIDES_SECTION.other].map((d, i) => (
+              <li key={d.k} className={i === DOWNSIDES.length ? 'other' : undefined}>
+                <b>{String(i + 1).padStart(2, '0')}</b>
+                <em>{d.k}</em>
+                <span>{d.v}</span>
+              </li>
+            ))}
+          </ol>
+        </Bento>
+      </Section>
 
-      {/* S4 - Protections. Four equal cells; the mono line carries the term
-          each one turns on. */}
-      <section className="hx-band" data-pad="tight">
-        <div className="hx-wrap">
-          <p className="hx-label">
-            <b>04</b> {PROTECTIONS.kicker}
-          </p>
-          <div className="hx-grid" style={{ marginBottom: 'clamp(32px, 4vw, 64px)' }}>
-            <h2 className="hx-h2 c-two-thirds">{PROTECTIONS.heading}</h2>
-            <p className="hx-lede c-third">{PROTECTIONS.sub}</p>
-          </div>
-        </div>
-
-        <div className="hx-bento">
-          {PROTECTIONS.steps.map((s, i) => (
-            <article className="cell" data-size="eq4" key={s.title}>
-              <p className="cell-n">
-                {String(i + 1).padStart(2, '0')} · {s.meta}
-              </p>
-              <h3 className="cell-title">{s.title}</h3>
-              <p className="t-sm cell-body">{s.body}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      {/* S5 - The honest downsides. DOWNSIDES is imported from
-          content/contribute, so "verbatim" is enforced by the module system
-          rather than by remembering, and it is not softened here. */}
-      <section className="hx-band hx-wrap" data-pad="tight">
-        <p className="hx-label">
-          <b>05</b> {DOWNSIDES_SECTION.kicker}
-        </p>
-        <div className="hx-grid">
-          <h2 className="hx-h2 c-two-thirds">{DOWNSIDES.title}</h2>
-          <p className="hx-lede c-third">{DOWNSIDES_SECTION.sub}</p>
-
-          <div className="c-full">
-            <ul className="crit" data-cols="2">
-              {DOWNSIDES.list.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="c-two-thirds">
-            <p className="d4">{DOWNSIDES_SECTION.extra.title}</p>
-            <p className="t-sm hx-prose">{DOWNSIDES_SECTION.extra.body}</p>
-          </div>
-        </div>
-      </section>
-
-      {/* S6 - What we will not publish, which is itself the argument. */}
-      <section className="hx-band hx-wrap" data-pad="tight">
-        <p className="hx-label">
-          <b>06</b> {NEXT.kicker}
-        </p>
-        <div className="hx-grid">
-          <p className="hx-stage-line c-two-thirds">{NEXT.statement}</p>
-          {/* The button follows the sentence that describes what happens on
-              the call, not the refusal above it — and it closes a 121px hole
-              under that column. */}
-          <div className="c-third">
-            <p className="t-sm hx-prose">{NEXT.body}</p>
-            <div style={{ marginTop: 'clamp(24px, 2.6vw, 36px)' }}>
-              <Button href={NEXT.cta.href} live>{NEXT.cta.label}</Button>
+      {/* 05 · Next: what we publish, and what we will not. */}
+      <Section ink id="next">
+        <SectionHead n={NEXT.n} label={NEXT.label} title={NEXT.title} line={NEXT.line} />
+        <RedactMotion>
+          <Bento className="ts body-gap">
+            <div className="cell">
+              <div className="c-h">
+                <span className="who">{NEXT.get.who}</span>
+                <span className="ck">{NEXT.get.ck}</span>
+              </div>
+              <div className="c-m">
+                {NEXT.get.rows.map((r) => (
+                  <div className="ts-row" key={r.k}>
+                    <span>{r.k}</span>
+                    <b>{r.v}</b>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-
-          <div className="c-full note-wide">
-            <Note>{NEXT.note}</Note>
-          </div>
-        </div>
-      </section>
+            <div className="cell">
+              <div className="c-h">
+                <span className="who">{NEXT.withheld.who}</span>
+                <span className="ck">{NEXT.withheld.ck}</span>
+              </div>
+              <div className="c-m">
+                {NEXT.withheld.rows.map((k) => (
+                  <div className="ts-row" key={k}>
+                    <span>{k}</span>
+                    <span className="rd">
+                      <span>{NEXT.withheld.redacted}</span>
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="c-f">
+              <p>{NEXT.note}</p>
+              <Button href={NEXT.cta.href} live>
+                {NEXT.cta.label}
+              </Button>
+            </div>
+          </Bento>
+        </RedactMotion>
+      </Section>
     </div>
   );
 }

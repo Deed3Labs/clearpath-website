@@ -1,163 +1,201 @@
-import { Note, Button, TextLink } from '@/components/primitives';
-import { OPENING, HOW, DOWNSIDES, DOWNSIDES_INTRO, WHO, CLOSE } from '@/content/contribute';
+import Link from 'next/link';
+import { PageHero, Section, SectionHead, Bento, Cell, Fig, Knob, Rail, Button, More } from '@/components/system';
+import { money, int } from '@/lib/format';
+import { HeroBeat } from '@/components/system';
+import { HeldStrip } from './_parts/HeldStrip';
+import './page.css';
+import {
+  META,
+  PROPERTY_VALUE,
+  HERO,
+  OFFER,
+  HOW,
+  DOWNSIDES,
+  DOWNSIDES_SECTION,
+  WHO,
+  HELD,
+} from '@/content/contribute';
 
-export const metadata = {
-  title: 'Contribute land',
-  description:
-    'Contribute rental property or land to Clear Properties in exchange for units under section 721, rather than selling it and paying tax on the whole gain this year.',
-};
+export const metadata = { title: META.title, description: META.description };
 
-/* Migrated to the .hx layout system. The numbered rail is gone; the section
- * number is an inline label.
+/* Contribute land, ported from reference/redesign/contribute.html.
  *
- * The page was four sections of heading and paragraph, and its whole argument
- * — that contributing is not selling — was a subordinate clause inside the
- * lede. It is the opening pair now, and the honest downsides have their own
- * section instead of a sidebar, because a list called "the honest downsides"
- * sitting in a 3-column panel is not being honest about how much it means it.
- *
- * Rhythm: a pair of statements -> four equal cells on full-bleed ink -> a list
- * -> three columns -> one sentence and one figure. No two consecutive sections
- * share a shape. */
+ * Hero on three set lines, then the offer: one property sold against the same
+ * property contributed. 01 is four §721 steps on one rule, on ink; 02 the
+ * downsides as a ruled list; 03 three people; 04, on ink, seven years of
+ * months against seven. */
+
+/* Step 02's two figures come from the worked example. */
+const rowValue = (v: string) => (v === 'value' ? money(PROPERTY_VALUE, 0) : v === 'shares' ? int(PROPERTY_VALUE) : v);
 
 export default function Contribute() {
   return (
-    <div className="hx">
-      {/* S1 - Two ways to stop being a landlord, side by side. */}
-      <section className="hx-band hx-wrap" data-pad="tight">
-        <p className="hx-label">
-          <b>01</b> {OPENING.kicker}
-        </p>
-        <div className="hx-grid">
-          <h1 className="hx-h2 c-two-thirds">{OPENING.heading}</h1>
-          <p className="hx-lede c-third">{OPENING.lede}</p>
-
-          <div className="c-full hx-cols" data-n="2" data-rows="3">
-            {OPENING.sides.map((side) => (
-              <div
-                className="side"
-                key={side.label}
-                data-live={'live' in side && side.live ? '' : undefined}
-              >
-                <p className="side-label">{side.label}</p>
-                <p className="side-line">{side.line}</p>
-                <p className="t-sm side-note">{side.note}</p>
+    <div className="pg-contribute">
+      <PageHero
+        label={HERO.label}
+        lines={HERO.lines}
+        size="min(8.4vw, 116px)"
+        phoneSize="clamp(30px, 8.6vw, 58px)"
+        phone="set"
+        lede={HERO.lede}
+        actions={
+          <>
+            <Button href={HERO.primary.href} live>
+              {HERO.primary.label}
+            </Button>
+            <Button href={HERO.ghost.href} variant="ghost">
+              {HERO.ghost.label}
+            </Button>
+          </>
+        }
+        facts={HERO.facts}
+        figs
+      >
+        <div data-stage="bento">
+        <Bento className="offer">
+          <Cell className="sell" head={<><span className="who">{OFFER.sell.who}</span><span className="ck">{OFFER.sell.ck}</span></>}>
+            <div className="prop">
+              <div className="prop-top">
+                <span>{OFFER.propLabel}</span>
+                <Fig>{money(PROPERTY_VALUE, 0)}</Fig>
               </div>
-            ))}
-          </div>
-
-          {/* Full width: this disclaimer qualifies the section, not the
-              column it happened to start under. */}
-          <div className="c-full note-wide">
-            <Note>{OPENING.note}</Note>
-          </div>
-        </div>
-      </section>
-
-      {/* S2 - How it works, on this page's one ink band. Four equal cells;
-          the mono line carries the step number and the term it turns on. */}
-      <section className="hx-band" data-tone="ink" id="how-it-works">
-        <div className="hx-wrap">
-          <p className="hx-label">
-            <b>02</b> {HOW.kicker}
-          </p>
-          <div className="hx-grid" style={{ marginBottom: 'clamp(32px, 4vw, 64px)' }}>
-            <h2 className="hx-h2 c-two-thirds">{HOW.heading}</h2>
-            <p className="hx-lede c-third">{HOW.sub}</p>
-          </div>
-        </div>
-
-        <div className="hx-bento">
-          {HOW.steps.map((s, i) => (
-            <article className="cell" data-size="eq4" key={s.title}>
-              <p className="cell-n">
-                {String(i + 1).padStart(2, '0')} · {s.meta}
-              </p>
-              <h3 className="cell-title">{s.title}</h3>
-              <p className="t-sm cell-body">{s.body}</p>
-            </article>
-          ))}
-        </div>
-
-        <div className="hx-wrap" style={{ marginTop: 'clamp(32px, 4vw, 64px)' }}>
-          <Note>{HOW.note}</Note>
-        </div>
-      </section>
-
-      {/* S3 - The honest downsides. Its own section, set in the same type as
-          everything else, because that is what makes it honest. */}
-      <section className="hx-band hx-wrap" data-pad="tight">
-        <p className="hx-label">
-          <b>03</b> {DOWNSIDES_INTRO.kicker}
-        </p>
-        <div className="hx-grid">
-          <h2 className="hx-h2 c-two-thirds">{DOWNSIDES.title}</h2>
-          <p className="hx-lede c-third">{DOWNSIDES_INTRO.sub}</p>
-          <div className="c-full">
-            <ul className="crit" data-cols="2">
-              {DOWNSIDES.list.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* S4 - Who this is for. Three people, three columns. */}
-      <section className="hx-band hx-wrap" data-pad="tight">
-        <p className="hx-label">
-          <b>04</b> {WHO.kicker}
-        </p>
-        <div className="hx-grid">
-          <h2 className="hx-h2 c-two-thirds">{WHO.heading}</h2>
-
-          <div className="c-full hx-cols" data-n="3" data-rows="3">
-            {WHO.columns.map((col) => (
-              <div className="door" key={col.key}>
-                <h3 className="door-head">{col.heading}</h3>
-                <p className="door-line">{col.line}</p>
-                <p className="t-sm door-body">{col.body}</p>
+              <div className="vbar" aria-hidden="true">
+                <span className="keep">{OFFER.sell.keep}</span>
+                <span className="tax">{OFFER.sell.tax}</span>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* S5 - The close. One sentence, one figure, and the thing most likely
-          to save someone a wasted call. */}
-      <section className="hx-band hx-wrap" data-pad="tight">
-        <p className="hx-label">
-          <b>05</b> {CLOSE.kicker}
-        </p>
-        <div className="hx-grid">
-          {/* Two rows, each a statement beside the thing that qualifies it.
-              The figure block carries no rule of its own: a 2px rule over one
-              column, with an 80px headline and no rule beside it, reads as a
-              line someone forgot to finish rather than as structure. */}
-          <p className="hx-stage-line c-two-thirds">{CLOSE.statement}</p>
-          <div className="c-third fig-stack">
-            <p className="side-label">The window</p>
-            <p className="side-fig">{CLOSE.figure}</p>
-            <p className="t-sm side-note">{CLOSE.figureCaption}</p>
-          </div>
-
-          {/* The button sits under the paragraph it acts on, not stranded
-              beside the headline with 95px of nothing under it. */}
-          <div className="c-two-thirds">
-            <p className="t-body hx-prose">{CLOSE.body}</p>
-            <div style={{ marginTop: 'clamp(28px, 3.4vw, 48px)' }}>
-              <Button href={CLOSE.cta.href} live>{CLOSE.cta.label}</Button>
+              <div className="vleg">
+                <span><i className="k" />{OFFER.sell.legend.keep}</span>
+                <span><i className="t" />{OFFER.sell.legend.tax}</span>
+              </div>
             </div>
-          </div>
-          <div className="c-third">
-            <p className="t-sm hx-prose">
-              {CLOSE.onward.before}
-              <TextLink href={CLOSE.onward.link.href}>{CLOSE.onward.link.label}</TextLink>
-              {CLOSE.onward.after}
-            </p>
-          </div>
+            <span className="big">{OFFER.sell.big}</span>
+            <p>{OFFER.sell.body}</p>
+          </Cell>
+          <Cell className="give" head={<><span className="who">{OFFER.give.who}</span><span className="ck">{OFFER.give.ck}</span></>}>
+            <div className="prop">
+              <div className="prop-top">
+                <span>{OFFER.propLabel}</span>
+                <Fig>{`${int(PROPERTY_VALUE)} ${OFFER.give.unit}`}</Fig>
+              </div>
+              <div className="vbar" aria-hidden="true">
+                <span className="shares">{OFFER.give.bar}</span>
+              </div>
+              <div className="vleg">
+                <span><i className="s" />{OFFER.give.legend}</span>
+              </div>
+            </div>
+            <span className="big">{OFFER.give.big}</span>
+            <p>{OFFER.give.body}</p>
+          </Cell>
+          <p className="offer-f">{OFFER.note}</p>
+        </Bento>
         </div>
-      </section>
+        <HeroBeat beats={[{ sel: '.offer .vbar span', from: { scaleX: 0, duration: 1, stagger: 0.15, ease: 'power3.inOut' }, at: '-=.4' }]} />
+      </PageHero>
+
+      {/* 01 · Four steps on one rule. Each step's three values arrive as the
+          rule reaches its knob; the markup has every step reached. */}
+      <Section ink id="how">
+        <SectionHead n={HOW.n} label={HOW.label} title={HOW.title} line={HOW.line} />
+        <Rail className="steps4 body-gap" vertical={640} end="bottom 70%">
+          {HOW.steps.map((s) => (
+            <div className="stp4 reached" key={s.n}>
+              <div className="c-h">
+                <Knob />
+                <span className="who">{s.n}</span>
+                <span className="meta">{s.meta}</span>
+              </div>
+              <h3>{s.title}</h3>
+              <div className="c-m">
+                <p>{s.body}</p>
+              </div>
+              <div className="vis">
+                {s.rows.map((r) => (
+                  <div className="mini-row" key={r.k}>
+                    <span>{r.k}</span>
+                    <b className={'live' in r && r.live ? 'live' : undefined}>{rowValue(r.v)}</b>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </Rail>
+        <Bento className="steps4-f">{HOW.foot}</Bento>
+      </Section>
+
+      {/* 02 · The downsides, as a ruled list. */}
+      <Section id="downsides">
+        <SectionHead
+          n={DOWNSIDES_SECTION.n}
+          label={DOWNSIDES_SECTION.label}
+          title={DOWNSIDES_SECTION.title}
+          line={DOWNSIDES_SECTION.line}
+        />
+        <Bento className="down body-gap">
+          <div className="c-h">
+            <span className="who">{DOWNSIDES_SECTION.who}</span>
+            <span className="ck">{DOWNSIDES_SECTION.ck}</span>
+          </div>
+          <ol>
+            {DOWNSIDES.map((d, i) => (
+              <li key={d.k}>
+                <b>{String(i + 1).padStart(2, '0')}</b>
+                <em>{d.k}</em>
+                <span>{d.v}</span>
+              </li>
+            ))}
+          </ol>
+          <div className="c-f">{DOWNSIDES_SECTION.foot}</div>
+        </Bento>
+      </Section>
+
+      {/* 03 · Who this is for. Three cells on subgrid rows, so the three
+          headlines and paragraphs start on the same lines. */}
+      <Section id="who" className="sec-who">
+        <SectionHead n={WHO.n} label={WHO.label} title={WHO.title} line={WHO.line} />
+        <Bento className="who3 body-gap">
+          {WHO.columns.map((c) => (
+            <div className="cell" key={c.n}>
+              <div className="c-h">
+                <span className="who">{c.who}</span>
+                <span className="ck">{c.n}</span>
+              </div>
+              <div className="line2">{c.line}</div>
+              <div className="c-m">
+                <p>{c.body}</p>
+              </div>
+            </div>
+          ))}
+        </Bento>
+        <Bento className="who3-f">
+          <span>{WHO.foot}</span>
+          <More href={WHO.more.href}>{WHO.more.label}</More>
+        </Bento>
+      </Section>
+
+      {/* 04 · Held: two cells, then seven years of months against seven. */}
+      <Section ink id="held">
+        <SectionHead n={HELD.n} label={HELD.label} title={HELD.title} line={HELD.line} />
+        <Bento className="held body-gap">
+          <Cell head={<><span className="who">{HELD.why.who}</span><span className="ck">{HELD.why.ck}</span></>}>
+            <p>{HELD.why.body}</p>
+          </Cell>
+          <Cell className="win" head={<><span className="who">{HELD.win.who}</span><span className="ck">{HELD.win.ck}</span></>}>
+            <Fig className="yrs">{HELD.win.figure}</Fig>
+          </Cell>
+          <HeldStrip />
+          <div className="held-f">
+            <p>
+              {HELD.foot.before}
+              <Link href={HELD.foot.link.href}>{HELD.foot.link.label}</Link>
+              {HELD.foot.after}
+            </p>
+            <Button href={HELD.cta.href} live>
+              {HELD.cta.label}
+            </Button>
+          </div>
+        </Bento>
+      </Section>
     </div>
   );
 }

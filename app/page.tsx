@@ -1,185 +1,189 @@
-import Link from 'next/link';
-import { Ledger, Note, TextLink } from '@/components/primitives';
-import { LiveDot } from '@/components/primitives/Button';
-import { HERO, GAP, PHASES, WAYS_IN, STATUS, UNDERNEATH } from '@/content/home';
+import { PageHero, Device, Button, Section, SectionHead, More, Close, Chip, Arrow, Check } from '@/components/system';
+import { int } from '@/lib/format';
+import { MemberHome } from './_home/MemberHome';
+import { GapCompare } from './_home/GapCompare';
+import { PathRail } from './_home/PathRail';
+import { CounterFlow } from './_home/CounterFlow';
+import { LedgerStream } from './_home/LedgerStream';
+import './page.css';
+import { HERO, GAP, PATH, COUNTER, STATUS, LEDGER, CLOSE } from '@/content/home';
 
-/* The home page. Built on the .hx layout system, not converted from the old
- * sections — the two-column numbered rail those used boxed every band into
- * columns 3–12, which made an edge-to-edge bento structurally impossible.
- * The rail is gone; the section number is an inline label.
- *
- * Rhythm, deliberately: type → two figures on full-bleed ink → three equal
- * cells edge to edge → two columns → a list → one sentence. No two consecutive
- * sections share a shape. */
+/* The home page, ported from reference/redesign/home.html. The hero shows the
+   member app's Home as real UI; then five sections, each one crafted figure,
+   alternating paper and ink. Every animated part is rendered here at its end
+   state, so the page reads in full with no JavaScript and under reduced
+   motion; the client parts animate from a start state back to it. */
 
 export default function Home() {
   return (
-    <div className="hx">
-      {/* ── S1 · Hero ──────────────────────────────────────────────────── */}
-      <section className="hx-band hx-wrap hero" data-pad="open">
-        <div className="hx-grid hero-grid">
-          <h1 className="d1 hero-headline">
-            {/* The misregistration runs over the whole headline now that it is
-                one sentence — a cobalt ghost slipping into register, which is
-                what it was doing on the old second line anyway. */}
-            <span
-              className="misreg"
-              data-ghost={HERO.headline}
-              data-rise
-              style={{ ['--i' as string]: 0 }}
-            >
-              {HERO.headline}
-            </span>
-          </h1>
-
-          <p className="hx-lede hero-lede" data-rise style={{ ['--i' as string]: 1 }}>
-            {HERO.lede}
-          </p>
-
-          <div className="hero-actions" data-rise style={{ ['--i' as string]: 2 }}>
-            <Link href={HERO.primary.href} className="btn" data-variant="primary">
-              <LiveDot />
+    <div className="pg-home">
+      <PageHero
+        home
+        lines={HERO.lines}
+        size="min(9.4vw, 132px)"
+        phoneSize="clamp(46px, 13.4vw, 72px)"
+        stagger={0.07}
+        lede={HERO.lede}
+        actions={
+          <>
+            <Button href={HERO.primary.href} live>
               {HERO.primary.label}
-            </Link>
-            <Link href={HERO.ghost.href} className="btn" data-variant="ghost">
+            </Button>
+            <Button href={HERO.ghost.href} variant="ghost">
               {HERO.ghost.label}
-            </Link>
+            </Button>
+          </>
+        }
+        facts={HERO.facts}
+      >
+        <div className="stage">
+          <div className="stagebox" data-stage="device">
+            <Device trace="hero">
+              <MemberHome />
+            </Device>
           </div>
-
-          <div className="hero-meta" data-rise style={{ ['--i' as string]: 3 }}>
-            {HERO.meta.map((m) => (
-              <p className="t-note" key={m}>
-                {m}
-              </p>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── S2 · The gap. Full-bleed ink, two figures in tension. ───────── */}
-      <section className="hx-band" data-tone="ink" id="the-gap">
-        <div className="hx-wrap">
-          <p className="hx-label">
-            <b>01</b> {GAP.kicker}
-          </p>
-          <div className="hx-grid">
-            <h2 className="hx-h2 c-two-thirds">{GAP.heading}</h2>
-
-            <div className="c-full hx-tally">
-              {GAP.columns.map((c) => (
-                <div className="tally" key={c.key} data-live={c.live ? '' : undefined}>
-                  <p className="tally-label">{c.label}</p>
-                  <div className="tally-row">
-                    <p className="tally-fig" data-weight="quiet">{c.paid}</p>
-                    <p className="t-note tally-note">{c.paidNote}</p>
-                  </div>
-                  <div className="tally-row">
-                    <p className="tally-fig fig" data-weight="loud">{c.kept}</p>
-                    <p className="t-sm tally-note">{c.keptNote}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="c-half">
-              <p className="t-body">{GAP.close}</p>
-              <p className="t-body" style={{ marginTop: 'var(--spacing-3)' }}>
-                <TextLink href={GAP.link.href}>{GAP.link.label}</TextLink>
-              </p>
-            </div>
-            <div className="c-half">
-              <Note>{GAP.note}</Note>
-            </div>
+          <div className="stage-cap label">
+            <span>{HERO.stage.caption}</span>
+            <span>{HERO.stage.sample}</span>
           </div>
         </div>
-      </section>
+      </PageHero>
 
-      {/* ── S3 · Three phases. Bento, edge to edge, three equal cells. ───── */}
-      <section className="hx-band" data-pad="tight">
-        <div className="hx-wrap">
-          <p className="hx-label">
-            <b>02</b> {PHASES.kicker}
-          </p>
-          <div className="hx-grid" style={{ marginBottom: 'clamp(32px, 4vw, 64px)' }}>
-            <h2 className="hx-h2 c-two-thirds">{PHASES.heading}</h2>
-            <p className="hx-lede c-third">{PHASES.standfirst}</p>
-          </div>
-        </div>
+      {/* 01 · renting against Clear, paid in month by month as you scroll */}
+      <Section ink id="gap">
+        <SectionHead n={GAP.n} label={GAP.label} title={GAP.title} line={GAP.line} more={GAP.more} />
+        <GapCompare />
+      </Section>
 
-        {/* Outside the wrap: the bento runs the full viewport, edge to edge. */}
-        <div className="hx-bento">
-          {PHASES.steps.map((s) => (
-            <article className="cell" data-size={s.size} key={s.n}>
-              <p className="cell-n">{s.n}</p>
-              <h3 className="cell-title">{s.title}</h3>
-              <p className="t-sm cell-body">{s.body}</p>
-              <div className="cell-gate">
-                <p className="cell-gate-fig">{s.gate}</p>
-                <p className="t-note cell-gate-note">{s.gateNote}</p>
+      {/* 02 · the path: three phases on one rule */}
+      <Section id="path">
+        <SectionHead n={PATH.n} label={PATH.label} title={PATH.title} line={PATH.line} more={PATH.more} />
+        <PathRail>
+          <div className="ph reached">
+            <div className="ph-h">
+              <span className="knob" aria-hidden="true" />
+              <span className="who">{PATH.renter.who}</span>
+              <span className="n">{PATH.renter.n}</span>
+            </div>
+            <h3 className="ph-t">{PATH.renter.title}</h3>
+            <div className="ph-v">
+              <div className="cred-n">
+                <span className="fig" data-cred="">
+                  {int(PATH.renter.credits)}
+                </span>
+                <span className="ck">{PATH.renter.creditsLabel}</span>
               </div>
-            </article>
+              <span className="ladder" aria-hidden="true">
+                <i data-ladder="" />
+                {PATH.renter.marks.map((m) => (
+                  <b key={m} style={{ left: `${((m / PATH.renter.credits) * 100).toFixed(1)}%` }} />
+                ))}
+              </span>
+              <p className="ph-c">{PATH.renter.caption}</p>
+            </div>
+            <div className="ph-f">
+              <span className="ck">{PATH.gateLabel}</span>
+              <span className="fig">{PATH.renter.gate}</span>
+            </div>
+          </div>
+          <div className="ph reached">
+            <div className="ph-h">
+              <span className="knob" aria-hidden="true" />
+              <span className="who">{PATH.owner.who}</span>
+              <span className="n">{PATH.owner.n}</span>
+            </div>
+            <h3 className="ph-t">{PATH.owner.title}</h3>
+            <div className="ph-v">
+              <ul className="ph-l">
+                {PATH.owner.rows.map((r) => (
+                  <li className="ok" key={r.k}>
+                    <Check />
+                    <span>{r.k}</span>
+                    <span className="r">{r.v}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="ph-c">{PATH.owner.caption}</p>
+            </div>
+            <div className="ph-f">
+              <span className="ck">{PATH.gateLabel}</span>
+              <span className="fig">{PATH.owner.gate}</span>
+            </div>
+          </div>
+          <div className="ph reached">
+            <div className="ph-h">
+              <span className="knob" aria-hidden="true" />
+              <span className="who">{PATH.earner.who}</span>
+              <span className="n">{PATH.earner.n}</span>
+            </div>
+            <h3 className="ph-t">{PATH.earner.title}</h3>
+            <div className="ph-v">
+              <ul className="ph-l">
+                {PATH.earner.rows.map((r) => (
+                  <li key={r}>
+                    <span>{r}</span>
+                    <Arrow />
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="ph-f">
+              <span className="ck">{PATH.gateLabel}</span>
+              <span className="fig">{PATH.earner.gate}</span>
+            </div>
+          </div>
+        </PathRail>
+      </Section>
+
+      {/* 03 · the counter: the shop's flow, handed across to yours */}
+      <Section id="counter">
+        <SectionHead n={COUNTER.n} label={COUNTER.label} title={COUNTER.title} line={COUNTER.line} links={[...COUNTER.links]} />
+        <CounterFlow />
+        <div className="kfigs">
+          {COUNTER.figs.map((f) => (
+            <div key={f.fig}>
+              <span className="fig">{f.fig}</span>
+              <p>{f.text}</p>
+            </div>
           ))}
         </div>
-      </section>
+        <p className="flow-cap label">{COUNTER.caption}</p>
+      </Section>
 
-      {/* ── S4 · Two ways in. Three columns: the shop's price, the
-             mechanism between them, the member's price. ─────────────────── */}
-      <section className="hx-band hx-wrap" data-pad="tight">
-        <p className="hx-label">
-          <b>03</b> {WAYS_IN.kicker}
-        </p>
-        <div className="hx-grid">
-          <h2 className="hx-h2 c-two-thirds">{WAYS_IN.heading}</h2>
+      {/* 04 · what exists today */}
+      <Section id="status">
+        <SectionHead n={STATUS.n} label={STATUS.label} title={STATUS.title} line={STATUS.line} />
+        <ul className="rows body-gap">
+          {STATUS.rows.map((r) => (
+            <li key={r.name}>
+              <span className="nm">{r.name}</span>
+              <span className="ds">{r.desc}</span>
+              <Chip tone={r.tone}>{r.chip}</Chip>
+            </li>
+          ))}
+        </ul>
+      </Section>
 
-          <div className="c-full hx-split">
-            {WAYS_IN.columns.map((col) => (
-              <div className="door" key={col.key}>
-                <h3 className="door-head">{col.heading}</h3>
-                <p className="door-fig fig">{col.figure}</p>
-                <p className="t-sm door-note">{col.figureNote}</p>
-                <p className="t-sm door-body">{col.body}</p>
-                {'note' in col && col.note ? <Note>{col.note}</Note> : null}
-                {col.link ? (
-                  <p className="door-link">
-                    <TextLink href={col.link.href}>{col.link.label}</TextLink>
-                  </p>
-                ) : null}
+      {/* 05 · the public ledger */}
+      <Section ink id="ledger">
+        <SectionHead
+          n={LEDGER.n}
+          label={LEDGER.label}
+          title={LEDGER.title}
+          aside={
+            <>
+              <div>
+                <p className="line">{LEDGER.line}</p>
+                <p className="src">{LEDGER.source}</p>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+              <More href={LEDGER.more.href}>{LEDGER.more.label}</More>
+            </>
+          }
+        />
+        <LedgerStream />
+      </Section>
 
-      {/* ── S5 · Status. A list of facts, set as a list. ────────────────── */}
-      <section className="hx-band hx-wrap" data-pad="tight">
-        <p className="hx-label">
-          <b>04</b> {STATUS.kicker}
-        </p>
-        <div className="hx-grid">
-          <h2 className="hx-h2 c-two-thirds">{STATUS.heading}</h2>
-          <p className="hx-lede c-third">{STATUS.standfirst}</p>
-          <div className="c-full">
-            <Ledger items={[...STATUS.ledger]} />
-          </div>
-        </div>
-      </section>
-
-      {/* ── S6 · Underneath. One sentence, and the page ends on it. ─────── */}
-      <section className="hx-band hx-wrap" data-pad="open">
-        <p className="hx-label">
-          <b>05</b> {UNDERNEATH.kicker}
-        </p>
-        <div className="hx-grid">
-          <p className="hx-stage-line c-two-thirds">{UNDERNEATH.statement}</p>
-          <div className="c-third">
-            <p className="t-sm">{UNDERNEATH.body}</p>
-            <Note>{UNDERNEATH.source}</Note>
-            <p className="t-body" style={{ marginTop: 'var(--spacing-3)' }}>
-              <TextLink href={UNDERNEATH.link.href}>{UNDERNEATH.link.label}</TextLink>
-            </p>
-          </div>
-        </div>
-      </section>
+      <Close title={CLOSE.title} line={CLOSE.line} primary={CLOSE.primary} ghost={CLOSE.ghost} />
     </div>
   );
 }

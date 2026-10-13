@@ -1,60 +1,44 @@
 'use client';
 
 import { useId, useState } from 'react';
+import { formatRange, type RangeFormat } from './FieldRange';
 
-/* Two handles, because a typical ticket is a range and not a number.
+/* Two handles, because a typical ticket — or what a property is worth — is a
+ * range and not a number.
  *
  * A shop that does $350 brake jobs and $1,500 transmissions has no single
- * "typical" — asked for one they pick a middle that describes nothing. Two
- * handles let them say the thing that is actually true, and the spread is
- * more useful to us than any midpoint would have been.
+ * "typical"; asked for one they pick a middle that describes nothing. Two
+ * handles let them say the thing that is actually true.
  *
  * There is no dual-handle input in HTML, so this is two range inputs lying on
- * top of each other with a drawn track behind them. Only the thumbs take
- * pointer events; everything else about the track is painted by the rail.
+ * top of each other over one drawn rule, with the cobalt span between the
+ * handles. Only the thumbs take pointer events. The handles keep one step
+ * apart, so they can never land on the same pixel and strand each other.
  */
 
 type Props = {
   nameMin: string;
   nameMax: string;
   label: string;
+  /* Appended to the label for each handle's spoken name: "Typical ticket,
+     low". From the page's content file. */
+  lowWord: string;
+  highWord: string;
   min: number;
   max: number;
   step: number;
   startLow: number;
   startHigh: number;
-  format: 'usd' | 'usdCompact';
+  format: RangeFormat;
   topLabel: string;
-  wide?: boolean;
 };
-
-const usd = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-  maximumFractionDigits: 0,
-});
-
-/* $400K, $1.3M. Seven-figure numbers written out put nineteen characters
-   next to their own label, which on a phone is a line break in the middle of
-   an answer.
-
-   Written out by hand rather than with Intl's compact notation, which is not
-   the same function on both sides of hydration: given maximumFractionDigits
-   1, Node pins the MINIMUM to 1 as well and returns "$400.0K" where the
-   browser returns "$400K". The server HTML and the client render disagreed
-   and React threw. Arithmetic has no ICU version. */
-function usdCompact(v: number): string {
-  const unit = v >= 1_000_000 ? { d: 1_000_000, s: 'M' } : v >= 1_000 ? { d: 1_000, s: 'K' } : null;
-  if (!unit) return `$${v}`;
-  /* One decimal, and never a trailing ".0" — $1.3M, but $2M. */
-  const n = Math.round((v / unit.d) * 10) / 10;
-  return `$${n}${unit.s}`;
-}
 
 export function FieldRangeDual({
   nameMin,
   nameMax,
   label,
+  lowWord,
+  highWord,
   min,
   max,
   step,
@@ -62,75 +46,50 @@ export function FieldRangeDual({
   startHigh,
   format,
   topLabel,
-  wide,
 }: Props) {
   const [lo, setLo] = useState(startLow);
   const [hi, setHi] = useState(startHigh);
   const id = useId();
 
-  /* One step of clearance so the two thumbs can never land on the same pixel
-     and strand each other — the classic way a dual range gets stuck. */
-  const setLow = (v: number) => setLo(Math.min(v, hi - step));
-  const setHigh = (v: number) => setHi(Math.max(v, lo + step));
-
   const pct = (v: number) => ((v - min) / (max - min)) * 100;
-  const money = (v: number) => (format === 'usdCompact' ? usdCompact(v) : usd.format(v));
-  const highRead = hi >= max ? topLabel : money(hi);
-  const read = `${money(lo)} – ${highRead}`;
+  const loRead = formatRange(lo, format);
+  const hiRead = formatRange(hi, format, topLabel, max);
 
   return (
-    <div className={`join-field fr fr2${wide ? ' is-wide' : ''}`}>
-      <div className="fr-head">
-        <span className="fr-label" id={`${id}-label`}>
-          {label}
-        </span>
+    <div className="f range wide">
+      <span className="lb" id={`${id}-l`}>
+        {label}
         {/* The pair is the answer, so the pair is what the readout shows. */}
-        <output className="fr-value fig" aria-hidden="true">
-          {read}
-        </output>
-      </div>
-
-      <div className="fr-track">
-        <span className="fr-end" aria-hidden="true">
-          {money(min)}
-        </span>
-
-        <div
-          className="fr2-rail"
-          style={{
-            ['--lo' as string]: `${pct(lo)}%`,
-            ['--hi' as string]: `${pct(hi)}%`,
-          }}
-        >
-          <span className="fr2-line" aria-hidden="true" />
-          <span className="fr2-fill" aria-hidden="true" />
-
-          <input
-            type="range"
-            min={min}
-            max={max}
-            step={step}
-            value={lo}
-            name={nameMin}
-            aria-label={`${label} — lowest`}
-            aria-valuetext={money(lo)}
-            onChange={(e) => setLow(Number(e.currentTarget.value))}
-          />
-          <input
-            type="range"
-            min={min}
-            max={max}
-            step={step}
-            value={hi}
-            name={nameMax}
-            aria-label={`${label} — highest`}
-            aria-valuetext={highRead}
-            onChange={(e) => setHigh(Number(e.currentTarget.value))}
-          />
-        </div>
-
-        <span className="fr-end" aria-hidden="true">
-          {topLabel}
+        <output aria-hidden="true">{`${loRead} – ${hiRead}`}</output>
+      </span>
+      <div className="rg">
+        <span className="tr" aria-hidden="true" />
+        <span className="fl" aria-hidden="true" style={{ left: `${pct(lo)}%`, width: `${pct(hi) - pct(lo)}%` }} />
+        <input
+          type="range"
+          name={nameMin}
+          min={min}
+          max={max}
+          step={step}
+          value={lo}
+          aria-label={`${label}, ${lowWord}`}
+          aria-valuetext={loRead}
+          onChange={(e) => setLo(Math.min(Number(e.currentTarget.value), hi - step))}
+        />
+        <input
+          type="range"
+          name={nameMax}
+          min={min}
+          max={max}
+          step={step}
+          value={hi}
+          aria-label={`${label}, ${highWord}`}
+          aria-valuetext={hiRead}
+          onChange={(e) => setHi(Math.max(Number(e.currentTarget.value), lo + step))}
+        />
+        <span className="ax" aria-hidden="true">
+          <span>{formatRange(min, format)}</span>
+          <span>{topLabel}</span>
         </span>
       </div>
     </div>

@@ -1,192 +1,239 @@
-import { Ledger, Note, TextLink } from '@/components/primitives';
-import {
-  StructureDiagram,
-  StructureDiagramStacked,
-  StructureList,
-} from '@/components/marks/StructureDiagram';
-import { OPENING, STRUCTURE, GOVERNANCE, PROTOCOL, WHO } from '@/content/coop';
+import { PageHero, Section, SectionHead, Bento, Button } from '@/components/system';
+import { money } from '@/lib/format';
+import { Vote } from './_parts/Vote';
+import { OrgChart } from './_parts/OrgChart';
+import { GovMotion, BoardSize, ForkMotion, YearCount } from './_parts/Motion';
+import { ForkDrawings, CorridorMap } from './_parts/Drawings';
+import './page.css';
+import { META, HERO, STRUCTURE, GOVERNANCE, PROTOCOL, WHO } from '@/content/coop';
 
-export const metadata = {
-  title: 'The co-op',
-  description:
-    'How Clear is put together: two balance sheets that never touch, the reserved matters a future board cannot reverse, and an ownerless foundation holding the protocol.',
-};
+export const metadata = { title: META.title, description: META.description };
 
-/* Migrated to the .hx layout system. The numbered rail is gone; the section
- * number is an inline label.
+/* The co-op, ported from reference/redesign/coop.html.
  *
- * The page had one genuinely strong idea — that a promise written as a policy
- * and the same promise written as a reserved matter are different objects —
- * and it was a sidebar panel next to the headline. It opens the page.
- *
- * The diagram takes the ink band. It is the thing a reader evaluating an
- * entity came for, and it spent the old page as a figure in the middle of a
- * column with a heading above it.
- *
- * Rhythm: a pair of statements -> a full-bleed drawing on ink -> a table and a
- * list -> a sentence and a pair -> a figure and an ask. */
+ * Hero: the same sentence put to the same vote twice. 01, on ink: the org
+ * chart (components/marks/StructureDiagram, driven by OrgChart). 02:
+ * governance — one vote each, councils, a third of the board delegated, and
+ * the five reserved matters. 03, on ink: the protocol and its fork. 04: who
+ * is building it, and the four people we are looking for. */
 
 export default function Coop() {
+  const G = GOVERNANCE;
   return (
-    <div className="hx">
-      {/* S1 - The same promise, written two ways. */}
-      <section className="hx-band hx-wrap" data-pad="tight">
-        <p className="hx-label">
-          <b>01</b> {OPENING.kicker}
-        </p>
-        <div className="hx-grid">
-          <h1 className="hx-h2 c-two-thirds">{OPENING.heading}</h1>
-          <p className="hx-lede c-third">{OPENING.lede}</p>
+    <div className="pg-coop">
+      <PageHero
+        label={HERO.label}
+        lines={HERO.lines}
+        size="min(6.1vw, 84px)"
+        phoneSize="clamp(36px, 10.4vw, 56px)"
+        phone="block"
+        lede={HERO.lede}
+        actions={
+          <>
+            <Button href={HERO.primary.href} live>
+              {HERO.primary.label}
+            </Button>
+            <Button href={HERO.ghost.href} variant="ghost">
+              {HERO.ghost.label}
+            </Button>
+          </>
+        }
+        facts={HERO.facts}
+        figs
+      >
+        <Vote />
+      </PageHero>
 
-          <p className="d3 c-full">{OPENING.quote}</p>
-          <div className="c-full hx-cols" data-n="2" data-rows="3">
-            {OPENING.sides.map((side) => (
-              <div
-                className="side"
-                key={side.label}
-                data-live={'live' in side && side.live ? '' : undefined}
-              >
-                <p className="side-label">{side.label}</p>
-                <p className="side-line">{side.line}</p>
-                <p className="t-sm side-note">{side.note}</p>
+      {/* 01 · Structure: the org chart. */}
+      <Section ink id="structure">
+        <SectionHead n={STRUCTURE.n} label={STRUCTURE.label} title={STRUCTURE.title} line={STRUCTURE.line} />
+        <OrgChart />
+      </Section>
+
+      {/* 02 · Governance: three levels and one fraction. */}
+      <Section id="governance">
+        <SectionHead n={G.n} label={G.label} title={G.title} line={G.line} />
+        <GovMotion>
+          <Bento className="gov body-gap">
+            <div className="cell">
+              <div className="c-h">
+                <span className="who">{G.members.who}</span>
+                <span className="ck">{G.members.ck}</span>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* S2 - The structure, on this page's one ink band. The drawing above
-          860px, the same content as a nested portrait layout below it, and
-          the list for assistive technology at every width. */}
-      <section className="hx-band" data-tone="ink" id="structure">
-        <div className="hx-wrap">
-          <p className="hx-label">
-            <b>02</b> {STRUCTURE.kicker}
-          </p>
-          <div className="hx-grid">
-            <h2 className="hx-h2 c-two-thirds">{STRUCTURE.heading}</h2>
-            <p className="hx-lede c-third">{STRUCTURE.sub}</p>
-
-            <div className="c-full">
-              <figure className="dia-figure">
-                <StructureDiagram />
-                <StructureDiagramStacked />
-                <StructureList />
-              </figure>
+              <div className="line2">{G.members.line}</div>
+              <div className="fg">
+                <div className="bal">
+                  <div className="h">
+                    <span>{G.members.head.balance}</span>
+                    <span />
+                    <b>{G.members.head.votes}</b>
+                  </div>
+                  {G.members.rows.map((r) => (
+                    <div key={r.balance}>
+                      <span>{money(r.balance, 0)}</span>
+                      <span className="bar" style={{ width: r.bar }} aria-hidden="true" />
+                      <b>1</b>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="c-m">
+                <p>{G.members.body}</p>
+              </div>
             </div>
 
-            <div className="c-two-thirds">
-              <p className="t-body hx-prose">{STRUCTURE.prose}</p>
-              <p className="t-body" style={{ marginTop: 'var(--spacing-3)' }}>
-                <TextLink href={STRUCTURE.link.href}>{STRUCTURE.link.label}</TextLink>
-              </p>
-            </div>
-            <div className="c-third">
-              {STRUCTURE.footnotes.map((f) => (
-                <Note key={f.slice(0, 24)}>{f}</Note>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* S3 - Governance. The table, then the five things nobody decides
-          alone, which were a comma list inside one row's description. */}
-      <section className="hx-band hx-wrap" data-pad="tight">
-        <p className="hx-label">
-          <b>03</b> {GOVERNANCE.kicker}
-        </p>
-        <div className="hx-grid">
-          <h2 className="hx-h2 c-two-thirds">{GOVERNANCE.heading}</h2>
-          <p className="hx-lede c-third">{GOVERNANCE.sub}</p>
-
-          <div className="c-full">
-            <Ledger items={[...GOVERNANCE.ledger]} />
-          </div>
-
-          <div className="c-full">
-            <p className="d3">{GOVERNANCE.reserved.title}</p>
-            <ul className="crit" data-cols="2">
-              {GOVERNANCE.reserved.list.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* S4 - The protocol. The best line on the page was the second half of
-          a paragraph in a side column. */}
-      <section className="hx-band hx-wrap" data-pad="tight">
-        <p className="hx-label">
-          <b>04</b> {PROTOCOL.kicker}
-        </p>
-        <div className="hx-grid">
-          <p className="hx-stage-line c-two-thirds">{PROTOCOL.statement}</p>
-          <div className="c-third">
-            <p className="t-sm hx-prose">{PROTOCOL.body}</p>
-            <Note>{PROTOCOL.note}</Note>
-          </div>
-
-          <div className="c-full hx-cols" data-n="2" data-rows="3">
-            {PROTOCOL.sides.map((side) => (
-              <div
-                className="side"
-                key={side.label}
-                data-live={'live' in side && side.live ? '' : undefined}
-              >
-                <p className="side-label">{side.label}</p>
-                <p className="side-line">{side.line}</p>
-                <p className="t-sm side-note">{side.note}</p>
+            <div className="cell">
+              <div className="c-h">
+                <span className="who">{G.councils.who}</span>
+                <span className="ck">{G.councils.ck}</span>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* S5 - Who, and what we are looking for. */}
-      <section className="hx-band hx-wrap" data-pad="tight">
-        <p className="hx-label">
-          <b>05</b> {WHO.kicker}
-        </p>
-        <div className="hx-grid">
-          <h2 className="hx-h2 c-two-thirds">{WHO.heading}</h2>
-          <p className="hx-lede c-third">{WHO.sub}</p>
-
-          {/* Two blocks of the same shape, so sharing rows helps them. The
-              figure used to be paired with the hiring list, whose third row
-              is a note and a link — which dragged "2017"'s caption 250px
-              below the number it belongs to. */}
-          <div className="c-full hx-cols" data-n="2" data-rows="3">
-            {WHO.sides.map((side) => (
-              <div className="side" key={side.label}>
-                <p className="side-label">{side.label}</p>
-                {'figure' in side ? (
-                  <p className="side-fig">{side.figure}</p>
-                ) : (
-                  <p className="side-line">{side.line}</p>
-                )}
-                <p className="t-sm side-note">{side.note}</p>
+              <div className="line2">{G.councils.line}</div>
+              <div className="fg">
+                <div className="cns">
+                  {G.councils.communities.map((c) => (
+                    <div key={c.label}>
+                      <span className="dots" aria-hidden="true">
+                        {Array.from({ length: c.n }, (_, i) => (
+                          <i key={i} className={i === 0 ? 'ch' : undefined} />
+                        ))}
+                      </span>
+                      <span>{c.label}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            ))}
-          </div>
+              <div className="c-m">
+                <p>{G.councils.body}</p>
+              </div>
+            </div>
 
-          {/* The ask runs the full width rather than sharing a row with a
-              figure it has no structural relationship to. */}
-          <div className="c-full">
-            <p className="d3">{WHO.hiring.title}</p>
-            <ul className="crit" data-cols="3">
-              {WHO.hiring.list.map((item) => (
-                <li key={item}>{item}</li>
+            <div className="cell">
+              <div className="c-h">
+                <span className="who">{G.board.who}</span>
+                <span className="ck">{G.board.ck}</span>
+              </div>
+              <div className="line2">{G.board.line}</div>
+              <div className="fg">
+                <BoardSize />
+              </div>
+              <div className="c-m">
+                <p>{G.board.body}</p>
+              </div>
+            </div>
+          </Bento>
+          <Bento className="rsv">
+            <div className="c-h">
+              <span className="who">{G.reserved.who}</span>
+              <span className="ck">{G.reserved.ck}</span>
+            </div>
+            <ol>
+              {G.reserved.items.map((m, i) => (
+                <li key={m}>
+                  <b>{String(i + 1).padStart(2, '0')}</b>
+                  <span>{m}</span>
+                </li>
               ))}
-            </ul>
-            <p className="t-sm hx-prose" style={{ marginTop: 'var(--spacing-3)' }}>
-              {WHO.hiring.note}{' '}
-              <TextLink href={WHO.hiring.link.href}>{WHO.hiring.link.label}</TextLink>
-            </p>
+            </ol>
+          </Bento>
+        </GovMotion>
+      </Section>
+
+      {/* 03 · The protocol: a fork you can actually take. */}
+      <Section ink id="protocol">
+        <SectionHead n={PROTOCOL.n} label={PROTOCOL.label} title={PROTOCOL.title} line={PROTOCOL.line} />
+        <Bento className="proto body-gap">
+          <ForkMotion>
+            <ForkDrawings />
+          </ForkMotion>
+          {PROTOCOL.cells.map((c) => (
+            <div className="cell" key={c.who}>
+              <div className="c-h">
+                <span className="who">{c.who}</span>
+                <span className="ck">{c.ck}</span>
+              </div>
+              <div className="line2">{c.line}</div>
+              <div className="c-m">
+                <p>{c.body}</p>
+              </div>
+            </div>
+          ))}
+          <div className="c-f">
+            <a href={PROTOCOL.source.href} rel="noreferrer noopener">
+              {PROTOCOL.source.label}
+            </a>
+            <span className="ck">{PROTOCOL.source.license}</span>
           </div>
-        </div>
-      </section>
+        </Bento>
+      </Section>
+
+      {/* 04 · Who: small, local, and four open seats. */}
+      <Section id="who">
+        <SectionHead n={WHO.n} label={WHO.label} title={WHO.title} line={WHO.line} />
+        <Bento className="who2 body-gap">
+          <div className="cell">
+            <div className="c-h">
+              <span className="who">{WHO.progress.who}</span>
+              <span className="ck">{WHO.progress.ck}</span>
+            </div>
+            <div className="big">
+              <YearCount />
+              <div className="tl3">
+                {WHO.progress.rows.map((r) => (
+                  <span key={r.k}>
+                    {r.k}
+                    <em>{r.v}</em>
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="c-m">
+              <p>{WHO.progress.body}</p>
+            </div>
+          </div>
+          <div className="cell">
+            <div className="c-h">
+              <span className="who">{WHO.corridor.who}</span>
+              <span className="ck">{WHO.corridor.ck}</span>
+            </div>
+            <div className="big">
+              <span className="line2">{WHO.corridor.line}</span>
+              <div className="maps">
+                {WHO.corridor.maps.map((m, i) => (
+                  <figure key={m.k}>
+                    <CorridorMap spread={i === 1} />
+                    <figcaption>
+                      <span>{m.k}</span>
+                      <b>{m.v}</b>
+                    </figcaption>
+                  </figure>
+                ))}
+              </div>
+            </div>
+            <div className="c-m">
+              <p>{WHO.corridor.body}</p>
+            </div>
+          </div>
+        </Bento>
+        <Bento className="hire">
+          <div className="c-h">
+            <span className="who">{WHO.hire.who}</span>
+            <span className="ck">{WHO.hire.ck}</span>
+          </div>
+          {WHO.hire.rows.map((r) => (
+            <div className="row" key={r.role}>
+              <b>{r.n}</b>
+              <span>{r.role}</span>
+              <em>{r.area}</em>
+            </div>
+          ))}
+          <div className="c-f">
+            <p>{WHO.hire.note}</p>
+            <Button href={WHO.hire.cta.href} live>
+              {WHO.hire.cta.label}
+            </Button>
+          </div>
+        </Bento>
+      </Section>
     </div>
   );
 }

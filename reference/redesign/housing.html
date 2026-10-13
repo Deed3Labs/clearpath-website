@@ -1,0 +1,1637 @@
+<title>Clear Housing Redesign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: a constrained page (1280 max) with one rhythm per section —
+   label, a headline that answers itself, one line, one crafted figure, one
+   link. The product is shown on its own dark ground inside thin device
+   outlines (the guide's one radius exception); figures that explain the
+   model are drawn in the site's ink. Single look: paper with ink bands. */
+:root {
+  color-scheme: light;
+  --paper: #DFE3DE;
+  --paper-2: #E9ECE7;
+  --ink: #16211D;
+  --ground: #16211D;
+  --live: #24409E;
+  --settled: #0E6B4E;
+  --underway: #8A5512;
+  --absent: #9B2C22;
+  --sig-deep: #0E6B4E;
+  --sig-light: #6FCB9F;
+  --ink-70: #525B57;
+  --ink-50: #5A635F;
+  --ink-28: #A7ADA8;
+  --ink-13: #C5CAC5;
+
+  --f-display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --f-text: 'Instrument Sans', system-ui, sans-serif;
+  --f-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  --s1: 8px; --s2: 16px; --s3: 24px; --s4: 40px; --s5: 64px; --s6: 96px;
+  --inset: clamp(16px, 4vw, 56px);
+  --max: 1280px;
+  --sec: clamp(80px, 9vw, 144px);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+.band-ink {
+  background: var(--ground); color: var(--paper);
+  --ink: #DFE3DE; --ink-70: #ABB1AC; --ink-50: #939995;
+  --ink-28: rgb(223 227 222 / .32); --ink-13: rgb(223 227 222 / .16);
+  --live: #7C8CC5; --settled: #6FCB9F; --underway: #E3B667; --absent: #E58C7F;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--f-text); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+h1, h2, h3, p, dl, dd, figure { margin: 0; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+a { color: inherit; text-decoration: none; }
+svg { display: block; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--live); outline-offset: 3px; }
+::selection { background: var(--ink); color: var(--paper); }
+
+.wrap { width: 100%; max-width: calc(var(--max) + var(--inset) * 2); margin-inline: auto; padding-inline: var(--inset); }
+.fig { font-family: var(--f-text); font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.label { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-50); }
+
+/* ── Section rhythm ───────────────────────────────────────────────────── */
+.sec { padding-block: var(--sec); }
+/* A section opens with a full-width label rule, then the headline on the
+   left seven-twelfths and its one line plus link on the right, bottom-aligned
+   to the headline. Phones stack it. */
+.head { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: clamp(32px, 6vw, 112px); row-gap: clamp(28px, 3vw, 44px); align-items: end; }
+.head > .sec-label { grid-column: 1 / -1; }
+.head > .aside { display: grid; gap: var(--s3); align-content: end; padding-bottom: .4em; }
+@media (max-width: 900px) { .head { grid-template-columns: minmax(0, 1fr); } .head > .aside { padding-bottom: 0; gap: var(--s2); } }
+.sec-label { display: flex; gap: 14px; padding-bottom: var(--s2); border-bottom: 1px solid var(--ink-13); }
+.sec-label b { font-weight: 400; color: var(--live); }
+.h2 { font-family: var(--f-display); font-weight: 800; font-size: clamp(36px, 4.7vw, 72px); line-height: .98; letter-spacing: -0.038em; text-wrap: balance; }
+.line { font-size: clamp(17px, 1.35vw, 20px); line-height: 1.5; color: var(--ink-70); max-width: 42ch; text-wrap: pretty; }
+.more { display: inline-flex; align-items: center; gap: 10px; font-size: 15.5px; font-weight: 500; color: var(--ink); border-bottom: 1px solid var(--ink-28); padding-bottom: 3px; justify-self: start; transition: border-color 200ms var(--ease), gap 200ms var(--ease); }
+.more svg { width: 14px; height: 10px; transition: transform 200ms var(--ease); }
+.more:hover { border-color: var(--ink); }
+.more:hover svg { transform: translateX(3px); }
+.body-gap { margin-top: clamp(48px, 5.5vw, 80px); }
+
+/* ── Controls (guide) ─────────────────────────────────────────────────── */
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding-inline: var(--s3); border: 1px solid transparent; border-radius: 999px; font-size: 15px; font-weight: 500; line-height: 1; white-space: nowrap; transition: background-color 200ms var(--ease), border-color 200ms var(--ease), color 200ms var(--ease); }
+.btn-primary { background: var(--ink); color: var(--paper); }
+.btn-primary:hover { background: var(--live); }
+.band-ink .btn-primary { color: var(--ground); }
+.btn-ghost { border-color: var(--ink-28); color: var(--ink); }
+.btn-ghost:hover { border-color: var(--ink); }
+.dot { --dot: var(--sig-light); position: relative; flex: none; width: 7px; height: 7px; margin-right: 10px; border-radius: 999px; background: var(--dot); box-shadow: 0 0 6px 1px color-mix(in srgb, var(--dot) 55%, transparent); }
+.dot::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: var(--dot); animation: ping 2s cubic-bezier(0, 0, .2, 1) infinite; }
+.band-ink .btn-primary .dot { --dot: var(--sig-deep); }
+@keyframes ping { 0% { transform: scale(1); opacity: .6 } 75%, 100% { transform: scale(3.4); opacity: 0 } }
+.chip { --chip: var(--ink-70); display: inline-flex; align-items: center; font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .09em; text-transform: uppercase; line-height: 1; padding: 6px 11px 5px; border: 1px solid; border-radius: 999px; white-space: nowrap; color: var(--chip); border-color: color-mix(in srgb, var(--chip) 34%, transparent); background: color-mix(in srgb, var(--chip) 10%, transparent); }
+.chip .dot { --dot: var(--chip); width: 6px; height: 6px; margin-right: 7px; box-shadow: 0 0 4px color-mix(in srgb, var(--chip) 45%, transparent); }
+.chip[data-tone="live"] { --chip: var(--settled); }
+.chip[data-tone="underway"] { --chip: var(--underway); }
+.chip[data-tone="absent"] { --chip: var(--absent); }
+.chip:not([data-tone="live"]) .dot::after { animation: none; opacity: 0; }
+
+/* ── Header — the live site's shell, kept as it is: five links, the
+   Community menu and Join; below 1000px a Menu button that opens the
+   full-screen sheet. Only the colours follow the ground underneath. ─── */
+.site-head { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 30; background: color-mix(in srgb, var(--paper) 88%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-bottom: 1px solid transparent; transition: border-color 200ms var(--ease), background-color 300ms var(--ease), color 300ms var(--ease); }
+.site-head.scrolled { border-bottom-color: var(--ink-13); }
+.site-head.on-ink { background: color-mix(in srgb, var(--ground) 90%, transparent); color: #DFE3DE; border-bottom-color: rgb(223 227 222 / .14); }
+.site-head.on-ink .nav > ul > li > a, .site-head.on-ink .navmenu-button { color: #ABB1AC; }
+.site-head.on-ink .nav > ul > li > a:hover, .site-head.on-ink .navmenu-button:hover, .site-head.on-ink .nav > ul > li > a[aria-current="page"] { color: #DFE3DE; }
+.site-head.on-ink .btn-primary { background: #DFE3DE; color: var(--ground); }
+.site-head.on-ink .btn-primary .dot { --dot: var(--sig-deep); }
+.top { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); height: 68px; }
+.brand { display: flex; align-items: center; gap: 9px; font-family: var(--f-display); font-weight: 800; font-size: 19px; letter-spacing: -0.035em; }
+.brand svg { width: 21px; height: 21px; }
+.nav { display: flex; align-items: center; gap: clamp(20px, 2.4vw, 40px); font-size: 14.5px; }
+.nav > ul { display: flex; align-items: center; gap: clamp(16px, 1.8vw, 24px); }
+.nav > ul > li > a { display: inline-flex; align-items: center; min-height: 44px; white-space: nowrap; color: var(--ink-70); transition: color 200ms var(--ease); }
+.nav > ul > li > a:hover { color: var(--ink); }
+.nav > ul > li > a[aria-current="page"] { color: var(--ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 6px; }
+.nav .btn { min-height: 38px; padding-inline: 18px; font-size: 14px; }
+/* The Community menu: a nav link that opens a short sheet of paper. */
+.navmenu { position: relative; }
+.navmenu-button { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; white-space: nowrap; color: var(--ink-70); font-size: 14.5px; transition: color 200ms var(--ease); }
+.navmenu-button:hover { color: var(--ink); }
+.navmenu-button svg { width: 10px; height: 10px; transition: transform 200ms var(--ease); }
+.navmenu-button[aria-expanded="true"] svg { transform: rotate(180deg); }
+.navmenu-panel { position: absolute; z-index: 40; top: calc(100% + 10px); right: -12px; width: 320px; background: #DFE3DE; color: #16211D; border: 1px solid #C5CAC5; border-top: 2px solid #16211D; box-shadow: 0 18px 40px rgb(22 33 29 / .14); }
+.navmenu-panel::before { content: ''; position: absolute; left: 0; right: 0; top: -12px; height: 12px; }
+.navmenu-panel li + li { border-top: 1px solid #C5CAC5; }
+.navmenu-link { display: grid; grid-template-columns: 40px minmax(0, 1fr); align-items: center; gap: 14px; padding: 14px 16px; color: #16211D; transition: background-color 200ms var(--ease); }
+.navmenu-link:hover, .navmenu-link:focus-visible { background: #E9ECE7; }
+.navmenu-icon { display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid #C5CAC5; transition: border-color 200ms var(--ease); }
+.navmenu-link:hover .navmenu-icon { border-color: #16211D; }
+.navmenu-icon svg { width: 18px; height: 18px; }
+.navmenu-text { display: grid; gap: 2px; }
+.navmenu-label { font-size: 15px; font-weight: 600; letter-spacing: -0.005em; }
+.navmenu-note { font-size: 13px; line-height: 1.35; color: #525B57; }
+.menu-btn { display: none; min-height: 44px; min-width: 44px; align-items: center; justify-content: center; gap: 8px; font-size: 15px; }
+.menu-btn svg { width: 16px; height: 16px; }
+@media (max-width: 1000px) {
+  .nav > ul, .nav > .btn { display: none; }
+  .menu-btn { display: inline-flex; }
+}
+/* The sheet: a full-screen <dialog>, which traps focus and closes on Escape. */
+.sheet { width: 100%; max-width: none; height: 100%; max-height: none; margin: 0; padding: 0; border: 0; background: var(--paper); color: var(--ink); }
+.sheet::backdrop { background: #16211D; opacity: .28; }
+.sheet-inner { padding-bottom: var(--s3); }
+.sheet-top { display: flex; align-items: center; justify-content: space-between; height: 68px; margin-bottom: var(--s3); }
+.sheet-top .t-note { font-size: 15px; color: var(--ink-70); }
+.sheet-close { min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; justify-content: flex-end; }
+.sheet-close svg { width: 18px; height: 18px; }
+.sheet-nav { display: grid; gap: var(--s4); }
+.sheet-main { display: grid; gap: var(--s2); }
+.sheet-main a { display: block; padding-block: 9px; font-family: var(--f-display); font-weight: 600; font-size: clamp(23px, 2.1vw, 30px); letter-spacing: -0.024em; line-height: 1.12; }
+.sheet-main a[aria-current="page"] { color: var(--live); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 7px; }
+.sheet-community { display: grid; gap: var(--s1); }
+.sheet-label { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-50); }
+.sheet-tiles { border-top: 1px solid var(--ink-13); }
+.sheet-tiles li { border-bottom: 1px solid var(--ink-13); }
+.sheet-tile { display: grid; grid-template-columns: 44px minmax(0, 1fr); align-items: center; column-gap: 14px; padding: 12px 0; }
+.sheet-tile svg { grid-row: 1 / span 2; box-sizing: content-box; width: 20px; height: 20px; padding: 11px; border: 1px solid var(--ink-13); }
+.sheet-tile-label { font-family: var(--f-display); font-weight: 600; font-size: 20px; letter-spacing: -0.02em; line-height: 1.1; }
+.sheet-tile-note { font-size: 13px; line-height: 1.35; color: var(--ink-70); }
+.sheet-join { display: flex; width: 100%; min-height: 48px; }
+
+/* ── Hero ─────────────────────────────────────────────────────────────── */
+.hero { padding-top: clamp(40px, 6vw, 96px); padding-bottom: var(--sec); }
+.hero-h1 { font-family: var(--f-display); font-weight: 800; font-size: min(9.4vw, 132px); line-height: .92; letter-spacing: -0.045em; }
+/* Two set lines from tablet up; below that the words wrap on their own. */
+.hero-h1 .ln { display: block; white-space: nowrap; }
+@media (max-width: 699px) { .hero-h1 { font-size: clamp(46px, 13.4vw, 72px); } .hero-h1 .ln { display: inline; white-space: normal; } }
+.hero-h1 .w { display: inline-block; overflow: hidden; vertical-align: top; padding: .04em .1em .24em; margin: -.04em -.1em -.24em; }
+/* The mask is only for the rise. Once the words are up it comes off, so no
+   descender, overhang or tight-tracked edge is ever clipped. */
+.hero-h1.revealed .w { overflow: visible; }
+.hero-h1 .w > span { display: inline-block; }
+.hero-row { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); gap: var(--s4) clamp(24px, 6vw, 120px); margin-top: clamp(32px, 4vw, 56px); align-items: end; }
+.hero-lede { font-size: clamp(18px, 1.6vw, 22px); line-height: 1.45; color: var(--ink-70); max-width: 38ch; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: var(--s3); }
+.facts { border-top: 1px solid var(--ink); display: grid; }
+.facts li { padding-block: 12px; border-bottom: 1px solid var(--ink-13); font-size: 15px; display: flex; justify-content: space-between; gap: 12px; }
+.facts li span:last-child { color: var(--ink-50); font-family: var(--f-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; align-self: center; }
+@media (max-width: 860px) { .hero-row { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 560px) {
+  .hero-actions .btn { flex: 1 1 100%; min-height: 48px; }
+  .hero-row { gap: var(--s4); }
+}
+
+/* The product stage: flat on the page. */
+.stage { margin-top: clamp(56px, 7vw, 104px); position: relative; }
+.stage-cap { display: flex; justify-content: space-between; gap: 12px; margin-top: 14px; }
+.stagebox { position: relative; }
+
+/* ── Device outlines and scaled screens ───────────────────────────────── */
+/* A device is only its outline: one thin light line at the guide's 14px
+   radius, the screen pushed almost to it. Light travels along that line. */
+.device { position: relative; border: 1px solid var(--ink-28); border-radius: 14px; padding: 7px; }
+.screen { position: relative; overflow: hidden; background: #16211D; border-radius: 7px; }
+.trace { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; z-index: 4; }
+.trace path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.trace .halo { stroke: #6FCB9F; stroke-width: 7; opacity: .75; filter: url(#glow); }
+.trace .core { stroke: #0E6B4E; stroke-width: 1.6; }
+.trace .rest { stroke: var(--ink-28); stroke-width: 1; }
+.canvas { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+.screen-phone { display: none; }
+@media (max-width: 699px) {
+  .screen-desk { display: none; }
+  .screen-phone { display: block; }
+  .stage .device { max-width: 420px; margin-inline: auto; }
+}
+
+/* ── The app (member and merchant) — its own ground, same guide ──────── */
+.app {
+  --a-bg: #16211D; --a-2: #1E2C27; --a-line: rgb(223 227 222 / .14); --a-fg: #DFE3DE;
+  --a-70: #ABB1AC; --a-50: #939995; --a-live: #7C8CC5; --a-ok: #6FCB9F; --a-warn: #E3B667;
+  background: var(--a-bg); color: var(--a-fg); font-family: var(--f-text); font-size: 14px; line-height: 1.45;
+  -webkit-font-smoothing: antialiased; overflow: hidden;
+}
+.app .lbl { font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--a-50); }
+.app .num { font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.app .bar-top { height: 56px; display: flex; align-items: center; justify-content: space-between; padding-inline: 24px; border-bottom: 1px solid var(--a-line); }
+.app .bar-top .l { display: flex; align-items: center; gap: 28px; }
+.app .lock { display: flex; align-items: center; gap: 8px; font-family: var(--f-display); font-weight: 800; font-size: 17px; letter-spacing: -0.035em; }
+.app .lock svg { width: 18px; height: 18px; }
+.app .lock i { width: 1px; height: 16px; background: var(--a-line); margin-inline: 4px; }
+.app .lock em { font-style: normal; font-family: var(--f-text); font-weight: 500; font-size: 14px; letter-spacing: 0; color: var(--a-70); }
+.app .tabs { display: flex; gap: 22px; color: var(--a-50); font-size: 14px; }
+.app .tabs .on { color: var(--a-fg); }
+.app .ava { width: 30px; height: 30px; border-radius: 999px; border: 1px solid var(--a-line); display: grid; place-items: center; font-size: 11.5px; font-weight: 600; color: var(--a-70); }
+.app .pillb { display: inline-flex; align-items: center; justify-content: center; height: 32px; padding-inline: 14px; border-radius: 999px; border: 1px solid var(--a-line); font-size: 13px; font-weight: 500; color: var(--a-fg); white-space: nowrap; }
+.app .pillb.solid { background: var(--a-fg); color: var(--a-bg); border-color: var(--a-fg); }
+
+
+/* Shared bento vocabulary for this page: one line weight, padding on the
+   rows so every rule runs wall to wall, header / main / footer in a cell. */
+.who { font-size: 15px; font-weight: 500; letter-spacing: -0.01em; }
+.ck { font-size: 13.5px; color: var(--ink-50); }
+.bx { --line: var(--ink-28); --px: clamp(20px, 2.6vw, 36px); border: 1px solid var(--line); display: grid; }
+.bx + .bx { border-top: 0; }
+.cell { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; min-width: 0; }
+.c-h, .c-f { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 56px; padding: 0 var(--px); }
+.c-h { border-bottom: 1px solid var(--line); }
+.c-f { border-top: 1px solid var(--line); }
+.c-m { display: grid; align-content: start; gap: 18px; padding: clamp(26px, 3vw, 40px) var(--px); }
+.c-m h3 { font-family: var(--f-display); font-weight: 600; font-size: clamp(20px, 1.8vw, 26px); line-height: 1.15; letter-spacing: -0.022em; text-wrap: balance; max-width: 22ch; }
+.c-m p { font-size: 15px; line-height: 1.55; color: var(--ink-70); max-width: 44ch; }
+.note { font-size: 13.5px; color: var(--ink-50); }
+
+
+/* ── Hero ─────────────────────────────────────────────────────────────── */
+.phero { padding-bottom: var(--sec); }
+.phero .hero-h1 { font-size: min(6.9vw, 96px); }
+@media (max-width: 699px) { .phero .hero-h1 { font-size: clamp(40px, 11vw, 60px); text-wrap: balance; } }
+.page-label { display: flex; gap: 14px; margin-bottom: clamp(24px, 3vw, 40px); }
+.page-label b { font-weight: 400; color: var(--live); }
+.facts.figs li { align-items: baseline; }
+.facts.figs li span:last-child { font-family: var(--f-text); font-size: 16px; font-weight: 600; letter-spacing: -0.01em; text-transform: none; color: var(--ink); font-variant-numeric: tabular-nums; }
+.facts.figs li span.live:last-child { color: var(--live); }
+
+/* Member app, Savings, desktop canvas 1200 wide */
+.app .bar-top .r { display: flex; align-items: center; gap: 22px; }
+.app .bell { width: 17px; height: 17px; color: var(--a-70); }
+.app .cap2 { color: var(--a-50); font-size: 13px; }
+.app .pillb.lg { height: 38px; padding-inline: 20px; font-size: 13.5px; }
+.sv { padding: 30px 40px 40px; display: grid; gap: 22px; }
+.sv-top { display: flex; justify-content: space-between; align-items: end; gap: 24px; }
+.sv-top .l { display: grid; gap: 6px; }
+.sv-n { font-size: 46px; line-height: 1; letter-spacing: -0.035em; margin-top: 4px; }
+.sv-top .acts { display: flex; gap: 10px; }
+.slab { display: grid; grid-template-columns: 1.35fr 1fr; border: 1px solid var(--a-line); }
+.slab > .blk + .blk { border-left: 1px solid var(--a-line); }
+.blk { display: grid; grid-template-rows: auto 1fr auto; min-width: 0; }
+.bh { display: flex; justify-content: space-between; align-items: center; height: 56px; padding: 0 20px; border-bottom: 1px solid var(--a-line); }
+.bh .num { font-size: 19px; }
+.bh .num span { color: var(--a-50); font-weight: 500; font-size: 13px; }
+.bm { padding: 18px 20px; display: grid; align-content: start; gap: 16px; }
+.bf { border-top: 1px solid var(--a-line); padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 13px; color: var(--a-70); }
+.bf b { color: var(--a-fg); font-weight: 500; }
+.hp-n { display: flex; align-items: baseline; gap: 10px; }
+.hp-n .num { font-size: 40px; letter-spacing: -0.035em; line-height: 1; }
+.ladder5 { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; }
+.ladder5 > div { display: grid; gap: 8px; align-content: start; }
+.ladder5 i { display: block; height: 8px; background: var(--a-2); position: relative; overflow: hidden; }
+.ladder5 i b { position: absolute; inset: 0; background: var(--a-ok); transform-origin: 0 50%; }
+.ladder5 .now i b { background: var(--a-live); }
+.ladder5 span { font-size: 12px; color: var(--a-50); line-height: 1.3; }
+.ladder5 .got span { color: var(--a-fg); }
+.ladder5 em { font-style: normal; font-family: var(--f-mono); font-size: 10px; letter-spacing: .08em; color: var(--a-50); }
+.nextu { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 14px; background: var(--a-2); font-size: 13.5px; }
+.nextu b { font-weight: 600; }
+.comp { display: flex; height: 6px; }
+.comp i { display: block; transform-origin: 0 50%; }
+.trows { display: grid; gap: 7px; font-size: 13.5px; color: var(--a-70); }
+.trows div { display: flex; justify-content: space-between; gap: 12px; }
+.trows .fg { color: var(--a-fg); } .trows .ok { color: var(--a-ok); } .trows .warn { color: var(--a-warn); }
+.prot { border: 1px solid var(--a-line); }
+.prot .bh { border-bottom: 1px solid var(--a-line); }
+.prot-rows { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.prot-rows > div { display: grid; gap: 6px; padding: 14px 16px 16px; font-size: 13px; color: var(--a-70); }
+.prot-rows > div + div { border-left: 1px solid var(--a-line); }
+.prot-rows b { color: var(--a-fg); font-weight: 500; font-size: 13.5px; }
+.chp { justify-self: start; font-family: var(--f-mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--a-line); color: var(--a-50); }
+.chp.ok { color: var(--a-ok); border-color: rgb(111 203 159 / .35); }
+/* Phone canvas */
+.ph-top { height: 58px; display: flex; align-items: center; justify-content: space-between; padding-inline: 18px; border-bottom: 1px solid var(--a-line); }
+.ph-top .r { display: flex; align-items: center; gap: 16px; }
+.ph-sv { padding: 22px 18px 96px; display: grid; gap: 16px; }
+.ph-sv .sv-n { font-size: 38px; }
+.ph-sv .slab { grid-template-columns: minmax(0, 1fr); }
+.ph-sv .ladder5 span { font-size: 10.5px; }
+.navpill { position: absolute; left: 16px; bottom: 18px; height: 50px; display: flex; align-items: center; gap: 4px; padding: 5px; border-radius: 17px; background: var(--a-2); border: 1px solid var(--a-line); }
+.navpill span { height: 40px; padding-inline: 14px; display: grid; place-items: center; border-radius: 13px; font-size: 13px; color: var(--a-50); }
+.navpill span.on { background: var(--a-fg); color: var(--a-bg); font-weight: 500; }
+.navact { position: absolute; right: 16px; bottom: 18px; width: 50px; height: 50px; border-radius: 17px; background: var(--a-fg); color: var(--a-bg); display: grid; place-items: center; }
+.navact svg { width: 18px; height: 18px; }
+
+/* ── 01 The split: land and house, side by side ──────────────────────── */
+.split { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.split .cell + .cell { border-left: 1px solid var(--line); }
+.split .big { font-family: var(--f-display); font-weight: 800; font-size: clamp(30px, 3.4vw, 52px); line-height: 1; letter-spacing: -0.035em; text-wrap: balance; }
+.split .house .big { color: var(--live); }
+.split .c-m p { font-size: 15.5px; max-width: 46ch; }
+.split .plat { width: 100%; height: auto; display: block; margin-bottom: 6px; }
+.plat .hl { stroke: var(--ink-28); stroke-width: 1; }
+.plat .pl { fill: none; stroke: var(--ink-70); stroke-width: 1.1; stroke-dasharray: 10 3 2 3; }
+.plat .lane { fill: var(--paper); stroke: var(--ink-50); stroke-width: 1; }
+.plat .lane-c { stroke: var(--ink-28); stroke-width: .8; stroke-dasharray: 6 5; }
+.plat .walk { fill: var(--paper); stroke: var(--ink-50); stroke-width: .8; }
+.plat .pv { stroke: var(--ink-28); stroke-width: .6; }
+.plat .spur { fill: var(--paper); stroke: var(--ink-50); stroke-width: .7; }
+.plat .drv { fill: var(--paper); stroke: var(--ink-28); stroke-width: .7; }
+.plat .lot { stroke: var(--ink-28); stroke-width: .8; stroke-dasharray: 3 3; }
+.plat .h { fill: var(--paper); stroke: var(--ink-50); stroke-width: 1.4; }
+.plat .pc { fill: var(--paper); stroke: var(--ink-28); stroke-width: .8; }
+.plat .h.mine { fill: color-mix(in srgb, var(--live) 14%, var(--paper)); stroke: var(--live); stroke-width: 2.2; }
+.plat .pc.mine { stroke: var(--live); }
+.plat .title { fill: none; stroke: var(--live); stroke-width: .9; stroke-dasharray: 3 3; }
+.plat .lbl { font-family: var(--f-mono); font-size: 9px; letter-spacing: .08em; text-transform: uppercase; fill: var(--ink-50); }
+.plat .lbl.mine { fill: var(--live); font-size: 8.5px; }
+.split .land .plat .h { stroke: var(--ink-70); }
+.split-f { grid-column: 1 / -1; }
+@media (max-width: 760px) {
+  .split { grid-template-columns: minmax(0, 1fr); }
+  .split .cell + .cell { border-left: 0; border-top: 1px solid var(--line); }
+}
+
+/* ── 02 The numbers, on ink ───────────────────────────────────────────── */
+.nums { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.nums .cell + .cell { border-left: 1px solid var(--line); }
+.nums .fig.n { font-size: clamp(40px, 4.4vw, 68px); line-height: .95; letter-spacing: -0.04em; }
+.nums .member .fig.n { color: var(--live); }
+.nums .market .fig.n { color: var(--ink-50); }
+.nbar { height: 12px; background: var(--ink-13); position: relative; }
+.nbar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--ink); transform-origin: 0 50%; }
+.member .nbar i { background: var(--live); }
+.market .nbar i { background: var(--ink-50); }
+.nbar .cut { position: absolute; top: -6px; bottom: -6px; width: 1px; background: var(--ink-50); }
+.nums-f { grid-column: 1 / -1; display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 12px clamp(24px, 4vw, 64px); padding: clamp(22px, 2.6vw, 32px) var(--px); border-top: 1px solid var(--line); }
+.nums-f .fig { font-size: clamp(30px, 3vw, 46px); line-height: 1; letter-spacing: -0.035em; color: var(--settled); }
+.nums-f p { font-size: 15px; line-height: 1.5; color: var(--ink-70); max-width: 58ch; }
+@media (max-width: 860px) {
+  .nums { grid-template-columns: minmax(0, 1fr); }
+  .nums .cell + .cell { border-left: 0; border-top: 1px solid var(--line); }
+  .nums-f { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ── 03 Every month: the two lines, and what one of them becomes ─────── */
+.bill { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.bill .cell + .cell { border-left: 1px solid var(--line); }
+.bl { }
+.bl > div:first-child { padding-top: 0; }
+.bl > div { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 16px; padding-block: 16px; border-bottom: 1px solid var(--ink-13); align-items: baseline; }
+.bl dt { font-size: 17px; font-weight: 500; letter-spacing: -0.01em; }
+.bl dd { font-size: clamp(22px, 2vw, 28px); font-weight: 600; letter-spacing: -0.025em; font-variant-numeric: tabular-nums; text-align: right; }
+.bl small { grid-column: 1 / -1; font-size: 14px; color: var(--ink-50); }
+.bl .yours dd { color: var(--live); }
+.bl .var dd { font-size: 15px; font-weight: 500; letter-spacing: 0; color: var(--ink-50); }
+.bl .yours dt::after { content: 'Yours'; margin-left: 10px; font-family: var(--f-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--settled); border: 1px solid color-mix(in srgb, var(--settled) 34%, transparent); background: color-mix(in srgb, var(--settled) 10%, transparent); border-radius: 999px; padding: 4px 8px 3px; vertical-align: 2px; }
+.rng { display: grid; gap: 10px; }
+.rng input { -webkit-appearance: none; appearance: none; width: 100%; height: 28px; background: transparent; cursor: pointer; margin: 0; }
+.rng input::-webkit-slider-runnable-track { height: 2px; background: linear-gradient(to right, var(--ink) var(--p, 0%), var(--ink-28) var(--p, 0%)); }
+.rng input::-moz-range-track { height: 2px; background: var(--ink-28); }
+.rng input::-moz-range-progress { height: 2px; background: var(--ink); }
+.rng input::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; border-radius: 999px; background: var(--ink); border: 0; margin-top: -11px; box-shadow: 0 0 0 6px rgb(22 33 29 / .06); }
+.rng input::-moz-range-thumb { width: 24px; height: 24px; border-radius: 999px; background: var(--ink); border: 0; }
+.rng .ends { display: flex; justify-content: space-between; font-size: 13px; color: var(--ink-50); }
+.kept5 { display: grid; gap: 6px; }
+.kept5 .fig { font-size: clamp(48px, 5vw, 80px); line-height: .95; letter-spacing: -0.04em; color: var(--settled); }
+.yrs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; align-items: end; height: 150px; border-bottom: 1px solid var(--line); }
+.yrs > div { display: flex; flex-direction: column; justify-content: flex-end; gap: 6px; height: 150px; }
+.yrs > div i { flex: none; }
+.yrs span { font-size: 12.5px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--ink-70); }
+.yrs i { display: block; background: var(--settled); transform-origin: 50% 100%; }
+.bill .cell:first-child .c-m { grid-template-rows: auto minmax(0, 1fr) auto; height: 100%; }
+.bill .cell:first-child .rng { align-self: end; }
+.yrs-ax { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; font-size: 12.5px; color: var(--ink-50); margin-top: -8px; }
+.cmp2 { border-top: 1px solid var(--ink-13); }
+.cmp2 div { display: flex; justify-content: space-between; gap: 12px; padding-block: 11px; border-bottom: 1px solid var(--ink-13); font-size: 14.5px; color: var(--ink-70); }
+.cmp2 b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+.cmp2 .muted b { color: var(--ink-50); }
+@media (max-width: 860px) {
+  .bill { grid-template-columns: minmax(0, 1fr); }
+  .bill .cell + .cell { border-left: 0; border-top: 1px solid var(--line); }
+}
+
+/* ── 04 The homes: a drawn plan, three parts of one house ────────────── */
+.plan-x { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.plan-d { grid-column: 1 / -1; padding: clamp(24px, 3vw, 44px) var(--px); border-bottom: 1px solid var(--line); }
+.plan-d svg { width: 100%; height: auto; display: block; overflow: visible; }
+.plan-d .tall { display: none; max-width: 460px; margin-inline: auto; }
+@media (max-width: 620px) { .plan-d .wide { display: none; } .plan-d .tall { display: block; } }
+/* Drafting conventions: poché exterior walls, thinner partitions, glazing
+   as three lines in a knocked-out opening, doors as a leaf and a swing,
+   dash-dot property line, decking and pavers as light hatch. */
+.bp .pl { fill: none; stroke: var(--ink-50); stroke-width: 1; stroke-dasharray: 12 3 2 3; }
+.bp .wall { fill: none; stroke: var(--ink); stroke-width: 3.6; stroke-linejoin: miter; }
+.bp .iw { stroke: var(--ink); stroke-width: 2; stroke-linecap: square; }
+.bp .ko { fill: var(--paper); stroke: none; }
+.bp .win { stroke: var(--ink); stroke-width: .6; }
+.bp .door { stroke: var(--ink); stroke-width: 1.3; }
+.bp .arc { fill: none; stroke: var(--ink-50); stroke-width: .7; }
+.bp .oh { stroke: var(--ink-50); stroke-width: .8; stroke-dasharray: 4 3; }
+.bp .fx { fill: none; stroke: var(--ink-70); stroke-width: .75; }
+.bp .edge { fill: none; stroke: var(--ink-70); stroke-width: .9; }
+.bp .deck { stroke: var(--ink-28); stroke-width: .6; }
+.bp .pav { fill: none; stroke: var(--ink-28); stroke-width: .6; }
+.bp .cl { stroke: var(--ink-28); stroke-width: .8; }
+.bp .fence { stroke: var(--ink-50); stroke-width: .7; }
+.bp .post, .bp .postb { fill: var(--ink-70); stroke: none; }
+.bp .tree { fill: none; stroke: var(--ink-50); stroke-width: .7; stroke-dasharray: 1.5 1.5; }
+.bp .dim { stroke: var(--ink-50); stroke-width: .6; }
+.bp .dimk { stroke: var(--ink-70); stroke-width: .9; }
+.bp .sbf { fill: var(--ink-70); } .bp .sbo { fill: none; stroke: var(--ink-70); stroke-width: .7; }
+.bp .na { fill: var(--ink-70); }
+.bp text { font-family: var(--f-mono); font-size: 8.5px; letter-spacing: .08em; text-transform: uppercase; fill: var(--ink-70); }
+.bp text.s { font-size: 6.8px; fill: var(--ink-50); }
+.bp text.d { fill: var(--ink-50); font-size: 7px; }
+.bp.tall text { font-size: 10px; } .bp.tall text.s, .bp.tall text.d { font-size: 8px; }
+.bp .z { fill: transparent; stroke: none; transition: fill 400ms var(--ease); }
+.bp .z.on { fill: color-mix(in srgb, var(--live) 12%, transparent); }
+.bp text.zl { transition: fill 300ms var(--ease); }
+.bp text.zl.on { fill: var(--live); }
+.plan-x .cell { cursor: pointer; transition: background-color 300ms var(--ease); }
+.plan-x .cell + .cell { border-left: 1px solid var(--line); }
+.plan-x .cell.on { background: var(--paper-2); }
+.plan-x .cell .n { font-family: var(--f-mono); font-size: 11px; color: var(--ink-50); }
+.plan-x .cell.on .n { color: var(--live); }
+.plan-x .c-f .fig { font-size: clamp(22px, 2vw, 28px); letter-spacing: -0.025em; }
+.plan-x .c-f { min-height: 64px; }
+.plan-x .c-f .ck { text-align: right; max-width: 22ch; line-height: 1.35; }
+@media (max-width: 860px) {
+  .plan-x { grid-template-columns: minmax(0, 1fr); }
+  .plan-x .cell + .cell { border-left: 0; border-top: 1px solid var(--line); }
+}
+
+/* ── 05 Backyards, on ink ─────────────────────────────────────────────── */
+.yard { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: auto auto minmax(0, 1fr); }
+.yard .cell { grid-row: span 3; grid-template-rows: subgrid; }
+.yard .cell + .cell { border-left: 1px solid var(--line); }
+.yard .line2 { font-family: var(--f-display); font-weight: 800; font-size: clamp(30px, 3vw, 46px); line-height: 1; letter-spacing: -0.035em; padding: clamp(26px, 3vw, 40px) var(--px) 0; }
+.yard .unit .line2 { color: var(--live); }
+.yard .sub { padding: 8px var(--px) 0; font-size: 14px; color: var(--ink-50); }
+.yard .c-m { padding-top: 22px; }
+.yard-f { display: flex; justify-content: space-between; align-items: center; gap: 16px 32px; flex-wrap: wrap; padding: 22px var(--px); }
+.yard-f p { font-size: 16px; line-height: 1.5; max-width: 60ch; }
+@media (max-width: 860px) {
+  .yard { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
+  .yard .cell { grid-row: auto; grid-template-rows: auto auto auto; }
+  .yard .cell + .cell { border-left: 0; border-top: 1px solid var(--line); }
+}
+
+/* ── 06 The gate: five unlocks on one rule ────────────────────────────── */
+.gate-h { grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 20px 48px; padding: clamp(28px, 3vw, 44px) var(--px); }
+.gate-h .fig { font-size: clamp(64px, 8vw, 128px); line-height: .9; letter-spacing: -0.045em; }
+.gate-h .cap { display: grid; gap: 10px; justify-items: end; text-align: right; }
+.gate-h .cap p { font-size: 15px; color: var(--ink-70); max-width: 26ch; }
+.gate-h h3 { font-family: var(--f-display); font-weight: 600; font-size: clamp(24px, 2.4vw, 34px); line-height: 1.1; letter-spacing: -0.025em; max-width: 18ch; text-wrap: balance; }
+.ldr { position: relative; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.ldr .rail-fill { position: absolute; left: -1px; top: -1px; height: 2px; width: calc(100% + 2px); background: var(--ink); transform: scaleX(0); transform-origin: 0 50%; z-index: 2; pointer-events: none; }
+.ldr > .st { position: relative; display: grid; align-content: start; gap: 8px; padding: clamp(26px, 2.8vw, 36px) var(--px) clamp(24px, 2.6vw, 32px); }
+.ldr > .st + .st { border-left: 1px solid var(--line); }
+.ldr .knob { position: absolute; top: -7px; left: calc(50% - 7px); width: 13px; height: 13px; border-radius: 999px; background: var(--paper); border: 1px solid var(--ink-50); z-index: 3; transition: background-color 300ms var(--ease), border-color 300ms var(--ease); }
+.ldr .st.reached .knob { background: var(--ink); border-color: var(--ink); }
+.ldr .st.last.reached .knob { background: var(--settled); border-color: var(--settled); }
+.ldr .at { font-size: clamp(22px, 2vw, 30px); letter-spacing: -0.03em; line-height: 1; }
+.ldr .st.last .at { color: var(--settled); }
+.ldr .nm { font-size: 15.5px; font-weight: 500; letter-spacing: -0.01em; margin-top: 6px; }
+.ldr p { font-size: 14px; line-height: 1.5; color: var(--ink-70); }
+.gate-f { display: flex; justify-content: space-between; align-items: center; gap: 16px 32px; flex-wrap: wrap; padding: 20px var(--px); }
+.gate-f p { font-size: 14.5px; color: var(--ink-70); max-width: 70ch; }
+@media (max-width: 1000px) and (min-width: 761px) { .ldr .at { font-size: 20px; } .ldr .nm { font-size: 14px; } .ldr p { font-size: 13px; } }
+@media (max-width: 760px) {
+  .gate-h { grid-template-columns: minmax(0, 1fr); }
+  .gate-h .cap { justify-items: start; text-align: left; }
+  .ldr { grid-template-columns: minmax(0, 1fr); }
+  .ldr > .st + .st { border-left: 0; border-top: 1px solid var(--line); }
+  .ldr .rail-fill { width: 2px; height: calc(100% + 2px); transform: scaleY(0); transform-origin: 50% 0; }
+  .ldr .knob { left: -7px; top: calc(clamp(26px, 2.8vw, 36px) + 6px); }
+}
+
+/* ── Close ────────────────────────────────────────────────────────────── */
+.close .h2 { font-size: clamp(36px, 4.8vw, 72px); max-width: 16ch; }
+.note-b { margin-top: 14px; }
+
+/* ── Close + footer ───────────────────────────────────────────────────── */
+.close .h2 { font-size: clamp(40px, 5.6vw, 88px); max-width: 12ch; }
+.foot { border-top: 1px solid var(--ink); padding-block: var(--s5); display: grid; grid-template-columns: minmax(0, 1.4fr) repeat(4, minmax(0, 1fr)); gap: var(--s4) var(--s4); font-size: 14.5px; }
+.foot h4 { margin: 0 0 12px; font-family: var(--f-mono); font-weight: 400; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-50); }
+.foot li + li { margin-top: 6px; }
+.foot a { color: var(--ink-70); } .foot a:hover { color: var(--ink); }
+.foot .about { color: var(--ink-70); max-width: 30ch; display: grid; gap: var(--s2); align-content: start; }
+.legal { grid-column: 1 / -1; border-top: 1px solid var(--ink-13); padding-top: var(--s3); color: var(--ink-50); font-size: 12.5px; display: grid; gap: 8px; max-width: 110ch; }
+@media (max-width: 900px) { .foot { grid-template-columns: repeat(2, minmax(0, 1fr)); } .foot .about { grid-column: 1 / -1; } }
+
+.mock-flag { position: fixed; left: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); z-index: 40; font-family: var(--f-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; background: #24409E; color: #E9ECE7; padding: 6px 11px; border-radius: 999px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .dot::after { animation: none; opacity: 0; }
+  *, *::before, *::after { transition-duration: 0ms !important; }
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="mark" viewBox="-168 -168 336 336">
+    <path d="M 148.28 -64 A 161.5 161.5 0 1 0 148.28 64 L 74.22 64 A 98 98 0 1 1 74.22 -64 Z" fill="currentColor" stroke="currentColor" stroke-width="4"/>
+    <path d="M 0 -8 H 114 V 8 H 0 Z" fill="currentColor"/>
+    <circle cx="0" cy="0" r="34" fill="currentColor"/>
+    <circle cx="131.5" cy="0" r="25.25" fill="none" stroke="currentColor" stroke-width="15.5"/>
+  </symbol>
+  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3.2"/></filter>
+  <symbol id="i-events" viewBox="0 0 18 18"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="3.5" width="13" height="12"/><path d="M2.5 7h13M6 2v3M12 2v3"/><path d="M5.5 10h2M5.5 12.5h2M10.5 10h2"/></g></symbol>
+  <symbol id="i-directory" viewBox="0 0 18 18"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l1.2-4h10.6l1.2 4"/><path d="M2.5 7.5c0 1.1.9 2 2 2s2-.9 2-2c0 1.1.9 2 2 2s2-.9 2-2c0 1.1.9 2 2 2s2-.9 2-2"/><path d="M3.5 9.3V15.5h11V9.3M7.5 15.5v-3.5h3v3.5"/></g></symbol>
+  <symbol id="i-shop" viewBox="0 0 18 18"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6.5h12l-1 9H4z"/><path d="M6.5 6.5V5a2.5 2.5 0 0 1 5 0v1.5"/></g></symbol>
+  <symbol id="arrow" viewBox="0 0 14 10"><path d="M0 5h12M8 1l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.4"/></symbol>
+  <symbol id="check" viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="back" viewBox="0 0 9 15"><path d="M8 1L2 7.5 8 14" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+  <symbol id="bell" viewBox="0 0 18 18"><path d="M4.5 12.5V8a4.5 4.5 0 0 1 9 0v4.5l1.5 1.5H3z M7.2 15.5a1.9 1.9 0 0 0 3.6 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></symbol>
+  <symbol id="plus" viewBox="0 0 18 18"><path d="M9 2v14M2 9h14" stroke="currentColor" stroke-width="1.8"/></symbol>
+  <symbol id="del" viewBox="0 0 24 16"><path d="M8 1h14v14H8L1 8z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M12 5l6 6M18 5l-6 6" stroke="currentColor" stroke-width="1.4"/></symbol>
+</svg>
+
+<header class="site-head" id="site-head">
+  <div class="wrap">
+    <div class="top">
+      <a class="brand" href="https://www.useclear.org/" aria-label="Clear, home"><svg aria-hidden="true"><use href="#mark"/></svg>Clear</a>
+      <nav class="nav" aria-label="Main">
+        <ul>
+          <li><a href="https://www.useclear.org/how">How it works</a></li>
+          <li><a href="https://www.useclear.org/shops">For shops</a></li>
+          <li><a href="https://www.useclear.org/housing" aria-current="page">Housing</a></li>
+          <li><a href="https://www.useclear.org/contribute">Contribute land</a></li>
+          <li><a href="https://www.useclear.org/coop">The co-op</a></li>
+          <li class="navmenu" id="navmenu">
+            <button type="button" class="navmenu-button" id="navmenu-btn" aria-expanded="false" aria-controls="navmenu-panel">Community<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></button>
+            <div class="navmenu-panel" id="navmenu-panel" hidden><ul>
+              <li><a class="navmenu-link" href="https://www.useclear.org/events"><span class="navmenu-icon"><svg aria-hidden="true"><use href="#i-events"/></svg></span><span class="navmenu-text"><span class="navmenu-label">Events</span><span class="navmenu-note">Calls, town halls and local meetings</span></span></a></li>
+              <li><a class="navmenu-link" href="https://www.useclear.org/directory"><span class="navmenu-icon"><svg aria-hidden="true"><use href="#i-directory"/></svg></span><span class="navmenu-text"><span class="navmenu-label">Directory</span><span class="navmenu-note">Local businesses that take Clear Pay</span></span></a></li>
+              <li><a class="navmenu-link" href="https://www.useclear.org/shop"><span class="navmenu-icon"><svg aria-hidden="true"><use href="#i-shop"/></svg></span><span class="navmenu-text"><span class="navmenu-label">Shop</span><span class="navmenu-note">Goods with the Clear name on them</span></span></a></li>
+            </ul></div>
+          </li>
+        </ul>
+        <a class="btn btn-primary" href="https://www.useclear.org/join"><span class="dot"></span>Join</a>
+        <button type="button" class="menu-btn" id="menu-btn" aria-haspopup="dialog">Menu<svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 4h14M1 8h14M1 12h14"/></svg></button>
+      </nav>
+    </div>
+  </div>
+</header>
+<dialog class="sheet" id="sheet" aria-label="Main">
+  <div class="sheet-inner wrap">
+    <div class="sheet-top"><span class="t-note">Menu</span><button type="button" class="sheet-close" id="sheet-close" aria-label="Close menu"><svg viewBox="0 0 18 18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 2l14 14M16 2L2 16"/></svg></button></div>
+    <nav class="sheet-nav">
+      <ul class="sheet-main">
+          <li><a href="https://www.useclear.org/">Home</a></li>
+          <li><a href="https://www.useclear.org/how">How it works</a></li>
+          <li><a href="https://www.useclear.org/shops">For shops</a></li>
+          <li><a href="https://www.useclear.org/housing" aria-current="page">Housing</a></li>
+          <li><a href="https://www.useclear.org/contribute">Contribute land</a></li>
+          <li><a href="https://www.useclear.org/coop">The co-op</a></li>
+          <li><a href="https://www.useclear.org/capital">Clear Capital</a></li>
+      </ul>
+      <section class="sheet-community" aria-labelledby="sheet-community-label">
+        <p class="sheet-label" id="sheet-community-label">Community</p>
+        <ul class="sheet-tiles">
+            <li><a class="sheet-tile" href="https://www.useclear.org/events"><svg aria-hidden="true"><use href="#i-events"/></svg><span class="sheet-tile-label">Events</span><span class="sheet-tile-note">Calls, town halls and local meetings</span></a></li>
+            <li><a class="sheet-tile" href="https://www.useclear.org/directory"><svg aria-hidden="true"><use href="#i-directory"/></svg><span class="sheet-tile-label">Directory</span><span class="sheet-tile-note">Local businesses that take Clear Pay</span></a></li>
+            <li><a class="sheet-tile" href="https://www.useclear.org/shop"><svg aria-hidden="true"><use href="#i-shop"/></svg><span class="sheet-tile-label">Shop</span><span class="sheet-tile-note">Goods with the Clear name on them</span></a></li>
+        </ul>
+      </section>
+      <a class="btn btn-primary sheet-join" href="https://www.useclear.org/join"><span class="dot"></span>Join</a>
+    </nav>
+  </div>
+</dialog>
+
+<main>
+  <!-- HERO -->
+  <section class="hero phero wrap">
+    <div class="page-label label"><b>ClearPath</b>Housing</div>
+    <h1 class="hero-h1" id="hero-h1"><span class="ln">Take the land out of the price</span> <span class="ln">and the price changes.</span></h1>
+    <div class="hero-row">
+      <div data-in>
+        <p class="hero-lede">The land under a Clear community is held in common by its members and is never sold. What you buy is the house.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="https://www.useclear.org/join"><span class="dot"></span>Start saving</a>
+          <a class="btn btn-ghost" href="#numbers">See the numbers</a>
+        </div>
+      </div>
+      <ul class="facts figs" data-in>
+        <li><span>What you pay for the house</span><span class="live">Cost + 15%</span></li>
+        <li><span>The land</span><span>Never sold</span></li>
+        <li><span>Income test</span><span>None</span></li>
+        <li><span>The gate to your deed</span><span>15,000 credits</span></li>
+      </ul>
+    </div>
+
+    <div class="stage" id="stage">
+      <div class="stagebox" id="stagebox">
+        <div class="device" id="hero-device">
+          <!-- Desktop + tablet: Savings, where the home path lives -->
+          <div class="screen screen-desk" data-w="1200">
+            <div class="canvas app" style="width:1200px">
+              <div class="bar-top">
+                <span class="lock"><svg><use href="#mark"/></svg>Clear</span>
+                <div class="r"><nav class="tabs"><span>Home</span><span class="on">Savings</span><span>Earn</span><span>Send</span><span>Activity</span><span>Card</span></nav><svg class="bell" aria-hidden="true"><use href="#bell"/></svg><span class="ava">DR</span></div>
+              </div>
+              <div class="sv">
+                <div class="sv-top" data-a>
+                  <div class="l"><span class="lbl">Savings</span><span class="num sv-n">$3,000.00</span><span class="cap2">$1,500.00 in cash · 1,500 credits, matched one-for-one</span></div>
+                  <div class="acts"><span class="pillb lg">Auto-save</span><span class="pillb lg solid">Move money</span></div>
+                </div>
+                <div class="slab">
+                  <div class="blk" data-a>
+                    <div class="bh"><span class="lbl">Your home path</span><span class="cap2">On track for December 2027</span></div>
+                    <div class="bm">
+                      <div class="hp-n"><span class="num" id="h-cred">1,500</span><span class="cap2">of 15,000 credits</span></div>
+                      <div class="ladder5">
+                        <div class="got"><i><b data-grow></b></i><em>DAY ONE</em><span>Cycle assurance</span></div>
+                        <div class="got"><i><b data-grow></b></i><em>1,500</em><span>Home repair assurance</span></div>
+                        <div class="now"><i><b data-grow style="transform:scaleX(.08)"></b></i><em>4,000</em><span>Income assurance</span></div>
+                        <div><i></i><em>8,000</em><span>Deposit assurance</span></div>
+                        <div><i></i><em>15,000</em><span>Rent assurance and your Clear Deed</span></div>
+                      </div>
+                      <div class="nextu"><span>Next unlock · <b>Income assurance</b></span><span class="cap2">2,500 credits to go</span></div>
+                    </div>
+                    <div class="bf"><span>Saving <b>$1,000.00 a month</b> · matched for 36 months</span><span class="pillb">Change</span></div>
+                  </div>
+                  <div class="blk" data-a>
+                    <div class="bh"><span class="lbl">What you hold</span><span class="num">$3,000.00</span></div>
+                    <div class="bm">
+                      <span class="comp" aria-hidden="true"><i data-grow style="flex-basis:50%;background:#DFE3DE"></i><i data-grow style="flex-basis:33.3%;background:#6FCB9F"></i><i data-grow style="flex-basis:16.7%;background:#E3B667"></i></span>
+                      <div class="trows"><div><span class="fg">Cash (CLRUSD)</span><span class="fg">$1,500.00</span></div><div><span class="ok">Vested credits</span><span class="fg">$1,000</span></div><div><span class="warn">Vesting, about 30 days</span><span class="fg">$500</span></div></div>
+                    </div>
+                    <div class="bf"><span>Adds <b>$1,500</b> to your credit line</span><span class="pillb">Details</span></div>
+                  </div>
+                </div>
+                <div class="prot" data-a>
+                  <div class="bh"><span class="lbl">Protections</span><span class="cap2">Nothing on this list is ever paid back</span></div>
+                  <div class="prot-rows">
+                    <div><b>Cycle assurance</b><span>Two grace cycles a year</span><span class="chp ok">On</span></div>
+                    <div><b>Home repair</b><span>Covered by the co-op</span><span class="chp ok">On</span></div>
+                    <div><b>Income</b><span>Your limit holds a cycle</span><span class="chp">4,000</span></div>
+                    <div><b>Deposit</b><span>Paid to your landlord</span><span class="chp">8,000</span></div>
+                    <div><b>Rent</b><span>Two months on job loss</span><span class="chp">15,000</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Phone -->
+          <div class="screen screen-phone" data-w="390">
+            <div class="canvas app" style="width:390px;height:820px">
+              <div class="ph-top"><span class="lock"><svg><use href="#mark"/></svg>Clear</span><span class="r"><svg class="bell" aria-hidden="true"><use href="#bell"/></svg><span class="ava">DR</span></span></div>
+              <div class="ph-sv">
+                <div class="sv-top" data-a><div class="l"><span class="lbl">Savings</span><span class="num sv-n">$3,000.00</span><span class="cap2">$1,500.00 cash · 1,500 credits</span></div></div>
+                <div class="slab" data-a>
+                  <div class="blk">
+                    <div class="bh"><span class="lbl">Your home path</span><span class="cap2">Dec 2027</span></div>
+                    <div class="bm">
+                      <div class="hp-n"><span class="num">1,500</span><span class="cap2">of 15,000 credits</span></div>
+                      <div class="ladder5">
+                        <div class="got"><i><b data-grow></b></i><em>DAY 1</em><span>Cycle</span></div>
+                        <div class="got"><i><b data-grow></b></i><em>1,500</em><span>Repair</span></div>
+                        <div class="now"><i><b data-grow style="transform:scaleX(.08)"></b></i><em>4,000</em><span>Income</span></div>
+                        <div><i></i><em>8,000</em><span>Deposit</span></div>
+                        <div><i></i><em>15,000</em><span>Your deed</span></div>
+                      </div>
+                      <div class="nextu"><span>Next · <b>Income assurance</b></span><span class="cap2">2,500 to go</span></div>
+                    </div>
+                  </div>
+                  <div class="blk" style="border-top:1px solid var(--a-line)">
+                    <div class="bh"><span class="lbl">What you hold</span><span class="num">$3,000.00</span></div>
+                    <div class="bm"><span class="comp" aria-hidden="true"><i data-grow style="flex-basis:50%;background:#DFE3DE"></i><i data-grow style="flex-basis:33.3%;background:#6FCB9F"></i><i data-grow style="flex-basis:16.7%;background:#E3B667"></i></span><div class="trows"><div><span class="fg">Cash (CLRUSD)</span><span class="fg">$1,500.00</span></div><div><span class="ok">Vested</span><span class="fg">$1,000</span></div><div><span class="warn">Vesting</span><span class="fg">$500</span></div></div></div>
+                  </div>
+                </div>
+              </div>
+              <div class="navpill"><span>Home</span><span class="on">Savings</span><span>Earn</span><span>Card</span></div>
+              <span class="navact"><svg><use href="#plus"/></svg></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="stage-cap label"><span>Your home path</span><span>Sample account</span></div>
+    </div>
+  </section>
+
+  <!-- 01 -->
+  <section class="sec" id="split">
+    <div class="wrap">
+      <div class="head">
+        <div class="sec-label label"><b>01</b>Two things, kept apart</div>
+        <h2 class="h2">The land and the house are not the same purchase.</h2>
+        <div class="aside"><p class="line">Most of a home's price is the ground under it. Separate the two, and what is left has a cost you can point at.</p></div>
+      </div>
+      <div class="bx split body-gap">
+        <div class="cell land">
+          <div class="c-h"><span class="who">The land</span><span class="ck">Held by every member</span></div>
+          <div class="c-m">
+            <svg class="plat" viewBox="0 0 400 168" aria-hidden="true"><defs><pattern id="hx-land" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7" class="hl"/></pattern></defs><rect x="8" y="8" width="384" height="136" fill="url(#hx-land)"/><path class="lane" fill-rule="evenodd" d="M8 8H392V144H8Z M24 24V128H376V24Z"/><rect class="lane-c" x="16.0" y="16.0" width="368" height="120" fill="none"/><rect class="walk" x="24" y="71" width="352" height="10"/><line class="pv" x1="30" y1="71" x2="30" y2="81"/><line class="pv" x1="37" y1="71" x2="37" y2="81"/><line class="pv" x1="44" y1="71" x2="44" y2="81"/><line class="pv" x1="51" y1="71" x2="51" y2="81"/><line class="pv" x1="58" y1="71" x2="58" y2="81"/><line class="pv" x1="65" y1="71" x2="65" y2="81"/><line class="pv" x1="72" y1="71" x2="72" y2="81"/><line class="pv" x1="79" y1="71" x2="79" y2="81"/><line class="pv" x1="86" y1="71" x2="86" y2="81"/><line class="pv" x1="93" y1="71" x2="93" y2="81"/><line class="pv" x1="100" y1="71" x2="100" y2="81"/><line class="pv" x1="107" y1="71" x2="107" y2="81"/><line class="pv" x1="114" y1="71" x2="114" y2="81"/><line class="pv" x1="121" y1="71" x2="121" y2="81"/><line class="pv" x1="128" y1="71" x2="128" y2="81"/><line class="pv" x1="135" y1="71" x2="135" y2="81"/><line class="pv" x1="142" y1="71" x2="142" y2="81"/><line class="pv" x1="149" y1="71" x2="149" y2="81"/><line class="pv" x1="156" y1="71" x2="156" y2="81"/><line class="pv" x1="163" y1="71" x2="163" y2="81"/><line class="pv" x1="170" y1="71" x2="170" y2="81"/><line class="pv" x1="177" y1="71" x2="177" y2="81"/><line class="pv" x1="184" y1="71" x2="184" y2="81"/><line class="pv" x1="191" y1="71" x2="191" y2="81"/><line class="pv" x1="198" y1="71" x2="198" y2="81"/><line class="pv" x1="205" y1="71" x2="205" y2="81"/><line class="pv" x1="212" y1="71" x2="212" y2="81"/><line class="pv" x1="219" y1="71" x2="219" y2="81"/><line class="pv" x1="226" y1="71" x2="226" y2="81"/><line class="pv" x1="233" y1="71" x2="233" y2="81"/><line class="pv" x1="240" y1="71" x2="240" y2="81"/><line class="pv" x1="247" y1="71" x2="247" y2="81"/><line class="pv" x1="254" y1="71" x2="254" y2="81"/><line class="pv" x1="261" y1="71" x2="261" y2="81"/><line class="pv" x1="268" y1="71" x2="268" y2="81"/><line class="pv" x1="275" y1="71" x2="275" y2="81"/><line class="pv" x1="282" y1="71" x2="282" y2="81"/><line class="pv" x1="289" y1="71" x2="289" y2="81"/><line class="pv" x1="296" y1="71" x2="296" y2="81"/><line class="pv" x1="303" y1="71" x2="303" y2="81"/><line class="pv" x1="310" y1="71" x2="310" y2="81"/><line class="pv" x1="317" y1="71" x2="317" y2="81"/><line class="pv" x1="324" y1="71" x2="324" y2="81"/><line class="pv" x1="331" y1="71" x2="331" y2="81"/><line class="pv" x1="338" y1="71" x2="338" y2="81"/><line class="pv" x1="345" y1="71" x2="345" y2="81"/><line class="pv" x1="352" y1="71" x2="352" y2="81"/><line class="pv" x1="359" y1="71" x2="359" y2="81"/><line class="pv" x1="366" y1="71" x2="366" y2="81"/><line class="pv" x1="373" y1="71" x2="373" y2="81"/><rect class="drv" x="76.0" y="24" width="10" height="10"/><rect class="spur" x="65.5" y="68" width="5" height="3"/><rect class="h" x="44.0" y="34" width="48" height="28"/><rect class="pc" x="50.0" y="62" width="36" height="6"/><rect class="drv" x="164.0" y="24" width="10" height="10"/><rect class="spur" x="153.5" y="68" width="5" height="3"/><rect class="h" x="132.0" y="34" width="48" height="28"/><rect class="pc" x="138.0" y="62" width="36" height="6"/><rect class="drv" x="252.0" y="24" width="10" height="10"/><rect class="spur" x="241.5" y="68" width="5" height="3"/><rect class="h" x="220.0" y="34" width="48" height="28"/><rect class="pc" x="226.0" y="62" width="36" height="6"/><rect class="drv" x="340.0" y="24" width="10" height="10"/><rect class="spur" x="329.5" y="68" width="5" height="3"/><rect class="h" x="308.0" y="34" width="48" height="28"/><rect class="pc" x="314.0" y="62" width="36" height="6"/><rect class="drv" x="76.0" y="118" width="10" height="10"/><rect class="spur" x="65.5" y="81" width="5" height="3"/><rect class="h" x="44.0" y="90" width="48" height="28"/><rect class="pc" x="50.0" y="84" width="36" height="6"/><rect class="drv" x="164.0" y="118" width="10" height="10"/><rect class="spur" x="153.5" y="81" width="5" height="3"/><rect class="h" x="132.0" y="90" width="48" height="28"/><rect class="pc" x="138.0" y="84" width="36" height="6"/><rect class="drv" x="252.0" y="118" width="10" height="10"/><rect class="spur" x="241.5" y="81" width="5" height="3"/><rect class="h" x="220.0" y="90" width="48" height="28"/><rect class="pc" x="226.0" y="84" width="36" height="6"/><rect class="drv" x="340.0" y="118" width="10" height="10"/><rect class="spur" x="329.5" y="81" width="5" height="3"/><rect class="h" x="308.0" y="90" width="48" height="28"/><rect class="pc" x="314.0" y="84" width="36" height="6"/><rect class="pl" x="8" y="8" width="384" height="136"/><text class="lbl" x="8" y="164">One parcel · eight homes · held by every member</text></svg>
+            <span class="big">Held in common. Never sold.</span>
+            <p>Appreciation stays in the commons and every member holds a share of it, so members and investors are never reaching for the same dollar.</p>
+          </div>
+        </div>
+        <div class="cell house">
+          <div class="c-h"><span class="who">The house</span><span class="ck">Yours to hold title to</span></div>
+          <div class="c-m">
+            <svg class="plat" viewBox="0 0 400 168" aria-hidden="true"><defs><pattern id="hx-house" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7" class="hl"/></pattern></defs><path class="lane" fill-rule="evenodd" d="M8 8H392V144H8Z M24 24V128H376V24Z"/><rect class="lane-c" x="16.0" y="16.0" width="368" height="120" fill="none"/><rect class="walk" x="24" y="71" width="352" height="10"/><line class="pv" x1="30" y1="71" x2="30" y2="81"/><line class="pv" x1="37" y1="71" x2="37" y2="81"/><line class="pv" x1="44" y1="71" x2="44" y2="81"/><line class="pv" x1="51" y1="71" x2="51" y2="81"/><line class="pv" x1="58" y1="71" x2="58" y2="81"/><line class="pv" x1="65" y1="71" x2="65" y2="81"/><line class="pv" x1="72" y1="71" x2="72" y2="81"/><line class="pv" x1="79" y1="71" x2="79" y2="81"/><line class="pv" x1="86" y1="71" x2="86" y2="81"/><line class="pv" x1="93" y1="71" x2="93" y2="81"/><line class="pv" x1="100" y1="71" x2="100" y2="81"/><line class="pv" x1="107" y1="71" x2="107" y2="81"/><line class="pv" x1="114" y1="71" x2="114" y2="81"/><line class="pv" x1="121" y1="71" x2="121" y2="81"/><line class="pv" x1="128" y1="71" x2="128" y2="81"/><line class="pv" x1="135" y1="71" x2="135" y2="81"/><line class="pv" x1="142" y1="71" x2="142" y2="81"/><line class="pv" x1="149" y1="71" x2="149" y2="81"/><line class="pv" x1="156" y1="71" x2="156" y2="81"/><line class="pv" x1="163" y1="71" x2="163" y2="81"/><line class="pv" x1="170" y1="71" x2="170" y2="81"/><line class="pv" x1="177" y1="71" x2="177" y2="81"/><line class="pv" x1="184" y1="71" x2="184" y2="81"/><line class="pv" x1="191" y1="71" x2="191" y2="81"/><line class="pv" x1="198" y1="71" x2="198" y2="81"/><line class="pv" x1="205" y1="71" x2="205" y2="81"/><line class="pv" x1="212" y1="71" x2="212" y2="81"/><line class="pv" x1="219" y1="71" x2="219" y2="81"/><line class="pv" x1="226" y1="71" x2="226" y2="81"/><line class="pv" x1="233" y1="71" x2="233" y2="81"/><line class="pv" x1="240" y1="71" x2="240" y2="81"/><line class="pv" x1="247" y1="71" x2="247" y2="81"/><line class="pv" x1="254" y1="71" x2="254" y2="81"/><line class="pv" x1="261" y1="71" x2="261" y2="81"/><line class="pv" x1="268" y1="71" x2="268" y2="81"/><line class="pv" x1="275" y1="71" x2="275" y2="81"/><line class="pv" x1="282" y1="71" x2="282" y2="81"/><line class="pv" x1="289" y1="71" x2="289" y2="81"/><line class="pv" x1="296" y1="71" x2="296" y2="81"/><line class="pv" x1="303" y1="71" x2="303" y2="81"/><line class="pv" x1="310" y1="71" x2="310" y2="81"/><line class="pv" x1="317" y1="71" x2="317" y2="81"/><line class="pv" x1="324" y1="71" x2="324" y2="81"/><line class="pv" x1="331" y1="71" x2="331" y2="81"/><line class="pv" x1="338" y1="71" x2="338" y2="81"/><line class="pv" x1="345" y1="71" x2="345" y2="81"/><line class="pv" x1="352" y1="71" x2="352" y2="81"/><line class="pv" x1="359" y1="71" x2="359" y2="81"/><line class="pv" x1="366" y1="71" x2="366" y2="81"/><line class="pv" x1="373" y1="71" x2="373" y2="81"/><line class="lot" x1="112.0" y1="24" x2="112.0" y2="71"/><line class="lot" x1="112.0" y1="81" x2="112.0" y2="128"/><line class="lot" x1="200.0" y1="24" x2="200.0" y2="71"/><line class="lot" x1="200.0" y1="81" x2="200.0" y2="128"/><line class="lot" x1="288.0" y1="24" x2="288.0" y2="71"/><line class="lot" x1="288.0" y1="81" x2="288.0" y2="128"/><rect class="drv" x="76.0" y="24" width="10" height="10"/><rect class="spur" x="65.5" y="68" width="5" height="3"/><rect class="h" x="44.0" y="34" width="48" height="28"/><rect class="pc" x="50.0" y="62" width="36" height="6"/><rect class="drv" x="164.0" y="24" width="10" height="10"/><rect class="spur" x="153.5" y="68" width="5" height="3"/><rect class="h mine" x="132.0" y="34" width="48" height="28"/><rect class="pc mine" x="138.0" y="62" width="36" height="6"/><rect class="title" x="127.0" y="29" width="58" height="42"/><text class="lbl mine" x="156.0" y="51.0" text-anchor="middle">Yours</text><rect class="drv" x="252.0" y="24" width="10" height="10"/><rect class="spur" x="241.5" y="68" width="5" height="3"/><rect class="h" x="220.0" y="34" width="48" height="28"/><rect class="pc" x="226.0" y="62" width="36" height="6"/><rect class="drv" x="340.0" y="24" width="10" height="10"/><rect class="spur" x="329.5" y="68" width="5" height="3"/><rect class="h" x="308.0" y="34" width="48" height="28"/><rect class="pc" x="314.0" y="62" width="36" height="6"/><rect class="drv" x="76.0" y="118" width="10" height="10"/><rect class="spur" x="65.5" y="81" width="5" height="3"/><rect class="h" x="44.0" y="90" width="48" height="28"/><rect class="pc" x="50.0" y="84" width="36" height="6"/><rect class="drv" x="164.0" y="118" width="10" height="10"/><rect class="spur" x="153.5" y="81" width="5" height="3"/><rect class="h" x="132.0" y="90" width="48" height="28"/><rect class="pc" x="138.0" y="84" width="36" height="6"/><rect class="drv" x="252.0" y="118" width="10" height="10"/><rect class="spur" x="241.5" y="81" width="5" height="3"/><rect class="h" x="220.0" y="90" width="48" height="28"/><rect class="pc" x="226.0" y="84" width="36" height="6"/><rect class="drv" x="340.0" y="118" width="10" height="10"/><rect class="spur" x="329.5" y="81" width="5" height="3"/><rect class="h" x="308.0" y="90" width="48" height="28"/><rect class="pc" x="314.0" y="84" width="36" height="6"/><rect class="pl" x="8" y="8" width="384" height="136"/><text class="lbl" x="8" y="164">The house you hold title to · 33 × 28 ft</text></svg>
+            <span class="big">Yours, at cost plus 15%.</span>
+            <p>Unlike land, a house has a cost you can point at. It is also why the price sits below market with no subsidy, no covenant and no income test.</p>
+          </div>
+        </div>
+      </div>
+      <p class="note note-b">ClearPath is the housing program of the Clear cooperative.</p>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section class="sec band-ink" id="numbers">
+    <div class="wrap">
+      <div class="head">
+        <div class="sec-label label"><b>02</b>The numbers</div>
+        <h2 class="h2">Cost plus fifteen per cent, and we show the cost.</h2>
+        <div class="aside"><p class="line">This is not affordable housing. No income restrictions and no qualifying bands. Mixing incomes inside one neighbourhood is the point, not a compromise.</p></div>
+      </div>
+      <div class="bx nums body-gap" id="nums">
+        <div class="cell build">
+          <div class="c-h"><span class="who">To build the structure</span><span class="ck">First cohort</span></div>
+          <div class="c-m"><span class="fig n">$289,099</span><span class="nbar" aria-hidden="true"><i data-w="64.24" style="width:64.24%"></i></span><span class="ck">Inland Empire, the house alone.</span></div>
+        </div>
+        <div class="cell member">
+          <div class="c-h"><span class="who">What a member pays</span><span class="ck">Cost + 15%</span></div>
+          <div class="c-m"><span class="fig n">$332,464</span><span class="nbar" aria-hidden="true"><i data-w="73.88" style="width:73.88%"></i></span><span class="ck">The build cost plus fifteen per cent, and nothing else.</span></div>
+        </div>
+        <div class="cell market">
+          <div class="c-h"><span class="who">A comparable home</span><span class="ck">Open market</span></div>
+          <div class="c-m"><span class="fig n">~$450,000</span><span class="nbar" aria-hidden="true"><i data-w="100" style="width:100%"></i></span><span class="ck">Same corridor, land included.</span></div>
+        </div>
+        <div class="nums-f"><span class="fig">~$117,500</span><p>Below a comparable home, with no subsidy behind it. First-cohort figures for the Inland Empire, shown as illustrations of how the model works rather than quotes, offers or predictions.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section class="sec" id="monthly">
+    <div class="wrap">
+      <div class="head">
+        <div class="sec-label label"><b>03</b>Every month</div>
+        <h2 class="h2">Two lines on the bill, and the app keeps them apart.</h2>
+        <div class="aside"><p class="line">One of them ends up being yours and one of them does not, so they are never shown to you as a single number.</p></div>
+      </div>
+      <div class="bx bill body-gap">
+        <div class="cell">
+          <div class="c-h"><span class="who">Your monthly bill</span><span class="ck">Two lines, never one</span></div>
+          <div class="c-m">
+            <dl class="bl">
+              <div class="yours"><dt>Equity contribution</dt><dd id="eq-v">$500</dd><small>Straight to your balance. This is the part you keep.</small></div>
+              <div><dt>Community fee</dt><dd>~$850</dd><small>Property taxes, insurance and shared costs. It moves when those move.</small></div>
+              <div class="var"><dt>Utilities</dt><dd>Variable</dd><small>Electric, gas, water and internet. They move with what you use.</small></div>
+            </dl>
+            <div></div>
+            <div class="rng"><input type="range" id="eq" min="500" max="1500" step="50" value="500" aria-label="Equity contribution each month"><div class="ends"><span>From $500</span><span>Drag your contribution</span><span>$1,500</span></div></div>
+          </div>
+        </div>
+        <div class="cell">
+          <div class="c-h"><span class="who">What the first line becomes</span><span class="ck">Five years</span></div>
+          <div class="c-m">
+            <div class="kept5"><span class="ck">Yours after five years</span><span class="fig" id="eq-k">$30,000</span></div>
+            <div class="yrs" id="yrs" aria-hidden="true"><div><span></span><i style="height:17%"></i></div><div><span></span><i style="height:34%"></i></div><div><span></span><i style="height:51%"></i></div><div><span></span><i style="height:68%"></i></div><div><span></span><i style="height:85%"></i></div></div>
+            <div class="yrs-ax" aria-hidden="true"><span>Year 1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+            <div class="cmp2">
+              <div><span>All in, including utilities</span><b id="eq-all">$2,500</b></div>
+              <div class="muted"><span>A comparable single-family mortgage</span><b>$4,500–5,500</b></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="note note-b">First-cohort illustrations for the Inland Empire. Not quotes, offers or predictions.</p>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section class="sec" id="homes">
+    <div class="wrap">
+      <div class="head">
+        <div class="sec-label label"><b>04</b>The homes</div>
+        <h2 class="h2">A porch at both ends.</h2>
+        <div class="aside"><p class="line">Permitted, code-compliant California dwellings built from panelised kits and finished by local trades. The community owns the solar and storage, and residents buy their power from it.</p></div>
+      </div>
+      <div class="bx plan-x body-gap" id="planx">
+        <div class="plan-d">
+<svg class="bp wide" viewBox="0 0 1050 476" role="img" aria-label="Site plan of one lot: a covered front porch at the street, a two bed two bath house with the living room at the back, a rear porch and patio onto an L-shaped yard, and a workshop off the perimeter drive.">
+<polygon class="z" points="185.5,140.0 259.0,140.0 259.0,315.0 185.5,315.0" data-z="0"/>
+<polygon class="z" points="455.0,45.5 791.0,45.5 791.0,178.5 949.2,178.5 949.2,388.5 455.0,388.5" data-z="1"/>
+<polygon class="z" points="794.5,52.5 952.0,52.5 952.0,0.0 1036.0,0.0 1036.0,476.0 952.0,476.0 952.0,171.5 794.5,171.5" data-z="2"/>
+<line class="edge" x1="28.0" y1="0.0" x2="28.0" y2="476.0"/>
+<line class="pav" x1="77.0" y1="0.0" x2="77.0" y2="476.0"/>
+<line class="pav" x1="105.0" y1="0.0" x2="105.0" y2="476.0"/>
+<line class="pav" x1="77.0" y1="0.0" x2="105.0" y2="0.0"/>
+<line class="pav" x1="77.0" y1="28.0" x2="105.0" y2="28.0"/>
+<line class="pav" x1="77.0" y1="56.0" x2="105.0" y2="56.0"/>
+<line class="pav" x1="77.0" y1="84.0" x2="105.0" y2="84.0"/>
+<line class="pav" x1="77.0" y1="112.0" x2="105.0" y2="112.0"/>
+<line class="pav" x1="77.0" y1="140.0" x2="105.0" y2="140.0"/>
+<line class="pav" x1="77.0" y1="168.0" x2="105.0" y2="168.0"/>
+<line class="pav" x1="77.0" y1="196.0" x2="105.0" y2="196.0"/>
+<line class="pav" x1="77.0" y1="224.0" x2="105.0" y2="224.0"/>
+<line class="pav" x1="77.0" y1="252.0" x2="105.0" y2="252.0"/>
+<line class="pav" x1="77.0" y1="280.0" x2="105.0" y2="280.0"/>
+<line class="pav" x1="77.0" y1="308.0" x2="105.0" y2="308.0"/>
+<line class="pav" x1="77.0" y1="336.0" x2="105.0" y2="336.0"/>
+<line class="pav" x1="77.0" y1="364.0" x2="105.0" y2="364.0"/>
+<line class="pav" x1="77.0" y1="392.0" x2="105.0" y2="392.0"/>
+<line class="pav" x1="77.0" y1="420.0" x2="105.0" y2="420.0"/>
+<line class="pav" x1="77.0" y1="448.0" x2="105.0" y2="448.0"/>
+<line class="pav" x1="77.0" y1="476.0" x2="105.0" y2="476.0"/>
+<line class="edge" x1="952.0" y1="0.0" x2="952.0" y2="476.0"/>
+<line class="edge" x1="1036.0" y1="0.0" x2="1036.0" y2="476.0"/>
+<line class="cl" x1="994.0" y1="14.0" x2="994.0" y2="42.0"/>
+<line class="cl" x1="994.0" y1="70.0" x2="994.0" y2="98.0"/>
+<line class="cl" x1="994.0" y1="126.0" x2="994.0" y2="154.0"/>
+<line class="cl" x1="994.0" y1="182.0" x2="994.0" y2="210.0"/>
+<line class="cl" x1="994.0" y1="238.0" x2="994.0" y2="266.0"/>
+<line class="cl" x1="994.0" y1="294.0" x2="994.0" y2="322.0"/>
+<line class="cl" x1="994.0" y1="350.0" x2="994.0" y2="378.0"/>
+<line class="cl" x1="994.0" y1="406.0" x2="994.0" y2="434.0"/>
+<line class="cl" x1="994.0" y1="462.0" x2="994.0" y2="490.0"/>
+<rect class="pl" x="112.0" y="42.0" width="840.0" height="350.0"/>
+<line class="fence" x1="322.0" y1="44.8" x2="949.2" y2="44.8"/>
+<line class="fence" x1="322.0" y1="389.2" x2="949.2" y2="389.2"/>
+<line class="fence" x1="949.2" y1="178.5" x2="949.2" y2="389.2"/>
+<rect class="post" x="320.2" y="43.1" width="3.5" height="3.5"/>
+<rect class="post" x="320.2" y="387.4" width="3.5" height="3.5"/>
+<rect class="post" x="362.2" y="43.1" width="3.5" height="3.5"/>
+<rect class="post" x="362.2" y="387.4" width="3.5" height="3.5"/>
+<rect class="post" x="404.2" y="43.1" width="3.5" height="3.5"/>
+<rect class="post" x="404.2" y="387.4" width="3.5" height="3.5"/>
+<rect class="post" x="446.2" y="43.1" width="3.5" height="3.5"/>
+<rect class="post" x="446.2" y="387.4" width="3.5" height="3.5"/>
+<rect class="post" x="488.2" y="43.1" width="3.5" height="3.5"/>
+<rect class="post" x="488.2" y="387.4" width="3.5" height="3.5"/>
+<rect class="post" x="530.2" y="43.1" width="3.5" height="3.5"/>
+<rect class="post" x="530.2" y="387.4" width="3.5" height="3.5"/>
+<rect class="post" x="572.2" y="43.1" width="3.5" height="3.5"/>
+<rect class="post" x="572.2" y="387.4" width="3.5" height="3.5"/>
+<rect class="post" x="614.2" y="43.1" width="3.5" height="3.5"/>
+<rect class="post" x="614.2" y="387.4" width="3.5" height="3.5"/>
+<rect class="post" x="656.2" y="43.1" width="3.5" height="3.5"/>
+<rect class="post" x="656.2" y="387.4" width="3.5" height="3.5"/>
+<rect class="post" x="698.2" y="43.1" width="3.5" height="3.5"/>
+<rect class="post" x="698.2" y="387.4" width="3.5" height="3.5"/>
+<rect class="post" x="740.2" y="43.1" width="3.5" height="3.5"/>
+<rect class="post" x="740.2" y="387.4" width="3.5" height="3.5"/>
+<rect class="post" x="782.2" y="43.1" width="3.5" height="3.5"/>
+<rect class="post" x="782.2" y="387.4" width="3.5" height="3.5"/>
+<rect class="post" x="824.2" y="43.1" width="3.5" height="3.5"/>
+<rect class="post" x="824.2" y="387.4" width="3.5" height="3.5"/>
+<rect class="post" x="866.2" y="43.1" width="3.5" height="3.5"/>
+<rect class="post" x="866.2" y="387.4" width="3.5" height="3.5"/>
+<rect class="post" x="908.2" y="43.1" width="3.5" height="3.5"/>
+<rect class="post" x="908.2" y="387.4" width="3.5" height="3.5"/>
+<line class="pav" x1="112.0" y1="220.5" x2="112.0" y2="241.5"/>
+<line class="pav" x1="126.0" y1="220.5" x2="126.0" y2="241.5"/>
+<line class="pav" x1="140.0" y1="220.5" x2="140.0" y2="241.5"/>
+<line class="pav" x1="154.0" y1="220.5" x2="154.0" y2="241.5"/>
+<line class="pav" x1="168.0" y1="220.5" x2="168.0" y2="241.5"/>
+<line class="pav" x1="182.0" y1="220.5" x2="182.0" y2="241.5"/>
+<line class="pav" x1="112.0" y1="220.5" x2="185.5" y2="220.5"/>
+<line class="pav" x1="112.0" y1="241.5" x2="185.5" y2="241.5"/>
+<rect class="edge" x="185.5" y="213.5" width="17.5" height="35.0"/>
+<line class="deck" x1="194.2" y1="213.5" x2="194.2" y2="248.5"/>
+<line class="deck" x1="204.4" y1="147.0" x2="257.6" y2="147.0"/>
+<line class="deck" x1="204.4" y1="154.0" x2="257.6" y2="154.0"/>
+<line class="deck" x1="204.4" y1="161.0" x2="257.6" y2="161.0"/>
+<line class="deck" x1="204.4" y1="168.0" x2="257.6" y2="168.0"/>
+<line class="deck" x1="204.4" y1="175.0" x2="257.6" y2="175.0"/>
+<line class="deck" x1="204.4" y1="182.0" x2="257.6" y2="182.0"/>
+<line class="deck" x1="204.4" y1="189.0" x2="257.6" y2="189.0"/>
+<line class="deck" x1="204.4" y1="196.0" x2="257.6" y2="196.0"/>
+<line class="deck" x1="204.4" y1="203.0" x2="257.6" y2="203.0"/>
+<line class="deck" x1="204.4" y1="210.0" x2="257.6" y2="210.0"/>
+<line class="deck" x1="204.4" y1="217.0" x2="257.6" y2="217.0"/>
+<line class="deck" x1="204.4" y1="224.0" x2="257.6" y2="224.0"/>
+<line class="deck" x1="204.4" y1="231.0" x2="257.6" y2="231.0"/>
+<line class="deck" x1="204.4" y1="238.0" x2="257.6" y2="238.0"/>
+<line class="deck" x1="204.4" y1="245.0" x2="257.6" y2="245.0"/>
+<line class="deck" x1="204.4" y1="252.0" x2="257.6" y2="252.0"/>
+<line class="deck" x1="204.4" y1="259.0" x2="257.6" y2="259.0"/>
+<line class="deck" x1="204.4" y1="266.0" x2="257.6" y2="266.0"/>
+<line class="deck" x1="204.4" y1="273.0" x2="257.6" y2="273.0"/>
+<line class="deck" x1="204.4" y1="280.0" x2="257.6" y2="280.0"/>
+<line class="deck" x1="204.4" y1="287.0" x2="257.6" y2="287.0"/>
+<line class="deck" x1="204.4" y1="294.0" x2="257.6" y2="294.0"/>
+<line class="deck" x1="204.4" y1="301.0" x2="257.6" y2="301.0"/>
+<line class="deck" x1="204.4" y1="308.0" x2="257.6" y2="308.0"/>
+<rect class="edge" x="203.0" y="140.0" width="56.0" height="175.0"/>
+<rect class="postb" x="204.4" y="141.4" width="3.5" height="3.5"/>
+<rect class="postb" x="204.4" y="310.1" width="3.5" height="3.5"/>
+<rect class="postb" x="204.4" y="226.8" width="3.5" height="3.5"/>
+<line class="deck" x1="456.4" y1="140.0" x2="509.6" y2="140.0"/>
+<line class="deck" x1="456.4" y1="147.0" x2="509.6" y2="147.0"/>
+<line class="deck" x1="456.4" y1="154.0" x2="509.6" y2="154.0"/>
+<line class="deck" x1="456.4" y1="161.0" x2="509.6" y2="161.0"/>
+<line class="deck" x1="456.4" y1="168.0" x2="509.6" y2="168.0"/>
+<line class="deck" x1="456.4" y1="175.0" x2="509.6" y2="175.0"/>
+<line class="deck" x1="456.4" y1="182.0" x2="509.6" y2="182.0"/>
+<line class="deck" x1="456.4" y1="189.0" x2="509.6" y2="189.0"/>
+<line class="deck" x1="456.4" y1="196.0" x2="509.6" y2="196.0"/>
+<line class="deck" x1="456.4" y1="203.0" x2="509.6" y2="203.0"/>
+<line class="deck" x1="456.4" y1="210.0" x2="509.6" y2="210.0"/>
+<line class="deck" x1="456.4" y1="217.0" x2="509.6" y2="217.0"/>
+<line class="deck" x1="456.4" y1="224.0" x2="509.6" y2="224.0"/>
+<line class="deck" x1="456.4" y1="231.0" x2="509.6" y2="231.0"/>
+<line class="deck" x1="456.4" y1="238.0" x2="509.6" y2="238.0"/>
+<line class="deck" x1="456.4" y1="245.0" x2="509.6" y2="245.0"/>
+<line class="deck" x1="456.4" y1="252.0" x2="509.6" y2="252.0"/>
+<line class="deck" x1="456.4" y1="259.0" x2="509.6" y2="259.0"/>
+<line class="deck" x1="456.4" y1="266.0" x2="509.6" y2="266.0"/>
+<line class="deck" x1="456.4" y1="273.0" x2="509.6" y2="273.0"/>
+<line class="deck" x1="456.4" y1="280.0" x2="509.6" y2="280.0"/>
+<line class="deck" x1="456.4" y1="287.0" x2="509.6" y2="287.0"/>
+<line class="deck" x1="456.4" y1="294.0" x2="509.6" y2="294.0"/>
+<line class="deck" x1="456.4" y1="301.0" x2="509.6" y2="301.0"/>
+<line class="deck" x1="456.4" y1="308.0" x2="509.6" y2="308.0"/>
+<line class="deck" x1="456.4" y1="315.0" x2="509.6" y2="315.0"/>
+<line class="deck" x1="456.4" y1="322.0" x2="509.6" y2="322.0"/>
+<line class="deck" x1="456.4" y1="329.0" x2="509.6" y2="329.0"/>
+<line class="deck" x1="456.4" y1="336.0" x2="509.6" y2="336.0"/>
+<rect class="edge" x="455.0" y="133.0" width="56.0" height="210.0"/>
+<rect class="postb" x="506.1" y="134.4" width="3.5" height="3.5"/>
+<rect class="postb" x="506.1" y="338.1" width="3.5" height="3.5"/>
+<rect class="postb" x="506.1" y="236.6" width="3.5" height="3.5"/>
+<line class="pav" x1="511.0" y1="161.0" x2="511.0" y2="315.0"/>
+<line class="pav" x1="525.0" y1="161.0" x2="525.0" y2="315.0"/>
+<line class="pav" x1="539.0" y1="161.0" x2="539.0" y2="315.0"/>
+<line class="pav" x1="553.0" y1="161.0" x2="553.0" y2="315.0"/>
+<line class="pav" x1="567.0" y1="161.0" x2="567.0" y2="315.0"/>
+<line class="pav" x1="581.0" y1="161.0" x2="581.0" y2="315.0"/>
+<line class="pav" x1="511.0" y1="161.0" x2="581.0" y2="161.0"/>
+<line class="pav" x1="511.0" y1="175.0" x2="581.0" y2="175.0"/>
+<line class="pav" x1="511.0" y1="189.0" x2="581.0" y2="189.0"/>
+<line class="pav" x1="511.0" y1="203.0" x2="581.0" y2="203.0"/>
+<line class="pav" x1="511.0" y1="217.0" x2="581.0" y2="217.0"/>
+<line class="pav" x1="511.0" y1="231.0" x2="581.0" y2="231.0"/>
+<line class="pav" x1="511.0" y1="245.0" x2="581.0" y2="245.0"/>
+<line class="pav" x1="511.0" y1="259.0" x2="581.0" y2="259.0"/>
+<line class="pav" x1="511.0" y1="273.0" x2="581.0" y2="273.0"/>
+<line class="pav" x1="511.0" y1="287.0" x2="581.0" y2="287.0"/>
+<line class="pav" x1="511.0" y1="301.0" x2="581.0" y2="301.0"/>
+<line class="pav" x1="511.0" y1="315.0" x2="581.0" y2="315.0"/>
+<rect class="edge" x="511.0" y="161.0" width="70.0" height="154.0"/>
+<rect class="edge" x="602.0" y="210.0" width="15.4" height="9.8"/>
+<rect class="edge" x="637.0" y="199.5" width="15.4" height="9.8"/>
+<rect class="edge" x="672.0" y="192.5" width="15.4" height="9.8"/>
+<rect class="edge" x="707.0" y="189.0" width="15.4" height="9.8"/>
+<rect class="edge" x="742.0" y="186.9" width="15.4" height="9.8"/>
+<rect class="edge" x="777.0" y="186.2" width="15.4" height="9.8"/>
+<rect class="wall" x="259.0" y="112.0" width="196.0" height="231.0"/>
+<line class="iw" x1="343.0" y1="112.0" x2="343.0" y2="122.5"/>
+<line class="iw" x1="343.0" y1="140.0" x2="343.0" y2="189.0"/>
+<line class="iw" x1="343.0" y1="266.0" x2="343.0" y2="315.0"/>
+<line class="iw" x1="343.0" y1="332.5" x2="343.0" y2="343.0"/>
+<line class="iw" x1="259.0" y1="189.0" x2="320.6" y2="189.0"/>
+<line class="iw" x1="339.5" y1="189.0" x2="343.0" y2="189.0"/>
+<line class="iw" x1="259.0" y1="266.0" x2="320.6" y2="266.0"/>
+<line class="iw" x1="339.5" y1="266.0" x2="343.0" y2="266.0"/>
+<line class="iw" x1="378.0" y1="112.0" x2="378.0" y2="168.0"/>
+<line class="iw" x1="343.0" y1="168.0" x2="378.0" y2="168.0"/>
+<line class="iw" x1="378.0" y1="287.0" x2="378.0" y2="343.0"/>
+<line class="iw" x1="343.0" y1="287.0" x2="378.0" y2="287.0"/>
+<rect class="ko" x="256.6" y="129.5" width="4.9" height="38.5"/>
+<line class="win" x1="257.2" y1="129.5" x2="257.2" y2="168.0"/>
+<line class="win" x1="260.8" y1="129.5" x2="260.8" y2="168.0"/>
+<line class="win" x1="259.0" y1="129.5" x2="259.0" y2="168.0"/>
+<rect class="ko" x="256.6" y="287.0" width="4.9" height="38.5"/>
+<line class="win" x1="257.2" y1="287.0" x2="257.2" y2="325.5"/>
+<line class="win" x1="260.8" y1="287.0" x2="260.8" y2="325.5"/>
+<line class="win" x1="259.0" y1="287.0" x2="259.0" y2="325.5"/>
+<rect class="ko" x="280.0" y="109.5" width="42.0" height="4.9"/>
+<line class="win" x1="280.0" y1="110.2" x2="322.0" y2="110.2"/>
+<line class="win" x1="280.0" y1="113.8" x2="322.0" y2="113.8"/>
+<line class="win" x1="280.0" y1="112.0" x2="322.0" y2="112.0"/>
+<rect class="ko" x="399.0" y="109.5" width="35.0" height="4.9"/>
+<line class="win" x1="399.0" y1="110.2" x2="434.0" y2="110.2"/>
+<line class="win" x1="399.0" y1="113.8" x2="434.0" y2="113.8"/>
+<line class="win" x1="399.0" y1="112.0" x2="434.0" y2="112.0"/>
+<rect class="ko" x="280.0" y="340.6" width="42.0" height="4.9"/>
+<line class="win" x1="280.0" y1="341.2" x2="322.0" y2="341.2"/>
+<line class="win" x1="280.0" y1="344.8" x2="322.0" y2="344.8"/>
+<line class="win" x1="280.0" y1="343.0" x2="322.0" y2="343.0"/>
+<rect class="ko" x="399.0" y="340.6" width="35.0" height="4.9"/>
+<line class="win" x1="399.0" y1="341.2" x2="434.0" y2="341.2"/>
+<line class="win" x1="399.0" y1="344.8" x2="434.0" y2="344.8"/>
+<line class="win" x1="399.0" y1="343.0" x2="434.0" y2="343.0"/>
+<rect class="ko" x="256.2" y="220.5" width="5.6" height="21.0"/>
+<line class="door" x1="259.0" y1="220.5" x2="280.0" y2="220.5"/>
+<path class="arc" d="M280.0 220.5 A21.0 21.0 0 0 1 259.0 241.5"/>
+<rect class="ko" x="452.2" y="210.0" width="5.6" height="84.0"/>
+<line class="door" x1="453.6" y1="210.0" x2="453.6" y2="254.8"/>
+<line class="door" x1="456.4" y1="249.2" x2="456.4" y2="294.0"/>
+<line class="door" x1="339.5" y1="189.0" x2="339.5" y2="170.1"/>
+<path class="arc" d="M339.5 170.1 A18.9 18.9 0 0 0 320.6 189.0"/>
+<line class="door" x1="339.5" y1="266.0" x2="339.5" y2="284.9"/>
+<path class="arc" d="M339.5 284.9 A18.9 18.9 0 0 1 320.6 266.0"/>
+<line class="door" x1="343.0" y1="140.0" x2="360.5" y2="140.0"/>
+<path class="arc" d="M360.5 140.0 A17.5 17.5 0 0 0 343.0 122.5"/>
+<line class="door" x1="343.0" y1="315.0" x2="360.5" y2="315.0"/>
+<path class="arc" d="M360.5 315.0 A17.5 17.5 0 0 1 343.0 332.5"/>
+<rect class="fx" x="380.8" y="114.1" width="71.4" height="14.7"/>
+<circle class="fx" cx="423.5" cy="121.5" r="4.2"/>
+<rect class="fx" x="392.0" y="116.2" width="11.2" height="10.5"/>
+<rect class="fx" x="399.0" y="148.4" width="38.5" height="16.8"/>
+<circle class="fx" cx="416.5" cy="199.5" r="13.3"/>
+<rect class="fx" x="345.8" y="114.8" width="29.4" height="17.5"/>
+
+<rect class="fx" x="345.8" y="322.7" width="29.4" height="17.5"/>
+<rect class="fx" x="365.4" y="150.5" width="9.8" height="14.7"/>
+<rect class="fx" x="365.4" y="289.8" width="9.8" height="14.7"/>
+<rect class="wall" x="798.0" y="56.0" width="140.0" height="112.0"/>
+<rect class="ko" x="935.2" y="70.0" width="5.6" height="84.0"/>
+<line class="oh" x1="931.0" y1="70.0" x2="931.0" y2="154.0"/>
+<rect class="ko" x="819.0" y="165.2" width="21.0" height="5.6"/>
+<line class="door" x1="819.0" y1="168.0" x2="819.0" y2="189.0"/>
+<path class="arc" d="M819.0 189.0 A21.0 21.0 0 0 0 840.0 168.0"/>
+<rect class="pav" x="938.0" y="70.0" width="14.0" height="84.0"/>
+<circle class="tree" cx="143.5" cy="84.0" r="25.2"/>
+<circle class="post" cx="143.5" cy="84.0" r="2.4"/>
+<circle class="tree" cx="143.5" cy="353.5" r="22.4"/>
+<circle class="post" cx="143.5" cy="353.5" r="2.4"/>
+<circle class="tree" cx="672.0" cy="343.0" r="37.8"/>
+<circle class="post" cx="672.0" cy="343.0" r="2.4"/>
+<circle class="tree" cx="728.0" cy="105.0" r="29.4"/>
+<circle class="post" cx="728.0" cy="105.0" r="2.4"/>
+<line class="dim" x1="259.0" y1="87.5" x2="455.0" y2="87.5"/>
+<line class="dimk" x1="254.8" y1="91.7" x2="263.2" y2="83.3"/>
+<line class="dim" x1="259.0" y1="80.5" x2="259.0" y2="94.5"/>
+<line class="dimk" x1="450.8" y1="91.7" x2="459.2" y2="83.3"/>
+<line class="dim" x1="455.0" y1="80.5" x2="455.0" y2="94.5"/>
+<text class="t d" x="357.0" y="81.2" text-anchor="middle">28'-0"</text>
+<line class="dim" x1="175.0" y1="112.0" x2="175.0" y2="343.0"/>
+<line class="dimk" x1="170.8" y1="116.2" x2="179.2" y2="107.8"/>
+<line class="dim" x1="168.0" y1="112.0" x2="182.0" y2="112.0"/>
+<line class="dimk" x1="170.8" y1="347.2" x2="179.2" y2="338.8"/>
+<line class="dim" x1="168.0" y1="343.0" x2="182.0" y2="343.0"/>
+<text class="t d" x="168.7" y="168.0" text-anchor="middle" transform="rotate(-90 168.7 168.0)">33'-0"</text>
+<line class="dim" x1="112.0" y1="409.5" x2="952.0" y2="409.5"/>
+<line class="dimk" x1="107.8" y1="413.7" x2="116.2" y2="405.3"/>
+<line class="dim" x1="112.0" y1="402.5" x2="112.0" y2="416.5"/>
+<line class="dimk" x1="947.8" y1="413.7" x2="956.2" y2="405.3"/>
+<line class="dim" x1="952.0" y1="402.5" x2="952.0" y2="416.5"/>
+<text class="t d" x="532.0" y="424.2" text-anchor="middle">120'-0" lot</text>
+<text class="t" x="301.0" y="150.5" text-anchor="middle">Bed 1</text>
+<text class="t s" x="301.0" y="163.8" text-anchor="middle">11 × 12</text>
+<text class="t" x="301.0" y="227.5" text-anchor="middle">Parlor</text>
+<text class="t" x="301.0" y="304.5" text-anchor="middle">Bed 2</text>
+<text class="t s" x="301.0" y="317.8" text-anchor="middle">11 × 12</text>
+<text class="t s" x="360.5" y="149.8" text-anchor="middle">Bath</text>
+<text class="t s" x="360.5" y="308.0" text-anchor="middle">Bath</text>
+<text class="t" x="420.0" y="259.0" text-anchor="middle">Living</text>
+<text class="t s" x="420.0" y="272.3" text-anchor="middle">22 × 11</text>
+<text class="t s" x="420.0" y="179.2" text-anchor="middle">Kitchen</text>
+<text class="t zl" x="235.2" y="227.5" text-anchor="middle" transform="rotate(-90 235.2 227.5)" data-z="0">Front porch</text>
+<text class="t zl" x="487.2" y="238.0" text-anchor="middle" transform="rotate(-90 487.2 238.0)" data-z="1">Rear porch</text>
+<text class="t s" x="546.0" y="151.2" text-anchor="middle">Patio</text>
+<text class="t zl" x="700.0" y="273.0" text-anchor="middle" data-z="1">Yard</text>
+<text class="t zl" x="868.0" y="108.5" text-anchor="middle" data-z="2">Workshop</text>
+<text class="t s" x="868.0" y="121.8" text-anchor="middle" data-z="2">20 × 16</text>
+<text class="t zl" x="994.0" y="252.0" text-anchor="middle" transform="rotate(-90 994.0 252.0)" data-z="2">Perimeter drive</text>
+<text class="t" x="52.5" y="252.0" text-anchor="middle" transform="rotate(-90 52.5 252.0)">Street</text>
+<rect class="sbf" x="728.0" y="430.5" width="35.0" height="7.0"/>
+<rect class="sbo" x="763.0" y="430.5" width="35.0" height="7.0"/>
+<rect class="sbf" x="798.0" y="430.5" width="70.0" height="7.0"/>
+<text class="t s" x="728.0" y="455.0" text-anchor="middle">0</text>
+<text class="t s" x="763.0" y="455.0" text-anchor="middle">5</text>
+<text class="t s" x="798.0" y="455.0" text-anchor="middle">10</text>
+<text class="t s" x="868.0" y="455.0" text-anchor="middle">20</text>
+<text class="t s" x="903.0" y="455.0" text-anchor="start">ft</text>
+<circle class="edge" cx="672.0" cy="435.4" r="15.4"/>
+<polygon class="na" points="665.0,441.7 687.4,435.4 665.0,429.1"/>
+<text class="t" x="700.0" y="441.7" text-anchor="start">N</text>
+<text class="t s" x="112.0" y="441.0" text-anchor="start">Site plan · 2 bed, 2 bath · 924 sq ft · illustrative</text>
+</svg>
+<svg class="bp tall" viewBox="0 0 476 1050" role="img" aria-label="Site plan of one lot: a covered front porch at the street, a two bed two bath house with the living room at the back, a rear porch and patio onto an L-shaped yard, and a workshop off the perimeter drive.">
+<polygon class="z" points="140.0,864.5 140.0,791.0 315.0,791.0 315.0,864.5" data-z="0"/>
+<polygon class="z" points="45.5,595.0 45.5,259.0 178.5,259.0 178.5,100.8 388.5,100.8 388.5,595.0" data-z="1"/>
+<polygon class="z" points="52.5,255.5 52.5,98.0 0.0,98.0 0.0,14.0 476.0,14.0 476.0,98.0 171.5,98.0 171.5,255.5" data-z="2"/>
+<line class="edge" x1="0.0" y1="1022.0" x2="476.0" y2="1022.0"/>
+<line class="pav" x1="0.0" y1="973.0" x2="476.0" y2="973.0"/>
+<line class="pav" x1="0.0" y1="945.0" x2="476.0" y2="945.0"/>
+<line class="pav" x1="0.0" y1="973.0" x2="0.0" y2="945.0"/>
+<line class="pav" x1="28.0" y1="973.0" x2="28.0" y2="945.0"/>
+<line class="pav" x1="56.0" y1="973.0" x2="56.0" y2="945.0"/>
+<line class="pav" x1="84.0" y1="973.0" x2="84.0" y2="945.0"/>
+<line class="pav" x1="112.0" y1="973.0" x2="112.0" y2="945.0"/>
+<line class="pav" x1="140.0" y1="973.0" x2="140.0" y2="945.0"/>
+<line class="pav" x1="168.0" y1="973.0" x2="168.0" y2="945.0"/>
+<line class="pav" x1="196.0" y1="973.0" x2="196.0" y2="945.0"/>
+<line class="pav" x1="224.0" y1="973.0" x2="224.0" y2="945.0"/>
+<line class="pav" x1="252.0" y1="973.0" x2="252.0" y2="945.0"/>
+<line class="pav" x1="280.0" y1="973.0" x2="280.0" y2="945.0"/>
+<line class="pav" x1="308.0" y1="973.0" x2="308.0" y2="945.0"/>
+<line class="pav" x1="336.0" y1="973.0" x2="336.0" y2="945.0"/>
+<line class="pav" x1="364.0" y1="973.0" x2="364.0" y2="945.0"/>
+<line class="pav" x1="392.0" y1="973.0" x2="392.0" y2="945.0"/>
+<line class="pav" x1="420.0" y1="973.0" x2="420.0" y2="945.0"/>
+<line class="pav" x1="448.0" y1="973.0" x2="448.0" y2="945.0"/>
+<line class="pav" x1="476.0" y1="973.0" x2="476.0" y2="945.0"/>
+<line class="edge" x1="0.0" y1="98.0" x2="476.0" y2="98.0"/>
+<line class="edge" x1="0.0" y1="14.0" x2="476.0" y2="14.0"/>
+<line class="cl" x1="14.0" y1="56.0" x2="42.0" y2="56.0"/>
+<line class="cl" x1="70.0" y1="56.0" x2="98.0" y2="56.0"/>
+<line class="cl" x1="126.0" y1="56.0" x2="154.0" y2="56.0"/>
+<line class="cl" x1="182.0" y1="56.0" x2="210.0" y2="56.0"/>
+<line class="cl" x1="238.0" y1="56.0" x2="266.0" y2="56.0"/>
+<line class="cl" x1="294.0" y1="56.0" x2="322.0" y2="56.0"/>
+<line class="cl" x1="350.0" y1="56.0" x2="378.0" y2="56.0"/>
+<line class="cl" x1="406.0" y1="56.0" x2="434.0" y2="56.0"/>
+<line class="cl" x1="462.0" y1="56.0" x2="490.0" y2="56.0"/>
+<rect class="pl" x="42.0" y="98.0" width="350.0" height="840.0"/>
+<line class="fence" x1="44.8" y1="728.0" x2="44.8" y2="100.8"/>
+<line class="fence" x1="389.2" y1="728.0" x2="389.2" y2="100.8"/>
+<line class="fence" x1="178.5" y1="100.8" x2="389.2" y2="100.8"/>
+<rect class="post" x="43.1" y="726.2" width="3.5" height="3.5"/>
+<rect class="post" x="387.4" y="726.2" width="3.5" height="3.5"/>
+<rect class="post" x="43.1" y="684.2" width="3.5" height="3.5"/>
+<rect class="post" x="387.4" y="684.2" width="3.5" height="3.5"/>
+<rect class="post" x="43.1" y="642.2" width="3.5" height="3.5"/>
+<rect class="post" x="387.4" y="642.2" width="3.5" height="3.5"/>
+<rect class="post" x="43.1" y="600.2" width="3.5" height="3.5"/>
+<rect class="post" x="387.4" y="600.2" width="3.5" height="3.5"/>
+<rect class="post" x="43.1" y="558.2" width="3.5" height="3.5"/>
+<rect class="post" x="387.4" y="558.2" width="3.5" height="3.5"/>
+<rect class="post" x="43.1" y="516.2" width="3.5" height="3.5"/>
+<rect class="post" x="387.4" y="516.2" width="3.5" height="3.5"/>
+<rect class="post" x="43.1" y="474.2" width="3.5" height="3.5"/>
+<rect class="post" x="387.4" y="474.2" width="3.5" height="3.5"/>
+<rect class="post" x="43.1" y="432.2" width="3.5" height="3.5"/>
+<rect class="post" x="387.4" y="432.2" width="3.5" height="3.5"/>
+<rect class="post" x="43.1" y="390.2" width="3.5" height="3.5"/>
+<rect class="post" x="387.4" y="390.2" width="3.5" height="3.5"/>
+<rect class="post" x="43.1" y="348.2" width="3.5" height="3.5"/>
+<rect class="post" x="387.4" y="348.2" width="3.5" height="3.5"/>
+<rect class="post" x="43.1" y="306.2" width="3.5" height="3.5"/>
+<rect class="post" x="387.4" y="306.2" width="3.5" height="3.5"/>
+<rect class="post" x="43.1" y="264.2" width="3.5" height="3.5"/>
+<rect class="post" x="387.4" y="264.2" width="3.5" height="3.5"/>
+<rect class="post" x="43.1" y="222.2" width="3.5" height="3.5"/>
+<rect class="post" x="387.4" y="222.2" width="3.5" height="3.5"/>
+<rect class="post" x="43.1" y="180.2" width="3.5" height="3.5"/>
+<rect class="post" x="387.4" y="180.2" width="3.5" height="3.5"/>
+<rect class="post" x="43.1" y="138.2" width="3.5" height="3.5"/>
+<rect class="post" x="387.4" y="138.2" width="3.5" height="3.5"/>
+<line class="pav" x1="220.5" y1="938.0" x2="241.5" y2="938.0"/>
+<line class="pav" x1="220.5" y1="924.0" x2="241.5" y2="924.0"/>
+<line class="pav" x1="220.5" y1="910.0" x2="241.5" y2="910.0"/>
+<line class="pav" x1="220.5" y1="896.0" x2="241.5" y2="896.0"/>
+<line class="pav" x1="220.5" y1="882.0" x2="241.5" y2="882.0"/>
+<line class="pav" x1="220.5" y1="868.0" x2="241.5" y2="868.0"/>
+<line class="pav" x1="220.5" y1="938.0" x2="220.5" y2="864.5"/>
+<line class="pav" x1="241.5" y1="938.0" x2="241.5" y2="864.5"/>
+<rect class="edge" x="213.5" y="847.0" width="35.0" height="17.5"/>
+<line class="deck" x1="213.5" y1="855.8" x2="248.5" y2="855.8"/>
+<line class="deck" x1="147.0" y1="845.6" x2="147.0" y2="792.4"/>
+<line class="deck" x1="154.0" y1="845.6" x2="154.0" y2="792.4"/>
+<line class="deck" x1="161.0" y1="845.6" x2="161.0" y2="792.4"/>
+<line class="deck" x1="168.0" y1="845.6" x2="168.0" y2="792.4"/>
+<line class="deck" x1="175.0" y1="845.6" x2="175.0" y2="792.4"/>
+<line class="deck" x1="182.0" y1="845.6" x2="182.0" y2="792.4"/>
+<line class="deck" x1="189.0" y1="845.6" x2="189.0" y2="792.4"/>
+<line class="deck" x1="196.0" y1="845.6" x2="196.0" y2="792.4"/>
+<line class="deck" x1="203.0" y1="845.6" x2="203.0" y2="792.4"/>
+<line class="deck" x1="210.0" y1="845.6" x2="210.0" y2="792.4"/>
+<line class="deck" x1="217.0" y1="845.6" x2="217.0" y2="792.4"/>
+<line class="deck" x1="224.0" y1="845.6" x2="224.0" y2="792.4"/>
+<line class="deck" x1="231.0" y1="845.6" x2="231.0" y2="792.4"/>
+<line class="deck" x1="238.0" y1="845.6" x2="238.0" y2="792.4"/>
+<line class="deck" x1="245.0" y1="845.6" x2="245.0" y2="792.4"/>
+<line class="deck" x1="252.0" y1="845.6" x2="252.0" y2="792.4"/>
+<line class="deck" x1="259.0" y1="845.6" x2="259.0" y2="792.4"/>
+<line class="deck" x1="266.0" y1="845.6" x2="266.0" y2="792.4"/>
+<line class="deck" x1="273.0" y1="845.6" x2="273.0" y2="792.4"/>
+<line class="deck" x1="280.0" y1="845.6" x2="280.0" y2="792.4"/>
+<line class="deck" x1="287.0" y1="845.6" x2="287.0" y2="792.4"/>
+<line class="deck" x1="294.0" y1="845.6" x2="294.0" y2="792.4"/>
+<line class="deck" x1="301.0" y1="845.6" x2="301.0" y2="792.4"/>
+<line class="deck" x1="308.0" y1="845.6" x2="308.0" y2="792.4"/>
+<rect class="edge" x="140.0" y="791.0" width="175.0" height="56.0"/>
+<rect class="postb" x="141.4" y="842.1" width="3.5" height="3.5"/>
+<rect class="postb" x="310.1" y="842.1" width="3.5" height="3.5"/>
+<rect class="postb" x="226.8" y="842.1" width="3.5" height="3.5"/>
+<line class="deck" x1="140.0" y1="593.6" x2="140.0" y2="540.4"/>
+<line class="deck" x1="147.0" y1="593.6" x2="147.0" y2="540.4"/>
+<line class="deck" x1="154.0" y1="593.6" x2="154.0" y2="540.4"/>
+<line class="deck" x1="161.0" y1="593.6" x2="161.0" y2="540.4"/>
+<line class="deck" x1="168.0" y1="593.6" x2="168.0" y2="540.4"/>
+<line class="deck" x1="175.0" y1="593.6" x2="175.0" y2="540.4"/>
+<line class="deck" x1="182.0" y1="593.6" x2="182.0" y2="540.4"/>
+<line class="deck" x1="189.0" y1="593.6" x2="189.0" y2="540.4"/>
+<line class="deck" x1="196.0" y1="593.6" x2="196.0" y2="540.4"/>
+<line class="deck" x1="203.0" y1="593.6" x2="203.0" y2="540.4"/>
+<line class="deck" x1="210.0" y1="593.6" x2="210.0" y2="540.4"/>
+<line class="deck" x1="217.0" y1="593.6" x2="217.0" y2="540.4"/>
+<line class="deck" x1="224.0" y1="593.6" x2="224.0" y2="540.4"/>
+<line class="deck" x1="231.0" y1="593.6" x2="231.0" y2="540.4"/>
+<line class="deck" x1="238.0" y1="593.6" x2="238.0" y2="540.4"/>
+<line class="deck" x1="245.0" y1="593.6" x2="245.0" y2="540.4"/>
+<line class="deck" x1="252.0" y1="593.6" x2="252.0" y2="540.4"/>
+<line class="deck" x1="259.0" y1="593.6" x2="259.0" y2="540.4"/>
+<line class="deck" x1="266.0" y1="593.6" x2="266.0" y2="540.4"/>
+<line class="deck" x1="273.0" y1="593.6" x2="273.0" y2="540.4"/>
+<line class="deck" x1="280.0" y1="593.6" x2="280.0" y2="540.4"/>
+<line class="deck" x1="287.0" y1="593.6" x2="287.0" y2="540.4"/>
+<line class="deck" x1="294.0" y1="593.6" x2="294.0" y2="540.4"/>
+<line class="deck" x1="301.0" y1="593.6" x2="301.0" y2="540.4"/>
+<line class="deck" x1="308.0" y1="593.6" x2="308.0" y2="540.4"/>
+<line class="deck" x1="315.0" y1="593.6" x2="315.0" y2="540.4"/>
+<line class="deck" x1="322.0" y1="593.6" x2="322.0" y2="540.4"/>
+<line class="deck" x1="329.0" y1="593.6" x2="329.0" y2="540.4"/>
+<line class="deck" x1="336.0" y1="593.6" x2="336.0" y2="540.4"/>
+<rect class="edge" x="133.0" y="539.0" width="210.0" height="56.0"/>
+<rect class="postb" x="134.4" y="540.4" width="3.5" height="3.5"/>
+<rect class="postb" x="338.1" y="540.4" width="3.5" height="3.5"/>
+<rect class="postb" x="236.6" y="540.4" width="3.5" height="3.5"/>
+<line class="pav" x1="161.0" y1="539.0" x2="315.0" y2="539.0"/>
+<line class="pav" x1="161.0" y1="525.0" x2="315.0" y2="525.0"/>
+<line class="pav" x1="161.0" y1="511.0" x2="315.0" y2="511.0"/>
+<line class="pav" x1="161.0" y1="497.0" x2="315.0" y2="497.0"/>
+<line class="pav" x1="161.0" y1="483.0" x2="315.0" y2="483.0"/>
+<line class="pav" x1="161.0" y1="469.0" x2="315.0" y2="469.0"/>
+<line class="pav" x1="161.0" y1="539.0" x2="161.0" y2="469.0"/>
+<line class="pav" x1="175.0" y1="539.0" x2="175.0" y2="469.0"/>
+<line class="pav" x1="189.0" y1="539.0" x2="189.0" y2="469.0"/>
+<line class="pav" x1="203.0" y1="539.0" x2="203.0" y2="469.0"/>
+<line class="pav" x1="217.0" y1="539.0" x2="217.0" y2="469.0"/>
+<line class="pav" x1="231.0" y1="539.0" x2="231.0" y2="469.0"/>
+<line class="pav" x1="245.0" y1="539.0" x2="245.0" y2="469.0"/>
+<line class="pav" x1="259.0" y1="539.0" x2="259.0" y2="469.0"/>
+<line class="pav" x1="273.0" y1="539.0" x2="273.0" y2="469.0"/>
+<line class="pav" x1="287.0" y1="539.0" x2="287.0" y2="469.0"/>
+<line class="pav" x1="301.0" y1="539.0" x2="301.0" y2="469.0"/>
+<line class="pav" x1="315.0" y1="539.0" x2="315.0" y2="469.0"/>
+<rect class="edge" x="161.0" y="469.0" width="154.0" height="70.0"/>
+<rect class="edge" x="210.0" y="432.6" width="9.8" height="15.4"/>
+<rect class="edge" x="199.5" y="397.6" width="9.8" height="15.4"/>
+<rect class="edge" x="192.5" y="362.6" width="9.8" height="15.4"/>
+<rect class="edge" x="189.0" y="327.6" width="9.8" height="15.4"/>
+<rect class="edge" x="186.9" y="292.6" width="9.8" height="15.4"/>
+<rect class="edge" x="186.2" y="257.6" width="9.8" height="15.4"/>
+<rect class="wall" x="112.0" y="595.0" width="231.0" height="196.0"/>
+<line class="iw" x1="112.0" y1="707.0" x2="122.5" y2="707.0"/>
+<line class="iw" x1="140.0" y1="707.0" x2="189.0" y2="707.0"/>
+<line class="iw" x1="266.0" y1="707.0" x2="315.0" y2="707.0"/>
+<line class="iw" x1="332.5" y1="707.0" x2="343.0" y2="707.0"/>
+<line class="iw" x1="189.0" y1="791.0" x2="189.0" y2="729.4"/>
+<line class="iw" x1="189.0" y1="710.5" x2="189.0" y2="707.0"/>
+<line class="iw" x1="266.0" y1="791.0" x2="266.0" y2="729.4"/>
+<line class="iw" x1="266.0" y1="710.5" x2="266.0" y2="707.0"/>
+<line class="iw" x1="112.0" y1="672.0" x2="168.0" y2="672.0"/>
+<line class="iw" x1="168.0" y1="707.0" x2="168.0" y2="672.0"/>
+<line class="iw" x1="287.0" y1="672.0" x2="343.0" y2="672.0"/>
+<line class="iw" x1="287.0" y1="707.0" x2="287.0" y2="672.0"/>
+<rect class="ko" x="129.5" y="788.6" width="38.5" height="4.9"/>
+<line class="win" x1="129.5" y1="792.8" x2="168.0" y2="792.8"/>
+<line class="win" x1="129.5" y1="789.2" x2="168.0" y2="789.2"/>
+<line class="win" x1="129.5" y1="791.0" x2="168.0" y2="791.0"/>
+<rect class="ko" x="287.0" y="788.6" width="38.5" height="4.9"/>
+<line class="win" x1="287.0" y1="792.8" x2="325.5" y2="792.8"/>
+<line class="win" x1="287.0" y1="789.2" x2="325.5" y2="789.2"/>
+<line class="win" x1="287.0" y1="791.0" x2="325.5" y2="791.0"/>
+<rect class="ko" x="109.5" y="728.0" width="4.9" height="42.0"/>
+<line class="win" x1="110.2" y1="770.0" x2="110.2" y2="728.0"/>
+<line class="win" x1="113.8" y1="770.0" x2="113.8" y2="728.0"/>
+<line class="win" x1="112.0" y1="770.0" x2="112.0" y2="728.0"/>
+<rect class="ko" x="109.5" y="616.0" width="4.9" height="35.0"/>
+<line class="win" x1="110.2" y1="651.0" x2="110.2" y2="616.0"/>
+<line class="win" x1="113.8" y1="651.0" x2="113.8" y2="616.0"/>
+<line class="win" x1="112.0" y1="651.0" x2="112.0" y2="616.0"/>
+<rect class="ko" x="340.6" y="728.0" width="4.9" height="42.0"/>
+<line class="win" x1="341.2" y1="770.0" x2="341.2" y2="728.0"/>
+<line class="win" x1="344.8" y1="770.0" x2="344.8" y2="728.0"/>
+<line class="win" x1="343.0" y1="770.0" x2="343.0" y2="728.0"/>
+<rect class="ko" x="340.6" y="616.0" width="4.9" height="35.0"/>
+<line class="win" x1="341.2" y1="651.0" x2="341.2" y2="616.0"/>
+<line class="win" x1="344.8" y1="651.0" x2="344.8" y2="616.0"/>
+<line class="win" x1="343.0" y1="651.0" x2="343.0" y2="616.0"/>
+<rect class="ko" x="220.5" y="788.2" width="21.0" height="5.6"/>
+<line class="door" x1="220.5" y1="791.0" x2="220.5" y2="770.0"/>
+<path class="arc" d="M220.5 770.0 A21.0 21.0 0 0 1 241.5 791.0"/>
+<rect class="ko" x="210.0" y="592.2" width="84.0" height="5.6"/>
+<line class="door" x1="210.0" y1="596.4" x2="254.8" y2="596.4"/>
+<line class="door" x1="249.2" y1="593.6" x2="294.0" y2="593.6"/>
+<line class="door" x1="189.0" y1="710.5" x2="170.1" y2="710.5"/>
+<path class="arc" d="M170.1 710.5 A18.9 18.9 0 0 0 189.0 729.4"/>
+<line class="door" x1="266.0" y1="710.5" x2="284.9" y2="710.5"/>
+<path class="arc" d="M284.9 710.5 A18.9 18.9 0 0 1 266.0 729.4"/>
+<line class="door" x1="140.0" y1="707.0" x2="140.0" y2="689.5"/>
+<path class="arc" d="M140.0 689.5 A17.5 17.5 0 0 0 122.5 707.0"/>
+<line class="door" x1="315.0" y1="707.0" x2="315.0" y2="689.5"/>
+<path class="arc" d="M315.0 689.5 A17.5 17.5 0 0 1 332.5 707.0"/>
+<rect class="fx" x="114.1" y="597.8" width="14.7" height="71.4"/>
+<circle class="fx" cx="121.5" cy="626.5" r="4.2"/>
+<rect class="fx" x="116.2" y="646.8" width="10.5" height="11.2"/>
+<rect class="fx" x="148.4" y="612.5" width="16.8" height="38.5"/>
+<circle class="fx" cx="199.5" cy="633.5" r="13.3"/>
+<rect class="fx" x="114.8" y="674.8" width="17.5" height="29.4"/>
+
+<rect class="fx" x="322.7" y="674.8" width="17.5" height="29.4"/>
+<rect class="fx" x="150.5" y="674.8" width="14.7" height="9.8"/>
+<rect class="fx" x="289.8" y="674.8" width="14.7" height="9.8"/>
+<rect class="wall" x="56.0" y="112.0" width="112.0" height="140.0"/>
+<rect class="ko" x="70.0" y="109.2" width="84.0" height="5.6"/>
+<line class="oh" x1="70.0" y1="119.0" x2="154.0" y2="119.0"/>
+<rect class="ko" x="165.2" y="210.0" width="5.6" height="21.0"/>
+<line class="door" x1="168.0" y1="231.0" x2="189.0" y2="231.0"/>
+<path class="arc" d="M189.0 231.0 A21.0 21.0 0 0 0 168.0 210.0"/>
+<rect class="pav" x="70.0" y="98.0" width="84.0" height="14.0"/>
+<circle class="tree" cx="84.0" cy="906.5" r="25.2"/>
+<circle class="post" cx="84.0" cy="906.5" r="2.4"/>
+<circle class="tree" cx="353.5" cy="906.5" r="22.4"/>
+<circle class="post" cx="353.5" cy="906.5" r="2.4"/>
+<circle class="tree" cx="343.0" cy="378.0" r="37.8"/>
+<circle class="post" cx="343.0" cy="378.0" r="2.4"/>
+<circle class="tree" cx="105.0" cy="322.0" r="29.4"/>
+<circle class="post" cx="105.0" cy="322.0" r="2.4"/>
+<line class="dim" x1="87.5" y1="791.0" x2="87.5" y2="595.0"/>
+<line class="dimk" x1="91.7" y1="795.2" x2="83.3" y2="786.8"/>
+<line class="dim" x1="80.5" y1="791.0" x2="94.5" y2="791.0"/>
+<line class="dimk" x1="91.7" y1="599.2" x2="83.3" y2="590.8"/>
+<line class="dim" x1="80.5" y1="595.0" x2="94.5" y2="595.0"/>
+<text class="t d" x="81.2" y="693.0" text-anchor="middle">28'-0"</text>
+<line class="dim" x1="112.0" y1="875.0" x2="343.0" y2="875.0"/>
+<line class="dimk" x1="116.2" y1="879.2" x2="107.8" y2="870.8"/>
+<line class="dim" x1="112.0" y1="882.0" x2="112.0" y2="868.0"/>
+<line class="dimk" x1="347.2" y1="879.2" x2="338.8" y2="870.8"/>
+<line class="dim" x1="343.0" y1="882.0" x2="343.0" y2="868.0"/>
+<text class="t d" x="168.0" y="881.3" text-anchor="middle">33'-0"</text>
+<text class="t" x="150.5" y="749.0" text-anchor="middle">Bed 1</text>
+<text class="t s" x="150.5" y="762.3" text-anchor="middle">11 × 12</text>
+<text class="t" x="232.4" y="749.0" text-anchor="middle">Parlor</text>
+<text class="t" x="304.5" y="749.0" text-anchor="middle">Bed 2</text>
+<text class="t s" x="304.5" y="762.3" text-anchor="middle">11 × 12</text>
+<text class="t s" x="149.8" y="689.5" text-anchor="middle">Bath</text>
+<text class="t s" x="308.0" y="689.5" text-anchor="middle">Bath</text>
+<text class="t" x="259.0" y="630.0" text-anchor="middle">Living</text>
+<text class="t s" x="259.0" y="643.3" text-anchor="middle">22 × 11</text>
+<text class="t zl" x="227.5" y="814.8" text-anchor="middle" data-z="0">Front porch</text>
+<text class="t zl" x="238.0" y="562.8" text-anchor="middle" data-z="1">Rear porch</text>
+<text class="t s" x="151.2" y="504.0" text-anchor="middle">Patio</text>
+<text class="t zl" x="273.0" y="350.0" text-anchor="middle" data-z="1">Yard</text>
+<text class="t zl" x="108.5" y="182.0" text-anchor="middle" data-z="2">Workshop</text>
+<text class="t s" x="108.5" y="195.3" text-anchor="middle" data-z="2">20 × 16</text>
+<text class="t zl" x="252.0" y="56.0" text-anchor="middle" data-z="2">Perimeter drive</text>
+<text class="t" x="252.0" y="997.5" text-anchor="middle">Street</text>
+</svg>
+        </div>
+        <div class="cell on" data-z="0">
+          <div class="c-m"><span class="n">01</span><h3>The front is arrival and neighbours.</h3><p>A covered porch on every home, set at the street. It is the half of the house your neighbours meet.</p></div>
+          <div class="c-f"><span class="fig">1–3 bed</span><span class="ck">the unit mix inside every community</span></div>
+        </div>
+        <div class="cell" data-z="1">
+          <div class="c-m"><span class="n">02</span><h3>The back is where you actually live.</h3><p>A rear porch onto a patio and yard, proportioned so the smallest home has the ratio of the largest.</p></div>
+          <div class="c-f"><span class="fig">900–950</span><span class="ck">square feet at the smallest, two bed and two bath</span></div>
+        </div>
+        <div class="cell" data-z="2">
+          <div class="c-m"><span class="n">03</span><h3>The garage is a workshop, set back.</h3><p>Behind and to the side, off a perimeter drive that wraps the yard into an L.</p></div>
+          <div class="c-f"><span class="fig">1.5 car</span><span class="ck">on every home, off the perimeter drive</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 -->
+  <section class="sec band-ink" id="backyards">
+    <div class="wrap">
+      <div class="head">
+        <div class="sec-label label"><b>05</b>Before the communities</div>
+        <h2 class="h2">Backyards first, because they are available now.</h2>
+        <div class="aside"><p class="line">A master-planned community is an eighteen-to-thirty-six month problem. A backyard is not. The co-op leases them from homeowners and places relocatable studios and one-bedrooms on them.</p></div>
+      </div>
+      <div class="bx yard body-gap">
+        <div class="cell owner">
+          <div class="c-h"><span class="who">You own the backyard</span><span class="ck">01</span></div>
+          <div><div class="line2">Income, and a veto.</div><div class="sub">a ground lease on the back of your lot</div></div>
+          <div class="c-m"><p>You stay passive. Clear handles permitting and the leasing, and every decision on the unit comes to you to approve or decline.</p></div>
+        </div>
+        <div class="cell unit">
+          <div class="c-h"><span class="who">The unit itself</span><span class="ck">02</span></div>
+          <div><div class="line2">450–650</div><div class="sub">square feet, one open volume with high ceilings</div></div>
+          <div class="c-m"><p>Built to come apart and move, so when a lease ends the structure goes somewhere else and the next placement costs less.</p></div>
+        </div>
+        <div class="cell renter">
+          <div class="c-h"><span class="who">Whoever lives in it</span><span class="ck">03</span></div>
+          <div><div class="line2">One person.</div><div class="sub">the household almost nothing gets built for</div></div>
+          <div class="c-m"><p>Renting alone is close to impossible without roommates, and almost nothing gets built for the person trying to do it anyway.</p></div>
+        </div>
+      </div>
+      <div class="bx yard-f">
+        <p>Own a lot with real separation between the house and the back fence? We would like to talk about a ground lease.</p>
+        <a class="more" href="https://www.useclear.org/contribute">How contributions work<svg><use href="#arrow"/></svg></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 -->
+  <section class="sec" id="gate">
+    <div class="wrap">
+      <div class="head">
+        <div class="sec-label label"><b>06</b>The gate</div>
+        <h2 class="h2">The path to a deed is visible from your first deposit.</h2>
+        <div class="aside"><p class="line">Your deposit is your membership share. Every gate on the way unlocks something real, and none of it is paid back.</p></div>
+      </div>
+      <div class="bx gate-h body-gap">
+        <h3>You sign, and the deed is yours.</h3>
+        <div class="cap"><span class="fig" id="gate-n">15,000</span><p>equity credits, and you sign for the deed to your home</p></div>
+      </div>
+      <div class="bx ldr" id="ldr">
+        <span class="rail-fill" id="ldr-fill" aria-hidden="true"></span>
+        <div class="st reached" data-at="0"><span class="knob" aria-hidden="true"></span><span class="fig at">Day one</span><span class="nm">Cycle assurance</span><p>Two grace cycles a year, from your first deposit.</p></div>
+        <div class="st reached" data-at="1500"><span class="knob" aria-hidden="true"></span><span class="fig at">1,500</span><span class="nm">Home repair assurance</span><p>Repairs to the home you live in, covered by the co-op.</p></div>
+        <div class="st reached" data-at="4000"><span class="knob" aria-hidden="true"></span><span class="fig at">4,000</span><span class="nm">Income assurance</span><p>If your income drops, your limit holds and credits keep vesting.</p></div>
+        <div class="st reached" data-at="8000"><span class="knob" aria-hidden="true"></span><span class="fig at">8,000</span><span class="nm">Deposit assurance</span><p>The co-op covers a deposit on a new place, paid to the landlord.</p></div>
+        <div class="st reached last" data-at="15000"><span class="knob" aria-hidden="true"></span><span class="fig at">15,000</span><span class="nm">Rent assurance and your deed</span><p>Two months' rent on job loss, and you sign your ELPA and your Clear Deed.</p></div>
+      </div>
+      <div class="bx gate-f">
+        <p>The land stays in the commons, and the house is yours to hold title to outright. You can see where you are, and the date you are on track for, from the screen where you save.</p>
+        <a class="btn btn-primary" href="https://www.useclear.org/join"><span class="dot"></span>Start saving</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec close">
+    <div class="wrap head">
+      <h2 class="h2">Your money, kept in the neighborhood.</h2>
+      <div class="aside">
+        <p class="line">One member, one vote. Building in Inland Empire, California.</p>
+        <div class="hero-actions" style="margin-top:0">
+          <a class="btn btn-primary" href="https://www.useclear.org/join"><span class="dot"></span>Join the waitlist</a>
+          <a class="btn btn-ghost" href="https://www.useclear.org/contribute">Contribute land</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <div class="foot">
+    <div class="about"><a class="brand" href="https://www.useclear.org/"><svg aria-hidden="true"><use href="#mark"/></svg>Clear</a><p>A member-owned cooperative, building in Inland Empire, California.</p></div>
+    <div><h4>Members</h4><ul><li><a href="https://www.useclear.org/how">How it works</a></li><li><a href="https://www.useclear.org/housing">Housing</a></li><li><a href="https://www.useclear.org/join">Join the waitlist</a></li><li><a href="https://demo.useclear.org">Members app</a></li></ul></div>
+    <div><h4>Partners</h4><ul><li><a href="https://www.useclear.org/shops">For shops</a></li><li><a href="https://www.useclear.org/contribute">Contribute land</a></li><li><a href="https://www.useclear.org/capital">Clear Capital</a></li><li><a href="https://merchant.useclear.org">Merchant app</a></li></ul></div>
+    <div><h4>The co-op</h4><ul><li><a href="https://www.useclear.org/coop">Structure and governance</a></li><li><a href="https://github.com/Deed3Labs/Protocol-Contracts">Protocol source</a></li><li><a href="https://www.useclear.org/join?as=work">Work with us</a></li><li><a href="https://www.useclear.org/style">Brand and style guide</a></li></ul></div>
+    <div><h4>Community</h4><ul><li><a href="https://www.useclear.org/events">Events</a></li><li><a href="https://www.useclear.org/directory">Directory</a></li><li><a href="https://www.useclear.org/shop">Shop</a></li></ul></div>
+    <div class="legal">
+      <p>Clear is not a bank and deposits are not FDIC insured. Membership accounts are cooperative capital accounts, not deposit accounts.</p>
+      <p>Nothing here is an offer to sell or a solicitation to buy any security. Figures shown for housing, savings and credit are illustrations of how the model works, not quotes, offers or predictions. Credit is subject to the terms disclosed in the app before you draw.</p>
+      <p>We are not tax or legal advisers. Descriptions of property contributions are general and depend entirely on your own circumstances.</p>
+    </div>
+  </div>
+</footer>
+
+<div class="mock-flag">Mockup v1 · Housing</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const G = typeof window.gsap !== 'undefined' && !reduce;
+  const money = (n, dp = 2) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: dp, maximumFractionDigits: dp });
+
+  /* Header */
+  const head = $('#site-head');
+  const onScroll = () => head.classList.toggle('scrolled', scrollY > 8);
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+  /* The Community menu: opens on click, and on hover for a mouse. */
+  const nm = $('#navmenu'), nb = $('#navmenu-btn'), np = $('#navmenu-panel');
+  let nmT = null, byHover = false;
+  const nmSet = o => { np.hidden = !o; nb.setAttribute('aria-expanded', String(o)); if (!o) byHover = false; };
+  /* A mouse already opened it by hovering, so a click keeps it open. */
+  nb.addEventListener('click', () => nmSet(byHover ? true : np.hidden));
+  nm.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') { clearTimeout(nmT); if (np.hidden) byHover = true; nmSet(true); } });
+  nm.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') nmT = setTimeout(() => nmSet(false), 180); });
+  document.addEventListener('pointerdown', e => { if (!nm.contains(e.target)) nmSet(false); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { nmSet(false); $('#sheet').close(); } });
+  /* The full-screen sheet, on <dialog>. */
+  const sheet = $('#sheet');
+  $('#menu-btn').addEventListener('click', () => sheet.showModal());
+  $('#sheet-close').addEventListener('click', () => sheet.close());
+
+  /* Screens: each app canvas is authored at its real width and scaled to fit,
+     so the product reads like a screenshot at every width. */
+  function fit() {
+    $$('.screen').forEach(sc => {
+      if (!sc.offsetParent) return;
+      const w = +sc.dataset.w, h = +sc.dataset.h || sc.firstElementChild.offsetHeight, s = sc.clientWidth / w;
+      sc.style.height = (h * s) + 'px';
+      sc.firstElementChild.style.transform = `scale(${s})`;
+    });
+  }
+  new ResizeObserver(fit).observe(document.body); fit();
+
+  /* ── Light along the lines ──────────────────────────────────────────────
+     One engine. A path is built in an element's own pixels; a short lit
+     segment (soft halo + thin core) runs along it. Paths are rebuilt on resize. */
+  const NS = 'http://www.w3.org/2000/svg';
+  function traceLayer(host) {
+    const svg = document.createElementNS(NS, 'svg'); svg.classList.add('trace');
+    const halo = document.createElementNS(NS, 'path'); halo.classList.add('halo');
+    const core = document.createElementNS(NS, 'path'); core.classList.add('core');
+    svg.append(halo, core); host.appendChild(svg);
+    return { svg, halo, core };
+  }
+  /* Rounded rectangle, clockwise, starting at a chosen point on its edge. */
+  function rr(x, y, w, h, r, start = 'top') {
+    const L = x, T = y, R = x + w, B = y + h;
+    const seg = {
+      top:    `L ${R - r} ${T} A ${r} ${r} 0 0 1 ${R} ${T + r}`,
+      right:  `L ${R} ${B - r} A ${r} ${r} 0 0 1 ${R - r} ${B}`,
+      bottom: `L ${L + r} ${B} A ${r} ${r} 0 0 1 ${L} ${B - r}`,
+      left:   `L ${L} ${T + r} A ${r} ${r} 0 0 1 ${L + r} ${T}`,
+    };
+    const starts = { top: [L + w / 2, T], right: [R, T + h / 2], bottom: [L + w / 2, B], left: [L, T + h / 2] };
+    const order = ['top', 'right', 'bottom', 'left'];
+    const i = order.indexOf(start), [sx, sy] = starts[start];
+    let d = `M ${sx} ${sy} `;
+    for (let k = 0; k < 4; k++) d += seg[order[(i + k) % 4]] + ' ';
+    return d + `L ${sx} ${sy}`;
+  }
+  function makeTrace(host, build, { seg = 140, speed = 520 } = {}) {
+    if (!G) return { run(o = {}) { if (o.done) o.done(); }, kill() {} };
+    const t = traceLayer(host);
+    let len = 0, tw = null;
+    function layout() {
+      const w = host.clientWidth, h = host.clientHeight;
+      t.svg.setAttribute('width', w); t.svg.setAttribute('height', h); t.svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+      const d = build(w, h, host); t.halo.setAttribute('d', d); t.core.setAttribute('d', d);
+      len = t.core.getTotalLength();
+      [t.halo, t.core].forEach(p => { p.style.strokeDasharray = `${seg} ${len + seg}`; p.style.strokeDashoffset = seg; });
+    }
+    layout(); new ResizeObserver(layout).observe(host);
+    return {
+      run(opts = {}) {
+        if (tw) tw.kill(); layout();
+        const o = { v: seg };
+        tw = gsap.to(o, { v: -len, duration: len / speed, ease: opts.ease || 'power1.inOut', repeat: opts.repeat || 0, repeatDelay: opts.repeatDelay || 0,
+          onUpdate: () => { t.halo.style.strokeDashoffset = o.v; t.core.style.strokeDashoffset = o.v; }, onComplete: opts.done });
+      },
+      kill() { if (tw) tw.kill(); [t.halo, t.core].forEach(p => { p.style.strokeDashoffset = seg; }); },
+    };
+  }
+
+
+
+  /* ── 03 the first line, and what it becomes ──────────────────────────── */
+  const eq = $('#eq'), yrs = $$('#yrs span');
+  function bill() {
+    const v = +eq.value;
+    eq.style.setProperty('--p', ((v - 500) / 1000 * 100) + '%');
+    $('#eq-v').textContent = money(v, 0);
+    $('#eq-k').textContent = money(v * 60, 0);
+    $('#eq-all').textContent = money(2000 + v, 0);
+    yrs.forEach((b, i) => { b.textContent = money(v * 12 * (i + 1), 0); });
+  }
+  eq.addEventListener('input', bill); bill();
+
+  /* ── 04 the plan answers to the three cells ──────────────────────────── */
+  const pcells = $$('#planx .cell');
+  let pz = 0, pAuto = null, pUser = false;
+  function zone(z) {
+    pz = z;
+    pcells.forEach(c => c.classList.toggle('on', +c.dataset.z === z));
+    $$('#planx [data-z]').forEach(el => { if (el.tagName !== 'DIV') el.classList.toggle('on', +el.dataset.z === z); });
+  }
+  pcells.forEach(c => {
+    c.addEventListener('mouseenter', () => { pUser = true; zone(+c.dataset.z); });
+    c.addEventListener('click', () => { pUser = true; zone(+c.dataset.z); });
+  });
+  zone(0);
+
+  if (!G) return;
+  gsap.registerPlugin(ScrollTrigger);
+
+  /* Hero: words rise, the savings screen assembles, the ladder fills. */
+  const heroDev = $('#hero-device');
+  const heroTrace = makeTrace(heroDev, (w, h) => rr(.5, .5, w - 1, h - 1, 14, 'left'), { seg: 160, speed: 620 });
+  const h1 = $('#hero-h1');
+  $$('.ln', h1).forEach(ln => { ln.innerHTML = ln.textContent.split(' ').map(w => `<span class="w"><span>${w}</span></span>`).join(' '); });
+  gsap.timeline({ defaults: { ease: 'power3.out' } })
+    .from('#hero-h1 .w > span', { yPercent: 105, duration: 1, stagger: .06, onComplete: () => $('#hero-h1').classList.add('revealed') })
+    .from('[data-in]', { opacity: 0, y: 14, duration: .8, stagger: .1 }, '-=.6')
+    .from('#stagebox', { opacity: 0, y: 24, duration: 1.0 }, '-=.55')
+    .from('#stage [data-a]', { opacity: 0, y: 8, duration: .6, stagger: .06 }, '-=.6')
+    .from('#stage [data-grow]', { scaleX: 0, duration: 1, stagger: .08, ease: 'power2.inOut' }, '-=.2')
+    .call(() => heroTrace.run({ repeat: -1, repeatDelay: 4.5, ease: 'power2.inOut' }), null, '-=.3');
+
+  /* 02: the three bars grow to scale, on arrival. */
+  gsap.set('#nums .nbar i', { scaleX: 0 });
+  ScrollTrigger.create({ trigger: '#nums', start: 'top 72%', once: true,
+    onEnter: () => gsap.to('#nums .nbar i', { scaleX: 1, duration: 1.2, stagger: .18, ease: 'power3.inOut' }) });
+
+  /* 03: the years rise once, the first time you see them. */
+  gsap.from('#yrs i', { scaleY: 0, duration: .9, stagger: .08, ease: 'power3.out', scrollTrigger: { trigger: '#yrs', start: 'top 80%', once: true } });
+
+  /* 04: the plan walks the three parts until you point at one. */
+  ScrollTrigger.create({ trigger: '#planx', start: 'top 70%', once: true, onEnter: () => {
+    pAuto = setInterval(() => { if (pUser) return clearInterval(pAuto); zone((pz + 1) % 3); }, 2800);
+  } });
+
+  /* 06: the rule fills through the five gates; credits count to the deed. */
+  const sts = $$('#ldr .st'), lEl = $('#ldr');
+  const vert = () => matchMedia('(max-width: 760px)').matches;
+  const atOf = st => { const k = $('.knob', st); return vert() ? (st.offsetTop + k.offsetTop) / lEl.offsetHeight : (st.offsetLeft + k.offsetLeft) / lEl.offsetWidth; };
+  function setGate(p) {
+    gsap.set('#ldr-fill', vert() ? { scaleY: p, scaleX: 1 } : { scaleX: p, scaleY: 1 });
+    sts.forEach(st => st.classList.toggle('reached', p >= atOf(st) - .002));
+    $('#gate-n').textContent = (Math.round(p * 300) * 50).toLocaleString('en-US');
+  }
+  setGate(0);
+  ScrollTrigger.create({ trigger: lEl, start: 'top 78%', end: 'bottom 60%', scrub: .4, onUpdate: s => setGate(s.progress) });
+
+  /* Header follows the ground beneath it. */
+  $$('.band-ink').forEach(band => ScrollTrigger.create({ trigger: band, start: 'top 34px', end: 'bottom 34px', onToggle: s => head.classList.toggle('on-ink', s.isActive) }));
+})();
+</script>

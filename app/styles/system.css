@@ -1,0 +1,578 @@
+/* ═══ The shared system ════════════════════════════════════════════════════
+   The vocabulary the eight redesigned pages share, ported from the mockups in
+   reference/redesign/. Loaded after globals.css (app/layout.tsx), so where a
+   rule here and an older one there share a selector, this one wins on order.
+
+   Colour comes only from the --color-* tokens in lib/tokens.css. The mockups
+   wrote them as --paper, --ink and so on; PLAN.md has the mapping. Page-only
+   rules live in app/<route>/page.css, nested under .pg-<route>. */
+
+/* ─── Measure and rhythm ────────────────────────────────────────────────── */
+
+:root {
+  color-scheme: light;
+  /* The page inset, the content measure, and the section rhythm. */
+  --inset: clamp(16px, 4vw, 56px);
+  --max: 1280px;
+  --sec: clamp(80px, 9vw, 144px);
+  /* Padding that holds content to the measure while the element itself runs
+     full width — for anything whose ground must reach the viewport edge. */
+  --gutter-x: max(var(--inset), calc((100% - var(--max)) / 2));
+}
+
+[hidden] { display: none !important; }
+button { background: none; border: 0; padding: 0; cursor: pointer; }
+dl, dd { margin: 0; }
+
+.wrap {
+  width: 100%;
+  max-width: calc(var(--max) + var(--inset) * 2);
+  margin-inline: auto;
+  padding-inline: var(--inset);
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-ink-50);
+}
+.fig.live { color: var(--color-live); }
+/* Small grey text that sits beside a figure. */
+.ck { font-size: 13.5px; color: var(--color-ink-50); }
+.who { font-size: 15px; font-weight: 500; letter-spacing: -0.01em; }
+.note { font-size: 13.5px; color: var(--color-ink-50); }
+
+/* ─── Ink bands ─────────────────────────────────────────────────────────────
+   Paper sections alternate with ink bands. A band redefines the tokens for
+   everything inside it rather than reaching for one-off colours, so any
+   component works on either ground. The older .hx-band[data-tone='ink'] is
+   the same band; it also lifts --color-paper-2 for the structure diagram's
+   raised boxes, which the redesigned pages do not use. */
+.band-ink,
+.hx-band[data-tone='ink'] {
+  /* --color-ink-ground, not --color-ink: this rule rebinds --color-ink below,
+     and a custom property resolves to the value in scope on the element using
+     it — background: var(--color-ink) would paint the band light on light. */
+  background: var(--color-ink-ground);
+  color: var(--color-paper);
+  --color-ink: #DFE3DE;
+  --color-ink-70: #ABB1AC;
+  --color-ink-50: #939995;
+  --color-ink-28: rgb(223 227 222 / .32);
+  --color-ink-13: rgb(223 227 222 / .16);
+  /* Cobalt at its paper value measures 1.81:1 on ink. Same role, a value
+     that clears AA on this ground. Status trio lightened the same way. */
+  --color-live: #7C8CC5;
+  --color-settled: #6FCB9F;
+  --color-underway: #E3B667;
+  --color-absent: #E58C7F;
+}
+.hx-band[data-tone='ink'] { --color-paper-2: #1E2C27; }
+
+/* On ink --color-ink is light and --color-paper is light, so the primary
+   button's label takes the ground — the one token a band never rebinds. */
+.band-ink .btn[data-variant='primary'],
+.band-ink .btn[data-variant='primary']:hover { color: var(--color-ink-ground); }
+.band-ink .btn[data-variant='primary'] .live-dot { --dot: var(--color-signal-deep); }
+.band-ink .btn[data-variant='ghost'] .live-dot { --dot: var(--color-signal-light); }
+
+/* ─── Section ───────────────────────────────────────────────────────────── */
+
+.sec { padding-block: var(--sec); }
+
+/* A full-width label rule, then the headline on the left seven twelfths and
+   its one line plus link on the right, bottom-aligned to the headline. */
+.head {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  column-gap: clamp(32px, 6vw, 112px);
+  row-gap: clamp(28px, 3vw, 44px);
+  align-items: end;
+}
+.head > .sec-label { grid-column: 1 / -1; }
+.head > .aside { display: grid; gap: var(--spacing-3); align-content: end; padding-bottom: .4em; }
+@media (max-width: 900px) {
+  .head { grid-template-columns: minmax(0, 1fr); }
+  .head > .aside { padding-bottom: 0; gap: var(--spacing-2); }
+}
+.sec-label { display: flex; gap: 14px; padding-bottom: var(--spacing-2); border-bottom: 1px solid var(--color-ink-13); }
+.sec-label b { font-weight: 400; color: var(--color-live); }
+.h2 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(36px, 4.7vw, 72px);
+  line-height: .98;
+  letter-spacing: -0.038em;
+  text-wrap: balance;
+}
+.line {
+  font-size: clamp(17px, 1.35vw, 20px);
+  line-height: 1.5;
+  color: var(--color-ink-70);
+  max-width: 42ch;
+  text-wrap: pretty;
+}
+.more {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15.5px;
+  font-weight: 500;
+  color: var(--color-ink);
+  border-bottom: 1px solid var(--color-ink-28);
+  padding-bottom: 3px;
+  justify-self: start;
+  transition: border-color 200ms var(--ease), gap 200ms var(--ease);
+}
+.more svg { width: 14px; height: 10px; transition: transform 200ms var(--ease); }
+.more:hover { border-color: var(--color-ink); }
+.more:hover svg { transform: translateX(3px); }
+.links { display: flex; flex-wrap: wrap; gap: 12px 28px; }
+.body-gap { margin-top: clamp(48px, 5.5vw, 80px); }
+
+/* The closing section. */
+.close .h2 { font-size: clamp(40px, 5.6vw, 88px); max-width: 12ch; }
+
+/* ─── Controls ──────────────────────────────────────────────────────────── */
+
+/* A <button> wearing .btn (the Button component renders links). */
+button.btn { cursor: pointer; font-family: inherit; }
+.btn[disabled] { opacity: .35; cursor: default; }
+.btn[data-variant='primary'][disabled]:hover { background: var(--color-ink); }
+
+/* The segmented toggle (Seg). */
+.seg { display: inline-flex; padding: 3px; border: 1px solid var(--color-ink-28); border-radius: var(--radius-pill); }
+.seg button {
+  height: 34px;
+  padding-inline: 16px;
+  border-radius: var(--radius-pill);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-ink-70);
+  white-space: nowrap;
+  transition: background-color 250ms var(--ease), color 250ms var(--ease);
+}
+.seg button:hover { color: var(--color-ink); }
+.seg button[aria-pressed='true'] { background: var(--color-ink); color: var(--color-paper); }
+.band-ink .seg button[aria-pressed='true'] { color: var(--color-ink-ground); }
+@media (max-width: 560px) {
+  .seg { display: flex; }
+  .seg button { flex: 1; }
+}
+
+/* ─── Hero ──────────────────────────────────────────────────────────────── */
+
+.hero { padding-top: clamp(40px, 6vw, 96px); padding-bottom: var(--sec); }
+.phero { padding-bottom: var(--sec); }
+
+.hero-h1 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--h1, min(9.4vw, 132px));
+  line-height: .92;
+  letter-spacing: -0.045em;
+}
+/* Set lines from 700px up: each line is one span that never breaks. */
+.hero-h1 .ln { display: block; white-space: nowrap; }
+@media (max-width: 699px) {
+  .hero-h1 { font-size: var(--h1-phone, clamp(46px, 13.4vw, 72px)); }
+  .hero-h1[data-phone='wrap'] .ln { display: inline; white-space: normal; }
+  .hero-h1[data-phone='block'] .ln { display: block; white-space: normal; }
+  .hero-h1[data-phone='set'] .ln { display: block; white-space: nowrap; }
+  .hero-h1[data-balance] { text-wrap: balance; }
+}
+/* Each word sits in a padded mask while it rises; the padding is cancelled
+   by an equal negative margin, so the mask costs no space. The mask exists
+   only while the rise runs — at rest (and with no JS) nothing is clipped. */
+.hero-h1 .w { display: inline-block; vertical-align: top; padding: .04em .1em .24em; margin: -.04em -.1em -.24em; }
+.hero-h1 .w > span { display: inline-block; }
+.hero[data-intro='run'] .hero-h1:not(.revealed) .w { overflow: hidden; }
+
+/* First paint, before the intro takes over (see HeroScope). */
+html.motion .hero:not([data-intro]) .hero-h1 .w { overflow: hidden; }
+html.motion .hero:not([data-intro]) .hero-h1 .w > span { transform: translateY(105%); }
+html.motion .hero:not([data-intro]) [data-in],
+html.motion .hero:not([data-intro]) [data-stage] { opacity: 0; }
+
+.page-label { display: flex; gap: 14px; margin-bottom: clamp(24px, 3vw, 40px); }
+.page-label b { font-weight: 400; color: var(--color-live); }
+
+.hero-row {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+  gap: var(--spacing-4) clamp(24px, 6vw, 120px);
+  margin-top: clamp(32px, 4vw, 56px);
+  align-items: end;
+}
+.hero-lede { font-size: clamp(18px, 1.6vw, 22px); line-height: 1.45; color: var(--color-ink-70); max-width: 38ch; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: var(--spacing-3); }
+.facts { border-top: 1px solid var(--color-ink); display: grid; }
+.facts li {
+  padding-block: 12px;
+  border-bottom: 1px solid var(--color-ink-13);
+  font-size: 15px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.facts li span:last-child {
+  color: var(--color-ink-50);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  align-self: center;
+}
+.facts.figs li { align-items: baseline; }
+.facts.figs li span:last-child {
+  font-family: var(--font-text);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  color: var(--color-ink);
+  font-variant-numeric: tabular-nums;
+}
+.facts.figs li span.live:last-child { color: var(--color-live); }
+@media (max-width: 860px) { .hero-row { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 560px) {
+  .hero-actions .btn { flex: 1 1 100%; min-height: 48px; }
+  .hero-row { gap: var(--spacing-4); }
+}
+
+/* The product stage: flat on the page. */
+.stage { margin-top: clamp(56px, 7vw, 104px); position: relative; }
+.stage-cap { display: flex; justify-content: space-between; gap: 12px; margin-top: 14px; }
+.stagebox { position: relative; }
+
+/* ─── Bento ─────────────────────────────────────────────────────────────── */
+
+.bx {
+  --line: var(--color-ink-28);
+  --px: clamp(20px, 2.6vw, 36px);
+  border: 1px solid var(--line);
+  display: grid;
+}
+.bx + .bx { border-top: 0; }
+.cell { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; min-width: 0; }
+.c-h, .c-f {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 0 var(--px);
+}
+.c-h { border-bottom: 1px solid var(--line); }
+.c-f { border-top: 1px solid var(--line); }
+.c-m { display: grid; align-content: start; gap: 18px; padding: clamp(26px, 3vw, 40px) var(--px); }
+.c-m h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(20px, 1.8vw, 26px);
+  line-height: 1.15;
+  letter-spacing: -0.022em;
+  text-wrap: balance;
+  max-width: 22ch;
+}
+.c-m p { font-size: 15px; line-height: 1.55; color: var(--color-ink-70); max-width: 44ch; }
+
+/* Equal columns, seamed. */
+.bx[data-cols='2'] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.bx[data-cols='3'] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.bx[data-cols='4'] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.bx[data-cols] > * + * { border-left: 1px solid var(--line); }
+/* Subgrid rows: every cell borrows the bento's rows, so its header, headline
+   and figure land on the same lines as its neighbours'. */
+.bx[data-rows] { grid-template-rows: repeat(var(--rows), auto); }
+.bx[data-rows] > .cell { grid-row: span var(--rows); grid-template-rows: subgrid; }
+
+/* Stacking: one column, horizontal seams, each cell its own rows again. */
+@media (max-width: 980px) {
+  .bx[data-stack='980'] { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
+  .bx[data-stack='980'] > * + * { border-left: 0; border-top: 1px solid var(--line); }
+  .bx[data-stack='980'][data-rows] > .cell { grid-row: auto; grid-template-rows: auto minmax(0, 1fr) auto; }
+}
+@media (max-width: 900px) {
+  .bx[data-stack='900'] { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
+  .bx[data-stack='900'] > * + * { border-left: 0; border-top: 1px solid var(--line); }
+  .bx[data-stack='900'][data-rows] > .cell { grid-row: auto; grid-template-rows: auto minmax(0, 1fr) auto; }
+}
+@media (max-width: 860px) {
+  .bx[data-stack='860'] { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
+  .bx[data-stack='860'] > * + * { border-left: 0; border-top: 1px solid var(--line); }
+  .bx[data-stack='860'][data-rows] > .cell { grid-row: auto; grid-template-rows: auto minmax(0, 1fr) auto; }
+}
+@media (max-width: 760px) {
+  .bx[data-stack='760'] { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
+  .bx[data-stack='760'] > * + * { border-left: 0; border-top: 1px solid var(--line); }
+  .bx[data-stack='760'][data-rows] > .cell { grid-row: auto; grid-template-rows: auto minmax(0, 1fr) auto; }
+}
+@media (max-width: 680px) {
+  .bx[data-stack='680'] { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
+  .bx[data-stack='680'] > * + * { border-left: 0; border-top: 1px solid var(--line); }
+  .bx[data-stack='680'][data-rows] > .cell { grid-row: auto; grid-template-rows: auto minmax(0, 1fr) auto; }
+}
+@media (max-width: 560px) {
+  .bx[data-stack='560'] { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
+  .bx[data-stack='560'] > * + * { border-left: 0; border-top: 1px solid var(--line); }
+  .bx[data-stack='560'][data-rows] > .cell { grid-row: auto; grid-template-rows: auto minmax(0, 1fr) auto; }
+}
+
+/* ─── Rail ──────────────────────────────────────────────────────────────────
+   The progress rule along a bento's top edge, and the knobs centred in its
+   columns. Unscaled by default: the finished line is the no-JS state. Below
+   the rail's breakpoint it runs down the left wall; a page places the knob
+   vertically with --knob-y. */
+.rail { position: relative; }
+.rail > :not(.rail-fill) { position: relative; }
+.rail-fill {
+  position: absolute;
+  left: -1px;
+  top: -1px;
+  height: 2px;
+  width: calc(100% + 2px);
+  background: var(--color-ink);
+  transform-origin: 0 50%;
+  z-index: 2;
+  pointer-events: none;
+}
+.knob {
+  position: absolute;
+  top: -7px;
+  left: calc(50% - 7px);
+  width: 13px;
+  height: 13px;
+  border-radius: var(--radius-pill);
+  background: var(--color-paper);
+  border: 1px solid var(--color-ink-50);
+  z-index: 3;
+  transition: background-color 300ms var(--ease), border-color 300ms var(--ease);
+}
+.band-ink .knob { background: var(--color-ink-ground); }
+.reached .knob { background: var(--color-ink); border-color: var(--color-ink); }
+.knob.live, .reached .knob.live { background: var(--color-live); border-color: var(--color-live); }
+@media (max-width: 860px) {
+  .rail[data-v='860'] > .rail-fill { width: 2px; height: calc(100% + 2px); transform-origin: 50% 0; }
+  .rail[data-v='860'] .knob { left: -7px; top: var(--knob-y, 24px); }
+}
+@media (max-width: 760px) {
+  .rail[data-v='760'] > .rail-fill { width: 2px; height: calc(100% + 2px); transform-origin: 50% 0; }
+  .rail[data-v='760'] .knob { left: -7px; top: var(--knob-y, 24px); }
+}
+@media (max-width: 640px) {
+  .rail[data-v='640'] > .rail-fill { width: 2px; height: calc(100% + 2px); transform-origin: 50% 0; }
+  .rail[data-v='640'] .knob { left: -7px; top: var(--knob-y, 24px); }
+}
+
+/* ─── Devices, screens and the light along the lines ────────────────────── */
+
+/* A device is only its outline: one thin line at the guide's one radius
+   exception, the screen pushed almost to it. */
+.device { position: relative; border: 1px solid var(--color-ink-28); border-radius: var(--radius-device); padding: 7px; }
+.screen {
+  position: relative;
+  overflow: hidden;
+  background: #16211D;
+  border-radius: 7px;
+  container-type: inline-size;
+  aspect-ratio: var(--w) / var(--h);
+}
+.canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(var(--w) * 1px);
+  height: calc(var(--h) * 1px);
+  transform-origin: 0 0;
+  /* 100cqw ÷ the canvas's own width, as a plain number. */
+  transform: scale(tan(atan2(100cqw, calc(var(--w) * 1px))));
+}
+.screen-phone { display: none; }
+@media (max-width: 699px) {
+  .screen-desk { display: none; }
+  .screen-phone { display: block; }
+  .stage .device { max-width: 420px; margin-inline: auto; }
+}
+
+.trace { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; z-index: 4; }
+.trace path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.trace .halo { stroke: #6FCB9F; stroke-width: 7; opacity: .75; filter: url(#glow); }
+.trace .core { stroke: #0E6B4E; stroke-width: 1.6; }
+
+/* ─── The app, on its own ground ────────────────────────────────────────────
+   Member and merchant screens are drawn on the app's dark ground with its own
+   tokens. Pages add their screen-specific pieces; this is what they share. */
+.app {
+  --a-bg: #16211D;
+  --a-2: #1E2C27;
+  --a-line: rgb(223 227 222 / .14);
+  --a-fg: #DFE3DE;
+  --a-70: #ABB1AC;
+  --a-50: #939995;
+  --a-live: #7C8CC5;
+  --a-ok: #6FCB9F;
+  --a-warn: #E3B667;
+  background: var(--a-bg);
+  color: var(--a-fg);
+  font-family: var(--font-text);
+  font-size: 14px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+.app .lbl { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--a-50); }
+.app .num { font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.app .bar-top { height: 56px; display: flex; align-items: center; justify-content: space-between; padding-inline: 24px; border-bottom: 1px solid var(--a-line); }
+.app .bar-top .l, .app .bar-top .r { display: flex; align-items: center; gap: 22px; }
+.app .lock { display: flex; align-items: center; gap: 8px; font-family: var(--font-display); font-weight: 800; font-size: 17px; letter-spacing: -0.035em; }
+.app .lock svg { width: 18px; height: 18px; }
+.app .lock i { width: 1px; height: 16px; background: var(--a-line); margin-inline: 4px; }
+.app .lock em { font-style: normal; font-family: var(--font-text); font-weight: 500; font-size: 14px; letter-spacing: 0; color: var(--a-70); }
+.app .tabs { display: flex; gap: 22px; color: var(--a-50); font-size: 14px; }
+.app .tabs .on { color: var(--a-fg); }
+.app .bell { width: 17px; height: 17px; color: var(--a-70); }
+.app .ava { width: 30px; height: 30px; border-radius: 999px; border: 1px solid var(--a-line); display: grid; place-items: center; font-size: 11.5px; font-weight: 600; color: var(--a-70); }
+.app .pillb { display: inline-flex; align-items: center; justify-content: center; height: 32px; padding-inline: 14px; border-radius: 999px; border: 1px solid var(--a-line); font-size: 13px; font-weight: 500; color: var(--a-fg); white-space: nowrap; }
+.app .pillb.solid { background: var(--a-fg); color: var(--a-bg); border-color: var(--a-fg); }
+.app .pillb.lg { height: 38px; padding-inline: 20px; font-size: 13.5px; }
+.app .pillb.full { width: 100%; }
+.app .of { color: var(--a-50); font-weight: 500; }
+.app .cap2 { color: var(--a-50); font-size: 13px; }
+
+/* ─── Shared pieces the pages had each written ──────────────────────────── */
+
+/* The app's slab blocks, phone bar and nav pill (home and housing screens). */
+.app .blk { display: grid; grid-template-rows: auto 1fr auto; min-width: 0; }
+.app .bh { display: flex; justify-content: space-between; align-items: center; height: 56px; padding: 0 20px; border-bottom: 1px solid var(--a-line); }
+.app .bh .num { font-size: 19px; }
+.app .bf { border-top: 1px solid var(--a-line); padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 13px; color: var(--a-70); }
+.app .comp i { display: block; transform-origin: 0 50%; }
+.app .trows div { display: flex; justify-content: space-between; gap: 12px; }
+.app .trows .fg { color: var(--a-fg); } .app .trows .ok { color: var(--a-ok); } .app .trows .warn { color: var(--a-warn); }
+.app .ph-top { height: 58px; display: flex; align-items: center; justify-content: space-between; padding-inline: 18px; border-bottom: 1px solid var(--a-line); }
+.app .ph-top .r { display: flex; align-items: center; gap: 16px; }
+.app .navpill { position: absolute; left: 16px; bottom: 18px; height: 50px; display: flex; align-items: center; gap: 4px; padding: 5px; border-radius: 17px; background: var(--a-2); border: 1px solid var(--a-line); }
+.app .navpill span { height: 40px; padding-inline: 14px; display: grid; place-items: center; border-radius: 13px; font-size: 13px; color: var(--a-50); }
+.app .navpill span.on { background: var(--a-fg); color: var(--a-bg); font-weight: 500; }
+.app .navact { position: absolute; right: 16px; bottom: 18px; width: 50px; height: 50px; border-radius: 17px; background: var(--a-fg); color: var(--a-bg); display: grid; place-items: center; }
+.app .navact svg { width: 18px; height: 18px; }
+
+/* The range on a page (shops calculator, housing bill): a 2px line and a
+   24px thumb. The filled part of the track and the thumb's halo depend on
+   the ground, so each page sets those. */
+.rng { display: grid; gap: 10px; }
+.rng input { -webkit-appearance: none; appearance: none; width: 100%; height: 28px; background: transparent; cursor: pointer; margin: 0; }
+.rng input::-moz-range-track { height: 2px; background: var(--color-ink-28); }
+.rng input::-moz-range-progress { height: 2px; background: var(--color-ink); }
+.rng input::-moz-range-thumb { width: 24px; height: 24px; border-radius: var(--radius-pill); background: var(--color-ink); border: 0; }
+.rng input:focus-visible { outline: none; }
+.rng input:focus-visible::-webkit-slider-thumb { outline: 2px solid var(--color-live); outline-offset: 3px; }
+.rng input:focus-visible::-moz-range-thumb { outline: 2px solid var(--color-live); outline-offset: 3px; }
+.rng .ends { display: flex; justify-content: space-between; font-size: 13px; color: var(--color-ink-50); }
+
+/* The honest-downsides table (contribute, capital). */
+.down { grid-template-columns: minmax(0, 1fr); }
+.down ol { display: grid; }
+.down li { display: grid; grid-template-columns: 56px minmax(150px, 3fr) minmax(0, 9fr); align-items: baseline; gap: 16px; padding: 22px var(--px); }
+.down li + li { border-top: 1px solid var(--line); }
+.down li b { font-family: var(--font-mono); font-weight: 400; font-size: 11px; letter-spacing: .08em; color: var(--color-ink-50); }
+.down li em { font-style: normal; font-weight: 600; font-size: clamp(16px, 1.3vw, 18px); letter-spacing: -0.01em; color: var(--color-ink); }
+.down li span { font-size: clamp(16px, 1.3vw, 18px); line-height: 1.45; color: var(--color-ink-70); text-wrap: pretty; }
+@media (max-width: 760px) {
+  .down li { grid-template-columns: 36px minmax(0, 1fr); row-gap: 4px; padding-block: 18px; }
+  .down li span { grid-column: 2; }
+}
+
+/* ─── Header: sticky, and on ink while a band is under it ───────────────────
+   Header.tsx and its menus are unchanged; HeaderInk toggles .scrolled and
+   .on-ink. On ink the header rebinds the tokens as a band does, and the menu
+   panel and the mobile sheet — which float over the page, not the band —
+   take the paper values back. */
+.site-header {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 30;
+  padding-inline: var(--gutter-x);
+  background: color-mix(in srgb, var(--color-paper) 88%, transparent);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid transparent;
+  transition: border-color 200ms var(--ease), background-color 300ms var(--ease), color 300ms var(--ease);
+}
+.site-header.scrolled { border-bottom-color: var(--color-ink-13); }
+.site-header.on-ink {
+  background: color-mix(in srgb, var(--color-ink-ground) 90%, transparent);
+  color: #DFE3DE;
+  border-bottom-color: rgb(223 227 222 / .14);
+  --color-ink: #DFE3DE;
+  --color-ink-70: #ABB1AC;
+  --color-ink-50: #939995;
+  --color-ink-28: rgb(223 227 222 / .32);
+  --color-ink-13: rgb(223 227 222 / .16);
+  --color-live: #7C8CC5;
+}
+.site-header.on-ink .btn[data-variant='primary'] { color: var(--color-ink-ground); }
+.site-header.on-ink .btn[data-variant='primary'] .live-dot { --dot: var(--color-signal-deep); }
+.site-header.on-ink .navmenu-panel,
+.site-header.on-ink .sheet {
+  color: #16211D;
+  --color-ink: #16211D;
+  --color-ink-70: rgb(22 33 29 / .70);
+  --color-ink-50: rgb(22 33 29 / .66);
+  --color-ink-28: rgb(22 33 29 / .28);
+  --color-ink-13: rgb(22 33 29 / .13);
+  --color-live: #24409E;
+}
+.site-header.on-ink .sheet .btn[data-variant='primary'] { color: var(--color-paper); }
+.site-header.on-ink .sheet .btn[data-variant='primary'] .live-dot { --dot: var(--color-signal-light); }
+
+/* A jump to an in-page anchor lands below the sticky header, not under it. */
+html { scroll-padding-top: 76px; }
+
+/* ─── Footer ────────────────────────────────────────────────────────────── */
+
+.site-footer .foot {
+  border-top: 1px solid var(--color-ink);
+  padding-block: var(--spacing-5);
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) repeat(4, minmax(0, 1fr));
+  gap: var(--spacing-4);
+  font-size: 14.5px;
+}
+.site-footer .foot-h {
+  margin: 0 0 12px;
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: 11px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--color-ink-50);
+}
+.site-footer li + li { margin-top: 6px; }
+.site-footer nav a { color: var(--color-ink-70); transition: color 200ms var(--ease); }
+.site-footer nav a:hover { color: var(--color-ink); }
+.site-footer .about { color: var(--color-ink-70); max-width: 30ch; display: grid; gap: var(--spacing-2); align-content: start; }
+.site-footer .brand { color: var(--color-ink); justify-self: start; display: inline-flex; padding-block: 2px; }
+.site-footer .legal {
+  grid-column: 1 / -1;
+  border-top: 1px solid var(--color-ink-13);
+  padding-top: var(--spacing-3);
+  color: var(--color-ink-50);
+  font-size: 12.5px;
+  line-height: 1.6;
+  display: grid;
+  gap: 8px;
+  max-width: 110ch;
+}
+@media (max-width: 900px) {
+  .site-footer .foot { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .site-footer .about { grid-column: 1 / -1; }
+}
+
+/* ─── Reduced motion ────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0ms !important; }
+}

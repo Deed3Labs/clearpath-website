@@ -1,19 +1,35 @@
-/* Join. §6.8 — copy is final and lives here, never inline in JSX. */
+/* Join — copy is final and lives here, never inline in JSX.
+ *
+ * Ported to the redesign mockup (reference/redesign/join.html): the hero and
+ * the form are one composition. The four answers are the form bento's header
+ * row, the fields follow the chosen answer, and a side panel says what
+ * happens next, the one thing that might make you walk away, and how far
+ * through the form you are. */
 
-export const OPENING = {
-  rail: 'Join / 01',
-  heading: 'Tell us which one you are.',
-  lede:
-    'We are onboarding a small number of members and shops in the Inland Empire first. If you are somewhere else, say so — the waitlist is how we decide where to go next.',
+export const META = {
+  title: 'Join',
+  description:
+    'We are onboarding a small number of members and shops in the Inland Empire first. Tell us which one you are.',
+} as const;
+
+export const HERO = {
+  label: { kicker: 'Join', title: 'The waitlist' },
+  lines: ['Tell us which', 'one you are.'],
+  lede: 'We are onboarding a small number of members and shops in the Inland Empire first. If you are somewhere else, say so. The waitlist is how we decide where to go next.',
+  facts: [
+    { k: 'Where we start', v: 'Inland Empire' },
+    { k: 'Somewhere else', v: 'Tell us' },
+    { k: 'Who reads it', v: 'A founder' },
+  ],
 } as const;
 
 export type ModeKey = 'member' | 'shop' | 'land' | 'work';
 
 /* Three kinds of question, because three kinds of answer.
    A text box is right for a name and wrong for a quantity: it invites a
-   sentence where the reader has to guess the format we want, and it gives us
-   "about 40-50 a week" to parse. A select carries a list we already know, and
-   a range carries a number the reader can feel rather than type. */
+   sentence where the reader has to guess the format we want. A select
+   carries a list we already know, and a range carries a number the reader
+   can feel rather than type. */
 export type Field =
   | {
       kind: 'text';
@@ -21,8 +37,8 @@ export type Field =
       label: string;
       wide?: boolean;
       autoComplete?: string;
-      /* Sets the phone keyboard, not a validation rule. A ZIP typed on the
-         letter keyboard is four taps of hunting for the number row. */
+      /* Sets the phone keyboard and a five-character limit. A ZIP typed on
+         the letter keyboard is four taps of hunting for the number row. */
       numeric?: boolean;
     }
   | {
@@ -33,7 +49,6 @@ export type Field =
          reads like an answer is how a form collects a value nobody chose. */
       placeholder: string;
       options: string[];
-      wide?: boolean;
     }
   /* Two handles. A typical ticket is a spread, not a number — a shop doing
      $350 brake jobs and $1,500 transmissions has no single answer, and asked
@@ -48,11 +63,12 @@ export type Field =
       step: number;
       startLow: number;
       startHigh: number;
-      /* A ticket reads in whole dollars; a house does not. "$400,000 –
-         $750,000" is nineteen characters beside its own label on a phone. */
+      /* A ticket reads in whole dollars ($1,500); a house in thousands
+         ($400K) and millions ($1.25M). */
       format: 'usd' | 'usdCompact';
+      /* The top of the scale is open-ended: at the ceiling the reader is
+         telling us "at least this". */
       topLabel: string;
-      wide?: boolean;
     }
   | {
       kind: 'range';
@@ -62,21 +78,20 @@ export type Field =
       max: number;
       step: number;
       start: number;
-      /* How the live readout is written, not how the value is submitted. */
       format: 'usd' | 'count';
-      /* The top of the scale is open-ended: a shop at the ceiling is telling
-         us "at least this", not "exactly this". */
       topLabel: string;
-      wide?: boolean;
     };
 
-/* Each mode carries two asides. They were one paragraph, and every one of the
-   four had the same shape inside it: what we will do, and then the thing that
-   might make you walk away. Split, because the second half is the half that
-   earns trust and it was riding at the end of a sentence about scheduling. */
+const ZIP: Field = { kind: 'text', name: 'zip', label: 'ZIP', autoComplete: 'postal-code', numeric: true };
+
+/* Each mode carries two notes: what we will do, and then the thing that might
+   make you walk away. The second half is the half that earns trust. */
 export const MODES: {
   key: ModeKey;
+  n: string;
   tab: string;
+  /* Under the tab: what the answer is about. */
+  sub: string;
   /* Every mode asks for a name; only the wording changes. A shop is giving us
      a person to call, which is not the same request as "your name". */
   nameLabel: string;
@@ -89,27 +104,28 @@ export const MODES: {
 }[] = [
   {
     key: 'member',
+    n: '01',
     tab: 'I want to join',
+    sub: 'Housing and credit',
     nameLabel: 'Your name',
-    fields: [{ kind: 'text', name: 'zip', label: 'ZIP', autoComplete: 'postal-code', numeric: true }],
+    fields: [ZIP],
     button: 'Join the waitlist',
     noteLabel: 'Anything we should know',
     next: 'You will hear from us before we open in your area, and we will not email you about anything else.',
     caveatLabel: 'What this is not',
-    /* §7 Legal: a credit-advertising claim. Do not paraphrase it into
+    /* Legal: a credit-advertising claim. Verbatim; do not paraphrase it into
        anything stronger than it already is. */
     caveat: 'Joining the waitlist is not an application and does not affect your credit.',
   },
   {
     key: 'shop',
+    n: '02',
     tab: 'I run a shop',
+    sub: 'Take Clear Pay',
     nameLabel: 'Contact person',
-    /* The two questions that used to live inside the note are their own rows
-       now. Buried in a textarea they were answered in prose or not at all,
-       and both are the numbers that decide whether a shop is a fit. */
     fields: [
       { kind: 'text', name: 'business', label: 'Business name', wide: true, autoComplete: 'organization' },
-      { kind: 'text', name: 'zip', label: 'ZIP', autoComplete: 'postal-code', numeric: true },
+      ZIP,
       {
         kind: 'select',
         name: 'industry',
@@ -138,7 +154,6 @@ export const MODES: {
         startHigh: 1500,
         format: 'usd',
         topLabel: '$5,000+',
-        wide: true,
       },
       {
         kind: 'range',
@@ -150,7 +165,6 @@ export const MODES: {
         start: 40,
         format: 'count',
         topLabel: '200+',
-        wide: true,
       },
     ],
     button: 'Request a call',
@@ -161,10 +175,12 @@ export const MODES: {
   },
   {
     key: 'land',
+    n: '03',
     tab: 'I own property',
+    sub: 'Contribute it',
     nameLabel: 'Your name',
     fields: [
-      { kind: 'text', name: 'zip', label: 'ZIP', autoComplete: 'postal-code', numeric: true },
+      ZIP,
       {
         kind: 'select',
         name: 'propertyType',
@@ -180,19 +196,13 @@ export const MODES: {
         ],
       },
       /* Two handles for the same reason the ticket has two: nobody knows what
-         their property is worth to the dollar, and asked for one number they
-         either guess or leave it blank. A range is the honest answer and it
-         is the one we can work with. Compact notation because these run to
-         seven figures. */
+         their property is worth to the dollar. Land runs cheap — a small
+         parcel is four figures — so the floor and the step are $1,000. */
       {
         kind: 'range2',
         nameMin: 'valueLow',
         nameMax: 'valueHigh',
         label: 'Estimated value',
-        /* Land runs cheap — a small parcel is four figures, not six. The step
-           comes down with the floor: at $25,000 a $1,000 minimum would put
-           the next stop at $26,000, and every value on the scale would be a
-           thousand off a round number. */
         min: 1000,
         max: 2000000,
         step: 1000,
@@ -200,11 +210,9 @@ export const MODES: {
         startHigh: 750000,
         format: 'usdCompact',
         topLabel: '$2M+',
-        wide: true,
       },
     ],
     button: 'Send the details',
-    /* The value question left this line when it got a control of its own. */
     noteLabel: 'Where is it, and is there a mortgage on it?',
     next: 'We will walk through what a contribution would look like and what it would not.',
     caveatLabel: 'Bring your CPA',
@@ -212,7 +220,9 @@ export const MODES: {
   },
   {
     key: 'work',
+    n: '04',
     tab: 'I want to work on it',
+    sub: 'Equity-only',
     nameLabel: 'Your name',
     fields: [],
     button: 'Get in touch',
@@ -223,21 +233,38 @@ export const MODES: {
   },
 ];
 
-/* §6.8: "Wire the form to a real endpoint or leave a clearly labelled TODO.
-   Never a form that silently does nothing."
+/* The form's own words: the question the tabs answer, the email field, the
+   side panel's labels, and the two halves of a range's spoken name. */
+export const FORM = {
+  question: 'What are you getting in touch about?',
+  email: 'Email',
+  next: 'What happens next',
+  answers: 'Your answers',
+  /* "2 of 3 answered", then "Ready to send". */
+  answered: 'answered',
+  of: 'of',
+  ready: 'Ready to send',
+  where: 'Onboarding first in the Inland Empire',
+  rangeLow: 'low',
+  rangeHigh: 'high',
+  /* Client-side check before anything is sent. */
+  missingOne: 'One field needs an answer.',
+  missingMany: 'fields need an answer.',
+} as const;
 
-   The form is now built to submit for real: it posts to
-   NEXT_PUBLIC_JOIN_ENDPOINT, and shipping is a matter of setting that
-   variable. What it will never do is the thing §6.8 forbids — the live site's
-   old form accepted an email, wrote it to localStorage and showed a success
-   message. If the endpoint is missing or the request fails, this one says so
-   and says nothing was stored. There is no path through it that reports
-   success without a 2xx from a real endpoint. */
+/* Submitting. The form posts to NEXT_PUBLIC_JOIN_ENDPOINT, and shipping is a
+   matter of setting that variable. What it will never do is report success
+   without a 2xx from a real endpoint: the live site's old form wrote the
+   email to localStorage and showed a success message. If the endpoint is
+   missing or the request fails, this says so and says nothing was stored.
+   The confirmation repeats back what was sent. */
 export const SUBMIT = {
   sending: 'Sending…',
-  ok: 'We have it. You will hear from us.',
+  ok: 'We have it.',
+  youSaid: 'You said',
+  again: 'Send another',
   /* No address in it, because the site does not publish one yet. When it
-     does, add it here — a failure the reader can do something about is worth
-     more than an apology. */
+     does, add it here — a failure the reader can act on is worth more than
+     an apology. */
   error: 'That did not send, and nothing was stored. Please try again.',
 } as const;

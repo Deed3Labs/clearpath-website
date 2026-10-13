@@ -6,7 +6,7 @@ import { join } from 'node:path';
  *
  * A brand page that lists hex values by hand is wrong the first time someone
  * adjusts a token, and nobody notices, because the page still looks fine. So
- * this parses lib/tokens.css (and the ink band's rebinds in globals.css) at
+ * this parses lib/tokens.css (and the ink band's rebinds in app/styles/system.css) at
  * build time. Asking for a token that does not exist throws, which fails the
  * build: the guide cannot describe a colour the site does not have.
  *
@@ -15,6 +15,7 @@ import { join } from 'node:path';
 const root = process.cwd();
 const tokensCss = readFileSync(join(root, 'lib/tokens.css'), 'utf8');
 const globalsCss = readFileSync(join(root, 'app/globals.css'), 'utf8');
+const systemCss = readFileSync(join(root, 'app/styles/system.css'), 'utf8');
 
 function readVars(css: string): Map<string, string> {
   const out = new Map<string, string>();
@@ -26,10 +27,15 @@ function readVars(css: string): Map<string, string> {
 
 const base = readVars(tokensCss);
 
-/* The dark band rebinds a subset of tokens to lighter values. Only that one
-   rule block is read, so a stray custom property elsewhere cannot leak in. */
-const inkBlock = globalsCss.match(/\.hx-band\[data-tone='ink'\]\s*\{([\s\S]*?)\n\}/)?.[1] ?? '';
-const onInk = readVars(inkBlock);
+/* The dark band rebinds a subset of tokens to lighter values. Only the band's
+   own rule blocks are read, so a stray custom property elsewhere cannot leak
+   in: the shared one (.band-ink and .hx-band[data-tone='ink'] together) and
+   the old band's extra raised surface. A missing block fails the build, so
+   the guide cannot quietly drop its on-ink column again. */
+const bandBlock = systemCss.match(/\.band-ink,\s*\n\.hx-band\[data-tone='ink'\]\s*\{([\s\S]*?)\n\}/)?.[1];
+const raisedBlock = systemCss.match(/\n\.hx-band\[data-tone='ink'\] \{ (--color-paper-2:[^}]*)\}/)?.[1];
+if (!bandBlock || !raisedBlock) throw new Error('brandTokens: the ink band rules are missing from app/styles/system.css');
+const onInk = readVars(bandBlock + raisedBlock);
 
 export type RGB = { r: number; g: number; b: number; a: number };
 

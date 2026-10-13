@@ -1,0 +1,116 @@
+/* Contribute land — page-only rules, all under .pg-contribute (a route's CSS
+   stays loaded after you leave it, so nothing here may be global). Ported
+   from reference/redesign/contribute.html with the tokens renamed. */
+
+.pg-contribute {
+  /* 03 sits straight under 02: the two read as one argument. */
+  .sec-who { padding-top: 0; }
+
+  /* The offer: selling against contributing, one property, two outcomes */
+  .offer { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); margin-top: clamp(56px, 7vw, 104px); }
+  .offer .cell + .cell { border-left: 1px solid var(--line); }
+  .offer .big { font-family: var(--font-display); font-weight: 800; font-size: clamp(28px, 3vw, 46px); line-height: 1.02; letter-spacing: -0.035em; text-wrap: balance; }
+  .offer .give .big { color: var(--color-live); }
+  .offer .c-m p { font-size: 15.5px; max-width: 44ch; }
+  .prop { display: grid; gap: 10px; }
+  .prop-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 14px; color: var(--color-ink-50); }
+  .prop-top .fig { font-size: 15px; color: var(--color-ink); }
+  .vbar { display: flex; height: 44px; gap: 3px; }
+  .vbar span { display: grid; place-items: center; font-size: 12.5px; font-weight: 500; white-space: nowrap; overflow: hidden; min-width: 0; transform-origin: 0 50%; }
+  .vbar .keep { background: var(--color-ink); color: var(--color-paper); flex: 1 1 0; }
+  .vbar .tax { flex: 0 0 34%; color: var(--color-absent); border: 1px solid color-mix(in srgb, var(--color-absent) 45%, transparent); background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--color-absent) 14%, transparent) 0 6px, transparent 6px 12px); }
+  .vbar .shares { background: var(--color-live); color: var(--color-paper); flex: 1 1 0; }
+  .vleg { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--color-ink-50); }
+  .vleg i { display: inline-block; width: 10px; height: 10px; margin-right: 7px; vertical-align: -1px; }
+  .vleg .k { background: var(--color-ink); } .vleg .t { border: 1px solid var(--color-absent); background: color-mix(in srgb, var(--color-absent) 18%, transparent); } .vleg .s { background: var(--color-live); }
+  .offer-f { grid-column: 1 / -1; padding: 18px var(--px); border-top: 1px solid var(--line); font-size: 14px; line-height: 1.55; color: var(--color-ink-50); }
+  @media (max-width: 760px) {
+    .offer { grid-template-columns: minmax(0, 1fr); }
+    .offer .cell + .cell { border-left: 0; border-top: 1px solid var(--line); }
+  }
+
+  /* ── 01 How it works, on ink: four steps on one rule ─────────────────── */
+  .steps4 { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: auto auto auto minmax(0, 1fr); }
+  .steps4 .stp4 { position: relative; display: grid; grid-row: span 4; grid-template-rows: subgrid; min-width: 0; }
+  .steps4 .stp4 + .stp4 { border-left: 1px solid var(--line); }
+  .steps4 .c-h .meta { font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; color: var(--color-ink-50); text-transform: uppercase; }
+  .steps4 .stp4.reached .c-h .meta { color: var(--color-ink); }
+  .steps4 h3 { font-family: var(--font-display); font-weight: 600; font-size: clamp(20px, 1.8vw, 26px); line-height: 1.14; letter-spacing: -0.022em; padding: clamp(24px, 2.8vw, 36px) var(--px) 0; text-wrap: balance; }
+  .steps4 .c-m { padding-top: 12px; padding-bottom: 28px; }
+  .steps4 .c-m p { font-size: 15px; }
+  .steps4 .vis { padding: 0 var(--px) clamp(24px, 2.8vw, 36px); }
+  /* each step ends on the same three ruled rows; values arrive as the rule reaches the step */
+  .mini-row { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding-block: 11px; border-bottom: 1px solid var(--color-ink-13); font-size: 13.5px; color: var(--color-ink-50); }
+  .mini-row:first-child { border-top: 1px solid var(--color-ink-28); }
+  .mini-row b { color: var(--color-ink); font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; opacity: .22; transform: translateY(3px); transition: opacity 420ms var(--ease), transform 420ms var(--ease); }
+  .stp4.reached .mini-row b { opacity: 1; transform: none; }
+  .stp4.reached .mini-row:nth-child(2) b { transition-delay: 90ms; }
+  .stp4.reached .mini-row:nth-child(3) b { transition-delay: 180ms; }
+  .mini-row b.live { color: var(--color-live); }
+  .steps4-f { padding: 18px var(--px); font-size: 14px; color: var(--color-ink-70); }
+  @media (max-width: 1000px) {
+    .steps4 { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto auto minmax(0, 1fr) auto auto auto minmax(0, 1fr) auto; }
+    .steps4 .stp4:nth-child(4) { border-left: 0; }
+    .steps4 .stp4:nth-child(n+4) { border-top: 1px solid var(--line); }
+  }
+  @media (max-width: 640px) {
+    .steps4 { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
+    .steps4 .stp4 { grid-row: auto; grid-template-rows: auto auto auto auto; }
+    .steps4 .c-m { padding-bottom: 22px; }
+    .steps4 .stp4 + .stp4 { border-left: 0; border-top: 1px solid var(--line); }
+    /* The knob rides the wall at the header row's centre line. */
+    .steps4 { --knob-y: 21px; }
+  }
+
+  /* ── 02 The downsides: a ruled list, numbered ────────────────────────── */
+  .down .c-f { font-size: 14.5px; color: var(--color-ink-70); }
+
+  /* ── 03 Who this is for ───────────────────────────────────────────────── */
+  .who3 { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: auto auto minmax(0, 1fr); }
+  .who3 .cell { grid-row: span 3; grid-template-rows: subgrid; }
+  .who3 .cell + .cell { border-left: 1px solid var(--line); }
+  .who3 .line2 { font-family: var(--font-display); font-weight: 800; font-size: clamp(28px, 2.8vw, 42px); line-height: 1.02; letter-spacing: -0.035em; padding: clamp(26px, 3vw, 40px) var(--px) 0; text-wrap: balance; }
+  .who3 .cell:nth-child(2) .line2 { color: var(--color-live); }
+  .who3 .c-m { padding-top: 16px; }
+  .who3 .c-m p { max-width: none; }
+  .who3-f { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px 32px; padding: 20px var(--px); font-size: 15px; color: var(--color-ink-70); }
+  @media (max-width: 1000px) {
+    .who3 { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
+    .who3 .cell { grid-row: auto; grid-template-rows: auto auto auto; }
+    .who3 .cell + .cell { border-left: 0; border-top: 1px solid var(--line); }
+  }
+
+  /* ── 04 Held, on ink: seven years against seven months ───────────────── */
+  .held { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .held .cell + .cell { border-left: 1px solid var(--line); }
+  .held .c-m { align-content: end; min-height: clamp(150px, 14vw, 210px); }
+  .held .c-m p { font-size: clamp(17px, 1.5vw, 21px); line-height: 1.45; color: var(--color-ink); max-width: 30ch; text-wrap: pretty; }
+  .held .yrs.fig { font-family: var(--font-display); font-weight: 800; font-size: clamp(56px, 6.4vw, 96px); line-height: .86; letter-spacing: -0.045em; color: var(--color-ink); }
+  .months { grid-column: 1 / -1; border-top: 1px solid var(--line); padding: clamp(24px, 2.8vw, 36px) var(--px); display: grid; gap: 12px; }
+  .mo-row { display: grid; grid-template-columns: 112px minmax(0, 1fr) 64px; align-items: center; column-gap: 20px; font-size: 13.5px; color: var(--color-ink-70); }
+  .mo-row em { font-style: normal; text-align: right; font-variant-numeric: tabular-nums; color: var(--color-ink-50); }
+  .mo-row.seven-y em { color: var(--color-ink); font-weight: 600; }
+  .mo-row .ticks { display: grid; grid-template-columns: repeat(84, minmax(0, 1fr)); gap: 2px; height: 22px; }
+  .mo-row .ticks i { background: var(--color-ink-13); transition: background-color 200ms var(--ease); }
+  .mo-row.seven-m .ticks i.on { background: var(--color-ink-50); }
+  .mo-row.seven-y .ticks i.on { background: var(--color-live); }
+  .mo-ax { font-size: 12px; color: var(--color-ink-50); }
+  .mo-ax .yrs { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+  .mo-ax .yrs i { font-style: normal; }
+  .mo-ax .yrs span { border-left: 1px solid var(--line); padding-left: 6px; }
+  .held-f { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px 32px; padding: 20px var(--px); border-top: 1px solid var(--line); }
+  .held-f p { font-size: 14.5px; color: var(--color-ink-70); max-width: 62ch; }
+  .held-f p a { color: var(--color-ink); border-bottom: 1px solid var(--color-ink-28); }
+  @media (max-width: 760px) {
+    .held { grid-template-columns: minmax(0, 1fr); }
+    .held .cell + .cell { border-left: 0; border-top: 1px solid var(--line); }
+    .held .c-m { min-height: 0; }
+    .mo-row { grid-template-columns: minmax(0, 1fr) auto; row-gap: 6px; }
+    .mo-row .ticks { grid-column: 1 / -1; grid-row: 2; gap: 1px; }
+    .mo-ax > span, .mo-ax > em { display: none; }
+    .mo-ax .yrs { grid-column: 1 / -1; grid-row: 1; }
+    .mo-ax .yrs span:first-child { border-left: 0; padding-left: 0; }
+    .mo-ax .yrs i { display: none; }
+  }
+}
+
