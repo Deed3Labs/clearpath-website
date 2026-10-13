@@ -10,7 +10,7 @@ import { BoardIntro, RiseIn } from '@/components/events/Motion';
 import { dayKey, FORMAT, isLocal, localCalendars, monthName, shortDate, timeLabel, whereShort, type MonthName } from '@/components/events/model';
 import { Arrow } from '@/components/system/icons';
 import { EMPTY, KINDS, LISTING, META, NEXT, OPENING } from '@/content/events';
-import { allEvents, isUpcoming, type CalEvent } from '@/lib/events/sources';
+import { allEventsChecked, isUpcoming, type CalEvent } from '@/lib/events/sources';
 import { monthKey, timeRange } from '@/lib/events/time';
 import './page.css';
 
@@ -45,7 +45,7 @@ function NextUp({ e }: { e: CalEvent }) {
         <span className="who">{NEXT.who}</span>
         <span className="chips">{local ? <span className="chip k">{NEXT.localChip}</span> : <EventChips event={e} />}</span>
       </div>
-      <Link className="nm" href={`/events/${e.slug}`} prefetch={local ? false : undefined}>
+      <Link className="nm" href={`/events/${e.slug}`} prefetch={e.source === 'clear' ? undefined : false}>
         <DateBlock date={e.start} />
         <span className="nt">
           {e.title}
@@ -102,7 +102,16 @@ function ClearEmpty() {
 
 export default async function Events() {
   const now = new Date();
-  const upcoming = (await allEvents()).filter((e) => isUpcoming(e, now));
+  const { events, feedFailed } = await allEventsChecked();
+  /* A Clear feed that failed is not "no Clear events". Throwing during a
+     regeneration makes Next keep serving the last page that built cleanly,
+     instead of publishing an empty Clear section (Luma rate-limits Vercel at
+     times). At build there is no last page to keep, so the build goes ahead
+     with what answered. */
+  if (feedFailed && process.env.NEXT_PHASE !== 'phase-production-build') {
+    throw new Error('[events] a Clear feed failed; keeping the last good listing');
+  }
+  const upcoming = events.filter((e) => isUpcoming(e, now));
 
   const months: Record<string, MonthName> = { [monthKey(now)]: monthName(now) };
   for (const e of upcoming) months[monthKey(e.start)] ??= monthName(e.start);

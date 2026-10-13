@@ -7,7 +7,7 @@ import { RiseIn } from '@/components/events/Motion';
 import { isLocal, shortDate, shortTitle, timeLabel, whereLong } from '@/components/events/model';
 import { DETAIL, LISTING, TYPES } from '@/content/events';
 import { googleCalendarUrl } from '@/lib/events/ics';
-import { allEvents, clearEventSlugs, getEvent, isUpcoming } from '@/lib/events/sources';
+import { allEvents, clearEventSlugs, feedEventSlugs, getEvent, isUpcoming } from '@/lib/events/sources';
 import { longDate, timeRange } from '@/lib/events/time';
 import '../page.css';
 
@@ -16,10 +16,13 @@ import '../page.css';
    cache, so re-rendering sooner does not ask their servers more often. */
 export const revalidate = 300;
 
-/* Clear's own events are built ahead; pulled ones (feeds, council meetings)
-   render on first request and are cached for the hour. */
-export function generateStaticParams() {
-  return clearEventSlugs().map((slug) => ({ slug }));
+/* Clear's own events are built ahead, including the ones from Clear's feeds
+   (Luma), so a visitor never makes the page ask Luma itself; council
+   meetings render on first request and are cached. A feed that fails at
+   build only means its pages render on demand, as before. */
+export async function generateStaticParams() {
+  const fromFeeds = await feedEventSlugs().catch(() => [] as string[]);
+  return [...new Set([...clearEventSlugs(), ...fromFeeds])].map((slug) => ({ slug }));
 }
 
 type Props = { params: Promise<{ slug: string }> };

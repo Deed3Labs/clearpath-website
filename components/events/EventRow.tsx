@@ -41,11 +41,11 @@ export function EventRowBody({ event: e }: { event: CalEvent }) {
           {e.cancelled && <Chip tone="absent">{LISTING.cancelled}</Chip>}
         </div>
         <h3>
-          {/* A local meeting's page is rendered on demand from its city's
-              calendar, so prefetching every row in view fired a burst of
-              requests at those servers and drew 429s. Clear events are
-              prerendered, so they still prefetch. */}
-          <Link href={`/events/${e.slug}`} prefetch={local ? false : undefined}>
+          {/* Only hand-written Clear events prefetch. A feed event's or a
+              local meeting's page asks its calendar (Luma, a city) when it
+              renders, and prefetching every row in view fired bursts at
+              those servers that drew 429s. */}
+          <Link href={`/events/${e.slug}`} prefetch={e.source === 'clear' ? undefined : false}>
             {shortTitle(e)}
           </Link>
         </h3>
