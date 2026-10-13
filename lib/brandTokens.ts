@@ -196,3 +196,78 @@ export function dotSpec(): DotSpec {
     },
   };
 }
+
+/* ── More of the system, read the same way ─────────────────────────────── */
+
+/* Any colour, graded against both grounds: what a token resolves to inside
+   the ink band, or a value the site draws with that is not a token. */
+function swatchOf(c: RGB, label: string): Swatch {
+  const solid = c.a < 1 ? over(c, PAPER) : c;
+  return {
+    token: label,
+    hex: hex(solid),
+    rgb: `${solid.r} ${solid.g} ${solid.b}`,
+    cmyk: cmyk(solid).map((v, i) => `${'CMYK'[i]}${v}`).join(' '),
+    onPaper: contrast(solid, PAPER),
+    onInk: contrast(c.a < 1 ? over(c, GROUND) : c, GROUND),
+    composite: c.a < 1,
+  };
+}
+
+/* A token as the ink band rebinds it (cobalt on ink, say), as a full swatch.
+   Throws if the band does not rebind it. */
+export function bandSwatch(name: string): Swatch {
+  const v = onInk.get(name);
+  if (!v) throw new Error(`brandTokens: the ink band does not rebind --${name}`);
+  return swatchOf(parse(v), `--${name} on ink`);
+}
+
+/* The quiet trace: faded cobalt light along a line, for pointing at something
+   without calling it live. It is not a token; it is drawn once, round the
+   investor seats on /capital, so that rule is what the guide reads. */
+export function quietTrace(): { halo: Swatch; core: Swatch } {
+  const css = readFileSync(join(root, 'app/capital/page.css'), 'utf8');
+  const stroke = (part: 'halo' | 'core') => {
+    const m = css.match(new RegExp(`#seats-h \\.trace \\.${part} \\{ stroke: (#[0-9a-fA-F]{6})`));
+    if (!m) throw new Error(`brandTokens: the quiet trace's ${part} is missing from app/capital/page.css`);
+    return swatchOf(parse(m[1]), `quiet ${part}`);
+  };
+  return { halo: stroke('halo'), core: stroke('core') };
+}
+
+/* A tint token's raw value and its strength: "rgb(22 33 29 / .28)", 28. */
+export function tint(name: string): { value: string; pct: number } {
+  const v = token(name);
+  return { value: v, pct: Math.round(parse(v).a * 100) };
+}
+
+/* One value from either scale, by token: radius('device') → "14px". */
+export function radius(name: string): string {
+  const r = scale('radius').find((s) => s.token === `--radius-${name}`);
+  if (!r) throw new Error(`brandTokens: --radius-${name} is not defined in lib/tokens.css`);
+  return r.value;
+}
+
+/* The one ease everything moves on. */
+export function ease(): string {
+  const m = tokensCss.match(/\n\s*--ease:\s*([^;]+);/);
+  if (!m) throw new Error('brandTokens: --ease is not defined in lib/tokens.css');
+  return m[1].trim();
+}
+
+/* A file the guide offers for download. It must exist in public/, or the
+   build fails; a PNG's pixel width is read from its own header, so the label
+   beside the link cannot claim a size the file does not have. */
+export function download(href: string): { href: string; width: number | null } {
+  if (!href.startsWith('/')) throw new Error(`brandTokens: download ${href} is not a site path`);
+  const buf = readFileSync(join(root, 'public', href));
+  const png = buf.subarray(1, 4).toString('latin1') === 'PNG';
+  return { href, width: png ? buf.readUInt32BE(16) : null };
+}
+
+/* The page measure: the widest the content runs (--max in the shared system). */
+export function measure(): string {
+  const m = systemCss.match(/\n\s*--max:\s*([^;]+);/);
+  if (!m) throw new Error('brandTokens: --max is not defined in app/styles/system.css');
+  return m[1].trim();
+}
