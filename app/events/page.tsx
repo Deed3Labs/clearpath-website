@@ -2,7 +2,7 @@ import { Fragment } from 'react';
 import { EventFilter } from '@/components/events/EventFilter';
 import { EventRow } from '@/components/events/EventRow';
 import { NotifyForm } from '@/components/interactive/NotifyForm';
-import { EMPTY, KINDS, LISTING, OPENING, TYPES, type EventGroup } from '@/content/events';
+import { EMPTY, KINDS, LISTING, OPENING, type EventGroup } from '@/content/events';
 import { allEvents, isUpcoming, type CalEvent } from '@/lib/events/sources';
 import { monthKey, monthYear } from '@/lib/events/time';
 

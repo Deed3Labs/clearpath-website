@@ -31,7 +31,6 @@ export function useGsap(
       if (typeof extra === 'function') extra();
       ctx.revert();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 }
 
