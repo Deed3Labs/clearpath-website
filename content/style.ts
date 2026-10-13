@@ -181,7 +181,7 @@ export const TYPE = {
       kind: 'display',
       family: 'Bricolage Grotesque',
       job: 'Display',
-      sample: ['Your money, kept in the neighborhood.'],
+      sample: ['Your money kept in your neighborhood.'],
       body: 'Headlines, statements, the wordmark. 800 for headlines, 600 for sub-heads. Tracking −3.5% to −4.5%, line height 0.92–1.05.',
     },
     {
