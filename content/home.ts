@@ -6,11 +6,14 @@
 
 export const HERO = {
   /* One sentence, set on two lines from 700px up and broken after "kept":
-     the second line is the place the money stays. `headline` is the same
+     the second line is the place the money stays — and "your" makes it the
+     reader's neighbourhood rather than a general one. `headline` is the same
      sentence whole, for the metadata and the link-preview image
      (app/layout.tsx, app/opengraph-image.tsx). */
-  headline: 'Your money, kept in the neighborhood.',
-  lines: ['Your money, kept', 'in the neighborhood.'],
+  headline: 'Your money kept in your neighborhood.',
+  /* The second "your" is the stress — whose neighbourhood — so it leans
+     (_word_ marks it; see PageHero). */
+  lines: ['Your money kept', 'in _your_ neighborhood.'],
   /* What Clear is, then the four things it does, in the order the page
      covers them. Doubles as the meta and link-preview description, so it has
      to read on its own. "Toward a home of your own", not "the home you live
@@ -110,7 +113,7 @@ export const MEMBER_APP = {
 export const GAP = {
   n: '01',
   label: 'If you rent today',
-  title: 'Same money. But you end up owning something.',
+  title: 'Your rent is making someone else rich.',
   line: '$2,350 a month inside Clear, against $2,520 in rent. Most of it stays yours.',
   more: { href: '/housing', label: 'How the housing math works' },
   /* The bento's text alternative: the bars are aria-hidden. */
@@ -323,7 +326,7 @@ export const LEDGER = {
 } as const;
 
 export const CLOSE = {
-  title: 'Your money, kept in the neighborhood.',
+  title: 'Your money kept in your neighborhood.',
   line: 'One member, one vote. Building in Inland Empire, California.',
   primary: { href: '/join', label: 'Join the waitlist' },
   ghost: { href: '/shops', label: 'Bring Clear to your shop' },
