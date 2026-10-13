@@ -387,8 +387,10 @@ html.motion .hero:not([data-intro]) [data-stage] { opacity: 0; }
   width: calc(var(--w) * 1px);
   height: calc(var(--h) * 1px);
   transform-origin: 0 0;
-  /* 100cqw ÷ the canvas's own width, as a plain number. */
-  transform: scale(tan(atan2(100cqw, calc(var(--w) * 1px))));
+  /* --s is set by Screen from the measured width. Before that (or with no
+     script) the fallback is 100cqw ÷ the canvas's own width as a plain
+     number, which not every engine evaluates — see Screen.tsx. */
+  transform: scale(var(--s, tan(atan2(100cqw, calc(var(--w) * 1px)))));
 }
 .screen-phone { display: none; }
 @media (max-width: 699px) {
