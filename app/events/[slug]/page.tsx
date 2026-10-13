@@ -1,13 +1,15 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { Chip } from '@/components/primitives';
-import { LiveDot } from '@/components/primitives/Button';
-import { EventChips } from '@/components/events/EventChips';
-import { DETAIL, TYPES } from '@/content/events';
+import { Chip, CrumbLink, Crumbbar, LiveDot, Ticket, type TicketFact } from '@/components/system';
+import { StartsIn } from '@/components/events/Countdown';
+import { EventChips, EventRow } from '@/components/events/EventRow';
+import { RiseIn } from '@/components/events/Motion';
+import { isLocal, shortDate, shortTitle, timeLabel, whereLong } from '@/components/events/model';
+import { DETAIL, LISTING, TYPES } from '@/content/events';
 import { googleCalendarUrl } from '@/lib/events/ics';
-import { clearEventSlugs, getEvent, isUpcoming } from '@/lib/events/sources';
+import { allEvents, clearEventSlugs, getEvent, isUpcoming } from '@/lib/events/sources';
 import { longDate, timeRange } from '@/lib/events/time';
+import '../page.css';
 
 /* Five minutes, to match Clear's feeds (see CLEAR_FEED_REVALIDATE_SECONDS).
    City calendars inside are still fetched hourly: each fetch keeps its own
@@ -32,150 +34,142 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-const FORMAT = { online: DETAIL.online, 'in-person': DETAIL.inPerson, hybrid: DETAIL.hybrid } as const;
+/* An event's page, ported from the mockup's event view: the crumb bar, the
+   body cell (what it is, in full), and a ticket beside it (when and where,
+   then what to do). Under it, the next few of the same kind.
 
+   The event itself comes from getEvent, which asks only the calendar its
+   slug came from and throws when that calendar is down (error.tsx says so).
+   "Also coming up" reads the whole calendar, which never throws: a city
+   that is down only costs its own rows there. */
 export default async function EventPage({ params }: Props) {
   const e = await getEvent((await params).slug);
   if (!e) notFound();
 
   const over = !isUpcoming(e);
-  const local = e.source === 'local';
+  const local = isLocal(e);
+  const investors = e.type === 'investor-call' || e.groups.includes('investors');
+
+  const facts: TicketFact[] = [
+    /* A meeting's type is its category, so it is not repeated for those. */
+    ...(!local ? [{ k: DETAIL.type, v: TYPES[e.type].label }] : []),
+    {
+      k: DETAIL.when,
+      v: (
+        <>
+          {longDate(e.start)}
+          <br />
+          {timeLabel(e)}
+          {e.provisional && <span className="cav">{DETAIL.scheduleCaveat}</span>}
+        </>
+      ),
+    },
+    { k: DETAIL.where, v: whereLong(e) },
+    ...(e.host || e.place ? [{ k: local ? DETAIL.heldBy : DETAIL.host, v: e.host ?? e.place }] : []),
+    ...(!local ? [{ k: DETAIL.price, v: e.price ?? LISTING.free }] : []),
+  ];
+
+  const now = new Date();
+  const more = (await allEvents().catch(() => []))
+    .filter((x) => isUpcoming(x, now) && x.slug !== e.slug && isLocal(x) === local)
+    .slice(0, 3);
+
+  const startsAt = `${shortDate(e.start)}${e.timeUnknown ? '' : `, ${timeRange(e.start)}`}`;
 
   return (
-    <div className="hx">
-      <section className="hx-band hx-wrap" data-pad="tight">
-        <p className="hx-label">
-          <b>01</b>
-          <Link href="/events" className="shop-inline-link">
-            Events
-          </Link>
-          <span aria-hidden="true">/</span>
-          <span>{TYPES[e.type].label}</span>
-        </p>
-
-        <div className="hx-grid ev-detail">
-          <div className="c-two-thirds ev-body">
-            <div className="ev-chips">
+    <div className="pg-events">
+      <Crumbbar
+        crumbs={[{ href: '/events', label: DETAIL.crumb }, { label: local ? (e.place ?? TYPES[e.type].label) : TYPES[e.type].label }]}
+        action={<CrumbLink href="/events">{DETAIL.all}</CrumbLink>}
+      />
+      <section className="wrap vsec">
+        <RiseIn className="ed" id="ed" gate sel=":scope > .body > *, :scope > .tk > *" y={12} duration={0.5} stagger={0.05}>
+          <div className="cell body" data-cancelled={e.cancelled ? '' : undefined}>
+            <div className="chips">
               <EventChips event={e} />
-              {e.cancelled ? (
-                <Chip tone="absent">{DETAIL.cancelled.replace(/\.$/, '')}</Chip>
-              ) : over ? (
-                <Chip>Ended</Chip>
-              ) : null}
+              {e.cancelled ? <Chip tone="absent">{LISTING.cancelled}</Chip> : over ? <Chip>{DETAIL.endedChip}</Chip> : null}
             </div>
-            <h1 className="ev-detail-title">{e.title}</h1>
-            {e.summary && <p className="hx-lede">{e.summary}</p>}
-
+            <h1>{shortTitle(e)}</h1>
+            {e.summary && <p className="lede">{e.summary}</p>}
             {e.description.map((p) => (
-              <p className="t-body hx-prose" key={p}>
+              <p className="copy" key={p}>
                 {p}
               </p>
             ))}
-
-            {local && <p className="t-body hx-prose">{DETAIL.localAbout}</p>}
-
+            {local && <p className="copy">{DETAIL.localAbout}</p>}
             {e.agenda?.length ? (
-              <div className="ev-agenda">
-                <p className="side-label">{DETAIL.agenda}</p>
-                <ol>
-                  {e.agenda.map((a) => (
-                    <li key={a}>{a}</li>
+              <div>
+                <span className="label">{DETAIL.agenda}</span>
+                <ol className="agl">
+                  {e.agenda.map((a, i) => (
+                    <li key={a}>
+                      <b>{String(i + 1).padStart(2, '0')}</b>
+                      {a}
+                    </li>
                   ))}
                 </ol>
               </div>
             ) : null}
-
-            {e.type === 'investor-call' && <p className="t-sm ev-legal">{DETAIL.investorLegal}</p>}
+            {investors && <p className="legal2">{DETAIL.investorLegal}</p>}
           </div>
 
-          <aside className="c-third ev-ticket">
-            <dl className="ev-facts">
-              {/* The type lives here rather than in the tags, which name
-                  categories. A meeting's type is its category, so it is
-                  not repeated for those. */}
-              {!local && (
-                <div>
-                  <dt>{DETAIL.type}</dt>
-                  <dd>{TYPES[e.type].label}</dd>
-                </div>
-              )}
-              <div>
-                <dt>{DETAIL.when}</dt>
-                <dd>
-                  {longDate(e.start)}
-                  <br />
-                  {e.timeUnknown ? 'Time to be posted' : timeRange(e.start, e.end)}
-                  {e.provisional && <span className="ev-caveat">{DETAIL.scheduleCaveat}</span>}
-                </dd>
-              </div>
-              <div>
-                <dt>{DETAIL.where}</dt>
-                {/* An address already says "in person", so it stands alone; the
-                    format is only spelled out when it adds something. */}
-                <dd>
-                  {!e.location || e.location === DETAIL.online
-                    ? FORMAT[e.format]
-                    : e.format === 'hybrid'
-                      ? `${FORMAT[e.format]}. ${e.location}`
-                      : // An in-person address, or an online note that already says "Online".
-                        e.location}
-                </dd>
-              </div>
-              {(e.host || e.place) && (
-                <div>
-                  <dt>{local ? DETAIL.heldBy : DETAIL.host}</dt>
-                  <dd>{e.host ?? e.place}</dd>
-                </div>
-              )}
-              {!local && (
-                <div>
-                  <dt>{DETAIL.price}</dt>
-                  <dd>{e.price ?? 'Free'}</dd>
-                </div>
-              )}
-            </dl>
-
+          <Ticket who={local ? DETAIL.publicMeeting : DETAIL.whenWhere} ck={local ? DETAIL.open : (e.price ?? LISTING.free)} facts={facts}>
             {e.cancelled ? (
-              <p className="t-sm ev-state">{DETAIL.cancelled}</p>
+              <p className="state">{DETAIL.cancelled}</p>
             ) : over ? (
-              <p className="t-sm ev-state">{DETAIL.ended}</p>
-            ) : local ? (
-              e.officialUrl && (
-                <a href={e.officialUrl} className="btn ev-cta" data-variant="primary" target="_blank" rel="noopener noreferrer">
-                  <LiveDot />
-                  {DETAIL.officialListing}
-                </a>
-              )
-            ) : e.registerUrl ? (
-              <a href={e.registerUrl} className="btn ev-cta" data-variant="primary" target="_blank" rel="noopener noreferrer">
-                <LiveDot />
-                {/lu\.ma|luma\.com/.test(e.registerUrl) ? DETAIL.register : DETAIL.registerGeneric}
-              </a>
+              <>
+                <p className="state">{DETAIL.ended}</p>
+                {local && e.officialUrl && (
+                  <a className="inl state" href={e.officialUrl} target="_blank" rel="noopener noreferrer">
+                    {DETAIL.officialListing}
+                  </a>
+                )}
+              </>
             ) : (
-              <p className="t-sm ev-state">{DETAIL.noRegister}</p>
-            )}
-
-            {!over && !e.cancelled && (
-              <div className="ev-add">
-                <p className="side-label">{DETAIL.addTo}</p>
-                <div className="ev-add-row">
-                  <a href={googleCalendarUrl(e)} className="shop-inline-link" target="_blank" rel="noopener noreferrer">
+              <>
+                <StartsIn at={e.start.toISOString()} label={DETAIL.startsIn} fallbackLabel={DETAIL.starts} fallback={startsAt} />
+                {local ? (
+                  e.officialUrl && (
+                    <a className="btn" data-variant="primary" href={e.officialUrl} target="_blank" rel="noopener noreferrer">
+                      <LiveDot />
+                      {DETAIL.officialListing}
+                    </a>
+                  )
+                ) : e.registerUrl ? (
+                  <a className="btn" data-variant="primary" href={e.registerUrl} target="_blank" rel="noopener noreferrer">
+                    <LiveDot />
+                    {/lu\.ma|luma\.com/.test(e.registerUrl) ? DETAIL.register : DETAIL.registerGeneric}
+                  </a>
+                ) : (
+                  <p className="state">{DETAIL.noRegister}</p>
+                )}
+                <span className="label adds-l">{DETAIL.addTo}</span>
+                <div className="adds">
+                  <a className="btn" data-variant="ghost" href={googleCalendarUrl(e)} target="_blank" rel="noopener noreferrer">
                     {DETAIL.addGoogle}
                   </a>
-                  <a href={`/events/${e.slug}/ics`} className="shop-inline-link">
+                  <a className="btn" data-variant="ghost" href={`/events/${e.slug}/ics`}>
                     {DETAIL.addIcs}
                   </a>
                 </div>
-              </div>
+              </>
             )}
+          </Ticket>
+        </RiseIn>
 
-            {local && e.officialUrl && over && (
-              <a href={e.officialUrl} className="shop-inline-link t-sm" target="_blank" rel="noopener noreferrer">
-                {DETAIL.officialListing}
-              </a>
-            )}
-          </aside>
-        </div>
+        {more.length > 0 && (
+          <div className="more2">
+            <div className="sec-label label">
+              <b>{DETAIL.more.n}</b>
+              {DETAIL.more.label}
+            </div>
+            <div className="bx2">
+              {more.map((x) => (
+                <EventRow event={x} key={x.slug} />
+              ))}
+            </div>
+          </div>
+        )}
       </section>
     </div>
   );

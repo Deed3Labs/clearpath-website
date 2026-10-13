@@ -240,31 +240,82 @@ export const LOCAL_MEETINGS: LocalMeetingInput[] = [
    rows years out; past this they are noise. */
 export const LOCAL_HORIZON_DAYS = 60;
 
+/* ── The page's copy ──────────────────────────────────────────────────────
+   Ported from reference/redesign/events.html. Dates and times are never
+   written here: lib/events/time.ts formats every one, in Pacific time. */
+
+export const META = {
+  title: 'Events',
+  description:
+    'Community calls, investor calls, co-op town halls and the Inland Empire council and planning meetings that decide what gets built.',
+} as const;
+
 export const OPENING = {
-  kicker: 'Events',
-  heading: 'Come to the meetings.',
+  label: { kicker: 'Community', title: 'Events' },
+  lines: ['Come to the', 'meetings.'],
   lede: 'Co-op calls and town halls, plus the local meetings that decide what gets built here.',
   subscribe: 'Add Clear events to your calendar',
+} as const;
+
+/* The hero card: the next Clear event, counting down. With no Clear event
+   posted it shows the next public meeting instead, so the first screen still
+   says what is coming. */
+export const NEXT = {
+  who: 'Next up',
+  localChip: 'Local government',
+  open: 'Open to anyone',
+  agenda: 'Agenda',
+  register: 'Register',
+  noRegister: 'Registration opens soon',
+  /* The clock's accessible name, and its static stand-in before the clock
+     runs (and with JavaScript off): "Starts Thu, Oct 15 · 5:30 PM PDT". */
+  startsIn: 'Starts in',
+  starts: 'Starts',
+  units: { d: 'Days', h: 'Hours', m: 'Min', s: 'Sec' },
+} as const;
+
+export const BOARD = {
+  filterLabel: 'Show events',
+  upcoming: (n: number) => `${n} upcoming`,
+  onDay: (n: number, day: string) => `${n} on ${day}`,
+  calLabel: 'Month',
+  prev: 'Previous month',
+  next: 'Next month',
+  /* Sunday first, as a wall calendar in the US is. */
+  weekdays: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
+  stripWeekdays: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+  stripLabel: 'Days',
+  dayLabel: (date: string, n: number) => `${date}, ${n} ${n === 1 ? 'event' : 'events'}`,
+  legendClear: 'Clear event',
+  legendLocal: 'Local meeting',
+  today: (d: string) => `Today is ${d}`,
+  showing: (d: string) => `Showing ${d}`,
+  showAll: 'Show every day',
 } as const;
 
 export const LISTING = {
   clearHeading: 'Clear events',
   localHeading: 'Local government',
   localNote: 'Pulled from city and county calendars every hour. The official listing has the final word.',
+  /* The button over the list of calendars, counted from LOCAL_SOURCES. */
+  sources: (n: number) => `${n} public calendars`,
+  systems: { legistar: 'Legistar', primegov: 'PrimeGov', ics: 'City calendar', withapps: 'City calendar' },
   register: 'Register',
-  details: 'Details',
+  agenda: 'Agenda',
   free: 'Free',
   cancelled: 'Cancelled',
+  timeTbd: 'Time to be posted',
   noMatches: 'Nothing on the calendar in this category right now.',
 } as const;
 
-/* The empty state: no Clear events scheduled. The local meetings still list
-   beneath it, so the page is rarely bare. */
+/* The empty state: no Clear events scheduled. The section keeps its header,
+   and the local meetings still list beneath it, so the page is rarely bare. */
 export const EMPTY = {
   heading: 'Nothing on the calendar right now.',
   lede: 'Calls go up a few weeks ahead. Leave an email and we will tell you when one is posted.',
   notify: {
     label: 'Email',
+    placeholder: 'Your email',
     button: 'Email me when one is posted',
     sending: 'Adding you…',
     ok: 'Done. We will email you when the next event is posted.',
@@ -274,16 +325,28 @@ export const EMPTY = {
 } as const;
 
 export const KINDS = {
-  kicker: 'What goes on this calendar',
+  n: '02',
+  label: 'What goes on this calendar',
+  title: 'Four kinds of meeting, one calendar.',
+  line: "Clear's own calls, and the public meetings next door where anyone can speak.",
+  upcoming: (n: number) => `${n} upcoming`,
+  none: 'None posted',
+  see: 'See them',
+  nothing: 'Nothing on the calendar yet',
   sides: [
-    { label: 'Community', line: 'Community calls.', note: 'How the co-op works, in plain words. Free and online.' },
-    { label: 'Investors', line: 'Investor calls.', note: 'Updates for people considering capital in the co-op.' },
-    { label: 'Governance', line: 'Town halls and hearings.', note: 'Where members hear proposals and have a say before a vote.' },
-    { label: 'Local government', line: 'The meetings next door.', note: 'Council and planning meetings decide what gets built. Anyone can speak.' },
+    { group: 'community', label: 'Community', line: 'Community calls.', note: 'How the co-op works, in plain words. Free and online.' },
+    { group: 'investors', label: 'Investors', line: 'Investor calls.', note: 'Updates for people considering capital in the co-op.' },
+    { group: 'governance', label: 'Governance', line: 'Town halls and hearings.', note: 'Where members hear proposals and have a say before a vote.' },
+    { group: 'local', label: 'Local government', line: 'The meetings next door.', note: 'Council and planning meetings decide what gets built. Anyone can speak.' },
   ],
 } as const;
 
 export const DETAIL = {
+  crumb: 'Events',
+  all: 'All events',
+  whenWhere: 'When and where',
+  publicMeeting: 'Public meeting',
+  open: 'Open to anyone',
   type: 'Type',
   when: 'When',
   where: 'Where',
@@ -294,10 +357,13 @@ export const DETAIL = {
   register: 'Register on Luma',
   registerGeneric: 'Register',
   noRegister: 'Registration opens soon.',
+  startsIn: 'Starts in',
+  starts: 'Starts',
   addGoogle: 'Google Calendar',
   addIcs: 'Apple, Outlook (.ics)',
   addTo: 'Add to calendar',
   ended: 'This event has ended.',
+  endedChip: 'Ended',
   cancelled: 'This event was cancelled.',
   online: 'Online',
   inPerson: 'In person',
@@ -307,4 +373,5 @@ export const DETAIL = {
   scheduleCaveat: 'From the city calendar. Check the agenda for the final time.',
   investorLegal:
     'Nothing on this call or this page is an offer to sell or a solicitation to buy any security.',
+  more: { n: 'Next', label: 'Also coming up' },
 } as const;

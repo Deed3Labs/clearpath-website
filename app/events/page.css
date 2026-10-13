@@ -1,0 +1,196 @@
+/* Events — page-only rules, all under .pg-events (a route's CSS stays loaded
+   after you leave it, so nothing here may be global). Ported from
+   reference/redesign/events.html with the tokens renamed. The event page
+   (/events/[slug]) imports this file too. Shared pieces (DateBlock, Ticket,
+   CatChips, PillField, Crumbbar) are styled in system.css. */
+
+.pg-events {
+  /* ── Hero: the h1 and lede on the left, Next up on the right ─────────── */
+  .evhero { padding-top: clamp(40px, 5vw, 80px); padding-bottom: clamp(40px, 4.5vw, 64px); }
+  .evhero .hero-row { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); align-items: end; margin-top: 0; }
+  .evl { display: grid; gap: clamp(24px, 2.6vw, 36px); }
+  .evhero .hero-lede { text-wrap: pretty; }
+  .evhero .sub-link { margin-top: var(--spacing-3); }
+  .evhero .sub-link svg { width: 16px; height: 16px; }
+  .evhero .sub-link:hover svg { transform: none; }
+  @media (max-width: 960px) { .evhero .hero-row { grid-template-columns: minmax(0, 1fr); } }
+
+  /* Next up: the one Clear event coming soonest, counting down. */
+  .next { --px: clamp(18px, 2vw, 28px); --line: var(--color-ink-28); border: 1px solid var(--line); display: grid; grid-template-rows: auto auto auto auto; min-width: 0; }
+  .next .c-h { min-height: 52px; }
+  .next .chips { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  .next .nm { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px; align-items: center; padding: 20px var(--px); }
+  .next .nt { font-family: var(--font-display); font-weight: 600; font-size: clamp(19px, 1.6vw, 22px); letter-spacing: -0.02em; line-height: 1.2; transition: color 200ms var(--ease); }
+  .next .nm:hover .nt { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+  .next .nt small { display: block; margin-top: 4px; font-family: var(--font-text); font-weight: 400; font-size: 14px; letter-spacing: 0; color: var(--color-ink-50); }
+  .cd { position: relative; border-top: 1px solid var(--line); }
+  .cd-cells { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .cd:not([data-live]) .cd-cells { visibility: hidden; }
+  .cd-cells > div { display: grid; gap: 2px; padding: 12px var(--px) 14px; }
+  .cd-cells > div + div { border-left: 1px solid var(--color-ink-13); }
+  .cd b { font-size: clamp(24px, 2.2vw, 30px); font-weight: 600; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .cd span { font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--color-ink-50); }
+  /* The static line the server renders, over the cells until the clock runs. */
+  .cd-s { position: absolute; inset: 0; display: flex; align-items: center; padding: 0 var(--px); font-size: 15px; font-weight: 500; line-height: 1.35; }
+  .next .c-f { min-height: 60px; }
+  .next .c-f .btn { min-height: 40px; padding-inline: 18px; font-size: 14px; }
+
+  /* ── The board: month on the left, the agenda on the right ───────────── */
+  .cal { padding-bottom: var(--sec); }
+  .evbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 14px; min-width: 0; }
+  .evbar .ck { white-space: nowrap; }
+  @media (max-width: 640px) { .evbar > .ck { display: none; } }
+
+  .board { --px: clamp(18px, 2vw, 28px); --line: var(--color-ink-28); display: grid; grid-template-columns: 340px minmax(0, 1fr); border: 1px solid var(--line); align-items: start; }
+  .mcal { border-right: 1px solid var(--line); align-self: stretch; }
+  .mcal-in { position: sticky; top: calc(var(--head-h, 68px) + 16px); }
+  /* Both columns' headers are one 64px row, and the weekday row and the
+     agenda's month rows are both 48px, so the two columns' lines meet. */
+  .mcal .c-h { min-height: 64px; height: 64px; }
+  .mcal .mt { font-weight: 500; font-size: 15px; }
+  .mnav { display: flex; gap: 4px; }
+  .mnav button { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid var(--color-ink-28); border-radius: var(--radius-pill); transition: border-color 200ms var(--ease); }
+  .mnav button:hover:not(:disabled) { border-color: var(--color-ink); }
+  .mnav button:disabled { opacity: .35; cursor: not-allowed; }
+  .mnav svg { width: 8px; height: 12px; }
+  .mnav .fw svg { transform: scaleX(-1); }
+  .grid7 { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); padding: 0 12px 14px; }
+  .grid7 .wd { display: grid; place-items: center; height: 48px; font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em; color: var(--color-ink-50); }
+  .day { position: relative; display: grid; justify-items: center; align-content: start; gap: 4px; height: 50px; padding-top: 7px; font-size: 14px; font-variant-numeric: tabular-nums; color: var(--color-ink); border-radius: 0; }
+  .day.past { color: var(--color-ink-28); }
+  .day.out { visibility: hidden; }
+  .day.today::before { content: ''; position: absolute; top: 3px; left: 50%; translate: -50% 0; width: 30px; height: 26px; border: 1px solid var(--color-ink); }
+  .day.has { cursor: pointer; }
+  .day.has:hover { background: var(--color-paper-2); }
+  button.day:disabled { cursor: default; }
+  .day[aria-pressed='true'] { background: var(--color-ink); color: var(--color-paper); }
+  .day[aria-pressed='true'] .pip { --c: var(--color-paper); }
+  .pips { display: flex; gap: 3px; height: 6px; }
+  .pip { --c: var(--color-ink); display: block; width: 6px; height: 6px; border-radius: var(--radius-pill); background: var(--c); }
+  .pip.lo { background: transparent; box-shadow: inset 0 0 0 1.2px var(--c); }
+  .day.dim .pip { opacity: .2; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; padding: 14px var(--px); border-top: 1px solid var(--color-ink-13); font-size: 13px; color: var(--color-ink-70); }
+  .legend span { display: inline-flex; align-items: center; gap: 8px; }
+  .mcal .c-f { border-top: 1px solid var(--line); min-height: 52px; font-size: 13.5px; color: var(--color-ink-50); }
+  .mcal .c-f button { font-size: 13.5px; color: var(--color-ink); text-decoration: underline; text-decoration-color: var(--color-ink-28); text-underline-offset: 3px; }
+
+  /* The strip that stands in for the month on a phone. */
+  .dstrip { display: none; gap: 6px; overflow-x: auto; scrollbar-width: none; padding: 12px var(--px); border-bottom: 1px solid var(--line); }
+  .dstrip::-webkit-scrollbar { display: none; }
+  .dstrip .day { flex: none; width: 48px; height: 66px; border: 1px solid var(--color-ink-13); padding-top: 8px; gap: 3px; }
+  .dstrip .day i { font-style: normal; font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--color-ink-50); }
+  .dstrip .day[aria-pressed='true'] i { color: rgb(223 227 222 / .7); }
+  .dstrip .day:disabled { color: var(--color-ink-50); }
+  .dstrip .day.today::before { display: none; }
+  .dstrip .day.today { border-color: var(--color-ink); }
+  @media (max-width: 900px) {
+    .board { grid-template-columns: minmax(0, 1fr); }
+    .mcal { display: none; }
+    .dstrip { display: flex; }
+  }
+
+  .agenda { min-width: 0; }
+  .ag-h { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 16px; height: 64px; padding: 0 var(--px); border-bottom: 1px solid var(--line); }
+  .ag-h h2 { font-family: var(--font-display); font-weight: 600; font-size: clamp(20px, 1.8vw, 24px); letter-spacing: -0.022em; }
+  .ag-sec + .ag-sec .ag-h { border-top: 1px solid var(--line); }
+  .ag-note { padding: 12px var(--px); border-bottom: 1px solid var(--color-ink-13); font-size: 13.5px; color: var(--color-ink-50); }
+  .mo { display: flex; align-items: center; height: 48px; padding: 0 var(--px); font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--color-ink-50); }
+  .row { position: relative; display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; align-items: center; gap: 18px; padding: 14px var(--px); border-top: 1px solid var(--color-ink-13); transition: background-color 200ms var(--ease); }
+  .mo + .row, .ag-note + .mo + .row { border-top: 0; }
+  .row:hover { background: color-mix(in srgb, var(--color-paper-2) 70%, transparent); }
+  .row .rm { display: grid; gap: 6px; min-width: 0; }
+  .row .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .row h3 { font-family: var(--font-display); font-weight: 600; font-size: clamp(17px, 1.4vw, 19px); letter-spacing: -0.015em; line-height: 1.25; overflow-wrap: break-word; }
+  .row h3 a::after { content: ''; position: absolute; inset: 0; }
+  .row h3 a:focus-visible { outline: none; }
+  .row:has(h3 a:focus-visible) { outline: 2px solid var(--color-live); outline-offset: -2px; }
+  .row .meta { font-size: 14px; color: var(--color-ink-70); line-height: 1.45; overflow-wrap: break-word; }
+  .row .cav { display: block; font-size: 12.5px; color: var(--color-underway); }
+  .row .ra { position: relative; z-index: 1; display: flex; align-items: center; gap: 14px; }
+  .row .ra:empty { display: none; }
+  .row .pr { font-size: 14px; color: var(--color-ink-50); }
+  .row .ra .btn { min-height: 38px; padding-inline: 16px; font-size: 14px; }
+  .row .ext { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: var(--color-ink-70); white-space: nowrap; transition: color 200ms var(--ease); }
+  .row .ext svg { width: 11px; height: 11px; }
+  .row .ext:hover { color: var(--color-ink); }
+  .chip.k { --chip: var(--color-ink-70); }
+  .nomatch { padding: 28px var(--px); font-size: 14.5px; color: var(--color-ink-50); }
+  .srcs { position: relative; }
+  .srcs > button { display: inline-flex; align-items: center; gap: 8px; min-height: 34px; padding-inline: 12px; border: 1px solid var(--color-ink-28); border-radius: var(--radius-pill); font-size: 13px; white-space: nowrap; transition: border-color 200ms var(--ease); }
+  .srcs > button:hover, .srcs > button[aria-expanded='true'] { border-color: var(--color-ink); }
+  .srcs > button .live-dot { --dot: var(--color-signal-light); margin-right: 0; }
+  .srcs ul { position: absolute; z-index: 20; right: 0; top: calc(100% + 6px); width: 300px; padding: 6px 0; background: var(--color-paper-2); border: 1px solid var(--color-ink); box-shadow: 0 12px 28px rgb(0 0 0 / .14); }
+  .srcs li { display: flex; justify-content: space-between; gap: 12px; padding: 8px 14px; font-size: 13.5px; }
+  .srcs li span { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--color-ink-50); align-self: center; text-align: right; }
+  @media (max-width: 640px) {
+    .row { grid-template-columns: 52px minmax(0, 1fr); gap: 14px; }
+    .row .dt { width: 52px; }
+    .row .dt b { font-size: 22px; }
+    .row .ra { grid-column: 2; justify-content: space-between; }
+    .srcs ul { right: auto; left: 0; width: min(300px, calc(100vw - 2 * var(--inset) - 2px)); }
+  }
+  @media (max-width: 420px) {
+    .srcs ul { left: auto; right: calc(-1 * var(--px)); }
+  }
+
+  /* Empty: no Clear events scheduled. The notify field shares one pill. */
+  .empty1 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px 40px; align-items: center; padding: 28px var(--px) 32px; }
+  .empty1 h3 { font-family: var(--font-display); font-weight: 600; font-size: clamp(20px, 1.8vw, 24px); letter-spacing: -0.02em; }
+  .empty1 p { margin-top: 6px; font-size: 14.5px; color: var(--color-ink-70); max-width: 44ch; }
+  /* The pill's own grid would otherwise size to the input's intrinsic width
+     and push the button out of the cell. */
+  .empty1 > * { min-width: 0; }
+  .empty1 .pillf { grid-template-columns: minmax(0, 1fr); }
+  @media (max-width: 1100px) { .empty1 { grid-template-columns: minmax(0, 1fr); } }
+
+  /* ── 02 what goes on this calendar ───────────────────────────────────── */
+  .kinds { --px: clamp(20px, 2.6vw, 36px); --line: var(--color-ink-28); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1px solid var(--line); }
+  .kinds > .cell + .cell { border-left: 1px solid var(--line); }
+  .kinds .ic { width: 56px; height: 56px; color: var(--color-ink); margin-bottom: 6px; }
+  .kinds .ic * { fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linejoin: round; stroke-linecap: round; }
+  .kinds .ic .lit { fill: var(--color-signal-light); stroke: none; }
+  .kinds .c-m { gap: 12px; }
+  .kinds .c-m h3 { font-size: clamp(20px, 1.7vw, 24px); }
+  .kinds .c-f button { font-size: 14px; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--color-ink); }
+  .kinds .c-f button svg { width: 13px; height: 9px; transition: transform 200ms var(--ease); }
+  .kinds .c-f button:hover svg { transform: translateX(3px); }
+  @media (max-width: 1100px) {
+    .kinds { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .kinds > .cell:nth-child(3) { border-left: 0; }
+    .kinds > .cell:nth-child(n + 3) { border-top: 1px solid var(--line); }
+  }
+  @media (max-width: 640px) {
+    .kinds { grid-template-columns: minmax(0, 1fr); }
+    .kinds > .cell + .cell { border-left: 0; border-top: 1px solid var(--line); }
+  }
+
+  /* ── Event page ──────────────────────────────────────────────────────── */
+  .vsec { padding-top: clamp(28px, 3.4vw, 48px); padding-bottom: var(--sec); }
+  .ed { --px: clamp(20px, 2.6vw, 40px); --line: var(--color-ink-28); display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); border: 1px solid var(--line); }
+  .ed > .cell + .cell { border-left: 1px solid var(--line); }
+  .ed .body { grid-template-rows: none; grid-template-columns: minmax(0, 1fr); display: grid; align-content: start; gap: 18px; padding: clamp(28px, 3.4vw, 48px) var(--px); }
+  .ed .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .ed h1 { font-family: var(--font-display); font-weight: 800; font-size: clamp(38px, 4.6vw, 66px); line-height: .98; letter-spacing: -0.04em; text-wrap: balance; overflow-wrap: break-word; }
+  .ed[data-cancelled] h1 { text-decoration: line-through; text-decoration-thickness: 2px; color: var(--color-ink-70); }
+  .ed .lede { font-size: clamp(18px, 1.5vw, 21px); line-height: 1.45; color: var(--color-ink-70); max-width: 40ch; }
+  .ed .copy { font-size: 16px; line-height: 1.6; color: var(--color-ink-70); max-width: 58ch; }
+  .agl { margin-top: 10px; border-top: 1px solid var(--color-ink); max-width: 560px; }
+  .agl li { display: grid; grid-template-columns: 40px minmax(0, 1fr); padding-block: 12px; border-bottom: 1px solid var(--color-ink-13); font-size: 15.5px; }
+  .agl li b { font-family: var(--font-mono); font-weight: 400; font-size: 11px; letter-spacing: .08em; color: var(--color-ink-50); align-self: center; }
+  .legal2 { font-size: 13px; color: var(--color-ink-50); padding-top: 14px; border-top: 1px solid var(--color-ink-13); max-width: 58ch; }
+  .tk .adds-l { margin-top: 6px; }
+  .adds { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .adds .btn { min-height: 40px; font-size: 13.5px; padding-inline: 12px; }
+  .tk .inl { text-decoration: underline; text-decoration-color: var(--color-ink-28); text-underline-offset: 3px; }
+  @media (max-width: 1000px) { .ed { grid-template-columns: minmax(0, 1fr); } .ed > .cell + .cell { border-left: 0; border-top: 1px solid var(--line); } }
+  @media (max-width: 379px) { .adds { grid-template-columns: minmax(0, 1fr); } }
+  .more2 { --px: clamp(18px, 2vw, 28px); margin-top: clamp(56px, 6vw, 88px); }
+  .more2 .bx2 { border: 1px solid var(--color-ink-28); border-top: 0; }
+  .more2 .row:first-child { border-top: 0; }
+
+  /* The board arrives after the hero's intro; until the intro takes over it
+     is held back with the hero's own parts (see HeroScope and the layout's
+     motion gate, which lets go after three seconds if the intro never runs). */
+  html.motion & [data-rise]:not([data-risen]) { opacity: 0; }
+  html.motion &:has(.hero:not([data-intro])) #cal :is(.evbar, .board) { opacity: 0; }
+}

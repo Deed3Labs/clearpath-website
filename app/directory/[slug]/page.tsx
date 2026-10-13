@@ -1,10 +1,14 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { Chip } from '@/components/primitives';
-import { LiveDot } from '@/components/primitives/Button';
-import { PROFILE, TAGS } from '@/content/directory';
-import { getPartner, initials, listedPartners, mapsUrl, monthYear } from '@/lib/directory';
+import { Chip, CrumbLink, Crumbbar, LiveDot, Ticket, type TicketFact } from '@/components/system';
+import { RiseIn } from '@/components/events/Motion';
+import { Avatar } from '@/components/directory/Avatar';
+import { cropAround, MapArt, onMap } from '@/components/directory/MapArt';
+import { PinDrop } from '@/components/directory/PinDrop';
+import { PartnerRow } from '@/components/directory/PartnerRow';
+import { PROFILE, TAGS, TOWNS } from '@/content/directory';
+import { getPartner, listedPartners, mapsUrl, monthYear } from '@/lib/directory';
+import '../page.css';
 
 /* Only businesses this build lists get a page; a draft's URL 404s on the
    live site rather than showing a stand-in as a partner. */
@@ -25,94 +29,113 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
+/* A partner's page, ported from the mockup's partner view: the crumb bar,
+   the body cell (who they are, the Clear Pay chip, a small map of the town),
+   a ticket beside it (how to visit), then the three nearest partners. */
 export default async function PartnerPage({ params }: Props) {
   const p = getPartner((await params).slug);
   if (!p) notFound();
 
-  return (
-    <div className="hx">
-      <section className="hx-band hx-wrap" data-pad="tight">
-        <p className="hx-label">
-          <b>01</b>
-          <Link href="/directory" className="shop-inline-link">
-            {PROFILE.back}
-          </Link>
-          <span aria-hidden="true">/</span>
-          <span>{p.category}</span>
-        </p>
+  const tel = p.phone?.replace(/[^\d+]/g, '');
+  const facts: TicketFact[] = [
+    ...(p.address ? [{ k: PROFILE.address, v: p.address }] : []),
+    ...(p.hours ? [{ k: PROFILE.hours, v: p.hours }] : []),
+    ...(p.phone
+      ? [
+          {
+            k: PROFILE.phone,
+            v: (
+              <a className="inl" href={`tel:${tel}`}>
+                {p.phone}
+              </a>
+            ),
+          },
+        ]
+      : []),
+    { k: PROFILE.accepts, v: p.splitPlans ? PROFILE.acceptsSplit : TAGS.pay },
+    ...(p.partnerSince ? [{ k: PROFILE.since, v: monthYear(p.partnerSince) }] : []),
+  ];
 
-        <div className="hx-grid ev-detail">
-          <div className="c-two-thirds ev-body dir-profile">
-            <div className="dir-profile-head">
-              <span className="dir-avatar dir-avatar-lg" aria-hidden="true">
-                {initials(p.name)}
-              </span>
+  /* Nearest first, by the distance between towns on the map. A partner in a
+     town the map does not have yet sorts last. */
+  const here = TOWNS[p.city];
+  const dist = (c: string) => (here && TOWNS[c] ? Math.hypot(TOWNS[c].x - here.x, TOWNS[c].y - here.y) : Infinity);
+  const near = listedPartners()
+    .filter((q) => q.slug !== p.slug)
+    .sort((a, b) => dist(a.city) - dist(b.city))
+    .slice(0, 3);
+
+  return (
+    <div className="pg-directory">
+      <Crumbbar
+        crumbs={[{ href: '/directory', label: PROFILE.crumb }, { label: p.category }]}
+        action={<CrumbLink href="/directory">{PROFILE.all}</CrumbLink>}
+      />
+      <section className="wrap vsec">
+        <RiseIn className="pp2" gate sel=":scope > .body > *, :scope > .tk > *" y={12} duration={0.5} stagger={0.05}>
+          <div className="cell body">
+            <div className="phd">
+              <Avatar category={p.category} name={p.name} />
               <div>
-                <h1 className="ev-detail-title">{p.name}</h1>
-                <p className="hx-lede dir-profile-meta">
+                <h1>{p.name}</h1>
+                <p className="lede">
                   {p.category} · {p.city}
                 </p>
               </div>
             </div>
-
-            <div className="ev-chips">
+            <div className="chips">
               <Chip tone="live">{TAGS.pay}</Chip>
               {p.splitPlans && <Chip>{TAGS.split}</Chip>}
             </div>
-
-            {p.about && <p className="t-body hx-prose">{p.about}</p>}
-            {p.splitPlans && <p className="t-sm dir-split-note">{PROFILE.splitNote}</p>}
+            {p.about && <p className="copy">{p.about}</p>}
+            {p.splitPlans && <p className="note2">{PROFILE.splitNote}</p>}
+            {onMap(p) && (
+              <figure className="pmap">
+                <PinDrop className="mapw">
+                  <MapArt partners={[p]} crop={cropAround(p.city)} small hot={p.slug} />
+                </PinDrop>
+                <figcaption>
+                  <span>{p.city}</span>
+                  <span>{PROFILE.mapCaption}</span>
+                </figcaption>
+              </figure>
+            )}
           </div>
 
-          <aside className="c-third ev-ticket">
-            <dl className="ev-facts">
-              {p.address && (
-                <div>
-                  <dt>{PROFILE.address}</dt>
-                  <dd>{p.address}</dd>
-                </div>
-              )}
-              {p.hours && (
-                <div>
-                  <dt>{PROFILE.hours}</dt>
-                  <dd>{p.hours}</dd>
-                </div>
-              )}
-              {p.phone && (
-                <div>
-                  <dt>{PROFILE.phone}</dt>
-                  <dd>
-                    <a href={`tel:${p.phone.replace(/[^\d+]/g, '')}`} className="shop-inline-link">
-                      {p.phone}
-                    </a>
-                  </dd>
-                </div>
-              )}
-              <div>
-                <dt>{PROFILE.accepts}</dt>
-                <dd>{p.splitPlans ? `${TAGS.pay}, ${TAGS.split.toLowerCase()}` : TAGS.pay}</dd>
-              </div>
-              {p.partnerSince && (
-                <div>
-                  <dt>{PROFILE.since}</dt>
-                  <dd>{monthYear(p.partnerSince)}</dd>
-                </div>
-              )}
-            </dl>
-
+          <Ticket who={PROFILE.visit} ck={p.city} facts={facts}>
             {p.address && (
-              <a href={mapsUrl(p.address)} className="btn ev-cta" data-variant="primary" target="_blank" rel="noopener noreferrer">
+              <a className="btn" data-variant="primary" href={mapsUrl(p.address)} target="_blank" rel="noopener noreferrer">
                 <LiveDot />
                 {PROFILE.directions}
               </a>
             )}
             {p.website && (
-              <a href={p.website} className="btn ev-cta" data-variant="ghost" target="_blank" rel="noopener noreferrer">
-                {PROFILE.visit}
+              <a className="btn" data-variant="ghost" href={p.website} target="_blank" rel="noopener noreferrer">
+                {PROFILE.website}
               </a>
             )}
-          </aside>
-        </div>
+            {!p.address && !p.website && p.phone && (
+              <a className="btn" data-variant="primary" href={`tel:${tel}`}>
+                <LiveDot />
+                {PROFILE.call(p.phone)}
+              </a>
+            )}
+          </Ticket>
+        </RiseIn>
+
+        {near.length > 0 && (
+          <div className="near">
+            <div className="sec-label label">
+              <b>{PROFILE.near.n}</b>
+              {PROFILE.near.label}
+            </div>
+            <div className="bxn">
+              {near.map((q) => (
+                <PartnerRow p={q} key={q.slug} />
+              ))}
+            </div>
+          </div>
+        )}
       </section>
     </div>
   );
