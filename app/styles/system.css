@@ -188,6 +188,10 @@ button.btn { cursor: pointer; font-family: inherit; }
    only while the rise runs — at rest (and with no JS) nothing is clipped. */
 .hero-h1 .w { display: inline-block; vertical-align: top; padding: .04em .1em .24em; margin: -.04em -.1em -.24em; }
 .hero-h1 .w > span { display: inline-block; }
+/* The stressed word: leant rather than italic (the display face has no
+   italic cut). The lean pushes the tops of the letters right, so the word
+   keeps a hair more room before the next one. */
+.hero-h1 em { font-style: normal; display: inline-block; transform: skewX(-9deg); margin-right: .05em; }
 .hero[data-intro='run'] .hero-h1:not(.revealed) .w { overflow: hidden; }
 
 /* First paint, before the intro takes over (see HeroScope). */

@@ -17,6 +17,22 @@ import { HeroScope } from './HeroScope';
 
 export type Fact = { k: string; v: string; live?: boolean };
 
+/* A word written _like this_ in a line is the one the sentence leans on. It
+   is set in <em>, which leans (a skew — Bricolage ships no italic, and a
+   synthesised oblique is the browser guessing), so the stress survives in
+   the accessibility tree as well as on screen. Punctuation after the closing
+   underscore stays upright. */
+function emph(word: string) {
+  const m = word.match(/^_(.+)_(\W*)$/);
+  if (!m) return word;
+  return (
+    <>
+      <em>{m[1]}</em>
+      {m[2]}
+    </>
+  );
+}
+
 export function PageHero({
   label,
   lines,
@@ -73,7 +89,7 @@ export function PageHero({
             {ln.split(' ').map((w, j, all) => (
               <Fragment key={j}>
                 <span className="w">
-                  <span>{w}</span>
+                  <span>{emph(w)}</span>
                 </span>
                 {j < all.length - 1 ? ' ' : null}
               </Fragment>

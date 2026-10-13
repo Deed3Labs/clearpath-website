@@ -11,7 +11,9 @@ export const HERO = {
      sentence whole, for the metadata and the link-preview image
      (app/layout.tsx, app/opengraph-image.tsx). */
   headline: 'Your money kept in your neighborhood.',
-  lines: ['Your money kept', 'in your neighborhood.'],
+  /* The second "your" is the stress — whose neighbourhood — so it leans
+     (_word_ marks it; see PageHero). */
+  lines: ['Your money kept', 'in _your_ neighborhood.'],
   /* What Clear is, then the four things it does, in the order the page
      covers them. Doubles as the meta and link-preview description, so it has
      to read on its own. "Toward a home of your own", not "the home you live
