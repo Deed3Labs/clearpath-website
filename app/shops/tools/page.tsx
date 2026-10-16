@@ -13,6 +13,9 @@ import { LinkCell } from './_parts/LinkCell';
 import { CostTable } from './_parts/CostTable';
 import { Head } from './_parts/Head';
 import { Rise } from './_parts/Rise';
+import { HardwareLineup } from './_parts/HardwareLineup';
+import { HowReserving } from '@/components/shop/HowReserving';
+import { forShopsProducts } from '@/lib/shop/catalog';
 import './page.css';
 import { META, HERO, FEES, TABLES, REWARDS, ONLINE, HARDWARE, COSTS, CLOSE } from '@/content/shopsTools';
 
@@ -24,7 +27,8 @@ export const metadata: Metadata = { title: META.title, description: HERO.lede };
    costs, and the close. */
 
 export default function ShopsTools() {
-  const hardwareVisible = false;
+  /* The links into the shop show only when it has hardware to show. */
+  const hardwareVisible = forShopsProducts().length > 0;
 
   return (
     <div className="pg-shops-tools">
@@ -130,7 +134,8 @@ export default function ShopsTools() {
           line={HARDWARE.line}
           more={hardwareVisible ? HARDWARE.more : null}
         />
-        {/* HARDWARE LINEUP */}
+        <HardwareLineup />
+        <HowReserving items={HARDWARE.how} />
       </Section>
 
       <Section id="costs">
