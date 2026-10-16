@@ -1,0 +1,1257 @@
+<title>Clear · For shops (updated)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: a constrained page (1280 max) with one rhythm per section —
+   label, a headline that answers itself, one line, one crafted figure, one
+   link. The product is shown on its own dark ground inside thin device
+   outlines (the guide's one radius exception); figures that explain the
+   model are drawn in the site's ink. Single look: paper with ink bands. */
+:root {
+  color-scheme: light;
+  --paper: #DFE3DE;
+  --paper-2: #E9ECE7;
+  --ink: #16211D;
+  --ground: #16211D;
+  --live: #24409E;
+  --settled: #0E6B4E;
+  --underway: #8A5512;
+  --absent: #9B2C22;
+  --sig-deep: #0E6B4E;
+  --sig-light: #6FCB9F;
+  --ink-70: #525B57;
+  --ink-50: #5A635F;
+  --ink-28: #A7ADA8;
+  --ink-13: #C5CAC5;
+
+  --f-display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --f-text: 'Instrument Sans', system-ui, sans-serif;
+  --f-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  --s1: 8px; --s2: 16px; --s3: 24px; --s4: 40px; --s5: 64px; --s6: 96px;
+  --inset: clamp(16px, 4vw, 56px);
+  --max: 1280px;
+  --sec: clamp(80px, 9vw, 144px);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+.band-ink {
+  background: var(--ground); color: var(--paper);
+  --ink: #DFE3DE; --ink-70: #ABB1AC; --ink-50: #939995;
+  --ink-28: rgb(223 227 222 / .32); --ink-13: rgb(223 227 222 / .16);
+  --live: #7C8CC5; --settled: #6FCB9F; --underway: #E3B667; --absent: #E58C7F;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--f-text); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+h1, h2, h3, p, dl, dd, figure { margin: 0; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+a { color: inherit; text-decoration: none; }
+svg { display: block; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--live); outline-offset: 3px; }
+::selection { background: var(--ink); color: var(--paper); }
+
+.wrap { width: 100%; max-width: calc(var(--max) + var(--inset) * 2); margin-inline: auto; padding-inline: var(--inset); }
+.fig { font-family: var(--f-text); font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.label { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-50); }
+
+/* ── Section rhythm ───────────────────────────────────────────────────── */
+.sec { padding-block: var(--sec); }
+/* A section opens with a full-width label rule, then the headline on the
+   left seven-twelfths and its one line plus link on the right, bottom-aligned
+   to the headline. Phones stack it. */
+.head { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: clamp(32px, 6vw, 112px); row-gap: clamp(28px, 3vw, 44px); align-items: end; }
+.head > .sec-label { grid-column: 1 / -1; }
+.head > .aside { display: grid; gap: var(--s3); align-content: end; padding-bottom: .4em; }
+@media (max-width: 900px) { .head { grid-template-columns: minmax(0, 1fr); } .head > .aside { padding-bottom: 0; gap: var(--s2); } }
+.sec-label { display: flex; gap: 14px; padding-bottom: var(--s2); border-bottom: 1px solid var(--ink-13); }
+.sec-label b { font-weight: 400; color: var(--live); }
+.h2 { font-family: var(--f-display); font-weight: 800; font-size: clamp(36px, 4.7vw, 72px); line-height: .98; letter-spacing: -0.038em; text-wrap: balance; }
+.line { font-size: clamp(17px, 1.35vw, 20px); line-height: 1.5; color: var(--ink-70); max-width: 42ch; text-wrap: pretty; }
+.more { display: inline-flex; align-items: center; gap: 10px; font-size: 15.5px; font-weight: 500; color: var(--ink); border-bottom: 1px solid var(--ink-28); padding-bottom: 3px; justify-self: start; transition: border-color 200ms var(--ease), gap 200ms var(--ease); }
+.more svg { width: 14px; height: 10px; transition: transform 200ms var(--ease); }
+.more:hover { border-color: var(--ink); }
+.more:hover svg { transform: translateX(3px); }
+.body-gap { margin-top: clamp(48px, 5.5vw, 80px); }
+
+/* ── Controls (guide) ─────────────────────────────────────────────────── */
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding-inline: var(--s3); border: 1px solid transparent; border-radius: 999px; font-size: 15px; font-weight: 500; line-height: 1; white-space: nowrap; transition: background-color 200ms var(--ease), border-color 200ms var(--ease), color 200ms var(--ease); }
+.btn-primary { background: var(--ink); color: var(--paper); }
+.btn-primary:hover { background: var(--live); }
+.band-ink .btn-primary { color: var(--ground); }
+.btn-ghost { border-color: var(--ink-28); color: var(--ink); }
+.btn-ghost:hover { border-color: var(--ink); }
+.dot { --dot: var(--sig-light); position: relative; flex: none; width: 7px; height: 7px; margin-right: 10px; border-radius: 999px; background: var(--dot); box-shadow: 0 0 6px 1px color-mix(in srgb, var(--dot) 55%, transparent); }
+.dot::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: var(--dot); animation: ping 2s cubic-bezier(0, 0, .2, 1) infinite; }
+.band-ink .btn-primary .dot { --dot: var(--sig-deep); }
+@keyframes ping { 0% { transform: scale(1); opacity: .6 } 75%, 100% { transform: scale(3.4); opacity: 0 } }
+.chip { --chip: var(--ink-70); display: inline-flex; align-items: center; font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .09em; text-transform: uppercase; line-height: 1; padding: 6px 11px 5px; border: 1px solid; border-radius: 999px; white-space: nowrap; color: var(--chip); border-color: color-mix(in srgb, var(--chip) 34%, transparent); background: color-mix(in srgb, var(--chip) 10%, transparent); }
+.chip .dot { --dot: var(--chip); width: 6px; height: 6px; margin-right: 7px; box-shadow: 0 0 4px color-mix(in srgb, var(--chip) 45%, transparent); }
+.chip[data-tone="live"] { --chip: var(--settled); }
+.chip[data-tone="underway"] { --chip: var(--underway); }
+.chip[data-tone="absent"] { --chip: var(--absent); }
+.chip:not([data-tone="live"]) .dot::after { animation: none; opacity: 0; }
+
+/* ── Header — the live site's shell, kept as it is: five links, the
+   Community menu and Join; below 1000px a Menu button that opens the
+   full-screen sheet. Only the colours follow the ground underneath. ─── */
+.site-head { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 30; background: color-mix(in srgb, var(--paper) 88%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-bottom: 1px solid transparent; transition: border-color 200ms var(--ease), background-color 300ms var(--ease), color 300ms var(--ease); }
+.site-head.scrolled { border-bottom-color: var(--ink-13); }
+.site-head.on-ink { background: color-mix(in srgb, var(--ground) 90%, transparent); color: #DFE3DE; border-bottom-color: rgb(223 227 222 / .14); }
+.site-head.on-ink .nav > ul > li > a, .site-head.on-ink .navmenu-button { color: #ABB1AC; }
+.site-head.on-ink .nav > ul > li > a:hover, .site-head.on-ink .navmenu-button:hover, .site-head.on-ink .nav > ul > li > a[aria-current="page"] { color: #DFE3DE; }
+.site-head.on-ink .btn-primary { background: #DFE3DE; color: var(--ground); }
+.site-head.on-ink .btn-primary .dot { --dot: var(--sig-deep); }
+.top { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); height: 68px; }
+.brand { display: flex; align-items: center; gap: 9px; font-family: var(--f-display); font-weight: 800; font-size: 19px; letter-spacing: -0.035em; }
+.brand svg { width: 21px; height: 21px; }
+.nav { display: flex; align-items: center; gap: clamp(20px, 2.4vw, 40px); font-size: 14.5px; }
+.nav > ul { display: flex; align-items: center; gap: clamp(16px, 1.8vw, 24px); }
+.nav > ul > li > a { display: inline-flex; align-items: center; min-height: 44px; white-space: nowrap; color: var(--ink-70); transition: color 200ms var(--ease); }
+.nav > ul > li > a:hover { color: var(--ink); }
+.nav > ul > li > a[aria-current="page"] { color: var(--ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 6px; }
+.nav .btn { min-height: 38px; padding-inline: 18px; font-size: 14px; }
+/* The Community menu: a nav link that opens a short sheet of paper. */
+.navmenu { position: relative; }
+.navmenu-button { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; white-space: nowrap; color: var(--ink-70); font-size: 14.5px; transition: color 200ms var(--ease); }
+.navmenu-button:hover { color: var(--ink); }
+.navmenu-button svg { width: 10px; height: 10px; transition: transform 200ms var(--ease); }
+.navmenu-button[aria-expanded="true"] svg { transform: rotate(180deg); }
+.navmenu-panel { position: absolute; z-index: 40; top: calc(100% + 10px); right: -12px; width: 320px; background: #DFE3DE; color: #16211D; border: 1px solid #C5CAC5; border-top: 2px solid #16211D; box-shadow: 0 18px 40px rgb(22 33 29 / .14); }
+.navmenu-panel::before { content: ''; position: absolute; left: 0; right: 0; top: -12px; height: 12px; }
+.navmenu-panel li + li { border-top: 1px solid #C5CAC5; }
+.navmenu-link { display: grid; grid-template-columns: 40px minmax(0, 1fr); align-items: center; gap: 14px; padding: 14px 16px; color: #16211D; transition: background-color 200ms var(--ease); }
+.navmenu-link:hover, .navmenu-link:focus-visible { background: #E9ECE7; }
+.navmenu-icon { display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid #C5CAC5; transition: border-color 200ms var(--ease); }
+.navmenu-link:hover .navmenu-icon { border-color: #16211D; }
+.navmenu-icon svg { width: 18px; height: 18px; }
+.navmenu-text { display: grid; gap: 2px; }
+.navmenu-label { font-size: 15px; font-weight: 600; letter-spacing: -0.005em; }
+.navmenu-note { font-size: 13px; line-height: 1.35; color: #525B57; }
+.menu-btn { display: none; min-height: 44px; min-width: 44px; align-items: center; justify-content: center; gap: 8px; font-size: 15px; }
+.menu-btn svg { width: 16px; height: 16px; }
+@media (max-width: 1000px) {
+  .nav > ul, .nav > .btn { display: none; }
+  .menu-btn { display: inline-flex; }
+}
+/* The sheet: a full-screen <dialog>, which traps focus and closes on Escape. */
+.sheet { width: 100%; max-width: none; height: 100%; max-height: none; margin: 0; padding: 0; border: 0; background: var(--paper); color: var(--ink); }
+.sheet::backdrop { background: #16211D; opacity: .28; }
+.sheet-inner { padding-bottom: var(--s3); }
+.sheet-top { display: flex; align-items: center; justify-content: space-between; height: 68px; margin-bottom: var(--s3); }
+.sheet-top .t-note { font-size: 15px; color: var(--ink-70); }
+.sheet-close { min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; justify-content: flex-end; }
+.sheet-close svg { width: 18px; height: 18px; }
+.sheet-nav { display: grid; gap: var(--s4); }
+.sheet-main { display: grid; gap: var(--s2); }
+.sheet-main a { display: block; padding-block: 9px; font-family: var(--f-display); font-weight: 600; font-size: clamp(23px, 2.1vw, 30px); letter-spacing: -0.024em; line-height: 1.12; }
+.sheet-main a[aria-current="page"] { color: var(--live); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 7px; }
+.sheet-community { display: grid; gap: var(--s1); }
+.sheet-label { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-50); }
+.sheet-tiles { border-top: 1px solid var(--ink-13); }
+.sheet-tiles li { border-bottom: 1px solid var(--ink-13); }
+.sheet-tile { display: grid; grid-template-columns: 44px minmax(0, 1fr); align-items: center; column-gap: 14px; padding: 12px 0; }
+.sheet-tile svg { grid-row: 1 / span 2; box-sizing: content-box; width: 20px; height: 20px; padding: 11px; border: 1px solid var(--ink-13); }
+.sheet-tile-label { font-family: var(--f-display); font-weight: 600; font-size: 20px; letter-spacing: -0.02em; line-height: 1.1; }
+.sheet-tile-note { font-size: 13px; line-height: 1.35; color: var(--ink-70); }
+.sheet-join { display: flex; width: 100%; min-height: 48px; }
+
+/* ── Hero ─────────────────────────────────────────────────────────────── */
+.hero { padding-top: clamp(40px, 6vw, 96px); padding-bottom: var(--sec); }
+.hero-h1 { font-family: var(--f-display); font-weight: 800; font-size: min(9.4vw, 132px); line-height: .92; letter-spacing: -0.045em; }
+/* Two set lines from tablet up; below that the words wrap on their own. */
+.hero-h1 .ln { display: block; white-space: nowrap; }
+@media (max-width: 699px) { .hero-h1 { font-size: clamp(46px, 13.4vw, 72px); } .hero-h1 .ln { display: inline; white-space: normal; } }
+.hero-h1 .w { display: inline-block; overflow: hidden; vertical-align: top; padding: .04em .1em .24em; margin: -.04em -.1em -.24em; }
+/* The mask is only for the rise. Once the words are up it comes off, so no
+   descender, overhang or tight-tracked edge is ever clipped. */
+.hero-h1.revealed .w { overflow: visible; }
+.hero-h1 .w > span { display: inline-block; }
+.hero-row { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); gap: var(--s4) clamp(24px, 6vw, 120px); margin-top: clamp(32px, 4vw, 56px); align-items: end; }
+.hero-lede { font-size: clamp(18px, 1.6vw, 22px); line-height: 1.45; color: var(--ink-70); max-width: 38ch; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: var(--s3); }
+.facts { border-top: 1px solid var(--ink); display: grid; }
+.facts li { padding-block: 12px; border-bottom: 1px solid var(--ink-13); font-size: 15px; display: flex; justify-content: space-between; gap: 12px; }
+.facts li span:last-child { color: var(--ink-50); font-family: var(--f-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; align-self: center; }
+@media (max-width: 860px) { .hero-row { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 560px) {
+  .hero-actions .btn { flex: 1 1 100%; min-height: 48px; }
+  .hero-row { gap: var(--s4); }
+}
+
+/* The product stage: flat on the page. */
+.stage { margin-top: clamp(56px, 7vw, 104px); position: relative; }
+.stage-cap { display: flex; justify-content: space-between; gap: 12px; margin-top: 14px; }
+.stagebox { position: relative; }
+
+/* ── Device outlines and scaled screens ───────────────────────────────── */
+/* A device is only its outline: one thin light line at the guide's 14px
+   radius, the screen pushed almost to it. Light travels along that line. */
+.device { position: relative; border: 1px solid var(--ink-28); border-radius: 14px; padding: 7px; }
+.screen { position: relative; overflow: hidden; background: #16211D; border-radius: 7px; }
+.trace { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; z-index: 4; }
+.trace path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.trace .halo { stroke: #6FCB9F; stroke-width: 7; opacity: .75; filter: url(#glow); }
+.trace .core { stroke: #0E6B4E; stroke-width: 1.6; }
+.trace .rest { stroke: var(--ink-28); stroke-width: 1; }
+.canvas { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+.screen-phone { display: none; }
+@media (max-width: 699px) {
+  .screen-desk { display: none; }
+  .screen-phone { display: block; }
+  .stage .device { max-width: 420px; margin-inline: auto; }
+}
+
+/* ── The app (member and merchant) — its own ground, same guide ──────── */
+.app {
+  --a-bg: #16211D; --a-2: #1E2C27; --a-line: rgb(223 227 222 / .14); --a-fg: #DFE3DE;
+  --a-70: #ABB1AC; --a-50: #939995; --a-live: #7C8CC5; --a-ok: #6FCB9F; --a-warn: #E3B667;
+  background: var(--a-bg); color: var(--a-fg); font-family: var(--f-text); font-size: 14px; line-height: 1.45;
+  -webkit-font-smoothing: antialiased; overflow: hidden;
+}
+.app .lbl { font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--a-50); }
+.app .num { font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.app .bar-top { height: 56px; display: flex; align-items: center; justify-content: space-between; padding-inline: 24px; border-bottom: 1px solid var(--a-line); }
+.app .bar-top .l { display: flex; align-items: center; gap: 28px; }
+.app .lock { display: flex; align-items: center; gap: 8px; font-family: var(--f-display); font-weight: 800; font-size: 17px; letter-spacing: -0.035em; }
+.app .lock svg { width: 18px; height: 18px; }
+.app .lock i { width: 1px; height: 16px; background: var(--a-line); margin-inline: 4px; }
+.app .lock em { font-style: normal; font-family: var(--f-text); font-weight: 500; font-size: 14px; letter-spacing: 0; color: var(--a-70); }
+.app .tabs { display: flex; gap: 22px; color: var(--a-50); font-size: 14px; }
+.app .tabs .on { color: var(--a-fg); }
+.app .ava { width: 30px; height: 30px; border-radius: 999px; border: 1px solid var(--a-line); display: grid; place-items: center; font-size: 11.5px; font-weight: 600; color: var(--a-70); }
+.app .pillb { display: inline-flex; align-items: center; justify-content: center; height: 32px; padding-inline: 14px; border-radius: 999px; border: 1px solid var(--a-line); font-size: 13px; font-weight: 500; color: var(--a-fg); white-space: nowrap; }
+.app .pillb.solid { background: var(--a-fg); color: var(--a-bg); border-color: var(--a-fg); }
+
+
+/* Shared bento vocabulary for this page: one line weight, padding on the
+   rows so every rule runs wall to wall, header / main / footer in a cell. */
+.who { font-size: 15px; font-weight: 500; letter-spacing: -0.01em; }
+.ck { font-size: 13.5px; color: var(--ink-50); }
+.bx { --line: var(--ink-28); --px: clamp(20px, 2.6vw, 36px); border: 1px solid var(--line); display: grid; }
+.bx + .bx { border-top: 0; }
+.cell { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; min-width: 0; }
+.c-h, .c-f { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 56px; padding: 0 var(--px); }
+.c-h { border-bottom: 1px solid var(--line); }
+.c-f { border-top: 1px solid var(--line); }
+.c-m { display: grid; align-content: start; gap: 18px; padding: clamp(26px, 3vw, 40px) var(--px); }
+.c-m h3 { font-family: var(--f-display); font-weight: 600; font-size: clamp(20px, 1.8vw, 26px); line-height: 1.15; letter-spacing: -0.022em; text-wrap: balance; max-width: 22ch; }
+.c-m p { font-size: 15px; line-height: 1.55; color: var(--ink-70); max-width: 44ch; }
+.note { font-size: 13.5px; color: var(--ink-50); }
+
+/* ── Hero ─────────────────────────────────────────────────────────────── */
+.phero { padding-bottom: var(--sec); }
+.phero .hero-h1 { font-size: min(7.9vw, 110px); }
+@media (max-width: 699px) { .phero .hero-h1 { font-size: clamp(42px, 11.6vw, 64px); text-wrap: balance; } }
+.page-label { display: flex; gap: 14px; margin-bottom: clamp(24px, 3vw, 40px); }
+.page-label b { font-weight: 400; color: var(--live); }
+.facts.figs li { align-items: baseline; }
+.facts.figs li span:last-child { font-family: var(--f-text); font-size: 16px; font-weight: 600; letter-spacing: -0.01em; text-transform: none; color: var(--ink); font-variant-numeric: tabular-nums; }
+.facts.figs li span.live:last-child { color: var(--live); }
+
+/* Merchant counter app, landscape tablet canvas 1200 wide. Action on the
+   left, context on the right — the layout of the real app at this width. */
+.app .lock em { color: var(--a-fg); }
+.app .bar-top .r { display: flex; align-items: center; gap: 22px; }
+.mc { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.mc-l { display: grid; align-content: start; gap: 18px; padding: 28px 32px 32px; border-right: 1px solid var(--a-line); }
+.mc-amt { font-size: 64px; line-height: 1; letter-spacing: -0.04em; }
+.memo { height: 44px; display: flex; align-items: center; padding-inline: 14px; border: 1px solid var(--a-line); color: var(--a-70); font-size: 14px; }
+.kv2 { border-top: 1px solid var(--a-line); }
+.kv2 div { display: flex; justify-content: space-between; gap: 12px; padding-block: 11px; border-bottom: 1px solid var(--a-line); color: var(--a-70); font-size: 14px; }
+.kv2 b { color: var(--a-fg); font-weight: 600; font-variant-numeric: tabular-nums; }
+.kv2 .ok b { color: var(--a-ok); }
+.keys { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--a-line); border: 1px solid var(--a-line); }
+.keys span { background: var(--a-bg); height: 54px; display: grid; place-items: center; font-size: 19px; font-weight: 500; font-variant-numeric: tabular-nums; transition: background-color 140ms linear; }
+.keys span.hit { background: #2A3B35; }
+.keys svg { width: 22px; height: 15px; }
+.go { display: flex; align-items: center; justify-content: center; height: 50px; border-radius: 999px; background: var(--a-fg); color: var(--a-bg); font-weight: 500; font-size: 15.5px; transition: transform 160ms var(--ease); }
+.go.hit { transform: scale(.98); }
+.alt2 { display: flex; justify-content: center; gap: 22px; font-size: 13.5px; color: var(--a-70); }
+.alt2 span { border-bottom: 1px solid var(--a-line); padding-bottom: 2px; }
+.mc-r { display: grid; grid-template-rows: auto auto minmax(0, 1fr) auto; }
+.sec-h { display: flex; justify-content: space-between; align-items: baseline; padding: 16px 24px; border-bottom: 1px solid var(--a-line); }
+.wait { background: rgb(227 182 103 / .06); border-bottom: 1px solid var(--a-line); padding: 16px 24px 18px; display: grid; gap: 8px; }
+.wait .t { display: flex; justify-content: space-between; align-items: baseline; font-size: 15px; }
+.wait .s { color: var(--a-50); font-size: 13px; }
+.rcpt { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12.5px; color: var(--a-70); }
+.rcpt span { display: inline-flex; align-items: center; gap: 6px; }
+.rcpt i { width: 6px; height: 6px; border-radius: 999px; background: var(--a-ok); }
+.rcpt i.p { background: var(--a-50); }
+.wait .acts2 { display: flex; gap: 8px; margin-top: 4px; }
+.rows2 { padding: 4px 24px; }
+.rows2 div { display: grid; grid-template-columns: minmax(0, 1fr) 54px 92px 92px; align-items: center; gap: 12px; padding-block: 12px; border-bottom: 1px solid var(--a-line); font-size: 14px; }
+.rows2 div:last-child { border-bottom: 0; }
+.rows2 .stf { color: var(--a-50); font-size: 13px; }
+.rows2 .num { text-align: right; }
+.st3 { justify-self: end; font-family: var(--f-mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; padding: 4px 8px; border-radius: 999px; border: 1px solid var(--a-line); color: var(--a-50); }
+.st3.ok { color: var(--a-ok); border-color: rgb(111 203 159 / .35); }
+.st3.wt { color: var(--a-warn); border-color: rgb(227 182 103 / .35); }
+.pay-f { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 18px 24px; border-top: 1px solid var(--a-line); }
+.pay-f .num { font-size: 26px; letter-spacing: -0.03em; }
+.pay-f .cap2 { color: var(--a-50); font-size: 13px; display: block; }
+/* Phone fallback canvas 390 wide: the charge, nothing else */
+.mp { display: grid; gap: 16px; padding: 20px 18px 24px; }
+.mp .mc-amt { font-size: 54px; }
+
+/* ── 01 The difference: a calculator, on ink ─────────────────────────── */
+.calc { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.calc-h { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); align-items: center; gap: 20px clamp(32px, 5vw, 80px); padding: clamp(26px, 3vw, 40px) var(--px); border-bottom: 1px solid var(--line); }
+.vol { display: grid; gap: 6px; }
+.vol .fig { font-size: clamp(48px, 5.4vw, 84px); line-height: .95; letter-spacing: -0.04em; }
+.rng { display: grid; gap: 10px; }
+.rng input { -webkit-appearance: none; appearance: none; width: 100%; height: 28px; background: transparent; cursor: pointer; margin: 0; }
+.rng input::-webkit-slider-runnable-track { height: 2px; background: linear-gradient(to right, var(--ink) var(--p, 18%), var(--ink-28) var(--p, 18%)); }
+.rng input::-moz-range-track { height: 2px; background: var(--ink-28); }
+.rng input::-moz-range-progress { height: 2px; background: var(--ink); }
+.rng input::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; border-radius: 999px; background: var(--ink); border: 0; margin-top: -11px; box-shadow: 0 0 0 6px rgb(223 227 222 / .08); }
+.rng input::-moz-range-thumb { width: 24px; height: 24px; border-radius: 999px; background: var(--ink); border: 0; }
+.rng .ends { display: flex; justify-content: space-between; font-size: 13px; color: var(--ink-50); }
+.calc .cell + .cell { border-left: 1px solid var(--line); }
+.calc .c-m { gap: 14px; }
+.take { font-size: clamp(40px, 4.2vw, 64px); line-height: .95; letter-spacing: -0.035em; transition: opacity 120ms linear; }
+.ours .take { color: var(--settled); }
+.tbar { height: 10px; background: var(--ink-13); position: relative; }
+.tbar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--ink-50); transform-origin: 0 50%; transition: width 500ms var(--ease); }
+.ours .tbar i { background: var(--settled); }
+.calc-f { grid-column: 1 / -1; display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 12px clamp(24px, 4vw, 64px); padding: clamp(22px, 2.6vw, 32px) var(--px); border-top: 1px solid var(--line); }
+.calc-f .fig { font-size: clamp(34px, 3.6vw, 54px); line-height: 1; letter-spacing: -0.035em; color: var(--settled); }
+.calc-f p { font-size: 15px; line-height: 1.5; color: var(--ink-70); max-width: 52ch; }
+.calc-note { margin-top: 14px; max-width: 110ch; }
+@media (max-width: 760px) {
+  .calc { grid-template-columns: minmax(0, 1fr); }
+  .calc-h { grid-template-columns: minmax(0, 1fr); }
+  .calc .cell + .cell { border-left: 0; border-top: 1px solid var(--line); }
+  .calc-f { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ── 02 At the counter: the steps drive the screen ───────────────────── */
+.ctr { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+.stp { display: flex; flex-direction: column; }
+.stp button { flex: 1 0 auto; align-content: center; }
+.stp button { position: relative; display: grid; grid-template-columns: 26px minmax(0, 1fr); column-gap: 14px; row-gap: 6px; text-align: left; padding: 30px var(--px); border-bottom: 1px solid var(--line); transition: background-color 300ms var(--ease); }
+.stp button:last-child { border-bottom: 0; }
+.stp .n { width: 26px; height: 26px; border-radius: 999px; border: 1px solid var(--ink-28); display: grid; place-items: center; font-family: var(--f-mono); font-size: 11px; color: var(--ink-50); transition: background-color 300ms var(--ease), color 300ms var(--ease), border-color 300ms var(--ease); }
+.stp .t { font-size: 17px; font-weight: 500; letter-spacing: -0.01em; color: var(--ink-50); align-self: center; transition: color 300ms var(--ease); }
+.stp .b { grid-column: 2; font-size: 14.5px; line-height: 1.5; color: var(--ink-70); display: grid; grid-template-rows: 0fr; transition: grid-template-rows 420ms var(--ease); }
+.stp .b > span { overflow: hidden; }
+.stp button.on { background: var(--paper-2); }
+.stp button.on .n { background: var(--live); border-color: var(--live); color: var(--paper); }
+.stp button.on .t { color: var(--ink); }
+.stp button.on .b { grid-template-rows: 1fr; }
+.stp button.done .n { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.stp button.done .t { color: var(--ink); }
+.stp .pg { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--live); transform: scaleX(0); transform-origin: 0 50%; }
+.ctr-s { border-left: 1px solid var(--line); padding: clamp(20px, 2.4vw, 32px); display: grid; align-content: center; }
+.tab-st { display: none; }
+.tab-st.on { display: grid; }
+/* tablet canvas 1000 x 600, four states */
+.ts { height: 424px; }
+/* Narrow: the same tablet states reflowed at phone width, so the screen stays readable. */
+.canvas.narrow .ts { height: 470px; }
+.canvas.narrow .ts-1, .canvas.narrow .ts-3 { grid-template-columns: minmax(0, 1fr); align-content: start; }
+.canvas.narrow .ts-1 > div + div, .canvas.narrow .ts-3 > div + div { border-left: 0; padding-top: 0 !important; }
+.canvas.narrow .ts-1 > div:first-child .kv2 { display: none; }
+.canvas.narrow .ts-1 .keys span { height: 44px; }
+.canvas.narrow .ts-3 > div + div { display: none; }
+.canvas.narrow .ts-4 .kv2, .canvas.narrow .ts-4 .go { width: 300px !important; }
+.ts-1 > div, .ts-3 > div { padding: 24px 26px !important; }
+.ts .mc-amt { font-size: 54px; }
+.ts .keys span { height: 50px; }
+.ts-3 .big2 { font-size: 26px; }
+.qrbox { width: 210px !important; height: 210px !important; }
+.ts-4 .kv2 { width: 340px !important; }
+.ts-1 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.ts-1 > div { padding: 30px 32px; display: grid; align-content: start; gap: 18px; }
+.ts-1 > div + div { border-left: 1px solid var(--a-line); }
+.ts-c { place-content: center; justify-items: center; text-align: center; gap: 18px; }
+.qrbox { width: 236px; height: 236px; background: #DFE3DE; padding: 14px; }
+.qrbox svg { width: 100%; height: 100%; }
+.qrbox rect { fill: #16211D; }
+.ts-3 { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); }
+.ts-3 > div { padding: 30px 32px; display: grid; align-content: start; gap: 16px; }
+.ts-3 > div + div { border-left: 1px solid var(--a-line); }
+.big2 { font-family: var(--f-display); font-weight: 600; font-size: 30px; line-height: 1.1; letter-spacing: -0.025em; }
+.rlist div { display: flex; justify-content: space-between; align-items: center; padding-block: 12px; border-bottom: 1px solid var(--a-line); font-size: 14.5px; }
+.rlist div:first-child { border-top: 1px solid var(--a-line); }
+.rlist .ok { color: var(--a-ok); font-size: 13px; }
+.rlist .p { color: var(--a-50); font-size: 13px; }
+.okc { width: 64px; height: 64px; border-radius: 999px; border: 1px solid var(--a-ok); color: var(--a-ok); display: grid; place-items: center; }
+.okc svg { width: 26px; height: 26px; }
+.ts-4 .kv2 { width: 380px; text-align: left; }
+.pan3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.pan3 .cell, .fnd2 .cell { grid-template-rows: minmax(0, 1fr) auto; }
+.pan3 .cell + .cell { border-left: 1px solid var(--line); }
+@media (max-width: 980px) {
+  .ctr { grid-template-columns: minmax(0, 1fr); }
+  .ctr-s { border-left: 0; border-top: 1px solid var(--line); order: -1; }
+}
+@media (max-width: 860px) {
+  .pan3 { grid-template-columns: minmax(0, 1fr); }
+  .pan3 .cell + .cell { border-left: 0; border-top: 1px solid var(--line); }
+}
+
+/* ── 03 Fit: two columns, row for row ────────────────────────────────── */
+.fit { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto auto auto; }
+.fit .cell { grid-row: span 3; grid-template-rows: subgrid; }
+.fit .cell + .cell { border-left: 1px solid var(--line); }
+.fit .c-h { justify-content: flex-start; gap: 12px; min-height: 64px; }
+.fit .c-h h3 { font-family: var(--f-display); font-weight: 600; font-size: clamp(20px, 1.8vw, 26px); letter-spacing: -0.022em; }
+.mk { width: 26px; height: 26px; border-radius: 999px; display: grid; place-items: center; flex: none; }
+.mk svg { width: 13px; height: 13px; }
+.mk.y { background: var(--settled); color: var(--paper); }
+.mk.n { border: 1px solid var(--ink-28); color: var(--ink-50); }
+.crit li { display: flex; align-items: center; gap: 14px; padding: 16px var(--px); border-bottom: 1px solid var(--ink-13); font-size: clamp(16px, 1.3vw, 18px); }
+.crit li:last-child { border-bottom: 0; }
+.crit li .x { width: 12px; height: 1.5px; background: var(--ink-50); flex: none; margin-inline: 7px; }
+.crit li .y2 { width: 26px; display: grid; place-items: center; color: var(--settled); flex: none; }
+.crit li .y2 svg { width: 15px; height: 15px; }
+.fit .c-f { min-height: 0; padding-block: 20px; font-size: 14.5px; line-height: 1.55; color: var(--ink-70); display: block; }
+.fit .no .crit li { color: var(--ink-70); }
+@media (max-width: 760px) {
+  .fit { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
+  .fit .cell { grid-row: auto; grid-template-rows: auto auto auto; }
+  .fit .cell + .cell { border-left: 0; border-top: 1px solid var(--line); }
+}
+
+/* ── 04 Founding partners, on ink ─────────────────────────────────────── */
+.perk { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.perk > div { display: grid; gap: 6px; align-content: start; padding: clamp(24px, 2.6vw, 34px) var(--px); }
+.perk > div + div { border-left: 1px solid var(--line); }
+.perk .fig { font-size: clamp(26px, 2.5vw, 38px); line-height: 1.05; letter-spacing: -0.03em; }
+.perk .live .fig { color: var(--live); }
+.perk .note { margin-top: 2px; }
+.fnd2 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.fnd2 .cell + .cell { border-left: 1px solid var(--line); }
+.six { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--ink-13); }
+.six li { display: flex; align-items: baseline; gap: 12px; padding-block: 12px; border-bottom: 1px solid var(--ink-13); font-size: 15px; }
+.six li:nth-child(odd) { padding-right: 16px; }
+.six li:nth-child(even) { padding-left: 16px; border-left: 1px solid var(--ink-13); }
+.six li b { font-family: var(--f-mono); font-weight: 400; font-size: 11px; color: var(--ink-50); }
+.six li.last { color: var(--settled); }
+.six li.last b { color: var(--settled); }
+.terms6 { border-top: 1px solid var(--ink-13); }
+.terms6 div { display: flex; justify-content: space-between; gap: 12px; padding-block: 11px; border-bottom: 1px solid var(--ink-13); font-size: 15px; color: var(--ink-70); }
+.terms6 dd { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; }
+@media (max-width: 1000px) {
+  .perk { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .perk > div:nth-child(3) { border-left: 0; }
+  .perk > div:nth-child(n+3) { border-top: 1px solid var(--line); }
+}
+@media (max-width: 760px) {
+  .fnd2 { grid-template-columns: minmax(0, 1fr); }
+  .fnd2 .cell + .cell { border-left: 0; border-top: 1px solid var(--line); }
+}
+@media (max-width: 480px) {
+  .perk { grid-template-columns: minmax(0, 1fr); }
+  .perk > div + div { border-left: 0 !important; border-top: 1px solid var(--line); }
+  .six { grid-template-columns: minmax(0, 1fr); }
+  .six li:nth-child(n) { padding-inline: 0; border-left: 0; }
+}
+
+/* ── 05 The money: the clock, then the refund hand-off ───────────────── */
+.track { position: relative; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.track > div { position: relative; display: grid; gap: 8px; align-content: start; padding: clamp(28px, 3vw, 40px) var(--px); }
+.track > div + div { border-left: 1px solid var(--line); }
+.track .knob { position: absolute; top: -7px; left: calc(50% - 7px); width: 13px; height: 13px; border-radius: 999px; background: var(--paper); border: 1px solid var(--ink-50); z-index: 3; }
+.track .day30 .knob { background: var(--live); border-color: var(--live); }
+.track .when { font-size: clamp(30px, 3vw, 44px); line-height: 1; letter-spacing: -0.035em; }
+.track .day30 .when { color: var(--live); }
+.track .what { font-size: 17px; font-weight: 500; letter-spacing: -0.01em; margin-top: 6px; }
+.track p { font-size: 14.5px; line-height: 1.5; color: var(--ink-70); max-width: 34ch; }
+.rf-h { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); align-items: end; gap: 16px clamp(32px, 5vw, 80px); padding: clamp(28px, 3vw, 40px) var(--px); }
+.rf-h h3 { font-family: var(--f-display); font-weight: 600; font-size: clamp(22px, 2.2vw, 32px); line-height: 1.12; letter-spacing: -0.025em; text-wrap: balance; max-width: 24ch; }
+.rf-h p { font-size: 15px; line-height: 1.55; color: var(--ink-70); }
+.rf { position: relative; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.rf .cell + .cell { border-left: 1px solid var(--line); }
+.rf .c-m { padding: clamp(20px, 2.4vw, 28px) var(--px); }
+.role { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; }
+.role .av { width: 26px; height: 26px; border-radius: 999px; border: 1px solid var(--ink-28); display: grid; place-items: center; font-size: 10.5px; font-weight: 600; color: var(--ink-70); }
+.pane { display: grid; gap: 0; align-content: start; height: 100%; }
+.pane > .lbl { margin-bottom: 14px; }
+.pane > .msg { margin-top: 12px; }
+.pane > .bigp, .pane > span:has(.bigp) { margin-bottom: 6px; }
+.pane > * { transition: opacity 400ms var(--ease); }
+.pane .lbl { font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-50); }
+.pane .row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 15px; color: var(--ink-70); padding-block: 12px; border-bottom: 1px solid var(--ink-13); }
+.pane .row b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+.pane .row:first-of-type { border-top: 1px solid var(--ink); }
+.pane .bigp { font-size: clamp(40px, 4vw, 60px); font-weight: 600; letter-spacing: -0.04em; line-height: 1; font-variant-numeric: tabular-nums; }
+.pane .was { font-size: 17px; color: var(--ink-50); text-decoration: line-through; margin-left: 12px; font-weight: 500; }
+.pane .pbtn { justify-self: start; display: inline-flex; align-items: center; min-height: 46px; padding-inline: 24px; border-radius: 999px; background: var(--ink); color: var(--paper); font-size: 15px; font-weight: 500; margin-top: 22px; transition: transform 160ms var(--ease), opacity 200ms, background-color 200ms var(--ease); }
+.pane .pbtn:hover { background: var(--live); }
+.pane .pbtn:active { transform: scale(.97); }
+.pane .pbtn[disabled] { opacity: .3; cursor: default; background: var(--ink); }
+.pane .pbtn.gone { display: none; }
+.pane .msg { font-size: 14px; color: var(--ink-50); }
+.pane .msg.ok { color: var(--settled); }
+.pane.idle > * { opacity: .35; }
+.rf .c-m { align-content: stretch; }
+.rf-f { grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px clamp(24px, 4vw, 56px); padding: 20px var(--px); }
+.rf-f .fig { font-size: 20px; letter-spacing: -0.02em; }
+.rf-f p { font-size: 14.5px; line-height: 1.5; color: var(--ink-70); }
+@media (max-width: 860px) {
+  .track { grid-template-columns: minmax(0, 1fr); }
+  .track > div + div { border-left: 0; border-top: 1px solid var(--line); }
+  .track .knob { left: -7px; top: calc(clamp(28px, 3vw, 40px) + 10px); }
+  .rf-h, .rf-f { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 680px) {
+  .rf { grid-template-columns: minmax(0, 1fr); }
+  .rf .cell + .cell { border-left: 0; border-top: 1px solid var(--line); }
+  .rf .c-h .ck { display: none; }
+}
+.rail2 { position: absolute; left: -1px; top: -1px; height: 2px; width: calc(100% + 2px); background: var(--ink); transform: scaleX(0); transform-origin: 0 50%; z-index: 2; pointer-events: none; }
+@media (max-width: 860px) { .rail2 { width: 2px; height: calc(100% + 2px); transform: scaleY(0); transform-origin: 50% 0; } }
+
+/* ── Close ────────────────────────────────────────────────────────────── */
+.close .h2 { font-size: clamp(36px, 4.8vw, 72px); max-width: 16ch; }
+
+/* ── Close + footer ───────────────────────────────────────────────────── */
+.close .h2 { font-size: clamp(40px, 5.6vw, 88px); max-width: 12ch; }
+.foot { border-top: 1px solid var(--ink); padding-block: var(--s5); display: grid; grid-template-columns: minmax(0, 1.4fr) repeat(4, minmax(0, 1fr)); gap: var(--s4) var(--s4); font-size: 14.5px; }
+.foot h4 { margin: 0 0 12px; font-family: var(--f-mono); font-weight: 400; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-50); }
+.foot li + li { margin-top: 6px; }
+.foot a { color: var(--ink-70); } .foot a:hover { color: var(--ink); }
+.foot .about { color: var(--ink-70); max-width: 30ch; display: grid; gap: var(--s2); align-content: start; }
+.legal { grid-column: 1 / -1; border-top: 1px solid var(--ink-13); padding-top: var(--s3); color: var(--ink-50); font-size: 12.5px; display: grid; gap: 8px; max-width: 110ch; }
+@media (max-width: 900px) { .foot { grid-template-columns: repeat(2, minmax(0, 1fr)); } .foot .about { grid-column: 1 / -1; } }
+
+.mock-flag { position: fixed; left: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); z-index: 40; font-family: var(--f-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; background: #24409E; color: #E9ECE7; padding: 6px 11px; border-radius: 999px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .dot::after { animation: none; opacity: 0; }
+  *, *::before, *::after { transition-duration: 0ms !important; }
+}
+
+/* Hardware plates: the shop's drawn plates, with screens and an occluding fill. */
+.plate .oc { fill: var(--pg); stroke: none; }
+.plate .fl { fill: none; stroke: currentColor; stroke-width: 1.2; opacity: .45; }
+.plate .tx { fill: currentColor; font-family: var(--f-text); font-weight: 600; letter-spacing: -0.02em; }
+.plate .tx.big { font-family: var(--f-display); font-weight: 800; letter-spacing: -0.04em; }
+.plate .tx.mono { font-family: var(--f-mono); font-weight: 400; letter-spacing: .1em; }
+.plate .tx.dim { opacity: .55; }
+.plate .tx.serif { font-family: 'Fraunces', Georgia, serif; font-weight: 600; letter-spacing: -0.01em; }
+.plate .tx.neg { fill: var(--pg); }
+.plate .inv { fill: currentColor; }
+.plate .qbg { fill: var(--pg); }
+.plate .pill { fill: none; stroke: currentColor; stroke-width: 1; vector-effect: non-scaling-stroke; }
+.plate .hl { fill: none; stroke: currentColor; stroke-width: 1; vector-effect: non-scaling-stroke; opacity: .7; }
+.plate .hl.neg { stroke: var(--pg); }
+.plate .qf { fill: none; stroke: currentColor; stroke-width: 1.4; vector-effect: non-scaling-stroke; }
+.plate .qd { fill: currentColor; }
+.plate .ns * { vector-effect: non-scaling-stroke; }
+
+/* 04 Beyond financing: four cells, a picture each, on the same seams as the rest of the page. */
+.plate { --pg: var(--paper-2); --pl: #16211D; --pf: rgb(22 33 29 / .05); position: relative; background: var(--pg); color: var(--pl); overflow: hidden; }
+.plate[data-tone="ink"] { --pg: #16211D; --pl: #DFE3DE; --pf: rgb(223 227 222 / .06); }
+.plate[data-tone="land"] { --pg: #6B7F5C; --pl: #E9ECE7; --pf: rgb(233 236 231 / .1); }
+.plate svg { width: 100%; height: 100%; display: block; }
+.plate .bd { fill: var(--pf); stroke: currentColor; stroke-width: 2.5; stroke-linejoin: round; }
+.plate .ln2 { fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; }
+.inl { text-decoration: underline; text-decoration-color: var(--ink-28); text-underline-offset: 3px; }
+.by4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.by4 .cell { grid-template-rows: auto auto minmax(0, 1fr) auto; }
+.by4 .cell + .cell { border-left: 1px solid var(--line); }
+.by4 .vis.p svg { position: absolute; inset: 0; }
+.by4 .vis.p { background: var(--pg); }
+.by4 .vis { aspect-ratio: 5 / 4; border-bottom: 1px solid var(--line); overflow: hidden; position: relative; background: #DFE2DC; }
+.by4 .vis img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.by4 .vis.r img { object-fit: cover; }
+.by4 .vis.s { background: var(--paper-2); }
+.by4 .vis.s img { object-fit: cover; object-position: 50% 0; width: 72%; left: 14%; top: 10%; height: auto; border: 1px solid var(--ink-28); border-radius: 18px 18px 0 0; }
+.by4 .vis.s.m img { width: 64%; left: 18%; border-radius: 0; }
+.by4 .c-m { gap: 10px; }
+.by-f .c-f { border-top: 0; min-height: 64px; padding-block: 14px; flex-wrap: wrap; row-gap: 8px; color: var(--ink-70); font-size: 15px; }
+@media (max-width: 1100px) {
+  .by4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .by4 .cell:nth-child(3) { border-left: 0; }
+  .by4 .cell:nth-child(n+3) { border-top: 1px solid var(--line); }
+}
+@media (max-width: 640px) {
+  .by4 { grid-template-columns: minmax(0, 1fr); }
+  .by4 .cell + .cell { border-left: 0; border-top: 1px solid var(--line); }
+}
+.mock-note { position: fixed; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); z-index: 40; font-family: var(--f-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; background: #16211D; color: #E9ECE7; padding: 8px 12px; border-radius: 999px; }
+
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="mark" viewBox="-168 -168 336 336">
+    <path d="M 148.28 -64 A 161.5 161.5 0 1 0 148.28 64 L 74.22 64 A 98 98 0 1 1 74.22 -64 Z" fill="currentColor" stroke="currentColor" stroke-width="4"/>
+    <path d="M 0 -8 H 114 V 8 H 0 Z" fill="currentColor"/>
+    <circle cx="0" cy="0" r="34" fill="currentColor"/>
+    <circle cx="131.5" cy="0" r="25.25" fill="none" stroke="currentColor" stroke-width="15.5"/>
+  </symbol>
+  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3.2"/></filter>
+  <symbol id="i-events" viewBox="0 0 18 18"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="3.5" width="13" height="12"/><path d="M2.5 7h13M6 2v3M12 2v3"/><path d="M5.5 10h2M5.5 12.5h2M10.5 10h2"/></g></symbol>
+  <symbol id="i-directory" viewBox="0 0 18 18"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l1.2-4h10.6l1.2 4"/><path d="M2.5 7.5c0 1.1.9 2 2 2s2-.9 2-2c0 1.1.9 2 2 2s2-.9 2-2c0 1.1.9 2 2 2s2-.9 2-2"/><path d="M3.5 9.3V15.5h11V9.3M7.5 15.5v-3.5h3v3.5"/></g></symbol>
+  <symbol id="i-shop" viewBox="0 0 18 18"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6.5h12l-1 9H4z"/><path d="M6.5 6.5V5a2.5 2.5 0 0 1 5 0v1.5"/></g></symbol>
+  <symbol id="arrow" viewBox="0 0 14 10"><path d="M0 5h12M8 1l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.4"/></symbol>
+  <symbol id="check" viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="back" viewBox="0 0 9 15"><path d="M8 1L2 7.5 8 14" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+  <symbol id="bell" viewBox="0 0 18 18"><path d="M4.5 12.5V8a4.5 4.5 0 0 1 9 0v4.5l1.5 1.5H3z M7.2 15.5a1.9 1.9 0 0 0 3.6 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></symbol>
+  <symbol id="plus" viewBox="0 0 18 18"><path d="M9 2v14M2 9h14" stroke="currentColor" stroke-width="1.8"/></symbol>
+  <symbol id="del" viewBox="0 0 24 16"><path d="M8 1h14v14H8L1 8z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M12 5l6 6M18 5l-6 6" stroke="currentColor" stroke-width="1.4"/></symbol>
+</svg>
+
+<header class="site-head" id="site-head">
+  <div class="wrap">
+    <div class="top">
+      <a class="brand" href="https://www.useclear.org/" aria-label="Clear, home"><svg aria-hidden="true"><use href="#mark"/></svg>Clear</a>
+      <nav class="nav" aria-label="Main">
+        <ul>
+          <li><a href="https://www.useclear.org/how">How it works</a></li>
+          <li><a href="https://www.useclear.org/shops" aria-current="page">For shops</a></li>
+          <li><a href="https://www.useclear.org/housing">Housing</a></li>
+          <li><a href="https://www.useclear.org/contribute">Contribute land</a></li>
+          <li><a href="https://www.useclear.org/coop">The co-op</a></li>
+          <li class="navmenu" id="navmenu">
+            <button type="button" class="navmenu-button" id="navmenu-btn" aria-expanded="false" aria-controls="navmenu-panel">Community<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></button>
+            <div class="navmenu-panel" id="navmenu-panel" hidden><ul>
+              <li><a class="navmenu-link" href="https://www.useclear.org/events"><span class="navmenu-icon"><svg aria-hidden="true"><use href="#i-events"/></svg></span><span class="navmenu-text"><span class="navmenu-label">Events</span><span class="navmenu-note">Calls, town halls and local meetings</span></span></a></li>
+              <li><a class="navmenu-link" href="https://www.useclear.org/directory"><span class="navmenu-icon"><svg aria-hidden="true"><use href="#i-directory"/></svg></span><span class="navmenu-text"><span class="navmenu-label">Directory</span><span class="navmenu-note">Local businesses that take Clear Pay</span></span></a></li>
+              <li><a class="navmenu-link" href="https://www.useclear.org/shop"><span class="navmenu-icon"><svg aria-hidden="true"><use href="#i-shop"/></svg></span><span class="navmenu-text"><span class="navmenu-label">Shop</span><span class="navmenu-note">Goods with the Clear name on them</span></span></a></li>
+            </ul></div>
+          </li>
+        </ul>
+        <a class="btn btn-primary" href="https://www.useclear.org/join"><span class="dot"></span>Join</a>
+        <button type="button" class="menu-btn" id="menu-btn" aria-haspopup="dialog">Menu<svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 4h14M1 8h14M1 12h14"/></svg></button>
+      </nav>
+    </div>
+  </div>
+</header>
+<dialog class="sheet" id="sheet" aria-label="Main">
+  <div class="sheet-inner wrap">
+    <div class="sheet-top"><span class="t-note">Menu</span><button type="button" class="sheet-close" id="sheet-close" aria-label="Close menu"><svg viewBox="0 0 18 18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 2l14 14M16 2L2 16"/></svg></button></div>
+    <nav class="sheet-nav">
+      <ul class="sheet-main">
+          <li><a href="https://www.useclear.org/">Home</a></li>
+          <li><a href="https://www.useclear.org/how">How it works</a></li>
+          <li><a href="https://www.useclear.org/shops" aria-current="page">For shops</a></li>
+          <li><a href="https://www.useclear.org/housing">Housing</a></li>
+          <li><a href="https://www.useclear.org/contribute">Contribute land</a></li>
+          <li><a href="https://www.useclear.org/coop">The co-op</a></li>
+          <li><a href="https://www.useclear.org/capital">Clear Capital</a></li>
+      </ul>
+      <section class="sheet-community" aria-labelledby="sheet-community-label">
+        <p class="sheet-label" id="sheet-community-label">Community</p>
+        <ul class="sheet-tiles">
+            <li><a class="sheet-tile" href="https://www.useclear.org/events"><svg aria-hidden="true"><use href="#i-events"/></svg><span class="sheet-tile-label">Events</span><span class="sheet-tile-note">Calls, town halls and local meetings</span></a></li>
+            <li><a class="sheet-tile" href="https://www.useclear.org/directory"><svg aria-hidden="true"><use href="#i-directory"/></svg><span class="sheet-tile-label">Directory</span><span class="sheet-tile-note">Local businesses that take Clear Pay</span></a></li>
+            <li><a class="sheet-tile" href="https://www.useclear.org/shop"><svg aria-hidden="true"><use href="#i-shop"/></svg><span class="sheet-tile-label">Shop</span><span class="sheet-tile-note">Goods with the Clear name on them</span></a></li>
+        </ul>
+      </section>
+      <a class="btn btn-primary sheet-join" href="https://www.useclear.org/join"><span class="dot"></span>Join</a>
+    </nav>
+  </div>
+</dialog>
+
+<main>
+  <!-- HERO — the question every service writer can answer, then the counter app. -->
+  <section class="hero phero wrap">
+    <div class="page-label label"><b>Partners</b>For shops</div>
+    <h1 class="hero-h1" id="hero-h1"><span class="ln">How many jobs a week</span> <span class="ln">do you write up and lose?</span></h1>
+    <div class="hero-row">
+      <div data-in>
+        <p class="hero-lede">Every service writer knows the number. Clear finances those customers at 2.5% of the ticket, pays you on net&#8209;30, and carries the default itself.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="https://www.useclear.org/join?as=shop"><span class="dot"></span>Talk to us about your shop</a>
+          <a class="btn btn-ghost" href="/shops/tools">See the tools</a>
+        </div>
+      </div>
+      <ul class="facts figs" data-in>
+        <li><span>Your rate</span><span class="live">2.5%</span></li>
+        <li><span>You are paid</span><span>net&#8209;30</span></li>
+        <li><span>Who bears a default</span><span>we do</span></li>
+        <li><span>Exclusivity</span><span>none</span></li>
+      </ul>
+    </div>
+
+    <div class="stage" id="stage">
+      <div class="stagebox" id="stagebox">
+        <div class="device" id="hero-device">
+          <!-- Landscape tablet: the counter app, owner signed in -->
+          <div class="screen screen-desk" data-w="1200">
+            <div class="canvas app" style="width:1200px">
+              <div class="bar-top">
+                <span class="lock"><svg><use href="#mark"/></svg>Clear<i></i><em>Mike's Tire</em></span>
+                <div class="r"><nav class="tabs"><span class="on">Counter</span><span>Charges</span><span>Payouts</span><span>Staff</span></nav><span class="ava">MK</span></div>
+              </div>
+              <div class="mc">
+                <div class="mc-l">
+                  <span class="lbl" data-a>New charge</span>
+                  <span class="num mc-amt" id="h-amt" data-a>$940.00</span>
+                  <div class="memo" data-a>Front pads and rotors</div>
+                  <div class="kv2" data-a>
+                    <div><span>Clear keeps 2.5%</span><b id="h-fee">$23.50</b></div>
+                    <div class="ok"><span>You get, on net&#8209;30</span><b id="h-net">$916.50</b></div>
+                  </div>
+                  <div class="keys" id="h-keys" data-a><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>.</span><span>0</span><span><svg><use href="#del"/></svg></span></div>
+                  <span class="go" id="h-go" data-a>Show the code</span>
+                  <div class="alt2" data-a><span>Scan their code</span><span>Enter a phone number</span></div>
+                </div>
+                <div class="mc-r">
+                  <div class="sec-h" data-a><span class="lbl">Waiting</span><span class="cap2" style="color:var(--a-50);font-size:13px">1 charge</span></div>
+                  <div class="wait" data-a>
+                    <div class="t"><span>D. Ramirez</span><span class="num">$612.00</span></div>
+                    <span class="s">Raised by Jen · 3 min ago · expires in 24 hours</span>
+                    <div class="rcpt"><span><i></i>Text delivered</span><span><i></i>Email delivered</span><span><i class="p"></i>Push sent</span></div>
+                    <div class="acts2"><span class="pillb">Resend</span><span class="pillb">Cancel</span></div>
+                  </div>
+                  <div data-a>
+                    <div class="sec-h"><span class="lbl">Today</span><span style="color:var(--a-50);font-size:13px">4 charges · $2,215.00 approved</span></div>
+                    <div class="rows2">
+                      <div><span>A. Nguyen</span><span class="stf">Jen</span><span class="num">$1,180.00</span><span class="st3 ok">Approved</span></div>
+                      <div><span>K. Brooks</span><span class="stf">Luis</span><span class="num">$455.00</span><span class="st3 ok">Approved</span></div>
+                      <div><span>T. Ortiz</span><span class="stf">Jen</span><span class="num">$387.00</span><span class="st3">Expired</span></div>
+                      <div><span>M. Patel</span><span class="stf">Jen</span><span class="num">$580.00</span><span class="st3 ok">Approved</span></div>
+                    </div>
+                  </div>
+                  <div class="pay-f" data-a><div><span class="lbl">Next payout</span><span class="cap2">Lands November 14 · 23 charges</span></div><span class="num">$4,210.00</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Phone: the fallback, the charge and nothing else -->
+          <div class="screen screen-phone" data-w="390">
+            <div class="canvas app" style="width:390px">
+              <div class="bar-top" style="padding-inline:18px"><span class="lock"><svg><use href="#mark"/></svg>Clear<i></i><em>Mike's Tire</em></span><span class="ava">MK</span></div>
+              <div class="mp">
+                <span class="lbl" data-a>New charge</span>
+                <span class="num mc-amt" id="h-amt-p" data-a>$940.00</span>
+                <div class="memo" data-a>Front pads and rotors</div>
+                <div class="kv2" data-a>
+                  <div><span>Clear keeps 2.5%</span><b id="h-fee-p">$23.50</b></div>
+                  <div class="ok"><span>You get, on net&#8209;30</span><b id="h-net-p">$916.50</b></div>
+                </div>
+                <div class="keys" id="h-keys-p" data-a><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>.</span><span>0</span><span><svg><use href="#del"/></svg></span></div>
+                <span class="go" data-a>Show the code</span>
+                <div class="alt2" data-a><span>Scan their code</span><span>Enter a phone number</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="stage-cap label"><span>The counter app</span><span>Sample shop</span></div>
+    </div>
+  </section>
+
+  <!-- 01 -->
+  <section class="sec band-ink" id="difference">
+    <div class="wrap">
+      <div class="head">
+        <div class="sec-label label"><b>01</b>The difference</div>
+        <h2 class="h2">Six to twelve per cent is not greed. It is the price of getting paid tomorrow.</h2>
+        <div class="aside"><p class="line">Klarna and Affirm settle the same day and have to fund every dollar of it. We wait thirty days, and collect most of it before your payout.</p></div>
+      </div>
+      <div class="bx calc body-gap">
+        <div class="calc-h">
+          <div class="vol"><span class="ck">Financed through Clear each month</span><span class="fig" id="cv-vol">$12,000</span></div>
+          <div class="rng"><input type="range" id="cv" min="2000" max="60000" step="500" value="12000" aria-label="Financed each month"><div class="ends"><span>$2,000</span><span>Drag to your month</span><span>$60,000</span></div></div>
+        </div>
+        <div class="cell theirs">
+          <div class="c-h"><span class="who">A 6% provider</span><span class="ck">Paid tomorrow</span></div>
+          <div class="c-m"><span class="ck">What they take each month</span><span class="fig take" id="cv-theirs">$720</span><span class="tbar" aria-hidden="true"><i id="cb-theirs" style="width:100%"></i></span></div>
+        </div>
+        <div class="cell ours">
+          <div class="c-h"><span class="who">Clear</span><span class="ck">Paid on net&#8209;30</span></div>
+          <div class="c-m"><span class="ck">What Clear takes each month</span><span class="fig take" id="cv-ours">$300</span><span class="tbar" aria-hidden="true"><i id="cb-ours" style="width:41.7%"></i></span></div>
+        </div>
+        <div class="calc-f">
+          <span class="fig" id="cv-kept">$5,040</span>
+          <p>Kept over a year, for waiting three extra weeks on money you were not going to see at all if the customer walked.</p>
+        </div>
+      </div>
+      <p class="note calc-note">Held at 6%, the low end. Longer 0% promotional plans and no-credit-needed programmes commonly run to 12% of the ticket. Rates vary by provider, plan length and customer; illustration, not a quote.</p>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section class="sec" id="counter">
+    <div class="wrap">
+      <div class="head">
+        <div class="sec-label label"><b>02</b>At the counter</div>
+        <h2 class="h2">Two taps for your writer. Three minutes for the customer.</h2>
+        <div class="aside"><p class="line">This is not a point of sale. It settles one number your own system already produced.</p></div>
+      </div>
+      <div class="bx ctr body-gap" id="ctr">
+        <div class="stp" id="stp" role="tablist" aria-label="At the counter">
+          <button type="button" class="on" data-s="0" role="tab"><span class="n">1</span><span class="t">Enter the amount</span><span class="b"><span>The number your own system already produced. No items, no tips, no splitting the ticket.</span></span><span class="pg"></span></button>
+          <button type="button" data-s="1" role="tab"><span class="n">2</span><span class="t">Turn the screen</span><span class="b"><span>The tablet shows a code. A new customer scans it and the app installs; a member just gets a notification.</span></span><span class="pg"></span></button>
+          <button type="button" data-s="2" role="tab"><span class="n">3</span><span class="t">The customer approves on their phone</span><span class="b"><span>They pick how to clear it and approve. The split is never chosen on your device, which matters if there is ever a dispute.</span></span><span class="pg"></span></button>
+          <button type="button" data-s="3" role="tab"><span class="n">4</span><span class="t">You see it confirmed</span><span class="b"><span>The charge sits waiting if their phone is dead. You can see whether the text was delivered before they drive off.</span></span><span class="pg"></span></button>
+        </div>
+        <div class="ctr-s">
+          <div class="device" id="ctr-device">
+            <div class="screen" data-w="760" data-h="480">
+              <div class="canvas app" style="width:760px;height:480px">
+                <div class="bar-top">
+                  <span class="lock"><svg><use href="#mark"/></svg>Clear<i></i><em>Mike's Tire</em></span>
+                  <span style="font-size:13px;color:var(--a-70)">Jen · Counter</span>
+                </div>
+                <div class="ts tab-st ts-1 on" data-st="0">
+                  <div>
+                    <span class="lbl">New charge</span>
+                    <span class="num mc-amt" id="c-amt">$940.00</span>
+                    <div class="memo">Front pads and rotors</div>
+                    <div class="kv2"><div><span>Clear keeps 2.5%</span><b>$23.50</b></div><div class="ok"><span>You get, on net&#8209;30</span><b>$916.50</b></div></div>
+                  </div>
+                  <div>
+                    <div class="keys" id="c-keys"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>.</span><span>0</span><span><svg><use href="#del"/></svg></span></div>
+                    <span class="go" id="c-go">Show the code</span>
+                  </div>
+                </div>
+                <div class="ts tab-st ts-c" data-st="1">
+                  <div class="qrbox"><svg id="qr2" viewBox="0 0 29 29" shape-rendering="crispEdges" aria-hidden="true"></svg></div>
+                  <span class="num" style="font-size:28px;letter-spacing:-0.03em">$940.00</span>
+                  <span style="color:var(--a-70)">Scan with your phone's camera to approve</span>
+                  <div class="alt2"><span>Scan their code</span><span>Enter a phone number</span></div>
+                </div>
+                <div class="ts tab-st ts-3" data-st="2">
+                  <div>
+                    <span class="lbl">Waiting for the customer</span>
+                    <span class="big2">D. Ramirez is choosing how to clear it.</span>
+                    <span style="color:var(--a-70)">$940.00 · front pads and rotors · raised by Jen</span>
+                    <div class="rlist">
+                      <div><span>Text</span><span class="ok">Delivered 4:12pm</span></div>
+                      <div><span>Email</span><span class="ok">Delivered 4:12pm</span></div>
+                      <div><span>Push</span><span class="p">Sent</span></div>
+                    </div>
+                  </div>
+                  <div>
+                    <span class="lbl">If they walk away</span>
+                    <span style="color:var(--a-70)">The charge waits for 24 hours. Nothing to re-enter.</span>
+                    <span class="pillb" style="justify-self:start">Resend</span>
+                    <span class="pillb" style="justify-self:start">Cancel the charge</span>
+                  </div>
+                </div>
+                <div class="ts tab-st ts-c ts-4" data-st="3">
+                  <span class="okc"><svg aria-hidden="true"><use href="#check"/></svg></span>
+                  <span class="big2">Approved</span>
+                  <div class="kv2">
+                    <div><span>Ticket</span><b>$940.00</b></div>
+                    <div><span>Customer's choice</span><b>Split in 4</b></div>
+                    <div class="ok"><span>You get, on net&#8209;30</span><b>$916.50</b></div>
+                  </div>
+                  <span class="go" style="width:340px">New charge</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bx pan3">
+        <div class="cell"><div class="c-m"><h3>Signup happens once per member, not once per shop.</h3><p>The first customer through your door signs up from scratch. By your twentieth, most people walking in already hold a line.</p></div><div class="c-f"><span class="ck">By your twentieth</span><span class="fig" style="font-size:15px">Just a number</span></div></div>
+        <div class="cell"><div class="c-m"><h3>Your existing signage is a reason to talk, not a reason not to.</h3><p>Synchrony takes your prime customers. Snap and Acima take the declines and can cost that customer close to double the ticket.</p></div><div class="c-f"><span class="ck">Keep what you have</span><span class="fig" style="font-size:15px">No exclusivity</span></div></div>
+        <div class="cell"><div class="c-m"><h3>No hardware required.</h3><p>The merchant app installs from a browser. A tablet, a phone or the shop PC will do. If you want ours, reserve it.</p><a class="more" href="/shops/tools#hardware" style="margin-top:4px">See the hardware<svg aria-hidden="true"><use href="#arrow"/></svg></a></div><div class="c-f"><span class="ck">Runs at</span><a class="fig" style="font-size:15px" href="https://merchant.useclear.org">merchant.useclear.org</a></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section class="sec" id="fit">
+    <div class="wrap">
+      <div class="head">
+        <div class="sec-label label"><b>03</b>Fit</div>
+        <h2 class="h2">We would rather say it now than lose you in month two.</h2>
+        <div class="aside"><p class="line">If Clear is wrong for your shop, we will say so on the first call.</p></div>
+      </div>
+      <div class="bx fit body-gap">
+        <div class="cell yes">
+          <div class="c-h"><span class="mk y"><svg aria-hidden="true"><use href="#check"/></svg></span><h3>This works for you if</h3></div>
+          <ul class="crit">
+            <li><span class="y2"><svg aria-hidden="true"><use href="#check"/></svg></span>Your tickets are $300 and up</li>
+            <li><span class="y2"><svg aria-hidden="true"><use href="#check"/></svg></span>You lose jobs because people cannot pay that day</li>
+            <li><span class="y2"><svg aria-hidden="true"><use href="#check"/></svg></span>You can wait thirty days for the money</li>
+          </ul>
+          <div class="c-f">Auto repair, tires, dental, veterinary, HVAC, appliances, furniture, equipment: trades where financing is already part of how the sale closes.</div>
+        </div>
+        <div class="cell no">
+          <div class="c-h"><span class="mk n"><span class="x" style="width:10px;height:1.5px;background:currentColor;display:block"></span></span><h3>It does not work for you if</h3></div>
+          <ul class="crit">
+            <li><span class="x"></span>Your average ticket is twelve dollars</li>
+            <li><span class="x"></span>You need the cash the same week</li>
+            <li><span class="x"></span>Waiting thirty days would strain the shop</li>
+          </ul>
+          <div class="c-f">We would rather say that now than sign you and lose you in month two. <a class="inl" href="#beyond">The rest of Clear may still fit.</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- 04 — for the shops financing doesn't fit -->
+  <section class="sec" id="beyond">
+    <div class="wrap">
+      <div class="head">
+        <div class="sec-label label"><b>04</b>Beyond financing</div>
+        <h2 class="h2">Not here for financing? Run the whole counter on Clear.</h2>
+        <div class="aside"><p class="line">The same app rings up the till, runs your tables, keeps your regulars and takes payments online. When they pay with Clear, you pay 1.5%.</p><a class="more" href="/shops/tools">See the tools<svg aria-hidden="true"><use href="#arrow"/></svg></a></div>
+      </div>
+      <div class="bx by4 body-gap"><div class="cell"><div class="c-h"><span class="who">The till</span></div><div class="vis p plate" data-tone="paper" data-kind="counter"><svg viewBox="30 66 340 272" aria-hidden="true"><g class="gar"><path class="bd" d="M132 318 Q132 302 200 302 Q268 302 268 318 L268 322 Q268 334 200 334 Q132 334 132 322 Z" pathLength="1"/><path class="bd" d="M150 302 Q150 292 200 292 Q250 292 250 302 Z" pathLength="1"/><path class="bd" d="M190 292 V262 H210 V292 Z" pathLength="1"/><path class="bd" d="M68 92 H332 A10 10 0 0 1 342 102 V264 A10 10 0 0 1 332 274 H68 A10 10 0 0 1 58 264 V102 A10 10 0 0 1 68 92 Z" pathLength="1"/><path class="bd" d="M61 86 H69 A9 9 0 0 1 78 95 V103 A9 9 0 0 1 69 112 H61 A9 9 0 0 1 52 103 V95 A9 9 0 0 1 61 86 Z" pathLength="1"/><path class="bd" d="M331 86 H339 A9 9 0 0 1 348 95 V103 A9 9 0 0 1 339 112 H331 A9 9 0 0 1 322 103 V95 A9 9 0 0 1 331 86 Z" pathLength="1"/><path class="bd" d="M61 254 H69 A9 9 0 0 1 78 263 V271 A9 9 0 0 1 69 280 H61 A9 9 0 0 1 52 271 V263 A9 9 0 0 1 61 254 Z" pathLength="1"/><path class="bd" d="M331 254 H339 A9 9 0 0 1 348 263 V271 A9 9 0 0 1 339 280 H331 A9 9 0 0 1 322 271 V263 A9 9 0 0 1 331 254 Z" pathLength="1"/><path class="ln2" d="M75 104 H325 A3 3 0 0 1 328 107 V259 A3 3 0 0 1 325 262 H75 A3 3 0 0 1 72 259 V107 A3 3 0 0 1 75 104 Z" pathLength="1"/><g class="scr" transform="translate(72 104) scale(0.2667)"><g><text class="tx" x="28" y="44" font-size="26" text-anchor="start">Mi Casa Tacos</text><path class="hl" d="M0 62 H960"/><path class="hl" d="M480 62 V600"/><text class="tx" x="28" y="112" font-size="22" text-anchor="start">2  Al pastor taco</text><text class="tx" x="452" y="112" font-size="22" text-anchor="end">9.00</text><path class="hl" d="M28 124 H452"/><text class="tx" x="28" y="156" font-size="22" text-anchor="start">1  Carne asada burrito</text><text class="tx" x="452" y="156" font-size="22" text-anchor="end">12.50</text><path class="hl" d="M28 168 H452"/><text class="tx" x="28" y="200" font-size="22" text-anchor="start">1  Chips and salsa</text><text class="tx" x="452" y="200" font-size="22" text-anchor="end">4.50</text><path class="hl" d="M28 212 H452"/><text class="tx" x="28" y="244" font-size="22" text-anchor="start">2  Mexican Coke</text><text class="tx" x="452" y="244" font-size="22" text-anchor="end">7.00</text><path class="hl" d="M28 256 H452"/><text class="tx" x="28" y="288" font-size="22" text-anchor="start">1  Churros</text><text class="tx" x="452" y="288" font-size="22" text-anchor="end">5.75</text><path class="hl" d="M28 300 H452"/><path class="hl" d="M28 500 H452"/><text class="tx mono" x="28" y="560" font-size="18" text-anchor="start">TOTAL</text><text class="tx big" x="452" y="566" font-size="64" text-anchor="end">$42.00</text><rect class="pill" x="508" y="86" width="100" height="40" rx="20"/><text class="tx" x="558" y="112" font-size="18" text-anchor="middle">Clear</text><rect class="pill" x="620" y="86" width="100" height="40" rx="20"/><text class="tx" x="670" y="112" font-size="18" text-anchor="middle">Card</text><rect class="pill" x="732" y="86" width="100" height="40" rx="20"/><text class="tx" x="782" y="112" font-size="18" text-anchor="middle">Cash</text><text class="tx mono" x="508" y="200" font-size="16" text-anchor="start">CHANGE</text><text class="tx big" x="504" y="300" font-size="110" text-anchor="start">$8.00</text><rect class="inv" x="508" y="500" width="424" height="64" rx="32"/><text class="tx neg" x="720" y="540" font-size="22" text-anchor="middle">Done, next order</text></g></g><path class="fl" d="M100 334.5 H300"/></g></svg></div>
+      <div class="c-m"><h3>Ring up anything.</h3><p>Items, tips, tabs and cash. Card runs on your own Stripe, and the drawer opens itself.</p></div><div class="c-f"><span class="ck">Card sales</span><span class="fig" style="font-size:15px">Your Stripe + 30¢</span></div></div><div class="cell"><div class="c-h"><span class="who">Tables</span></div><div class="vis p plate" data-tone="paper" data-kind="point"><svg viewBox="66 72 268 214" aria-hidden="true"><g class="gar"><path class="bd" d="M88 258 H312 A4 4 0 0 1 316 262 V272 A4 4 0 0 1 312 276 H88 A4 4 0 0 1 84 272 V262 A4 4 0 0 1 88 258 Z" pathLength="1"/><path class="ln2" d="M176 276 V270 H224 V276" pathLength="1"/><path class="oc" d="M110 88 H290 A10 10 0 0 1 300 98 V254 A10 10 0 0 1 290 264 H110 A10 10 0 0 1 100 254 V98 A10 10 0 0 1 110 88 Z"/><path class="bd" d="M110 88 H290 A10 10 0 0 1 300 98 V254 A10 10 0 0 1 290 264 H110 A10 10 0 0 1 100 254 V98 A10 10 0 0 1 110 88 Z" pathLength="1"/><circle class="ln2" cx="200" cy="95" r="1.8"/><path class="ln2" d="M110 101 H290 A2 2 0 0 1 292 103 V237 A2 2 0 0 1 290 239 H110 A2 2 0 0 1 108 237 V103 A2 2 0 0 1 110 101 Z" pathLength="1"/><g class="scr" transform="translate(108 101) scale(0.3067)"><text class="tx" x="26" y="42" font-size="28" text-anchor="start">Mi Casa Tacos</text><text class="tx mono" x="574" y="40" font-size="15" text-anchor="end">TABLE 12</text><path class="hl" d="M0 62 H600"/><path class="hl" d="M404 62 V398"/><text class="tx mono" x="26" y="98" font-size="16" text-anchor="start">YOUR BILL</text><text class="tx" x="26" y="140" font-size="24" text-anchor="start">4 Al pastor</text><text class="tx" x="384" y="140" font-size="24" text-anchor="end">18.00</text><path class="hl" d="M26 150 H384"/><text class="tx" x="26" y="178" font-size="24" text-anchor="start">2 Horchata</text><text class="tx" x="384" y="178" font-size="24" text-anchor="end">7.00</text><path class="hl" d="M26 188 H384"/><text class="tx" x="26" y="216" font-size="24" text-anchor="start">1 Nachos grande</text><text class="tx" x="384" y="216" font-size="24" text-anchor="end">19.50</text><path class="hl" d="M26 226 H384"/><text class="tx dim" x="26" y="254" font-size="24" text-anchor="start">Tax</text><text class="tx dim" x="384" y="254" font-size="24" text-anchor="end">3.70</text><path class="hl" d="M26 264 H384"/><text class="tx mono" x="26" y="340" font-size="16" text-anchor="start">TOTAL</text><text class="tx big" x="384" y="350" font-size="64" text-anchor="end">$48.20</text><rect class="qf" x="424.0" y="92.0" width="56.5" height="56.5"/><rect class="qd" x="442.5" y="110.5" width="19.5" height="19.5"/><rect class="qf" x="519.5" y="92.0" width="56.5" height="56.5"/><rect class="qd" x="538.0" y="110.5" width="19.5" height="19.5"/><rect class="qf" x="424.0" y="187.5" width="56.5" height="56.5"/><rect class="qd" x="442.5" y="206.0" width="19.5" height="19.5"/><rect class="qd" x="497.8" y="100.7" width="18.5" height="18.5"/><rect class="qd" x="497.8" y="126.7" width="18.5" height="18.5"/><rect class="qd" x="497.8" y="165.8" width="18.5" height="18.5"/><rect class="qd" x="523.9" y="165.8" width="18.5" height="18.5"/><rect class="qd" x="549.9" y="165.8" width="18.5" height="18.5"/><rect class="qd" x="523.9" y="191.9" width="18.5" height="18.5"/><rect class="qd" x="549.9" y="217.9" width="18.5" height="18.5"/><rect class="qd" x="523.9" y="217.9" width="18.5" height="18.5"/><rect class="qd" x="497.8" y="217.9" width="18.5" height="18.5"/><rect class="qd" x="432.7" y="165.8" width="18.5" height="18.5"/><rect class="qd" x="458.7" y="165.8" width="18.5" height="18.5"/><rect class="qd" x="497.8" y="191.9" width="18.5" height="18.5"/><rect class="qd" x="471.8" y="191.9" width="18.5" height="18.5"/><rect class="qd" x="549.9" y="139.8" width="18.5" height="18.5"/><text class="tx mono" x="500" y="290" font-size="16" text-anchor="middle">SCAN OR TAP</text><text class="tx mono dim" x="500" y="314" font-size="14" text-anchor="middle">PAY NOW OR</text><text class="tx mono dim" x="500" y="336" font-size="14" text-anchor="middle">OVER TIME</text><path class="hl" d="M0 398 H600"/><text class="tx mono" x="26" y="432" font-size="15" text-anchor="start">BILL SENT 7:42 PM</text><text class="tx mono" x="574" y="432" font-size="15" text-anchor="end">ANY CARD WORKS</text></g><path class="ln2" d="M197.0 249.5 A2.5 2.5 0 0 1 197.0 254.5"/><path class="ln2" d="M197.9 247.0 A5.0 5.0 0 0 1 197.9 257.0"/><path class="ln2" d="M198.8 244.4 A7.6 7.6 0 0 1 198.8 259.6"/><path class="fl" d="M70 276.5 H330"/></g></svg></div>
+      <div class="c-m"><h3>Seat the floor.</h3><p>A Clear Point on every table: the menu, who’s seated, a call button and the bill.</p></div><div class="c-f"><span class="ck">Clear Point</span><span class="fig" style="font-size:15px">From $89</span></div></div><div class="cell"><div class="c-h"><span class="who">Rewards</span></div><div class="vis s"><img src="assets/screens/rewards-micasa-home.png" alt="Mi Casa Tacos in its rewards app"></div>
+      <div class="c-m"><h3>Keep your regulars.</h3><p>Points and offers in your colours, in your own app at useclear.org/s/yourshop.</p></div><div class="c-f"><span class="ck">Rewards app</span><span class="fig" style="font-size:15px">Free</span></div></div><div class="cell"><div class="c-h"><span class="who">Online</span></div><div class="vis s m"><img src="assets/screens/pay-modal.png" alt="Pay with Clear on a shop’s website"></div>
+      <div class="c-m"><h3>Take it online.</h3><p>Pay with Clear on your website, or send a link. Card is always there.</p></div><div class="c-f"><span class="ck">Online</span><span class="fig" style="font-size:15px">Same as the counter</span></div></div></div>
+      <div class="bx by-f"><div class="cell"><div class="c-f"><span>Hardware is optional. If you want ours, it’s reserved at cost and the rest is charged when it ships.</span><a class="more" href="/shop#for-shops">The hardware<svg aria-hidden="true"><use href="#arrow"/></svg></a></div></div></div>
+    </div>
+  </section>
+
+  <!-- 05 -->
+  <section class="sec band-ink" id="founding">
+    <div class="wrap">
+      <div class="head">
+        <div class="sec-label label"><b>05</b>Founding partners</div>
+        <h2 class="h2">The first five shops are working out the kinks with us.</h2>
+        <div class="aside"><p class="line">That is worth paying for, so we do. Founding partners are capped at five, and when they are gone they are gone.</p></div>
+      </div>
+      <div class="bx perk body-gap">
+        <div class="live"><span class="ck">Rate</span><span class="fig">2% for life</span><span class="note">Standard is 2.5%.</span></div>
+        <div><span class="ck">First twenty charges</span><span class="fig">No fee</span><span class="note">The beta period, on us.</span></div>
+        <div><span class="ck">Named as a founding partner</span><span class="fig">In the app</span><span class="note">In the partner directory every member sees.</span></div>
+        <div><span class="ck">Support</span><span class="fig">The founder's number</span><span class="note">Not a queue.</span></div>
+      </div>
+      <div class="bx fnd2">
+        <div class="cell">
+          <div class="c-m">
+            <h3>Getting set up takes about twenty minutes.</h3>
+            <ol class="six">
+              <li><b>1</b>Start</li><li><b>2</b>Your shop</li>
+              <li><b>3</b>Your terms</li><li><b>4</b>Verify</li>
+              <li><b>5</b>Where payouts go</li><li class="last"><b>6</b>A $1.00 test charge</li>
+            </ol>
+            <p>At your back-office computer. The last step is a test charge you refund straight away, so your writers have run the loop once before a customer is standing there.</p>
+          </div>
+          <div class="c-f"><span class="ck">Nobody from Clear ever sees your banking credentials.</span></div>
+        </div>
+        <div class="cell">
+          <div class="c-m">
+            <h3>Your terms are six lines, not a document.</h3>
+            <dl class="terms6">
+              <div><dt>Rate</dt><dd>2.5% of the ticket</dd></div>
+              <div><dt>First twenty charges</dt><dd>No fee</dd></div>
+              <div><dt>Payout timing</dt><dd>Net&#8209;30</dd></div>
+              <div><dt>Who bears a default</dt><dd>Clear</dd></div>
+              <div><dt>Approval cap</dt><dd>Up to $1,500 a charge</dd></div>
+              <div><dt>Leaving</dt><dd>Any time</dd></div>
+            </dl>
+          </div>
+          <div class="c-f"><span class="ck">An owner who reads six lines has actually read their agreement.</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 -->
+  <section class="sec" id="money">
+    <div class="wrap">
+      <div class="head">
+        <div class="sec-label label"><b>06</b>The money</div>
+        <h2 class="h2">From a bank deposit back to the tickets.</h2>
+        <div class="aside"><p class="line">A shop that cannot reconcile a payout against its own books will ask for a spreadsheet every month. So every payout opens up.</p></div>
+      </div>
+      <div class="bx track body-gap" id="track">
+        <span class="rail2" id="rail2" aria-hidden="true"></span>
+        <div><span class="knob" aria-hidden="true"></span><span class="fig when">Day 0</span><span class="what">The ticket closes.</span><p>Your writer enters the amount, the customer approves on their own phone, and the job leaves.</p></div>
+        <div class="day30"><span class="knob" aria-hidden="true"></span><span class="fig when">Day 30</span><span class="what">Your payout lands.</span><p>Net&#8209;30, every time. Withdrawals are capped by what the pool holds, and the app says so rather than failing silently.</p></div>
+        <div><span class="knob" aria-hidden="true"></span><span class="fig when">Any day</span><span class="what">The deposit opens up.</span><p>Every payout traces to the charges inside it, so your books close without a call to us.</p></div>
+      </div>
+      <div class="bx rf-h">
+        <h3>Your writer can start a refund. Only you can move your money.</h3>
+        <p>The manager-override pattern every till already uses, so it needs no training. Try it.</p>
+      </div>
+      <div class="bx rf" id="rf">
+        <div class="cell">
+          <div class="c-h"><span class="role"><span class="av">JN</span>Jen · counter</span><span class="ck">Sees what the customer gets back</span></div>
+          <div class="c-m">
+            <div class="pane" id="rf-w">
+              <span class="lbl">Charge · K. Brooks</span>
+              <div class="row"><span>Brake pads, wrong part</span><b>$412.00</b></div>
+              <div class="row"><span>Customer gets back</span><b>$99.91</b></div>
+              <div class="row"><span>Payments left</span><b>Cancelled</b></div>
+              <button type="button" class="pbtn" id="rf-send">Send to an owner</button>
+              <span class="msg" id="rf-wmsg">Nothing moves yet, and nothing is said to the customer.</span>
+            </div>
+          </div>
+        </div>
+        <div class="cell">
+          <div class="c-h"><span class="role"><span class="av">MK</span>Mike · owner</span><span class="ck">Sees what it does to the payout</span></div>
+          <div class="c-m">
+            <div class="pane idle" id="rf-o">
+              <span class="lbl" id="rf-olbl">Nothing to authorise</span>
+              <span><span class="bigp" id="rf-pay">$4,210.00</span><span class="was" id="rf-was" hidden>$4,210.00</span></span>
+              <span class="msg" id="rf-osub">Your next payout · November 14</span>
+              <button type="button" class="pbtn" id="rf-ok" disabled>Approve with owner code</button>
+              <span class="msg" id="rf-omsg"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bx rf-f">
+        <span class="fig">Carry is not refunded.</span>
+        <p>A refund unwinds the purchase, not the time the customer held the plan. Here that is $8.24, the one cycle they carried.</p>
+        <button type="button" class="btn btn-ghost" id="rf-again" style="min-height:40px">Run it again</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec close">
+    <div class="wrap head">
+      <div class="sec-label label"><b>07</b>Membership</div>
+      <h2 class="h2">Signing also makes you a partner member of the co-op.</h2>
+      <div class="aside">
+        <p class="line">You are not a vendor account. Both sides of every transaction are members of the same cooperative, which is why you appear in the directory members browse. You can leave any time.</p>
+        <div class="hero-actions" style="margin-top:0">
+          <a class="btn btn-primary" href="https://www.useclear.org/join?as=shop"><span class="dot"></span>Start a conversation</a><a class="btn btn-ghost" href="/shops/tools">See the tools</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <div class="foot">
+    <div class="about"><a class="brand" href="https://www.useclear.org/"><svg aria-hidden="true"><use href="#mark"/></svg>Clear</a><p>A member-owned cooperative, building in Inland Empire, California.</p></div>
+    <div><h4>Members</h4><ul><li><a href="https://www.useclear.org/how">How it works</a></li><li><a href="https://www.useclear.org/housing">Housing</a></li><li><a href="https://www.useclear.org/join">Join the waitlist</a></li><li><a href="https://demo.useclear.org">Members app</a></li></ul></div>
+    <div><h4>Partners</h4><ul><li><a href="https://www.useclear.org/shops">For shops</a></li><li><a href="https://www.useclear.org/contribute">Contribute land</a></li><li><a href="https://www.useclear.org/capital">Clear Capital</a></li><li><a href="https://merchant.useclear.org">Merchant app</a></li></ul></div>
+    <div><h4>The co-op</h4><ul><li><a href="https://www.useclear.org/coop">Structure and governance</a></li><li><a href="https://github.com/Deed3Labs/Protocol-Contracts">Protocol source</a></li><li><a href="https://www.useclear.org/join?as=work">Work with us</a></li><li><a href="https://www.useclear.org/style">Brand and style guide</a></li></ul></div>
+    <div><h4>Community</h4><ul><li><a href="https://www.useclear.org/events">Events</a></li><li><a href="https://www.useclear.org/directory">Directory</a></li><li><a href="https://www.useclear.org/shop">Shop</a></li></ul></div>
+    <div class="legal">
+      <p>Clear is not a bank and deposits are not FDIC insured. Membership accounts are cooperative capital accounts, not deposit accounts.</p>
+      <p>Nothing here is an offer to sell or a solicitation to buy any security. Figures shown for housing, savings and credit are illustrations of how the model works, not quotes, offers or predictions. Credit is subject to the terms disclosed in the app before you draw.</p>
+      <p>We are not tax or legal advisers. Descriptions of property contributions are general and depend entirely on your own circumstances.</p>
+    </div>
+  </div>
+</footer>
+
+<div class="mock-flag">Mockup v2 · For shops, with the tools links</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const G = typeof window.gsap !== 'undefined' && !reduce;
+  const money = (n, dp = 2) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: dp, maximumFractionDigits: dp });
+
+  /* Header */
+  const head = $('#site-head');
+  const onScroll = () => head.classList.toggle('scrolled', scrollY > 8);
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+  /* The Community menu: opens on click, and on hover for a mouse. */
+  const nm = $('#navmenu'), nb = $('#navmenu-btn'), np = $('#navmenu-panel');
+  let nmT = null, byHover = false;
+  const nmSet = o => { np.hidden = !o; nb.setAttribute('aria-expanded', String(o)); if (!o) byHover = false; };
+  /* A mouse already opened it by hovering, so a click keeps it open. */
+  nb.addEventListener('click', () => nmSet(byHover ? true : np.hidden));
+  nm.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') { clearTimeout(nmT); if (np.hidden) byHover = true; nmSet(true); } });
+  nm.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') nmT = setTimeout(() => nmSet(false), 180); });
+  document.addEventListener('pointerdown', e => { if (!nm.contains(e.target)) nmSet(false); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { nmSet(false); $('#sheet').close(); } });
+  /* The full-screen sheet, on <dialog>. */
+  const sheet = $('#sheet');
+  $('#menu-btn').addEventListener('click', () => sheet.showModal());
+  $('#sheet-close').addEventListener('click', () => sheet.close());
+
+  /* Screens: each app canvas is authored at its real width and scaled to fit,
+     so the product reads like a screenshot at every width. */
+  function fit() {
+    const cs = document.querySelector('#ctr .screen');
+    if (cs) { const narrow = cs.parentElement.clientWidth < 560, cv = cs.firstElementChild; if (cv.classList.contains('narrow') !== narrow) { cv.classList.toggle('narrow', narrow); cs.dataset.w = narrow ? 400 : 760; cs.dataset.h = narrow ? 526 : 480; cv.style.width = cs.dataset.w + 'px'; cv.style.height = cs.dataset.h + 'px'; } }
+    $$('.screen').forEach(sc => {
+      if (!sc.offsetParent) return;
+      const w = +sc.dataset.w, h = +sc.dataset.h || sc.firstElementChild.offsetHeight, s = sc.clientWidth / w;
+      sc.style.height = (h * s) + 'px';
+      sc.firstElementChild.style.transform = `scale(${s})`;
+    });
+  }
+  let fq = 0; new ResizeObserver(() => { cancelAnimationFrame(fq); fq = requestAnimationFrame(fit); }).observe(document.body); fit();
+
+  /* ── Light along the lines ──────────────────────────────────────────────
+     One engine. A path is built in an element's own pixels; a short lit
+     segment (soft halo + thin core) runs along it. Paths are rebuilt on resize. */
+  const NS = 'http://www.w3.org/2000/svg';
+  function traceLayer(host) {
+    const svg = document.createElementNS(NS, 'svg'); svg.classList.add('trace');
+    const halo = document.createElementNS(NS, 'path'); halo.classList.add('halo');
+    const core = document.createElementNS(NS, 'path'); core.classList.add('core');
+    svg.append(halo, core); host.appendChild(svg);
+    return { svg, halo, core };
+  }
+  /* Rounded rectangle, clockwise, starting at a chosen point on its edge. */
+  function rr(x, y, w, h, r, start = 'top') {
+    const L = x, T = y, R = x + w, B = y + h;
+    const seg = {
+      top:    `L ${R - r} ${T} A ${r} ${r} 0 0 1 ${R} ${T + r}`,
+      right:  `L ${R} ${B - r} A ${r} ${r} 0 0 1 ${R - r} ${B}`,
+      bottom: `L ${L + r} ${B} A ${r} ${r} 0 0 1 ${L} ${B - r}`,
+      left:   `L ${L} ${T + r} A ${r} ${r} 0 0 1 ${L + r} ${T}`,
+    };
+    const starts = { top: [L + w / 2, T], right: [R, T + h / 2], bottom: [L + w / 2, B], left: [L, T + h / 2] };
+    const order = ['top', 'right', 'bottom', 'left'];
+    const i = order.indexOf(start), [sx, sy] = starts[start];
+    let d = `M ${sx} ${sy} `;
+    for (let k = 0; k < 4; k++) d += seg[order[(i + k) % 4]] + ' ';
+    return d + `L ${sx} ${sy}`;
+  }
+  function makeTrace(host, build, { seg = 140, speed = 520 } = {}) {
+    if (!G) return { run(o = {}) { if (o.done) o.done(); }, kill() {} };
+    const t = traceLayer(host);
+    let len = 0, tw = null;
+    function layout() {
+      const w = host.clientWidth, h = host.clientHeight;
+      t.svg.setAttribute('width', w); t.svg.setAttribute('height', h); t.svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+      const d = build(w, h, host); t.halo.setAttribute('d', d); t.core.setAttribute('d', d);
+      len = t.core.getTotalLength();
+      [t.halo, t.core].forEach(p => { p.style.strokeDasharray = `${seg} ${len + seg}`; p.style.strokeDashoffset = seg; });
+    }
+    layout(); let lq = 0; new ResizeObserver(() => { cancelAnimationFrame(lq); lq = requestAnimationFrame(layout); }).observe(host);
+    return {
+      run(opts = {}) {
+        if (tw) tw.kill(); layout();
+        const o = { v: seg };
+        tw = gsap.to(o, { v: -len, duration: len / speed, ease: opts.ease || 'power1.inOut', repeat: opts.repeat || 0, repeatDelay: opts.repeatDelay || 0,
+          onUpdate: () => { t.halo.style.strokeDashoffset = o.v; t.core.style.strokeDashoffset = o.v; }, onComplete: opts.done });
+      },
+      kill() { if (tw) tw.kill(); [t.halo, t.core].forEach(p => { p.style.strokeDashoffset = seg; }); },
+    };
+  }
+
+
+  /* QR on the counter tablet (decorative, same generator as Home) */
+  (function qr() {
+    const svg = $('#qr2'), N = 29; let s = 7; const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
+    let out = ''; const sq = (x, y) => { out += `<rect x="${x}" y="${y}" width="1.02" height="1.02"/>`; };
+    const finder = (x, y) => { for (const [fx, fy] of [[0, 0], [N - 7, 0], [0, N - 7]]) { const ax = x - fx, ay = y - fy; if (ax >= 0 && ax < 7 && ay >= 0 && ay < 7) return [ax, ay]; } return null; };
+    for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+      const f = finder(x, y);
+      if (f) { const [ax, ay] = f; if (ax === 0 || ax === 6 || ay === 0 || ay === 6 || (ax > 1 && ax < 5 && ay > 1 && ay < 5)) sq(x, y); }
+      else if (!(x === 7 || y === 7 || x === N - 8 || y === N - 8) && (x === 6 || y === 6 ? (x + y) % 2 === 0 : rnd() > .52)) sq(x, y);
+    }
+    svg.innerHTML = out;
+  })();
+
+  const fee = v => Math.round(v * 2.5) / 100;
+  /* Keys are pressed in order; the amount builds the way a writer types it. */
+  function keyIn(keysEl, digits, onStep, t0 = 0, gap = .26, sched = later) {
+    const map = { '1': 0, '2': 1, '3': 2, '4': 3, '5': 4, '6': 5, '7': 6, '8': 7, '9': 8, '.': 9, '0': 10 };
+    let typed = '';
+    digits.split('').forEach((d, i) => sched(t0 + i * gap, () => {
+      const k = keysEl.children[map[d]]; k.classList.add('hit'); setTimeout(() => k.classList.remove('hit'), 160);
+      typed += d; onStep(+typed);
+    }));
+    return t0 + digits.length * gap;
+  }
+  let timers = [];
+  const later = (sec, fn) => timers.push(setTimeout(fn, sec * 1000));
+
+  /* ── 01 the calculator ───────────────────────────────────────────────── */
+  const cv = $('#cv');
+  function calc() {
+    const v = +cv.value, theirs = v * .06, ours = v * .025;
+    cv.style.setProperty('--p', ((v - 2000) / 58000 * 100) + '%');
+    $('#cv-vol').textContent = money(v, 0);
+    $('#cv-theirs').textContent = money(theirs, 0);
+    $('#cv-ours').textContent = money(ours, 0);
+    $('#cv-kept').textContent = money((theirs - ours) * 12, 0);
+    $('#cb-ours').style.width = (2.5 / 6 * 100) + '%';
+  }
+  cv.addEventListener('input', calc); calc();
+
+  /* ── 02 the steps drive the tablet ───────────────────────────────────── */
+  const stBtns = $$('#stp button'), stScr = $$('#ctr .tab-st');
+  let cur = 0, auto = null, ctrSeen = false, userPicked = false;
+  const STEP_MS = 4200;
+  let ctrT = [];
+  const cl = (sec, fn) => ctrT.push(setTimeout(fn, sec * 1000));
+  function show(i, fromUser) {
+    cur = i;
+    stBtns.forEach((b, j) => { b.classList.toggle('on', j === i); b.classList.toggle('done', j < i); b.setAttribute('aria-selected', String(j === i)); });
+    stScr.forEach((s, j) => s.classList.toggle('on', j === i));
+    fit();
+    if (G) {
+      gsap.killTweensOf('#stp .pg'); gsap.set('#stp .pg', { scaleX: 0 });
+      ctrT.forEach(clearTimeout); ctrT = [];
+      if (i === 0 && ctrSeen) { $('#c-amt').textContent = money(0); const end = keyIn($('#c-keys'), '940', v => { $('#c-amt').textContent = money(v); }, .3, .26, cl); cl(end + .5, () => { const g = $('#c-go'); g.classList.add('hit'); setTimeout(() => g.classList.remove('hit'), 160); }); }
+      if (i === 3) gsap.from('#ctr .ts-4 > *', { opacity: 0, y: 8, duration: .5, stagger: .07, ease: 'power3.out' });
+      if (!userPicked && ctrSeen) gsap.to(stBtns[i].querySelector('.pg'), { scaleX: 1, duration: STEP_MS / 1000, ease: 'none', onComplete: () => show((i + 1) % 4) });
+    }
+  }
+  stBtns.forEach((b, i) => b.addEventListener('click', () => { userPicked = true; show(i, true); }));
+
+  /* ── 05 the refund hand-off ──────────────────────────────────────────── */
+  function rfReset() {
+    $('#rf-send').classList.remove('gone'); $('#rf-ok').classList.remove('gone');
+    $('#rf-send').disabled = false; $('#rf-wmsg').className = 'msg'; $('#rf-wmsg').textContent = 'Nothing moves yet, and nothing is said to the customer.';
+    $('#rf-o').classList.add('idle'); $('#rf-olbl').textContent = 'Nothing to authorise'; $('#rf-ok').disabled = true;
+    $('#rf-pay').textContent = '$4,210.00'; $('#rf-was').hidden = true; $('#rf-osub').textContent = 'Your next payout · November 14'; $('#rf-omsg').textContent = ''; $('#rf-omsg').className = 'msg';
+  }
+  function rfSend() {
+    $('#rf-send').disabled = true; $('#rf-wmsg').textContent = 'Sent to an owner. Waiting for Mike.';
+    const go = () => {
+      $('#rf-o').classList.remove('idle'); $('#rf-olbl').textContent = 'Jen asks to refund K. Brooks · $412.00';
+      $('#rf-pay').textContent = '$3,808.30'; $('#rf-was').hidden = false; $('#rf-osub').textContent = 'Your next payout, if you approve · $401.70 less';
+      $('#rf-ok').disabled = false;
+    };
+    if (G) handoff.run({ ease: 'power2.inOut', done: go }); else go();
+  }
+  function rfOk() {
+    $('#rf-ok').disabled = true; $('#rf-olbl').textContent = 'Approved by Mike · 4:18pm'; $('#rf-osub').textContent = 'Your next payout · November 14';
+    $('#rf-omsg').className = 'msg ok'; $('#rf-omsg').textContent = 'Refunded. Both names are on the record.';
+    $('#rf-wmsg').className = 'msg ok'; $('#rf-wmsg').textContent = 'Approved by Mike. Now tell the customer.';
+    $('#rf-send').classList.add('gone'); $('#rf-ok').classList.add('gone');
+  }
+  $('#rf-send').addEventListener('click', rfSend);
+  $('#rf-ok').addEventListener('click', rfOk);
+  $('#rf-again').addEventListener('click', rfReset);
+
+  if (!G) { show(0); return; }
+  gsap.registerPlugin(ScrollTrigger);
+
+  /* Hero: words rise, the counter app assembles, the writer keys in $940. */
+  const heroDev = $('#hero-device');
+  const heroTrace = makeTrace(heroDev, (w, h) => rr(.5, .5, w - 1, h - 1, 14, 'left'), { seg: 160, speed: 620 });
+  const h1 = $('#hero-h1');
+  $$('.ln', h1).forEach(ln => { ln.innerHTML = ln.textContent.split(' ').map(w => `<span class="w"><span>${w}</span></span>`).join(' '); });
+  const setTicket = v => {
+    [['#h-amt', '#h-fee', '#h-net'], ['#h-amt-p', '#h-fee-p', '#h-net-p']].forEach(([a, f, n]) => { $(a).textContent = money(v); $(f).textContent = money(fee(v)); $(n).textContent = money(v - fee(v)); });
+  };
+  setTicket(0);
+  gsap.timeline({ defaults: { ease: 'power3.out' } })
+    .from('#hero-h1 .w > span', { yPercent: 105, duration: 1, stagger: .06, onComplete: () => $('#hero-h1').classList.add('revealed') })
+    .from('[data-in]', { opacity: 0, y: 14, duration: .8, stagger: .1 }, '-=.6')
+    .from('#stagebox', { opacity: 0, y: 24, duration: 1.0 }, '-=.55')
+    .from('#stage [data-a]', { opacity: 0, y: 8, duration: .6, stagger: .05 }, '-=.6')
+    .call(() => {
+      heroTrace.run({ repeat: -1, repeatDelay: 4.5, ease: 'power2.inOut' });
+      const keys = matchMedia('(max-width: 699px)').matches ? $('#h-keys-p') : $('#h-keys');
+      const end = keyIn(keys, '940', setTicket, .2, .3);
+      later(end + .4, () => { const g = $('#h-go'); g.classList.add('hit'); setTimeout(() => g.classList.remove('hit'), 160); });
+    }, null, '-=.2');
+
+  /* 02: the steps start cycling when the counter comes into view. */
+  show(0);
+  ScrollTrigger.create({ trigger: '#ctr', start: 'top 70%', once: true, onEnter: () => { ctrSeen = true; show(0); } });
+
+  /* 05: the top rule is the clock — it fills to Day 30 as you scroll. */
+  const vert = () => matchMedia('(max-width: 860px)').matches;
+  ScrollTrigger.create({ trigger: '#track', start: 'top 78%', end: 'bottom 60%', scrub: .4,
+    onUpdate: s => gsap.set('#rail2', vert() ? { scaleY: s.progress, scaleX: 1 } : { scaleX: s.progress, scaleY: 1 }) });
+
+  /* 05: the refund request travels across the seam between the two people. */
+  const rf = $('#rf'), rfCells = $$('#rf > .cell');
+  var handoff = makeTrace(rf, w => {
+    const a = rfCells[0], b = rfCells[1], ya = a.offsetTop + $('.c-h', a).offsetHeight - .5, yb = b.offsetTop + $('.c-h', b).offsetHeight - .5;
+    return b.offsetTop > 0 ? `M ${w * .5} ${ya} L ${w + .5} ${ya} L ${w + .5} ${yb} L ${w * .5} ${yb}`
+                           : `M ${a.offsetWidth * .5} ${ya} L ${a.offsetWidth + b.offsetWidth * .5} ${yb}`;
+  }, { seg: 150, speed: 760 });
+
+  /* Header follows the ground beneath it. */
+  $$('.band-ink').forEach(band => ScrollTrigger.create({ trigger: band, start: 'top 34px', end: 'bottom 34px', onToggle: s => head.classList.toggle('on-ink', s.isActive) }));
+})();
+</script>
