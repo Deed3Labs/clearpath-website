@@ -2,6 +2,7 @@ import { PageHero, Device, Button, Section, SectionHead, Close, Rail, Knob, Chec
 import { CounterHero } from './_parts/CounterHero';
 import { FeeCalc } from './_parts/FeeCalc';
 import { CounterSteps } from './_parts/CounterSteps';
+import { Beyond } from './_parts/Beyond';
 import { RefundHandoff } from './_parts/RefundHandoff';
 import './page.css';
 import { META, HERO, DIFFERENCE, COUNTER, FIT, FOUNDING, MONEY, MEMBERSHIP } from '@/content/shops';
@@ -128,6 +129,8 @@ export default function Shops() {
           </div>
         </div>
       </Section>
+
+      <Beyond />
 
       <Section ink id="founding">
         <SectionHead n={FOUNDING.n} label={FOUNDING.label} title={FOUNDING.title} line={FOUNDING.line} />
