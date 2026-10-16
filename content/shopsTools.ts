@@ -79,7 +79,6 @@ export const TILL = {
   items: ITEMS.map((i) => ({ ...i, qty: ORDER.find(([n]) => n === i.name)?.[1] ?? 0 })),
   order: 'Order · Table 4',
   count: `${ORDER.reduce((s, [, q]) => s + q, 0)} items`,
-  add: 'Add items',
   lines: tillLines,
   subtotal: { label: 'Subtotal', amount: tillSubtotal },
   tax: { label: 'Tax 8.375%', amount: tillTax },
@@ -146,33 +145,6 @@ export const TABLES = {
       { name: 'Marco', sub: ['Party of 3 · waited 12 min · told 15 min'], action: 'Seat' },
       { name: 'Priya', sub: ['Party of 2 · waited 6 min · told 15 min'], action: 'Seat at 1' },
     ] as readonly { name: string; next?: boolean; sub: readonly string[]; action: string; solid?: boolean }[],
-  },
-  /* The phone layout: the floor as a list, grouped by state. `tone` colours
-     the right-hand figure: w waiting on you, k paid, f free. */
-  phone: {
-    tabs: ['Floor', 'Wait list · 3'],
-    groups: [
-      {
-        label: 'Asking · 2',
-        rows: [
-          { n: '12', b: 'Kim · 2', s: 'Calling · 2 min ago', r: 'On my way', tone: 'w', call: true },
-          { n: '4', b: 'Okafor · 3', s: 'Asked for the bill · 4 min', r: '$62.00', tone: 'w' },
-        ],
-      },
-      {
-        label: 'Seated',
-        rows: [
-          { n: '2', b: 'Diaz · 4', s: 'Ordered · 38 min', r: '$35.76' },
-          { n: '7', b: 'Walk-in · 2', s: 'Seated · 6 min', r: '' },
-        ],
-      },
-      { label: 'Held', rows: [{ n: '6', b: 'For Ana', s: '2 min', r: 'Held' }] },
-      { label: 'Paid', rows: [{ n: '9', b: 'Paid · 2 min ago', s: 'Clears itself in 8 min', r: '$27.40', tone: 'k' }] },
-      { label: 'Free', rows: [{ n: '1', b: '2 seats', s: 'Inside', r: 'Seat', tone: 'f' }] },
-    ] as readonly {
-      label: string;
-      rows: readonly { n: string; b: string; s: string; r: string; tone?: 'w' | 'k' | 'f'; call?: boolean }[];
-    }[],
   },
   /* The Point's screen in each state. The caption carries what the screen
      says, so the images are decorative. */

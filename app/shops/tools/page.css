@@ -233,26 +233,4 @@
   .cost .v { font-weight: 600; font-size: 17px; }
   .cost .v small { display: block; font-weight: 400; font-size: 14px; color: var(--color-ink-50); margin-top: 2px; }
   @media (max-width: 700px) { .cost > div { grid-template-columns: minmax(0, 1fr); } }
-
-  /* ── Phone versions of the app screens: the merchant app's own layout ───── */
-  .mp { display: grid; grid-template-rows: 52px auto; align-content: start; }
-  .mp .bar-top { height: 52px; padding-inline: 18px; }
-  .mp .hd { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; border-bottom: 1px solid var(--a-line); }
-  .mp .hd b { font-weight: 500; }
-  .mp .ln3 { display: flex; justify-content: space-between; padding: 11px 18px; border-bottom: 1px solid var(--a-line); font-size: 14px; }
-  .mp .ln3 span:last-child { font-variant-numeric: tabular-nums; }
-  .mp .ms-pay { border-top: 0; }
-  .mp .rowt { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: center; gap: 2px 12px; padding: 12px 18px; border-bottom: 1px solid var(--a-line); }
-  .mp .rowt .n { font-family: var(--font-display); font-weight: 800; font-size: 24px; letter-spacing: -0.04em; }
-  .mp .rowt b { font-weight: 500; font-size: 14px; display: block; }
-  .mp .rowt small { color: var(--a-50); font-size: 12.5px; }
-  .mp .rowt .r3 { text-align: right; font-size: 13.5px; font-variant-numeric: tabular-nums; }
-  .mp .rowt .w { color: var(--a-warn); }
-  .mp .rowt .k { color: var(--a-ok); }
-  .mp .rowt .f { color: var(--a-50); }
-  .mp .rowt.call { background: color-mix(in srgb, var(--a-warn) 12%, var(--a-bg)); }
-  .mp .gl { padding: 14px 18px 6px; }
-  .mp .tabs2 { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--a-line); }
-  .mp .tabs2 span { height: 44px; display: grid; place-items: center; font-size: 14px; color: var(--a-50); }
-  .mp .tabs2 span.on { color: var(--a-fg); box-shadow: inset 0 -2px 0 var(--a-fg); }
 }

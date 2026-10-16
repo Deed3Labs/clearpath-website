@@ -7,10 +7,10 @@ import { money } from '@/lib/format';
 import { APP, TILL } from '@/content/shopsTools';
 import { amt } from './fmt';
 
-/* The till: the merchant app at the counter of a sample taco shop. On a
-   tablet (1180 × 640) the item grid sits beside the order; on a phone
-   (390 × 640) it is the order alone, the app's own phone layout. When the
-   hero has finished, the Charge button pulses once. */
+/* The till: the merchant app at the counter of a sample taco shop, the
+   item grid beside the order. One canvas (1180 × 640), the app's desktop
+   layout at every width, scaled to fit. When the hero has finished, the
+   Charge button pulses once. */
 
 function Totals() {
   return (
@@ -71,7 +71,7 @@ export function TillScreen() {
 
   return (
     <div ref={root}>
-      <Screen w={1180} h={640} variant="desk" canvasClassName="ms">
+      <Screen w={1180} h={640} canvasClassName="ms">
         <div className="bar-top">
           <div className="l">
             <Lock />
@@ -129,26 +129,6 @@ export function TillScreen() {
         </div>
       </Screen>
 
-      <Screen w={390} h={640} variant="phone" canvasClassName="mp">
-        <div className="bar-top">
-          <Lock />
-          <span className="ava">{APP.initials}</span>
-        </div>
-        <div>
-          <div className="hd">
-            <b>{TILL.order}</b>
-            <span className="pillb">{TILL.add}</span>
-          </div>
-          {TILL.lines.map((l) => (
-            <div className="ln3" key={l.label}>
-              <span>{l.label}</span>
-              <span>{amt(l.amount)}</span>
-            </div>
-          ))}
-          <Totals />
-          <Pay />
-        </div>
-      </Screen>
     </div>
   );
 }

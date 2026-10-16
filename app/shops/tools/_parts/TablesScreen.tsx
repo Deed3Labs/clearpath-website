@@ -5,10 +5,9 @@ import { Screen, Mark, Bell, Device } from '@/components/system';
 import { gsap, useGsap } from '@/lib/anim';
 import { APP, TABLES } from '@/content/shopsTools';
 
-/* The floor: who is asking, the eight tables and the wait list on a tablet
-   (1180 × 600); on a phone (390 × 780) the app's own layout, the floor as a
-   list grouped by state. When the screen comes into view the table that is
-   calling pulses once. */
+/* The floor: who is asking, the eight tables and the wait list. One canvas
+   (1180 × 600), the app's desktop layout at every width, scaled to fit. When
+   the screen comes into view the table that is calling pulses once. */
 
 function BillIcon() {
   return (
@@ -37,7 +36,7 @@ export function TablesScreen() {
     if (!el) return;
     /* Spans, never the <svg> itself: GSAP measures an svg's box by moving it
        into a scratch svg and back, and puts it back after the text. */
-    const ask = el.querySelectorAll('.tb-ask .call .ic, .tt.call .st .bi, .rowt.call .n');
+    const ask = el.querySelectorAll('.tb-ask .call .ic, .tt.call .st .bi');
     if (!ask.length) return;
     gsap.to(ask, {
       scale: 1.3,
@@ -53,7 +52,7 @@ export function TablesScreen() {
   return (
     <div ref={root}>
       <Device>
-        <Screen w={1180} h={600} variant="desk" canvasClassName="tb">
+        <Screen w={1180} h={600} canvasClassName="tb">
           <div className="bar-top">
             <div className="l">
               <Lock />
@@ -136,38 +135,6 @@ export function TablesScreen() {
           </div>
         </Screen>
 
-        <Screen w={390} h={780} variant="phone" canvasClassName="mp">
-          <div className="bar-top">
-            <Lock />
-            <span className="ava">{APP.initials}</span>
-          </div>
-          <div>
-            <div className="tabs2">
-              {TABLES.phone.tabs.map((t, i) => (
-                <span key={t} className={i === 0 ? 'on' : undefined}>
-                  {t}
-                </span>
-              ))}
-            </div>
-            {TABLES.phone.groups.map((g) => (
-              <div key={g.label}>
-                <div className="gl">
-                  <span className="lbl">{g.label}</span>
-                </div>
-                {g.rows.map((r) => (
-                  <div key={r.n} className={r.call ? 'rowt call' : 'rowt'}>
-                    <span className="n">{r.n}</span>
-                    <span>
-                      <b>{r.b}</b>
-                      <small>{r.s}</small>
-                    </span>
-                    <span className={['r3', r.tone].filter(Boolean).join(' ')}>{r.r}</span>
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
-        </Screen>
       </Device>
     </div>
   );
