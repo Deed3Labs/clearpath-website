@@ -1,0 +1,38 @@
+/* Shared by every route that shows hardware: /shop and /shops/tools.
+   Imported by ProductPlate and HowReserving, so whichever route renders
+   one gets these rules. Not page CSS, so nothing here is under a .pg-*
+   scope; each rule is scoped by a class only these components render
+   (.hwplate, .how3) instead. Ported from reference/redesign/shops-tools.html
+   (the plate ~307–313 and ~812–828, how reserving ~1028 and ~1096) and
+   shops-updated.html (~500–540). No drawing sets .tx.serif yet, so Fraunces
+   is not loaded and the rule falls back to Georgia; load it if one does. */
+
+/* ── A hardware plate: the drawn ground, then the drawing's own classes ── */
+.plate.hwplate { --pg: var(--color-paper-2); --pl: #16211D; --pf: rgb(22 33 29 / .05); position: relative; display: block; background: var(--pg); color: var(--pl); overflow: hidden; }
+.plate.hwplate[data-tone='ink'] { --pg: var(--color-ink-ground); --pl: #DFE3DE; --pf: rgb(223 227 222 / .06); }
+.plate.hwplate[data-tone='land'] { --pg: var(--color-land); --pl: #E9ECE7; --pf: rgb(233 236 231 / .1); }
+.plate.hwplate svg { display: block; width: 100%; height: 100%; }
+.hwplate .bd { fill: var(--pf); stroke: currentColor; stroke-width: 2.5; stroke-linejoin: round; }
+.hwplate .ln2 { fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; }
+.hwplate .mk { color: currentColor; }
+.hwplate .oc { fill: var(--pg); stroke: none; }
+.hwplate .fl { fill: none; stroke: currentColor; stroke-width: 1.2; opacity: .45; }
+.hwplate .tx { fill: currentColor; font-family: var(--font-text); font-weight: 600; letter-spacing: -0.02em; }
+.hwplate .tx.big { font-family: var(--font-display); font-weight: 800; letter-spacing: -0.04em; }
+.hwplate .tx.mono { font-family: var(--font-mono); font-weight: 400; letter-spacing: .1em; }
+.hwplate .tx.dim { opacity: .55; }
+.hwplate .tx.serif { font-family: 'Fraunces', Georgia, serif; font-weight: 600; letter-spacing: -0.01em; }
+.hwplate .tx.neg { fill: var(--pg); }
+.hwplate .inv { fill: currentColor; }
+.hwplate .qbg { fill: var(--pg); }
+.hwplate .pill { fill: none; stroke: currentColor; stroke-width: 1; vector-effect: non-scaling-stroke; }
+.hwplate .hl { fill: none; stroke: currentColor; stroke-width: 1; vector-effect: non-scaling-stroke; opacity: .7; }
+.hwplate .hl.neg { stroke: var(--pg); }
+.hwplate .qf { fill: none; stroke: currentColor; stroke-width: 1.4; vector-effect: non-scaling-stroke; }
+.hwplate .qd { fill: currentColor; }
+.hwplate .ns * { vector-effect: non-scaling-stroke; }
+
+/* ── How reserving works: three numbered cells under a lineup ─────────── */
+.bx.how3 { margin-top: 0; border-top: 0; }
+.how3 .c-m { gap: 10px; }
+.how3 .n2 { font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; color: var(--color-ink-50); }

@@ -13,23 +13,68 @@ import { useIsoLayoutEffect } from '@/lib/anim/hooks';
 
 const LINES = '.bd, .ln2';
 
+/* A hardware drawing also has parts that are not one stroke with a
+   pathLength: its screen's words and rules, QR squares, round details. They
+   wait for the outline and fade in with the fill. Goods have none. */
+function restOf(pl: Element) {
+  if (!pl.classList.contains('hwplate')) return [];
+  return Array.from(pl.querySelectorAll<SVGElement>('.gar *')).filter(
+    (el) => el.tagName !== 'g' && !el.classList.contains('oc') && !el.closest('.mk') && !(el.matches(LINES) && el.hasAttribute('pathLength')),
+  );
+}
+
+/* The opacity an element rests at without the inline start state (a dim
+   word on a screen rests at .55, not 1). */
+function restingOpacity(el: SVGElement) {
+  const was = el.style.opacity;
+  el.style.opacity = '';
+  const o = getComputedStyle(el).opacity;
+  el.style.opacity = was;
+  return o;
+}
+
+/* gsap.set / tween only what is there: a drawing with no mark (the Point's
+   screens, most hardware) or no extra parts would otherwise log "GSAP
+   target not found" for each empty list. */
+type Targets = ArrayLike<Element>;
+const some = (t: Targets) => t.length > 0;
+function setIf(t: Targets, vars: gsap.TweenVars) {
+  if (some(t)) gsap.set(t, vars);
+}
+
 function startState(pl: Element) {
-  const paths = Array.from(pl.querySelectorAll<SVGPathElement>(LINES)).filter((p) => p.style.opacity !== '0');
-  gsap.set(paths, { strokeDasharray: 1, strokeDashoffset: 1, fillOpacity: 0 });
-  gsap.set(pl.querySelectorAll('.mk'), { scale: 0, transformOrigin: '50% 50%' });
+  const paths = Array.from(pl.querySelectorAll<SVGPathElement>(LINES)).filter(
+    (p) => p.style.opacity !== '0' && p.hasAttribute('pathLength'),
+  );
+  setIf(paths, { strokeDasharray: 1, strokeDashoffset: 1, fillOpacity: 0 });
+  setIf(restOf(pl), { opacity: 0 });
+  setIf(pl.querySelectorAll('.mk'), { scale: 0, transformOrigin: '50% 50%' });
   return paths;
 }
 
+/* The outline runs (D), the fill and the other parts come in .35s before
+   it ends, the mark lands .3s before it ends, then every inline style is
+   cleared. Absolute times, so a missing part leaves the rest in step. */
 export function drawPlate(pl: Element, delay = 0) {
   const paths = startState(pl);
+  const rest = restOf(pl);
   const mk = pl.querySelectorAll('.mk');
-  return gsap
-    .timeline({ delay })
-    .to(paths, { strokeDashoffset: 0, duration: 1.1, ease: 'power2.inOut', stagger: 0.18 })
-    .to(paths, { fillOpacity: 1, duration: 0.5 }, '-=.35')
-    .to(mk, { scale: 1, duration: 0.55, ease: 'back.out(2.2)' }, '-=.45')
-    .set(paths, { clearProps: 'strokeDasharray,strokeDashoffset,fillOpacity' })
-    .set(mk, { clearProps: 'transform' });
+  const stagger = paths.length > 6 ? 0.04 : 0.18;
+  const d = paths.length ? 1.1 + stagger * (paths.length - 1) : 0.35;
+  const end = d + 0.25;
+  const tl = gsap.timeline({ delay });
+  if (some(paths)) {
+    tl.to(paths, { strokeDashoffset: 0, duration: 1.1, ease: 'power2.inOut', stagger }, 0)
+      .to(paths, { fillOpacity: 1, duration: 0.5 }, d - 0.35)
+      .set(paths, { clearProps: 'strokeDasharray,strokeDashoffset,fillOpacity' }, end);
+  }
+  if (some(rest)) {
+    tl.to(rest, { opacity: (_: number, el: SVGElement) => restingOpacity(el), duration: 0.5 }, d - 0.35).set(rest, { clearProps: 'opacity' }, end);
+  }
+  if (some(mk)) {
+    tl.to(mk, { scale: 1, duration: 0.55, ease: 'back.out(2.2)' }, d - 0.3).set(mk, { clearProps: 'transform' }, end);
+  }
+  return tl;
 }
 
 /* Every .plate under `root` draws in once as it enters view (35% visible).
@@ -66,8 +111,9 @@ export function usePlateDraw(root: RefObject<HTMLElement | null>, { first = 0 }:
       io.disconnect();
       tls.forEach((t) => t.kill());
       plates.forEach((p) => {
-        gsap.set(p.querySelectorAll(LINES), { clearProps: 'strokeDasharray,strokeDashoffset,fillOpacity' });
-        gsap.set(p.querySelectorAll('.mk'), { clearProps: 'transform' });
+        setIf(p.querySelectorAll(LINES), { clearProps: 'strokeDasharray,strokeDashoffset,fillOpacity' });
+        setIf(restOf(p), { clearProps: 'opacity' });
+        setIf(p.querySelectorAll('.mk'), { clearProps: 'transform' });
       });
     };
   }, [root]);
