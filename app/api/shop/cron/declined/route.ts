@@ -20,9 +20,8 @@ export async function GET(request: Request) {
   if (!secret || request.headers.get('authorization') !== `Bearer ${secret}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  if (shopAccountMode() !== 'clear' || !isStripeConfigured()) {
-    return NextResponse.json({ skipped: 'shop approval is not available yet' });
-  }
+  if (shopAccountMode() !== 'clear') return NextResponse.json({ skipped: 'shop approval is not available yet' });
+  if (!isStripeConfigured()) return NextResponse.json({ skipped: 'Stripe is not configured, so there are no deposits to check' });
 
   const stripe = getStripe();
   const refunded: string[] = [];
