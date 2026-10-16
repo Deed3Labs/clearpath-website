@@ -8,7 +8,11 @@
     "start": "next start -p 8137",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "test": "SHOP_SHOW_DRAFTS=true SHOP_ACCOUNT=mock node --import tsx --test \"tests/**/*.test.ts\""
+    "test": "SHOP_SHOW_DRAFTS=true SHOP_ACCOUNT=mock node --import tsx --test \"tests/**/*.test.ts\"",
+    "shop:reservations": "tsx scripts/shop/reservations/index.ts",
+    "shop:start-build": "tsx scripts/shop/start-build/index.ts",
+    "shop:charge-balance": "tsx scripts/shop/charge-balance/index.ts",
+    "shop:refund-deposit": "tsx scripts/shop/refund-deposit/index.ts"
   },
   "dependencies": {
     "gsap": "3.12.5",
