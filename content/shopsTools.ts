@@ -6,7 +6,7 @@
    The figures are one sample shop's and must agree everywhere they appear:
    - the till: 38.75 + tax at 8.375% (3.25) = $42.00;
    - a $40 sale: Clear $0.60, card tapped $1.43, card by QR $1.76;
-   - rewards: $13.55, and she earns 12 points.
+   - rewards: $13.55; she earns 12 points by card or cash, 18 with Clear.
    The totals are worked out below from the lines, so a changed line changes
    its total rather than contradicting it. */
 
@@ -188,7 +188,9 @@ export const REWARDS = {
     reward: { label: 'Free agua fresca', sub: '75 of her 128 points', amount: rwReward },
     tax: { label: 'Tax', amount: rwTax },
     total: { label: 'Total', amount: rwTotal },
-    text: 'She earns 12 points. With Clear, the request goes straight to her phone; card and cash earn the same.',
+    /* Her $12.50 of food after the reward, at the rules beside it: 1 point
+       a dollar by card or cash, and 1.5× paying with Clear (18.75, so 18). */
+    text: 'She earns 12 points by card or cash, or 18 paying with Clear, where the request goes straight to her phone.',
   },
   rules: {
     who: 'Your rules',
