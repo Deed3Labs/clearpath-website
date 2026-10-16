@@ -284,6 +284,7 @@ export const STATUS = {
   rows: [
     { name: 'Member app', desc: 'Savings, credit, term plans and the card', chip: 'Invite-only', tone: 'live' },
     { name: 'Merchant counter app', desc: 'Tablet-first, installs from a browser', chip: 'Invite-only', tone: 'live' },
+    { name: 'Developer API and SDKs', desc: 'Pay with Clear on websites, apps and payment links', chip: 'In build', tone: 'underway' },
     { name: 'Protocol contracts', desc: 'Public and open source', chip: 'In build', tone: 'underway' },
     { name: 'First merchant partners', desc: 'Auto repair and tires, Inland Empire', chip: 'Signing', tone: 'underway' },
     { name: 'First homes', desc: 'Twelve detached homes, land first', chip: 'Not yet', tone: 'absent' },
