@@ -24,6 +24,17 @@ export function getProduct(slug: string): Product | undefined {
   return visibleProducts().find((p) => p.slug === slug);
 }
 
+/* The shelf's goods, and the For shops hardware, as far as this build shows. */
+export function goodsProducts(): Product[] {
+  return visibleProducts().filter((p) => p.section === 'goods');
+}
+
+export function forShopsProducts(): Product[] {
+  return visibleProducts().filter((p) => p.section === 'for-shops');
+}
+
+export { deposit, fromDeposit, fromLabel, fromPrice, priceVaries, unitPrice } from './price';
+
 /* Open means the switch is on AND there is something to buy. */
 export function isShopOpen(): boolean {
   const env = process.env.SHOP_OPEN;
