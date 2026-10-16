@@ -14,7 +14,8 @@ export const HERO = {
   lines: ['How many jobs a week', 'do you write up and lose?'],
   lede: 'Every service writer knows the number. Clear finances those customers at 2.5% of the ticket, pays you on net‑30, and carries the default itself.',
   primary: { href: '/join?as=shop', label: 'Talk to us about your shop' },
-  ghost: { href: '#counter', label: 'See the counter' },
+  /* The way in to everything beyond financing, above the fold. */
+  ghost: { href: '/shops/tools', label: 'See the tools' },
   facts: [
     { k: 'Your rate', v: '2.5%', live: true },
     { k: 'You are paid', v: 'net‑30' },
@@ -157,15 +158,67 @@ export const FIT = {
     title: 'It does not work for you if',
     items: ['Your average ticket is twelve dollars', 'You need the cash the same week', 'Waiting thirty days would strain the shop'],
     foot: 'We would rather say that now than sign you and lose you in month two.',
-    /* For the shops financing does not suit: the rest of Clear still might. */
-    after: 'Financing isn’t for you, but the rest might be: the till, tables, rewards and online payments, at 1.5% when they pay with Clear.',
-    more: { href: '/shops/tools', label: 'Everything else Clear does' },
+    /* For the shops financing does not suit: the next section is the rest of Clear. */
+    more: { href: '#beyond', label: 'The rest of Clear may still fit.' },
   },
 } as const;
 
-/* ── 04 · Founding partners, on ink ───────────────────────────────────── */
-export const FOUNDING = {
+/* ── 04 · Beyond financing ─────────────────────────────────────────────
+   For the shops financing does not suit: the rest of the app, one cell each,
+   pointing to /shops/tools. The pictures are the shop's drawings (the counter
+   on the till, a table Point showing the bill) and two real screens. */
+export const BEYOND = {
   n: '04',
+  label: 'Beyond financing',
+  title: 'Not here for financing? Run the whole counter on Clear.',
+  line: 'The same app rings up the till, runs your tables, keeps your regulars and takes payments online. When they pay with Clear, you pay 1.5%.',
+  more: { href: '/shops/tools', label: 'See the tools' },
+  cells: [
+    {
+      who: 'The till',
+      pic: { kind: 'drawing', drawing: 'counterTill' },
+      title: 'Ring up anything.',
+      text: 'Items, tips, tabs and cash. Card runs on your own Stripe, and the drawer opens itself.',
+      k: 'Card sales',
+      v: 'Your Stripe + 30¢',
+    },
+    {
+      who: 'Tables',
+      pic: { kind: 'drawing', drawing: 'pointBill' },
+      title: 'Seat the floor.',
+      text: 'A Clear Point on every table: the menu, who’s seated, a call button and the bill.',
+      k: 'Clear Point',
+      /* The table Point's price, read from the shop's catalog. */
+      v: { fromPrice: 'clear-point' },
+    },
+    {
+      who: 'Rewards',
+      pic: { kind: 'screen', src: '/shops/tools/rewards-micasa-home.png', alt: 'Mi Casa Tacos in its rewards app', w: 600, h: 1738, frame: 'phone' },
+      title: 'Keep your regulars.',
+      text: 'Points and offers in your colours, in your own app at useclear.org/s/yourshop.',
+      k: 'Rewards app',
+      v: 'Free',
+    },
+    {
+      who: 'Online',
+      pic: { kind: 'screen', src: '/shops/tools/pay-modal.png', alt: 'Pay with Clear on a shop’s website', w: 760, h: 872, frame: 'modal' },
+      title: 'Take it online.',
+      text: 'Pay with Clear on your website, or send a link. Card is always there.',
+      k: 'Online',
+      v: 'Same as the counter',
+    },
+  ],
+  hardware: {
+    text: 'Hardware is optional. If you want ours, it’s reserved at cost and the rest is charged when it ships.',
+    /* To the shop's For shops section once any hardware is for sale;
+       until then to the hardware on /shops/tools. */
+    more: { label: 'The hardware', shop: '/shop#for-shops', tools: '/shops/tools#hardware' },
+  },
+} as const;
+
+/* ── 05 · Founding partners, on ink ───────────────────────────────────── */
+export const FOUNDING = {
+  n: '05',
   label: 'Founding partners',
   title: 'The first five shops are working out the kinks with us.',
   line: 'That is worth paying for, so we do. Founding partners are capped at five, and when they are gone they are gone.',
@@ -195,11 +248,11 @@ export const FOUNDING = {
   },
 } as const;
 
-/* ── 05 · The money ───────────────────────────────────────────────────────
+/* ── 06 · The money ───────────────────────────────────────────────────────
    The clock from ticket to payout, then the refund hand-off: the writer
    starts it, only the owner can move the money. */
 export const MONEY = {
-  n: '05',
+  n: '06',
   label: 'The money',
   title: 'From a bank deposit back to the tickets.',
   line: 'A shop that cannot reconcile a payout against its own books will ask for a spreadsheet every month. So every payout opens up.',
@@ -244,9 +297,9 @@ export const MONEY = {
   again: 'Run it again',
 } as const;
 
-/* ── 06 · Membership: the page closes on its own numbered section ─────── */
+/* ── 07 · Membership: the page closes on its own numbered section ─────── */
 export const MEMBERSHIP = {
-  n: '06',
+  n: '07',
   label: 'Membership',
   title: 'Signing also makes you a partner member of the co-op.',
   line: 'You are not a vendor account. Both sides of every transaction are members of the same cooperative, which is why you appear in the directory members browse. You can leave any time.',

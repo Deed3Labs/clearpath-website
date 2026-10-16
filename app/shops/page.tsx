@@ -65,8 +65,9 @@ export default function Shops() {
               <div className="c-m">
                 <h3>{p.title}</h3>
                 <p>{p.text}</p>
+                {'more' in p && <More href={p.more.href}>{p.more.label}</More>}
               </div>
-              <div className={'more' in p ? 'c-f has-more' : 'c-f'}>
+              <div className="c-f">
                 <span className="ck">{p.k}</span>
                 {'href' in p ? (
                   <a className="fig" href={p.href}>
@@ -75,7 +76,6 @@ export default function Shops() {
                 ) : (
                   <span className="fig">{p.v}</span>
                 )}
-                {'more' in p && <More href={p.more.href}>{p.more.label}</More>}
               </div>
             </div>
           ))}
@@ -120,9 +120,10 @@ export default function Shops() {
               ))}
             </ul>
             <div className="c-f">
-              {FIT.no.foot}
-              <p className="fit-after">{FIT.no.after}</p>
-              <More href={FIT.no.more.href}>{FIT.no.more.label}</More>
+              {FIT.no.foot}{' '}
+              <a className="inl" href={FIT.no.more.href}>
+                {FIT.no.more.label}
+              </a>
             </div>
           </div>
         </div>

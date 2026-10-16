@@ -141,9 +141,7 @@
   .pan3 .cell, .fnd2 .cell { grid-template-rows: minmax(0, 1fr) auto; }
   .pan3 .cell + .cell { border-left: 1px solid var(--line); }
   .pan3 .c-f .fig { font-size: 15px; }
-  /* The hardware panel adds a link to /shops/tools on its own line under the row. */
-  .pan3 .c-f.has-more { display: grid; grid-template-columns: minmax(0, 1fr) auto; row-gap: 14px; padding-block: 16px 20px; }
-  .pan3 .c-f.has-more .more { grid-column: 1 / -1; justify-self: start; }
+  .pan3 .c-m .more { margin-top: 4px; }
   @media (max-width: 980px) {
     .ctr { grid-template-columns: minmax(0, 1fr); }
     .ctr-s { border-left: 0; border-top: 1px solid var(--line); order: -1; }
@@ -174,7 +172,8 @@
   .fitlist li .y2 svg { width: 15px; height: 15px; }
   .fit .c-f { min-height: 0; padding-block: 20px; font-size: 14.5px; line-height: 1.55; color: var(--color-ink-70); display: block; }
   .fit .no .fitlist li { color: var(--color-ink-70); }
-  .fit .fit-after { margin: 14px 0 16px; color: var(--color-ink); }
+  .inl { text-decoration: underline; text-decoration-color: var(--color-ink-28); text-underline-offset: 3px; }
+  .inl:hover { text-decoration-color: currentColor; }
   @media (max-width: 760px) {
     .fit { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
     .fit .cell { grid-row: auto; grid-template-rows: auto auto auto; }
