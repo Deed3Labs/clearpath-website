@@ -42,7 +42,7 @@ export const SHOP: Route = { href: '/shop', label: 'Shop' };
 /* The calendar. */
 export const EVENTS: Route = { href: '/events', label: 'Events' };
 
-/* Businesses that take Clear Pay — the public side of the app's Clear Partners. */
+/* Businesses that take Clear — the public side of the app's Clear Partners. */
 export const DIRECTORY: Route = { href: '/directory', label: 'Directory' };
 
 /* A sixth header item, as a menu rather than two more links: the header was
@@ -52,7 +52,7 @@ export const COMMUNITY: { label: string; links: (Route & { note: string })[] } =
   label: 'Community',
   links: [
     { ...EVENTS, note: 'Calls, town halls and local meetings' },
-    { ...DIRECTORY, note: 'Local businesses that take Clear Pay' },
+    { ...DIRECTORY, note: 'Local businesses that take Clear' },
     { ...SHOP, note: 'Goods with the Clear name on them' },
   ],
 };

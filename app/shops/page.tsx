@@ -1,7 +1,8 @@
-import { PageHero, Device, Button, Section, SectionHead, Close, Rail, Knob, Check } from '@/components/system';
+import { PageHero, Device, Button, Section, SectionHead, Close, Rail, Knob, Check, More } from '@/components/system';
 import { CounterHero } from './_parts/CounterHero';
 import { FeeCalc } from './_parts/FeeCalc';
 import { CounterSteps } from './_parts/CounterSteps';
+import { Beyond } from './_parts/Beyond';
 import { RefundHandoff } from './_parts/RefundHandoff';
 import './page.css';
 import { META, HERO, DIFFERENCE, COUNTER, FIT, FOUNDING, MONEY, MEMBERSHIP } from '@/content/shops';
@@ -65,6 +66,7 @@ export default function Shops() {
               <div className="c-m">
                 <h3>{p.title}</h3>
                 <p>{p.text}</p>
+                {'more' in p && <More href={p.more.href}>{p.more.label}</More>}
               </div>
               <div className="c-f">
                 <span className="ck">{p.k}</span>
@@ -118,10 +120,17 @@ export default function Shops() {
                 </li>
               ))}
             </ul>
-            <div className="c-f">{FIT.no.foot}</div>
+            <div className="c-f">
+              {FIT.no.foot}{' '}
+              <a className="inl" href={FIT.no.more.href}>
+                {FIT.no.more.label}
+              </a>
+            </div>
           </div>
         </div>
       </Section>
+
+      <Beyond />
 
       <Section ink id="founding">
         <SectionHead n={FOUNDING.n} label={FOUNDING.label} title={FOUNDING.title} line={FOUNDING.line} />
@@ -190,7 +199,7 @@ export default function Shops() {
         <RefundHandoff />
       </Section>
 
-      <Close n={MEMBERSHIP.n} label={MEMBERSHIP.label} title={MEMBERSHIP.title} line={MEMBERSHIP.line} primary={MEMBERSHIP.primary} />
+      <Close n={MEMBERSHIP.n} label={MEMBERSHIP.label} title={MEMBERSHIP.title} line={MEMBERSHIP.line} primary={MEMBERSHIP.primary} ghost={MEMBERSHIP.ghost} />
     </div>
   );
 }

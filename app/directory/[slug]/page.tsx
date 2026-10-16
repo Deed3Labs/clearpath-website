@@ -25,12 +25,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!p) return {};
   return {
     title: `${p.name} · Directory`,
-    description: p.about ?? `${p.category} in ${p.city}. Takes Clear Pay.`,
+    description: p.about ?? `${p.category} in ${p.city}. Takes Clear.`,
   };
 }
 
 /* A partner's page, ported from the mockup's partner view: the crumb bar,
-   the body cell (who they are, the Clear Pay chip, a small map of the town),
+   the body cell (who they are, the Pay with Clear chip, a small map of the town),
    a ticket beside it (how to visit), then the three nearest partners. */
 export default async function PartnerPage({ params }: Props) {
   const p = getPartner((await params).slug);
@@ -52,7 +52,7 @@ export default async function PartnerPage({ params }: Props) {
           },
         ]
       : []),
-    { k: PROFILE.accepts, v: p.splitPlans ? PROFILE.acceptsSplit : TAGS.pay },
+    { k: PROFILE.accepts, v: p.splitPlans ? PROFILE.acceptsSplit : PROFILE.acceptsPay },
     ...(p.partnerSince ? [{ k: PROFILE.since, v: monthYear(p.partnerSince) }] : []),
   ];
 

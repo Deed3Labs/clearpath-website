@@ -1,4 +1,4 @@
-/* The directory: local businesses that take Clear Pay.
+/* The directory: local businesses that take Clear.
  *
  * The member app has the same list (Clear Partners). Its data is placeholder
  * today, and a public page must never show a business as a partner that is
@@ -73,13 +73,13 @@ export const PARTNERS: Partner[] = [
 
 export const META = {
   title: 'Directory',
-  description: 'Local businesses in the Inland Empire that take Clear Pay.',
+  description: 'Local businesses in the Inland Empire that take Clear.',
 } as const;
 
 export const OPENING = {
   label: { kicker: 'Community', title: 'Directory' },
   lines: ['Spend it close', 'to home.'],
-  lede: 'Local businesses that take Clear Pay. Paying them keeps money inside the co-op.',
+  lede: 'Local businesses that take Clear. Paying them keeps money inside the co-op.',
   searchLabel: 'Search the directory',
   searchPlaceholder: 'Search by name, kind of business or city',
   clearSearch: 'Clear search',
@@ -96,7 +96,7 @@ export const OPENING = {
    is happening instead. */
 export const FACTS = {
   listed: [
-    { k: 'Businesses', after: 'take Clear Pay' },
+    { k: 'Businesses', after: 'take Clear' },
     { k: 'Towns', after: 'so far' },
     { k: 'Split plans', after: 'offer them' },
   ],
@@ -108,7 +108,7 @@ export const FACTS = {
 } as const;
 
 export const TAGS = {
-  pay: 'Clear Pay',
+  pay: 'Pay with Clear',
   split: 'Split plans',
 } as const;
 
@@ -117,16 +117,16 @@ export const MAP = {
   label: 'Map',
   who: 'Inland Empire',
   ck: 'Drawn, not to scale',
-  legendPay: 'Takes Clear Pay',
+  legendPay: 'Takes Clear',
   legendSplit: 'Also offers split plans',
   byTown: 'By town',
-  peekPay: 'Takes Clear Pay',
-  peekSplit: 'Clear Pay and split plans',
+  peekPay: 'Takes Clear',
+  peekSplit: 'Pay with Clear, and split plans',
   hours: 'Hours',
   address: 'Address',
   phone: 'Phone',
   emptyLabel: 'Where first',
-  emptyNote: 'The Inland Empire. Pins appear as partners start taking Clear Pay.',
+  emptyNote: 'The Inland Empire. Pins appear as partners start taking Clear.',
 } as const;
 
 /* The towns on the map, placed from their real relative positions (longitude
@@ -149,7 +149,7 @@ export const TOWNS: Record<string, { x: number; y: number; label: [number, numbe
 export const EMPTY = {
   chip: 'Signing on',
   heading: 'The first partners are signing on.',
-  lede: 'Shops in the Inland Empire are joining now. They appear here once they take Clear Pay.',
+  lede: 'Shops in the Inland Empire are joining now. They appear here once they take Clear.',
   shopButton: 'Bring Clear to your shop',
   referN: '01',
   referLabel: 'Refer a business',
@@ -190,7 +190,7 @@ export const WHY = {
     member: 'Member',
     partner: 'Partner',
     coop: 'Co-op',
-    clearPay: 'Clear Pay',
+    payWithClear: 'Pay with Clear',
     salePaid: 'Sale · paid',
     card: 'Card',
     sale: 'Sale',
@@ -207,12 +207,14 @@ export const PROFILE = {
   hours: 'Hours',
   phone: 'Phone',
   accepts: 'Takes',
-  acceptsSplit: 'Clear Pay, split plans',
+  /* After "Takes": a partner takes Clear, and some also offer split plans. */
+  acceptsPay: 'Clear',
+  acceptsSplit: 'Clear, split plans',
   since: 'Partner since',
   directions: 'Get directions',
   website: 'Visit website',
   call: (phone: string) => `Call ${phone}`,
   splitNote: 'Members can split a purchase here into a plan.',
   mapCaption: 'Drawn, not to scale',
-  near: { n: 'Near', label: 'Also takes Clear Pay' },
+  near: { n: 'Near', label: 'Also takes Clear' },
 } as const;
