@@ -263,6 +263,52 @@
   @media (max-width: 1000px) { .also2 { grid-template-columns: minmax(0, 1fr); } .mini + .mini { border-left: 0; border-top: 1px solid var(--line); } }
   @media (max-width: 420px) { .mini { grid-template-columns: 88px minmax(0, 1fr) auto; gap: 0 14px; } .mini .plate { width: 88px; } .mini b { font-size: 18px; } }
 
+  /* ── A hardware product: the gallery, the reservation, the FCC notice ── */
+  .pd.hw { align-items: start; }
+  .pd.hw .gal { border-right: 0; position: sticky; top: calc(var(--head-h, 68px) + 72px); grid-template-rows: auto auto auto; }
+  .pd.hw .buy { border-left: 1px solid var(--line); }
+  .pd.hw .gal-wrap { position: relative; min-height: 0; aspect-ratio: 16 / 11; }
+  .gslide { position: absolute; inset: 0; }
+  .gslide[hidden] { display: none; }
+  .gslide .gm { position: absolute; inset: 0; }
+  .gslide .gm.r { background: var(--color-paper); }
+  .gslide .gm.r img { object-fit: cover; }
+  .gslide .gm.d { background: var(--color-paper-2); padding: 3%; }
+  .gslide .gm.d img { display: block; width: 100%; height: 100%; object-fit: contain; }
+  .gslide .plate.gm svg { position: absolute; inset: 0; }
+  .gslide .cap3 { position: absolute; left: 16px; bottom: 14px; z-index: 2; font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: #16211D; background: color-mix(in srgb, var(--color-paper-2) 86%, transparent); padding: 5px 8px 4px; }
+  .thumbs2 { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(176px, 1fr); overflow-x: auto; border-top: 1px solid var(--line); scrollbar-width: thin; }
+  .thumbs2 .thumb + .thumb { border-left: 1px solid var(--line); }
+  .thumbs2 .ti, .thumbs2 .plate { display: block; width: 52px; aspect-ratio: 1; position: relative; overflow: hidden; }
+  .thumbs2 .ti.r { background: var(--color-paper); }
+  .thumbs2 .ti.r img { object-fit: cover; }
+  .thumbs2 .ti.d { background: var(--color-paper-2); }
+  .thumbs2 .ti.d img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 30% 40%; }
+  .thumbs2 .thumb[aria-selected='true'] { background: var(--color-paper-2); box-shadow: inset 0 -2px 0 var(--color-ink); }
+  .thumbs2 .thumb small { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .gnote { padding: 12px var(--px); border-top: 1px solid var(--line); font-size: 12.5px; color: var(--color-ink-50); }
+  .pprice .of { font-size: 15px; font-weight: 400; color: var(--color-ink-50); margin-left: 2px; letter-spacing: 0; }
+  .rsv { margin-top: 24px; border-top: 1px solid var(--color-ink); }
+  .rsv div { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding-block: 11px; border-bottom: 1px solid var(--color-ink-13); font-size: 15px; }
+  .rsv dd { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .rsv div:first-child dd { font-size: 20px; letter-spacing: -0.02em; }
+  .rsv dd.est { color: var(--color-ink-50); font-weight: 400; }
+  .buy .c-m p.forshops { margin-top: 14px; font-size: 13.5px; color: var(--color-ink-50); max-width: none; }
+  .buy .c-m p.fnd { margin-top: 18px; max-width: none; padding: 12px 14px; border-left: 2px solid var(--color-live); background: color-mix(in srgb, var(--color-live) 6%, transparent); font-size: 14px; color: var(--color-ink); }
+  .fcc { margin-top: 22px; padding: 14px 16px; border: 1px solid var(--color-ink-28); font-size: 13px; line-height: 1.55; color: var(--color-ink-70); display: grid; gap: 6px; }
+  .fcc b { font-family: var(--font-mono); font-weight: 400; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--color-underway); }
+  .mini .plate.photo { position: relative; }
+  @media (max-width: 1000px) {
+    .pd.hw .gal { position: static; border-bottom: 1px solid var(--line); }
+    .pd.hw .buy { border-left: 0; }
+  }
+  @media (max-width: 560px) {
+    .thumbs2 { grid-auto-columns: 132px; }
+    .thumbs2 .thumb { grid-template-columns: minmax(0, 1fr); justify-items: start; text-align: left; }
+    .thumbs2 .thumb .plate, .thumbs2 .ti { width: 52px; }
+    .thumbs2 .thumb small { display: none; }
+  }
+
   /* ── The bag ─────────────────────────────────────────────────────────── */
   .vhead { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin-bottom: clamp(24px, 3vw, 40px); }
   .vh1 { font-family: var(--font-display); font-weight: 800; font-size: clamp(44px, 6vw, 88px); line-height: .95; letter-spacing: -0.042em; }
