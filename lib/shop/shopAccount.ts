@@ -33,7 +33,9 @@ import { createHmac, createPublicKey, generateKeyPairSync, randomBytes, sign, ti
  *   mock   no merchant app: "Sign in" returns a sample shop, signed with a key
  *          made at start-up, so the real verification path still runs. It
  *          refuses to run on a production deploy, so a real deposit can never
- *          be taken against a pretend shop.
+ *          be taken against a pretend shop. One server process only (next dev
+ *          or next start): on Vercel each function instance makes its own key,
+ *          so a hand-off signed by one is refused by the next.
  *   unset  pre-orders cannot be checked out at all.
  *
  * The shop id only ever comes from a verified token, never from a request. */
