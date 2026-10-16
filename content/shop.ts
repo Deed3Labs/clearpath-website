@@ -673,10 +673,11 @@ export const BAG = {
   subtotal: 'Subtotal',
   shipping: 'Shipping',
   shippingWait: 'Next step',
+  /* The address step's button when nothing ships now (pre-orders alone). */
+  nextStep: 'Next step',
   total: 'Total',
   remove: 'Remove',
   checkout: 'Checkout',
-  step: (n: number) => `Step ${n} of 3`,
   change: 'Change',
   addressHeading: 'Where should it go?',
   addressNote: 'US addresses only for now.',
@@ -700,6 +701,43 @@ export const BAG = {
   taxNote: 'Card payment is handled by Stripe. We never see your card number.',
   /* When fetch itself fails (offline), not when the API answers with an error. */
   failed: 'Something went wrong. Nothing was charged.',
+
+  /* ── Pre-orders (For shops) in the same bag ── */
+  stepOf: (n: number, of: number) => `Step ${n} of ${of}`,
+  shipsNow: 'Ships now',
+  preorderGroup: 'Pre-order · for shops',
+  depositChip: 'Deposit now',
+  /* "Reserve $220.00 now · $136.00 when it ships · Feb 2027", the deposit bold. */
+  reserve: 'Reserve',
+  depLine: (later: string, ships: string) => ` now · ${later} when it ships · ${ships}`,
+  goods: 'Goods',
+  shippingGoods: 'Shipping, goods',
+  deposits: 'Deposits',
+  today: 'Today',
+  later: 'When each ships, on the saved card',
+  plusShipping: (amount: string) => `${amount} + shipping`,
+  shopHeading: 'Your shop',
+  shopSum: (name: string, owner: string) => `${name} · ${owner}`,
+  shopNote: 'Pre-orders are for shops on Clear. Sign in, or set up your shop; it takes about five minutes and your bag waits here.',
+  signIn: 'Sign in to your shop',
+  setUp: 'Set up a shop',
+  shopRefund: 'If we can’t approve your shop, your deposit comes back automatically.',
+  /* After shopRefund when goods share the bag: "The tee ships either way." */
+  goodsShip: (what: string) => `${what} ships either way.`,
+  goodsShipMany: 'The rest of your bag ships either way.',
+  shopOff: 'Shop sign-in isn’t switched on yet, so pre-orders can’t be checked out. Nothing was charged.',
+  shopFailed: 'That sign-in didn’t go through. Try again.',
+  chargedToday: 'Charged today',
+  savedLater: 'Saved for later',
+  payReserve: (amount: string) => `Pay ${amount} and reserve`,
+  savedCardNote: 'Stripe saves your card to charge the rest when each item ships. We email you first. Card payment is handled by Stripe; we never see your card number.',
+  /* Shown by Stripe Checkout above its pay button for a reservation. */
+  savedCard: 'Stripe saves your card to charge the rest when each item ships. We email you first.',
+  /* The deposit line's description on Stripe's page and receipt. */
+  depositDescription: (balance: string, ships: string) =>
+    `${balance} more when it ships, ${ships}, estimated. Refundable in full until we start building yours.`,
+  shopRequired: 'Pre-orders are for shops on Clear. Sign in to your shop first. Nothing was charged.',
+  shopDeclined: 'This shop can’t take pre-orders. Nothing was charged.',
 } as const;
 
 /* US only (lib/shop/schema.ts). The listbox shows the name, the API gets the code. */
@@ -721,6 +759,39 @@ export const THANKS = {
     { b: 'Tracking', s: 'By email, once it ships', done: false },
   ],
   questions: 'Questions about your order? Reply to the receipt, or email',
+  back: 'Back to the shop',
+} as const;
+
+/* ─── After reserving (/shop/reserved) ───────────────────────────────────
+   The slip shows only to the shop that placed the order (the session's shop
+   must match the one signed in on this browser); anyone else who opens the
+   URL sees the timeline and nothing about the order. */
+
+export const RESERVED = {
+  who: 'Order placed',
+  chip: 'Reserved',
+  heading: 'Reserved.',
+  /* "Your deposits are in and the tee is on its way. We email you…" */
+  ledeGoods: (what: string) => `Your deposits are in and ${what} is on its way.`,
+  ledeGoodsMany: 'Your deposits are in and the rest of your order is on its way.',
+  ledeOnly: 'Your deposits are in.',
+  ledeTail: 'We email you when your shop is approved, before we start building, and when each piece ships.',
+  steps: [
+    { b: 'Reserved', s: (deposits: string) => `${deposits} in deposits, today`, sGeneric: 'Deposits paid today' },
+    // TODO(owner): kept as drawn; depends on how long approval actually takes.
+    { b: 'Shop approved', s: 'Usually within two business days' },
+    { b: 'Building yours', s: 'We email first. Refundable until then' },
+    { b: 'Ships', s: 'The rest is charged that day' },
+  ],
+  mind: 'Changed your mind before we build? Reply to the email, or write to',
+  order: 'Your order',
+  paidToday: 'Paid today',
+  shipping: 'Shipping',
+  deposit: (qty: number, name: string) => `Deposit · ${qty > 1 ? `${qty} × ` : ''}${name}`,
+  today: 'Today',
+  whenShips: 'When each ships',
+  laterLine: (name: string, ships: string) => `${name}, ${ships}`,
+  merchant: 'Also in the merchant app, under Settings › Devices › On order.',
   back: 'Back to the shop',
 } as const;
 

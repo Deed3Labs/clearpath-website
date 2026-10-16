@@ -44,18 +44,47 @@ export function isShopOpen(): boolean {
 
 export type BagLine = { slug: string; variant: string; qty: number };
 
-export type PricedLine = BagLine & { product: Product; variantLabel: string };
+export type PricedLine = BagLine & {
+  product: Product;
+  variantLabel: string;
+  /* Per unit, in cents, from the catalog: never from the browser. */
+  unitCents: number;
+  /* A pre-order reserves `depositCents` a unit now and charges `balanceCents`
+     a unit when it ships. Goods are paid in full now: deposit 0, balance 0. */
+  preorder: boolean;
+  depositCents: number;
+  balanceCents: number;
+  /* The estimated ship month, for a pre-order ("Feb 2027"). */
+  ships?: string;
+};
 
 /* Resolve a bag against the catalog. Returns null if any line names a
    product or variant this build does not sell, or a sold-out variant —
-   checkout refuses the whole bag rather than quietly dropping a line. */
+   checkout refuses the whole bag rather than quietly dropping a line.
+   This is the one place an order is priced: the rates and checkout routes
+   both call it, and the browser only ever says what and how many. A
+   pre-order variant without a deposit, or with one that is not below its
+   price, is a catalog mistake and refuses the bag the same way. */
 export function priceBag(lines: BagLine[]): PricedLine[] | null {
   const out: PricedLine[] = [];
   for (const line of lines) {
     const product = getProduct(line.slug);
     const variant = product?.variants.find((v) => v.id === line.variant);
     if (!product || !variant || variant.soldOut) return null;
-    out.push({ ...line, product, variantLabel: variant.label });
+    const unitCents = variant.priceCents ?? product.priceCents;
+    const preorder = product.section === 'for-shops';
+    const depositCents = preorder ? variant.depositCents ?? 0 : 0;
+    if (preorder && !(depositCents > 0 && depositCents < unitCents && product.preorder)) return null;
+    out.push({
+      ...line,
+      product,
+      variantLabel: variant.label,
+      unitCents,
+      preorder,
+      depositCents,
+      balanceCents: preorder ? unitCents - depositCents : 0,
+      ships: preorder ? product.preorder?.ships : undefined,
+    });
   }
   return out;
 }

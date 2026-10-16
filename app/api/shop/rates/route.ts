@@ -32,8 +32,15 @@ export async function POST(request: Request) {
     );
   }
 
+  /* Only goods ship now. Pre-orders ship when they are built, and their
+     shipping is quoted and charged then, so they are left out of the parcel. */
+  const goods = lines.filter((l) => !l.preorder);
+  if (!goods.length) {
+    return NextResponse.json({ error: 'Nothing in this bag ships now, so there is nothing to quote.' }, { status: 400 });
+  }
+
   try {
-    const rates = await quoteRates(parsed.data.address, lines);
+    const rates = await quoteRates(parsed.data.address, goods);
     if (!rates.length) {
       return NextResponse.json(
         { error: 'No carrier could quote that address. Check it and try again.' },
