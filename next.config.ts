@@ -1,6 +1,10 @@
 import path from 'node:path';
 import type { NextConfig } from 'next';
 
+/* Where the apex's app paths are served from (Clear's monorepo, Deed3Labs/Protocol-Contracts). */
+const REWARDS = (process.env.REWARDS_ORIGIN || 'https://rewards.useclear.org').replace(/\/+$/, '');
+const APP = (process.env.CLEAR_APP_ORIGIN || 'https://app.useclear.org').replace(/\/+$/, '');
+
 const config: NextConfig = {
   reactStrictMode: true,
   /* Make the PostCSS config part of webpack's build-cache key. Without it a
@@ -17,6 +21,21 @@ const config: NextConfig = {
       };
     }
     return webpackConfig;
+  },
+  /* Paths printed on things, served by Clear's apps behind this domain (rewards DECISIONS, Hosts).
+   *   /s/<shop>   a shop's rewards app (apps/rewards), with its files under /_rw
+   *   /p/<code>   a Point's bill, /r/<code> a receipt: the Clear app's phone pages (apps/member),
+   *               with their files under /assets
+   * External rewrites run after this site's own pages and files, so nothing here is shadowed:
+   * public/assets/logo.png is still this site's. */
+  async rewrites() {
+    return [
+      { source: '/s/:path*', destination: `${REWARDS}/s/:path*` },
+      { source: '/_rw/:path*', destination: `${REWARDS}/_rw/:path*` },
+      { source: '/p/:path*', destination: `${APP}/p/:path*` },
+      { source: '/r/:path*', destination: `${APP}/r/:path*` },
+      { source: '/assets/:path*', destination: `${APP}/assets/:path*` },
+    ];
   },
   async redirects() {
     /* Every route the old static site published keeps working. §8 — Redirects.
