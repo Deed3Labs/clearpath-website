@@ -33,11 +33,13 @@ type Props = {
   onChange?: (value: string) => void;
   /* Set by the form when this field was left empty at submit. */
   bad?: boolean;
+  /* The value to start from (the bag prefills a shop's address). */
+  defaultValue?: string;
 };
 
-export function FieldSelect({ name, label, placeholder, options, wide, required, onChange, bad }: Props) {
+export function FieldSelect({ name, label, placeholder, options, wide, required, onChange, bad, defaultValue }: Props) {
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState(defaultValue && options.includes(defaultValue) ? defaultValue : '');
   /* Which option the keyboard is on, which is not the same as which one is
      chosen — arrowing through a list must not commit anything. */
   const [cursor, setCursor] = useState(0);

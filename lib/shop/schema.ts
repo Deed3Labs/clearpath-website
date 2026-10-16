@@ -28,9 +28,12 @@ export const Address = z.object({
 
 export const RatesBody = z.object({ lines: Lines, address: Address });
 
+/* rateId is the goods' shipping, so a bag of pre-orders alone sends none;
+   the checkout route requires it whenever the bag holds goods. Nothing here
+   names a shop: the shop comes from the verified session cookie. */
 export const CheckoutBody = z.object({
   lines: Lines,
   address: Address,
   email: z.string().trim().email().max(160),
-  rateId: z.string().min(1).max(120),
+  rateId: z.string().min(1).max(120).optional(),
 });

@@ -335,6 +335,21 @@
   .tot div b.wait { font-weight: 400; color: var(--color-ink-50); }
   .tot .gt { margin-top: 8px; padding-top: 14px; border-top: 1px solid var(--color-ink); color: var(--color-ink); font-size: 17px; font-weight: 500; }
   .tot .gt b { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; }
+  /* Pre-orders in the bag: the two groups, the deposit line under each
+     pre-order, and the lighter "when each ships" total. */
+  .grp { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px var(--px); border-bottom: 1px solid var(--color-ink-13); background: var(--color-paper-2); font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--color-ink-50); }
+  .grp .chip { font-size: 10px; padding: 4px 9px 3px; }
+  .lines .thumbl .plate.photo { position: relative; }
+  .lines .dep { grid-column: 2 / -1; font-size: 13px; color: var(--color-ink-70); }
+  .lines .dep b { font-weight: 600; color: var(--color-ink); }
+  .tot .later { color: var(--color-ink-50); }
+  .tot .later b { color: var(--color-ink-70); }
+  /* The Your shop step, and the pay step's two figures. */
+  .shopc { display: grid; gap: 14px; }
+  .shopc .two { display: flex; flex-wrap: wrap; gap: 10px; }
+  .kv3 { display: grid; border-top: 1px solid var(--color-ink); margin-bottom: 18px; }
+  .kv3 div { display: flex; justify-content: space-between; gap: 14px; padding-block: 12px; border-bottom: 1px solid var(--color-ink-13); font-size: 15px; }
+  .kv3 div span:last-child { font-weight: 500; text-align: right; font-variant-numeric: tabular-nums; }
   /* Checkout: three steps that fold up once they are done */
   .co { display: block; }
   .stp { border-bottom: 1px solid var(--color-ink-13); }
@@ -430,6 +445,24 @@
   .tl li b { font-weight: 500; font-size: 15px; }
   .tl li small { font-size: 13px; color: var(--color-ink-50); line-height: 1.4; }
   .tbx .c-f { font-size: 14px; color: var(--color-ink-70); flex-wrap: wrap; padding-block: 14px; }
+  /* Reserved: the timeline cell and the order slip side by side. */
+  .tbx.rsvd { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); }
+  .tbx.rsvd > .cell + .cell { border-left: 1px solid var(--line); }
+  .tl4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .slip2 { border-top: 1px solid var(--color-ink); display: grid; }
+  .slip2 div { display: flex; justify-content: space-between; gap: 12px; padding-block: 10px; border-bottom: 1px solid var(--color-ink-13); font-size: 14.5px; }
+  .slip2 div span:last-child { font-variant-numeric: tabular-nums; }
+  .slip2 .h3 { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--color-ink-50); border-bottom-color: var(--color-ink-28); }
+  .slip2 .g { font-weight: 600; font-size: 16px; border-bottom: 0; }
+  .slip2 .lt2 { color: var(--color-ink-50); }
+  .rsvd .note { font-size: 13.5px; color: var(--color-ink-50); }
+  @media (max-width: 1000px) {
+    .tbx.rsvd { grid-template-columns: minmax(0, 1fr); }
+    .tbx.rsvd > .cell + .cell { border-left: 0; border-top: 1px solid var(--line); }
+  }
+  @media (max-width: 700px) {
+    .tl4 { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 22px; }
+  }
   @media (max-width: 560px) {
     .tl { grid-template-columns: minmax(0, 1fr); border-top: 0; border-left: 1px solid var(--color-ink-13); margin-left: 4px; }
     .tl li { padding: 0 0 18px 22px; }

@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start -p 8137",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "SHOP_SHOW_DRAFTS=true SHOP_ACCOUNT=mock node --import tsx --test \"tests/**/*.test.ts\""
   },
   "dependencies": {
     "gsap": "3.12.5",
@@ -28,6 +29,7 @@
     "eslint-config-next": "15.5.4",
     "postcss-nesting": "13.0.1",
     "tailwindcss": "4.1.13",
+    "tsx": "^4.19.2",
     "typescript": "5.9.2"
   }
 }
