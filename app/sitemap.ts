@@ -10,5 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly' as const,
       priority: 0.8,
     })),
+    /* Reached from /shops, not the nav, so it is not in ROUTES. */
+    { url: `${base}/shops/tools`, changeFrequency: 'weekly', priority: 0.7 },
   ];
 }
