@@ -1,24 +1,24 @@
-import Image from 'next/image';
+import { ProductPlate } from '@/components/shop/ProductPlate';
+import { PlateDraw } from '@/components/shop/PlateDraw';
 import { TABLES } from '@/content/shopsTools';
-import { Rise } from './Rise';
 
-/* The Point on the table, in its four states. The caption says what each
-   screen says, so the pictures themselves are decorative. */
+/* The Point on the table, in its four states, drawn as the shop draws its
+   hardware (the plate system's line drawings of the real screens). They
+   draw themselves in once as they come into view; the server markup is the
+   finished drawing. The caption says what each screen says. */
 
 export function PointStates() {
   return (
-    <Rise className="pts4">
+    <PlateDraw className="pts4">
       {TABLES.points.map((p) => (
         <div key={p.k}>
-          <div className="eink">
-            <Image src={p.src} alt="" width={1200} height={900} sizes="(max-width: 860px) 45vw, 300px" />
-          </div>
+          <ProductPlate drawing={p.drawing} tone="paper" />
           <div className="cap">
             <span>{p.k}</span>
             <span>{p.v}</span>
           </div>
         </div>
       ))}
-    </Rise>
+    </PlateDraw>
   );
 }

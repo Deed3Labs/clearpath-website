@@ -146,13 +146,14 @@ export const TABLES = {
       { name: 'Priya', sub: ['Party of 2 · waited 6 min · told 15 min'], action: 'Seat at 1' },
     ] as readonly { name: string; next?: boolean; sub: readonly string[]; action: string; solid?: boolean }[],
   },
-  /* The Point's screen in each state. The caption carries what the screen
-     says, so the images are decorative. */
+  /* The Point on the table in its four states: line drawings of its real
+     screens (components/shop/hardwareShapes, pointStates). The caption
+     carries what the screen says, so the drawings are decorative. */
   points: [
-    { src: '/shops/tools/point-free.jpg', k: 'Free', v: 'The number and the menu' },
-    { src: '/shops/tools/point-held.jpg', k: 'Seated', v: 'Who it’s for' },
-    { src: '/shops/tools/point-bill.jpg', k: 'Bill', v: 'Scan or tap to pay' },
-    { src: '/shops/tools/point-call.jpg', k: 'Calling', v: 'Someone’s coming over' },
+    { drawing: 'pointStates.free', k: 'Free', v: 'The number and the menu' },
+    { drawing: 'pointStates.held', k: 'Seated', v: 'Who it’s for' },
+    { drawing: 'pointStates.bill', k: 'Bill', v: 'Scan or tap to pay' },
+    { drawing: 'pointStates.call', k: 'Calling', v: 'Someone’s coming over' },
   ],
 } as const;
 
