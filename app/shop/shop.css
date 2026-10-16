@@ -428,6 +428,7 @@
      as rendered. */
   :where(html.motion) & [data-draw] .plate:not([data-drawn]) :is(.bd, .ln2) { stroke-dasharray: 1; stroke-dashoffset: 1; fill-opacity: 0; }
   :where(html.motion) & [data-draw] .plate:not([data-drawn]) .mk { opacity: 0; }
+  :where(html.motion) & [data-draw] .plate.hwplate:not([data-drawn]) .gar :is(text, rect, circle, .hl, .fl, .pill, .inv, :is(.bd, .ln2):not([pathLength])) { opacity: 0; }
 }
 
 /* Keyframes cannot nest under .pg-shop, so the names carry the scope. */
