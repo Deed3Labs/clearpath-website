@@ -148,7 +148,9 @@
   .pc.feat .plate.photo img { object-position: 50% 55%; }
 
   /* ── 01 For shops: the hardware, in the shelf's grid ─────────────────── */
-  .hwsec { padding-top: clamp(56px, 6vw, 96px); scroll-margin-top: calc(var(--head-h, 68px) + 84px - clamp(56px, 6vw, 96px)); }
+  /* The For shops chip lands the label just under the shop bar: html's
+     scroll-padding (76px) plus this margin, less the section's padding. */
+  .hwsec { padding-top: clamp(56px, 6vw, 96px); scroll-margin-top: calc(var(--head-h, 68px) + 8px - clamp(56px, 6vw, 96px)); }
   .hwsec .sec-label .chip { margin-left: auto; }
   .hwgrid .pc .chip { margin-left: auto; }
   .rs { grid-column: 1 / -1; font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--color-ink-50); margin-top: 6px; }
