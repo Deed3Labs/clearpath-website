@@ -133,3 +133,29 @@ After the foundation:
   - every copy change by content file;
   - any deviation from the spec, with why;
   - anything you found that conflicts with this plan.
+
+## Addendum, 16 Oct: the user's updated handoff
+
+The user sent a new round: `shops-tools.html` is updated, `shops-updated.html` is new (the whole `/shops` page with every change applied), `assets/screens/pay-modal.png` is new, and the `point-*.jpg` screens are **gone**. Where this disagrees with anything above, this wins.
+
+### `/shops/tools` (Worker A)
+- **The till and Tables screens show their desktop layout at every width, scaled to fit.** Remove their phone canvases (spec: `class="screen" data-w="1180" data-h="640"` for the till and `1180×600` for Tables). The Online section keeps its phone version (760×520 desk, 390×720 phone).
+- **`PointStates` are line drawings again:** "four line drawings of the table Point (from the plate system) showing its real screens: free, seated, bill and calling… copy the SVG from the spec". They're the four `<svg viewBox="66 72 268 214">` in the spec's tables section. They render through `ProductPlate`/`hardwareShapes` once Worker B adds them (below). Drop the `point-*.jpg` images and their files.
+- The spec's new `.duo` CSS is unused by the markup (there's no app pair). Ignore it.
+
+### Plates (Worker B)
+- **New plate classes** (from `shops-updated.html` lines ~500–517 and `shops-tools.html` line 819): `.fl`, `.inv`, `.qbg`, `.pill`, `.hl`, `.hl.neg`, `.qf`, `.qd`, `.tx.serif` (Fraunces; load it only if a drawing uses it, otherwise fall back to Georgia), and `.ns *` (non-scaling stroke). Support every class the drawings use.
+- **Named drawings beyond the ten products,** exported from `hardwareShapes` (same data format, same viewBox handling):
+  - `pointStates`: `free`, `held` (Seated), `bill`, `call`. Take them from the spec's tables section, viewBox `66 72 268 214`.
+  - `counterTill`: the drawn counter showing the till, from `shops-updated.html` section `#beyond`, viewBox `30 66 340 272`.
+  - `pointBill`: the drawn table Point showing the bill, from `shops-updated.html` `#beyond`, viewBox `66 72 268 214` (it may be identical to `pointStates.bill`; reuse it if so).
+  - **The brief also names a drawing-only kind, `pay-modal`.** The mockup uses `pay-modal.png` for it, so treat the image as the source of truth and skip `pay-modal` as a drawing unless the spec has an SVG for it.
+- Copy `assets/screens/pay-modal.png` to `public/shops/tools/`. Remove the `point-*.jpg` from `public/shops/tools/`.
+- Push these as soon as they work. Commit title: `Shop hardware: Point states and the /shops drawings`. Both the lead and Worker A wait on it.
+
+### `/shops` (the lead, PR #62 reworked)
+- The hero's ghost button: "See the counter" → **See the tools** (`/shops/tools`).
+- The hardware panel's **See the hardware** link moves into the text (after the paragraph), not the footer.
+- Fit: the "Financing isn't for you…" line and "Everything else Clear does" are **dropped**. The "does not work" foot gains **The rest of Clear may still fit.**, linking to `#beyond`.
+- **New 04 Beyond financing** (`app/shops/_parts/Beyond.tsx`, `BEYOND` in `content/shops.ts`): four cells (the till as the drawn counter, Tables as the drawn Point with the bill, Rewards as the image cropped to its top, Online as `pay-modal.png`) and a hardware footer row.
+- Founding, The money and Membership renumber to 05, 06, 07.
