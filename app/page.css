@@ -239,12 +239,16 @@
   }
 
   /* ── 04 Status ──────────────────────────────────────────────────────────── */
-  .rows { border-top: 1px solid var(--color-ink); }
-  .rows li { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr) 110px; column-gap: clamp(32px, 6vw, 112px); padding-block: 22px; border-bottom: 1px solid var(--color-ink-13); align-items: baseline; }
+  /* The rows share one set of columns (subgrid), and the line column never
+     goes narrower than the longest line, so every line stays on one row and
+     the name column gives way. */
+  .rows { border-top: 1px solid var(--color-ink); display: grid; grid-template-columns: minmax(0, 7fr) minmax(max-content, 4fr) 110px; column-gap: clamp(32px, 6vw, 112px); }
+  .rows li { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; padding-block: 22px; border-bottom: 1px solid var(--color-ink-13); align-items: baseline; }
   .rows .nm { font-size: clamp(18px, 1.6vw, 22px); font-weight: 500; letter-spacing: -0.015em; }
   .rows .ds { color: var(--color-ink-70); font-size: 15px; }
   .rows .chip { justify-self: end; }
   @media (max-width: 900px) {
+    .rows { grid-template-columns: minmax(0, 1fr); }
     .rows li { grid-template-columns: minmax(0, 1fr) auto; row-gap: 4px; column-gap: var(--spacing-3); padding-block: 18px; }
     .rows .ds { grid-column: 1; grid-row: 2; }
     .rows .chip { grid-column: 2; grid-row: 1; }
