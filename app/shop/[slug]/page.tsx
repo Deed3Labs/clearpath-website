@@ -7,7 +7,7 @@ import { Gallery } from '@/components/shop/Gallery';
 import { PlateDraw } from '@/components/shop/PlateDraw';
 import { isEmbroidered, markDetail, ProductPlate } from '@/components/shop/ProductPlate';
 import { pad2 } from '@/components/shop/item';
-import { CLOSED, GALLERY, PRODUCT_COPY } from '@/content/shop';
+import { CLOSED, GALLERY, PRODUCT_COPY, isGoodsKind } from '@/content/shop';
 import { getProduct, isShopOpen, visibleProducts } from '@/lib/shop/catalog';
 import { usd } from '@/lib/shop/money';
 
@@ -53,7 +53,7 @@ export default async function ProductPage({ params }: Props) {
                 ))}
               </div>
             </div>
-          ) : (
+          ) : isGoodsKind(product.kind) ? (
             <Gallery
               kind={product.kind}
               tone={product.tone}
@@ -61,7 +61,7 @@ export default async function ProductPage({ params }: Props) {
               mark={markDetail(product)}
               back={GALLERY.back.s[product.kind]}
             />
-          )}
+          ) : null}
 
           <div className="buy">
             <div className="c-h">

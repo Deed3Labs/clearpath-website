@@ -1,7 +1,9 @@
 import Link from 'next/link';
-import type { ReactNode } from 'react';
+import { createElement, type ReactNode } from 'react';
 import { LogoMark } from '@/components/marks/Logo';
-import type { PlateTone, Product, ProductKind } from '@/content/shop';
+import { isGoodsKind, type GoodsKind, type PlateTone, type Product, type ProductKind } from '@/content/shop';
+import { HW_SHAPES, type HwNode } from './hardwareShapes';
+import './hardware.css';
 
 /* The product, drawn, until there is a photograph.
  *
@@ -16,11 +18,16 @@ import type { PlateTone, Product, ProductKind } from '@/content/shop';
  * the mark close up, which is the front with the viewBox zoomed in to it.
  * Every path is pathLength 1, so the draw-in can run its dash from 1 to 0
  * whatever the shape's real length. The drawing is decoration: the product's
- * name always sits beside it in words. */
+ * name always sits beside it in words.
+ *
+ * Hardware is drawn from HW_SHAPES (generated from the spec's drawings): one
+ * view, with its screen. Those plates carry .hwplate, whose rules live in
+ * hardware.css beside this file rather than in the shop's page CSS, so a
+ * hardware plate is drawn right on any route. */
 
 type Shape = { body: string; extra: string; back: string; mark: [number, number, number] };
 
-export const SHAPES: Record<ProductKind, Shape> = {
+export const SHAPES: Record<GoodsKind, Shape> = {
   tee: {
     body: 'M140 92 L178 74 Q200 96 222 74 L260 92 L330 150 L298 192 L268 172 L268 334 L132 334 L132 172 L102 192 L70 150 Z',
     extra: 'M178 74 Q200 112 222 74',
@@ -46,7 +53,7 @@ export type PlateView = 'front' | 'mark' | 'back';
 export const FULL_VB = '0 0 400 400';
 
 /* The viewBox that frames the mark: a square a few marks wide round it. */
-export function markViewBox(kind: ProductKind) {
+export function markViewBox(kind: GoodsKind) {
   const [mx, my, size] = SHAPES[kind].mark;
   const k = Math.max(size * 3.6, 124);
   return `${mx - k / 2} ${my - k / 2} ${k} ${k}`;
@@ -61,6 +68,22 @@ export const isEmbroidered = (p: Pick<Product, 'details'>) => p.details.some((d)
 export const markDetail = (p: Pick<Product, 'details'>) => p.details.find((d) => /mark/i.test(d)) ?? p.details[1] ?? '';
 
 const hidden = { opacity: 0 } as const;
+
+/* One node of a generated drawing. ['mark', …] is the Clear mark, as it is. */
+function hwNode(n: HwNode, k: number): ReactNode {
+  if (n[0] === 'mark') {
+    const { x, y, size } = n[1] as { x: number; y: number; size: number };
+    return (
+      <g key={k} transform={`translate(${x} ${y})`}>
+        <g className="mk">
+          <LogoMark size={size} variant="solid" />
+        </g>
+      </g>
+    );
+  }
+  const [tag, attrs, kids] = n;
+  return createElement(tag, { key: k, ...attrs }, typeof kids === 'string' ? kids : kids?.map(hwNode));
+}
 
 export function ProductPlate({
   kind,
@@ -83,10 +106,36 @@ export function ProductPlate({
   className?: string;
   caption?: ReactNode;
 }) {
+  const hw = !isGoodsKind(kind);
+  const svg = hw ? (
+    <svg viewBox={HW_SHAPES[kind].viewBox} aria-hidden="true" focusable="false">
+      <g className="gar">{HW_SHAPES[kind].nodes.map(hwNode)}</g>
+    </svg>
+  ) : (
+    <GoodsSvg kind={kind} view={view} stitch={stitch} />
+  );
+  const cls = ['plate', hw && 'hwplate', className].filter(Boolean).join(' ');
+  if (href) {
+    return (
+      <Link href={href} className={cls} data-tone={tone} data-kind={kind} tabIndex={-1} aria-hidden="true">
+        {svg}
+        {caption}
+      </Link>
+    );
+  }
+  return (
+    <div className={cls} data-tone={tone} data-kind={kind}>
+      {svg}
+      {caption}
+    </div>
+  );
+}
+
+function GoodsSvg({ kind, view, stitch }: { kind: GoodsKind; view: PlateView; stitch?: boolean }) {
   const s = SHAPES[kind];
   const [mx, my, size] = s.mark;
   const back = view === 'back';
-  const svg = (
+  return (
     <svg viewBox={view === 'mark' ? markViewBox(kind) : FULL_VB} aria-hidden="true" focusable="false">
       <g className="gar">
         <path className="bd" d={s.body} pathLength={1} />
@@ -102,20 +151,5 @@ export function ProductPlate({
         </g>
       </g>
     </svg>
-  );
-  const cls = ['plate', className].filter(Boolean).join(' ');
-  if (href) {
-    return (
-      <Link href={href} className={cls} data-tone={tone} data-kind={kind} tabIndex={-1} aria-hidden="true">
-        {svg}
-        {caption}
-      </Link>
-    );
-  }
-  return (
-    <div className={cls} data-tone={tone} data-kind={kind}>
-      {svg}
-      {caption}
-    </div>
   );
 }

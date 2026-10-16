@@ -9,7 +9,7 @@ import { GoesArt, LastArt, RunsArt } from '@/components/shop/WhyArt';
 import { ClosedScene } from '@/components/shop/ClosedScene';
 import { BagRow, ClosedBeats, NotifyLink } from '@/components/shop/ClosedParts';
 import { CLOSED, CLOSED_REASONS, OPENING, SHOP_STATUS, SUPPORT_EMAIL, WHY } from '@/content/shop';
-import { isShopOpen, visibleProducts } from '@/lib/shop/catalog';
+import { goodsProducts, isShopOpen } from '@/lib/shop/catalog';
 
 export const metadata = {
   title: 'Shop',
@@ -35,7 +35,7 @@ export default function Shop() {
 }
 
 function OpenShop() {
-  const products = visibleProducts().map(toItem);
+  const products = goodsProducts().map(toItem);
   return (
     <div className="pg-shop">
       <PageHero

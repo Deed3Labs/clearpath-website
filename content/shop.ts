@@ -1,8 +1,10 @@
 /* The shop. Copy and catalog in one file, because the catalog IS the copy:
  * a product's name, line and details are words someone reads.
  *
- * Merchandise, not a product line. It pays a little, but it is here so
- * members can wear the co-op's name and people ask what it is.
+ * Two sections. The goods are merchandise, not a product line: they pay a
+ * little, but they are here so members can wear the co-op's name and people
+ * ask what it is. For shops is the hardware that runs Clear at a shop,
+ * reserved before it is built (a deposit now, the rest when it ships).
  *
  * Nothing is on sale yet. Every product below is status 'draft', and drafts
  * only render in development or when SHOP_SHOW_DRAFTS=true (see
@@ -13,21 +15,51 @@
  * weights and details are placeholders to design against, not decisions.
  */
 
-export type ProductKind = 'tee' | 'cap' | 'tote';
+/* Goods are drawn from SHAPES (components/shop/ProductPlate.tsx); hardware
+   from HW_SHAPES (components/shop/hardwareShapes.ts, generated from the spec). */
+export type GoodsKind = 'tee' | 'cap' | 'tote';
+export type HardwareKind =
+  | 'point'
+  | 'point-large'
+  | 'pay-case'
+  | 'tap'
+  | 'tap-phone'
+  | 'counter'
+  | 'drawer'
+  | 'printer'
+  | 'stand'
+  | 'panels'
+  | 'kit';
+export type ProductKind = GoodsKind | HardwareKind;
+
+const GOODS_KINDS: readonly string[] = ['tee', 'cap', 'tote'] satisfies GoodsKind[];
+export const isGoodsKind = (k: ProductKind): k is GoodsKind => GOODS_KINDS.includes(k);
 
 /* The ground a product is drawn on when there is no photograph yet. Tokens,
    not hexes — see .plate in app/shop/shop.css. */
 export type PlateTone = 'ink' | 'land' | 'paper';
 
-export type Variant = { id: string; label: string; soldOut?: boolean };
+/* A variant's price overrides the product's. `depositCents` is what a
+   pre-order reserves now; the rest is charged when it ships. `per` replaces
+   "each" after the price ("for ten"). */
+export type Variant = { id: string; label: string; soldOut?: boolean; priceCents?: number; depositCents?: number; per?: string };
+
+/* A hardware product's pictures, in gallery order: renders, then CAD sheets
+   (the drawing from HW_SHAPES sits between them). `caption` follows the
+   kind's word in the gallery: "Render · On a table, with the bill". */
+export type Media = { kind: 'render' | 'cad'; src: string; alt: string; caption: string };
 
 export type Product = {
   slug: string;
+  /* 'goods' sit on the shelf; 'for-shops' is the hardware, in its own
+     section of /shop. */
+  section: 'goods' | 'for-shops';
   name: string;
   /* One line under the name. */
   line: string;
   description: string;
-  /* In cents. Prices are only ever read on the server when charging. */
+  /* In cents. Prices are only ever read on the server when charging. A
+     variant's priceCents overrides this (see lib/shop/price.ts). */
   priceCents: number;
   kind: ProductKind;
   tone: PlateTone;
@@ -45,12 +77,25 @@ export type Product = {
   weightOz: number;
   /* Photographs, in /public. Until there are some, the plate is drawn. */
   images?: { src: string; alt: string }[];
+  /* Hardware is reserved, not bought: a deposit now, the rest when it ships
+     (`ships`, a display month). `fcc` marks a product awaiting FCC
+     equipment authorization; its notice is `fcc` below. */
+  preorder?: { ships: string; fcc: boolean };
+  /* The FCC notice, worded for this product. */
+  fcc?: string;
+  /* The founding-partner note under the reserve button. */
+  founding?: string;
+  media?: Media[];
   status: 'draft' | 'live';
 };
+
+/* Every hardware product's category: the shelf's For shops chip. */
+export const FOR_SHOPS_CATEGORY = 'For shops';
 
 export const PRODUCTS: Product[] = [
   {
     slug: 'member-tee',
+    section: 'goods',
     name: 'Member tee',
     line: 'Heavyweight cotton, mark on the chest.',
     description:
@@ -73,6 +118,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     slug: 'coop-cap',
+    section: 'goods',
     name: 'Co-op cap',
     line: 'Six panels, unstructured, adjustable strap.',
     description:
@@ -88,6 +134,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     slug: 'canvas-tote',
+    section: 'goods',
     name: 'Canvas tote',
     line: 'Heavy canvas, long handles, carries a week of groceries.',
     description:
@@ -101,6 +148,343 @@ export const PRODUCTS: Product[] = [
     weightOz: 7,
     status: 'draft',
   },
+
+  /* ─── For shops: the hardware ───────────────────────────────────────────
+     The hardware that runs Clear at a shop, reserved before it is built.
+     In the spec's order (reference/redesign/shops-tools.html). Every one is
+     a draft until the owner says otherwise.
+
+     Prices and deposits are per variant, in cents. The deposit is our build
+     cost plus a margin for the unexpected, rounded up to the next $5, set by
+     the owner. Never put costs on the site. */
+  {
+    slug: 'clear-point',
+    section: 'for-shops',
+    name: 'Clear Point',
+    line: 'E-paper for every table and the counter.',
+    description: 'Shows the table number and menu code, who is seated, the bill and the change due. Weeks on a battery at a table; plugged in at the counter. Works with the Clear merchant app.',
+    priceCents: 8900,
+    kind: 'point',
+    tone: 'ink',
+    category: FOR_SHOPS_CATEGORY,
+    variantLabel: 'Size',
+    variants: [
+      { id: 'table', label: 'Table', priceCents: 8900, depositCents: 5500 },
+      { id: 'counter', label: 'Counter', priceCents: 12900, depositCents: 6500 },
+      { id: 'ten', label: 'Ten for tables', priceCents: 79000, depositCents: 52000, per: 'for ten' },
+    ],
+    details: [
+      '4.2″ e-paper (table) or 7.5″ (counter)',
+      'Battery for weeks at a table; USB-C at the counter',
+      'Wi-Fi to Clear; pairs with Clear Tap',
+      '93 × 80 × 8.5 mm (table)',
+    ],
+    weightOz: 16, // TODO(owner): packed weight, a placeholder
+    // TODO(owner): the ship month is an estimate; confirm it.
+    preorder: { ships: 'Feb 2027', fcc: true },
+    // TODO(owner): counsel reviews this wording before launch.
+    fcc: 'Clear Point is awaiting FCC equipment authorization. Delivery is conditional on that authorization being granted. FCC rules do not address consumer protection, contract or other provisions. If it is not authorized, your deposit is refunded in full and nothing more is charged.',
+    // TODO(owner): kept as drawn; the lead raises it with the user.
+    founding: 'Founding partners: the counter Point is on us, and table Points are $59.',
+    media: [
+      { kind: 'render', src: '/shop/hardware/renders/point.jpg', alt: 'On a table, with the bill', caption: 'On a table, with the bill' },
+      { kind: 'render', src: '/shop/hardware/renders/pointtable.jpg', alt: 'Free, and held for a party', caption: 'Free, and held for a party' },
+      { kind: 'render', src: '/shop/hardware/renders/pointpair.jpg', alt: 'The menu, and table ready', caption: 'The menu, and table ready' },
+      { kind: 'render', src: '/shop/hardware/renders/pointlarge.jpg', alt: 'Counter size', caption: 'Counter size' },
+      { kind: 'cad', src: '/shop/hardware/cad/clr-pt-101-point-body.svg', alt: 'CLR-PT-101 · Body', caption: 'CLR-PT-101 · Body' },
+      { kind: 'cad', src: '/shop/hardware/cad/clr-pt-201-point-foot.svg', alt: 'CLR-PT-201 · Foot and assembly', caption: 'CLR-PT-201 · Foot and assembly' },
+      { kind: 'cad', src: '/shop/hardware/cad/clr-pt-102-point-large.svg', alt: 'CLR-PT-102 · Counter size', caption: 'CLR-PT-102 · Counter size' },
+    ],
+    status: 'draft',
+  },
+  {
+    slug: 'clear-tap',
+    section: 'for-shops',
+    name: 'Clear Tap',
+    line: 'Stripe’s M2 reader in our dock. Tap, chip and swipe.',
+    description: 'The reader your card money already runs through, standing in a dock that keeps it facing the customer. The Point above it shows the amount.',
+    priceCents: 3500,
+    kind: 'tap',
+    tone: 'land',
+    category: FOR_SHOPS_CATEGORY,
+    variantLabel: 'Option',
+    variants: [
+      { id: 'dock', label: 'Dock only', priceCents: 3500, depositCents: 1000 },
+      { id: 'm2', label: 'With an M2', priceCents: 8900, depositCents: 8000 },
+    ],
+    details: [
+      'Holds a Stripe Reader M2, never covers it',
+      'Stands on the counter or screws to the drawer',
+      'The M2 runs on your own Stripe account',
+      'No power of its own',
+    ],
+    weightOz: 16, // TODO(owner): packed weight, a placeholder
+    // TODO(owner): the ship month is an estimate; confirm it.
+    preorder: { ships: 'Mar 2027', fcc: false },
+    media: [
+      { kind: 'render', src: '/shop/hardware/renders/tapsolo.jpg', alt: 'With an M2', caption: 'With an M2' },
+      { kind: 'render', src: '/shop/hardware/renders/tap.jpg', alt: 'Beside a counter Point', caption: 'Beside a counter Point' },
+      { kind: 'render', src: '/shop/hardware/renders/tapdock.jpg', alt: 'The dock alone', caption: 'The dock alone' },
+      { kind: 'cad', src: '/shop/hardware/cad/clr-hw-601-tap-dock.svg', alt: 'CLR-HW-601 · M2 dock', caption: 'CLR-HW-601 · M2 dock' },
+    ],
+    status: 'draft',
+  },
+  {
+    slug: 'clear-counter',
+    section: 'for-shops',
+    name: 'Clear Counter',
+    line: 'An 8- or 10-inch rugged tablet, set up for the merchant app.',
+    description: 'A rugged tablet that arrives signed in to your shop and locked to the merchant app. It runs the till, the floor and the drawer.',
+    priceCents: 44900,
+    kind: 'counter',
+    tone: 'paper',
+    category: FOR_SHOPS_CATEGORY,
+    variantLabel: 'Size',
+    variants: [
+      { id: '8', label: '8-inch', priceCents: 44900, depositCents: 34500 },
+      { id: '10', label: '10-inch, stand included', priceCents: 69900, depositCents: 55500 },
+    ],
+    details: [
+      '8-inch, or 10-inch with the stand included',
+      'Refurbished and tested by us; rugged, with corner bumpers',
+      'Tap to Pay on the tablet itself',
+      'Fee credit back once you process enough in 90 days',
+    ],
+    weightOz: 16, // TODO(owner): packed weight, a placeholder
+    // TODO(owner): the ship month is an estimate; confirm it.
+    preorder: { ships: 'Apr 2027', fcc: false },
+    media: [
+      { kind: 'render', src: '/shop/hardware/renders/counter.jpg', alt: '10-inch, on its stand', caption: '10-inch, on its stand' },
+      { kind: 'render', src: '/shop/hardware/renders/counterback.jpg', alt: 'The Clear Mount at the back', caption: 'The Clear Mount at the back' },
+      { kind: 'cad', src: '/shop/hardware/cad/clr-hw-301-counter-stand.svg', alt: 'CLR-HW-301 · Swivel stand', caption: 'CLR-HW-301 · Swivel stand' },
+      { kind: 'cad', src: '/shop/hardware/cad/clr-hw-101-mount.svg', alt: 'CLR-HW-101 · Clear Mount', caption: 'CLR-HW-101 · Clear Mount' },
+    ],
+    status: 'draft',
+  },
+  {
+    slug: 'clear-drawer',
+    section: 'for-shops',
+    name: 'Clear Drawer',
+    line: 'A 64 mm steel drawer the tablet opens. Panels swap.',
+    description: 'Thin enough to live under the tablet. A cash sale opens it from the tablet directly, so it still works when the internet doesn’t.',
+    priceCents: 19900,
+    kind: 'drawer',
+    tone: 'ink',
+    category: FOR_SHOPS_CATEGORY,
+    variants: [
+      { id: 'one', label: 'One size', priceCents: 19900, depositCents: 15000 },
+    ],
+    details: [
+      '1.2 mm steel, 64 mm tall',
+      'Opens on a signed command from the tablet',
+      '5 notes, 8 coins; key lock',
+      'Face and top panels lift off without tools',
+    ],
+    weightOz: 16, // TODO(owner): packed weight, a placeholder
+    // TODO(owner): the ship month is an estimate; confirm it.
+    preorder: { ships: 'Apr 2027', fcc: true },
+    // TODO(owner): counsel reviews this wording before launch.
+    fcc: 'Clear Drawer is awaiting FCC equipment authorization. Delivery is conditional on that authorization being granted. FCC rules do not address consumer protection, contract or other provisions. If it is not authorized, your deposit is refunded in full and nothing more is charged.',
+    media: [
+      { kind: 'render', src: '/shop/hardware/renders/drawerclosed.jpg', alt: 'Closed', caption: 'Closed' },
+      { kind: 'render', src: '/shop/hardware/renders/drawer.jpg', alt: 'Open, with a Cobalt face', caption: 'Open, with a Cobalt face' },
+      { kind: 'render', src: '/shop/hardware/renders/finishes.jpg', alt: 'Four faces', caption: 'Four faces' },
+      { kind: 'cad', src: '/shop/hardware/cad/clr-hw-701-drawer.svg', alt: 'CLR-HW-701 · Assembly', caption: 'CLR-HW-701 · Assembly' },
+      { kind: 'cad', src: '/shop/hardware/cad/clr-hw-702-drawer-modules.svg', alt: 'CLR-HW-702 · Panels and insert', caption: 'CLR-HW-702 · Panels and insert' },
+    ],
+    status: 'draft',
+  },
+  {
+    slug: 'label-printer',
+    section: 'for-shops',
+    name: 'Label printer',
+    line: '4-inch thermal. Receipts that stick to a delivery bag.',
+    description: 'Prints receipts and bag labels as stickers, so a DoorDash order leaves with its ticket on the bag. Any 4-inch direct thermal labels work.',
+    priceCents: 14900,
+    kind: 'printer',
+    tone: 'paper',
+    category: FOR_SHOPS_CATEGORY,
+    variants: [
+      { id: 'one', label: 'One size', priceCents: 14900, depositCents: 7000 },
+    ],
+    details: [
+      '4-inch direct thermal, 203 dpi',
+      'USB and Wi-Fi',
+      'Labels 1.57 to 4.1 inches wide',
+      'Works with the merchant app’s receipts',
+    ],
+    weightOz: 16, // TODO(owner): packed weight, a placeholder
+    // TODO(owner): the ship month is an estimate; confirm it.
+    preorder: { ships: 'Mar 2027', fcc: false },
+    media: [
+      { kind: 'render', src: '/shop/hardware/renders/printer.jpg', alt: 'A bag label', caption: 'A bag label' },
+      { kind: 'render', src: '/shop/hardware/renders/printerside.jpg', alt: 'From the side', caption: 'From the side' },
+    ],
+    status: 'draft',
+  },
+  {
+    slug: 'pay-case',
+    section: 'for-shops',
+    name: 'Point Pay case',
+    line: 'An M2 under a table Point, with Call and Bill buttons.',
+    description: 'Turns a table Point into a card terminal. Guests press Call or Bill, then tap their card right under the screen.',
+    priceCents: 3900,
+    kind: 'pay-case',
+    tone: 'land',
+    category: FOR_SHOPS_CATEGORY,
+    variantLabel: 'Size',
+    variants: [
+      { id: 'table', label: 'Table', priceCents: 3900, depositCents: 3000 },
+      { id: 'large', label: 'Counter', priceCents: 4900, depositCents: 3500 },
+    ],
+    details: [
+      'Holds a Stripe Reader M2 (not included)',
+      'Two metal buttons: Call and Bill',
+      'One USB-C cable charges both',
+      'Sits on a Clear Stand',
+    ],
+    weightOz: 16, // TODO(owner): packed weight, a placeholder
+    // TODO(owner): the ship month is an estimate; confirm it.
+    preorder: { ships: 'Mar 2027', fcc: true },
+    // TODO(owner): counsel reviews this wording before launch.
+    fcc: 'The Point Pay case is awaiting FCC equipment authorization. Delivery is conditional on that authorization being granted. FCC rules do not address consumer protection, contract or other provisions. If it is not authorized, your deposit is refunded in full and nothing more is charged.',
+    media: [
+      { kind: 'render', src: '/shop/hardware/renders/casetable.jpg', alt: 'On a table, someone coming over', caption: 'On a table, someone coming over' },
+      { kind: 'render', src: '/shop/hardware/renders/casepair.jpg', alt: 'Table and counter', caption: 'Table and counter' },
+      { kind: 'cad', src: '/shop/hardware/cad/clr-pt-301-pay-case.svg', alt: 'CLR-PT-301 · Table case', caption: 'CLR-PT-301 · Table case' },
+      { kind: 'cad', src: '/shop/hardware/cad/clr-pt-302-pay-case-large.svg', alt: 'CLR-PT-302 · Counter case', caption: 'CLR-PT-302 · Counter case' },
+    ],
+    status: 'draft',
+  },
+  {
+    slug: 'tap-phone',
+    section: 'for-shops',
+    name: 'Clear Tap Phone',
+    line: 'A 6.7-inch phone in our shell. Tap to Pay anywhere.',
+    description: 'For trucks, stalls and paying at the table: a phone that takes contactless cards and phones with nothing plugged in.',
+    priceCents: 24900,
+    kind: 'tap-phone',
+    tone: 'paper',
+    category: FOR_SHOPS_CATEGORY,
+    variants: [
+      { id: 'one', label: 'One size', priceCents: 24900, depositCents: 18000 },
+    ],
+    details: [
+      '6.7-inch screen; refurbished and tested by us',
+      'Tap to Pay: cards and phones',
+      'Runs the merchant app',
+      'Clear’s shell hides the back',
+    ],
+    weightOz: 16, // TODO(owner): packed weight, a placeholder
+    // TODO(owner): the ship month is an estimate; confirm it.
+    preorder: { ships: 'Apr 2027', fcc: false },
+    media: [
+      { kind: 'render', src: '/shop/hardware/renders/tapphonesolo.jpg', alt: 'Ready for a tap', caption: 'Ready for a tap' },
+      { kind: 'render', src: '/shop/hardware/renders/tapphone.jpg', alt: 'Front, and the mount on the back', caption: 'Front, and the mount on the back' },
+      { kind: 'cad', src: '/shop/hardware/cad/clr-hw-201-tap-phone-shell.svg', alt: 'CLR-HW-201 · Shell and bezel', caption: 'CLR-HW-201 · Shell and bezel' },
+    ],
+    status: 'draft',
+  },
+  {
+    slug: 'clear-stand',
+    section: 'for-shops',
+    name: 'Clear Stand',
+    line: 'One stand for the Points and tablets. Twist to lock.',
+    description: 'A fixed stand with a steel plate and the Clear Mount socket. A Point, a Pay case or a tablet twists on and locks.',
+    priceCents: 3900,
+    kind: 'stand',
+    tone: 'land',
+    category: FOR_SHOPS_CATEGORY,
+    variants: [
+      { id: 'one', label: 'One size', priceCents: 3900, depositCents: 2000 },
+    ],
+    details: [
+      'Steel plate, Clear Mount socket',
+      'Fits every Point and both tablets',
+      'Screws down or stands free',
+      'Twist to lock, twist to lift',
+    ],
+    weightOz: 16, // TODO(owner): packed weight, a placeholder
+    // TODO(owner): the ship month is an estimate; confirm it.
+    preorder: { ships: 'Feb 2027', fcc: false },
+    media: [
+      { kind: 'render', src: '/shop/hardware/renders/standsolo.jpg', alt: 'The Clear Mount socket', caption: 'The Clear Mount socket' },
+      { kind: 'render', src: '/shop/hardware/renders/casepair.jpg', alt: 'Holding two Pay cases', caption: 'Holding two Pay cases' },
+      { kind: 'cad', src: '/shop/hardware/cad/clr-hw-302-stand.svg', alt: 'CLR-HW-302 · Fixed stand', caption: 'CLR-HW-302 · Fixed stand' },
+      { kind: 'cad', src: '/shop/hardware/cad/clr-hw-101-mount.svg', alt: 'CLR-HW-101 · Clear Mount', caption: 'CLR-HW-101 · Clear Mount' },
+    ],
+    status: 'draft',
+  },
+  {
+    slug: 'drawer-panels',
+    section: 'for-shops',
+    name: 'Drawer panels',
+    line: 'Faces, tops and till inserts. Swap without tools.',
+    description: 'The drawer’s face, top and till change in seconds. Engrave your own logo, or put a mount on top for the Tap.',
+    priceCents: 2900,
+    kind: 'panels',
+    tone: 'paper',
+    category: FOR_SHOPS_CATEGORY,
+    variantLabel: 'Panel',
+    variants: [
+      { id: 'paper', label: 'Face · Paper or Cobalt', priceCents: 2900, depositCents: 1000 },
+      { id: 'walnut', label: 'Face · Walnut', priceCents: 5900, depositCents: 1500 },
+      { id: 'logo', label: 'Face · your logo', priceCents: 7900, depositCents: 2000 },
+      { id: 'mount', label: 'Top · Mount', priceCents: 4900, depositCents: 2000 },
+      { id: 'wood', label: 'Top · Walnut or cork', priceCents: 6900, depositCents: 2000 },
+      { id: 'insert', label: 'Insert · wider slots', priceCents: 2900, depositCents: 1000 },
+      { id: 'lid', label: 'Locking lid', priceCents: 3900, depositCents: 1500 },
+    ],
+    details: [
+      'Face panels hold on two magnets',
+      'Tops screw down from inside',
+      'Inserts lift out for counting',
+      'Made by us, in small runs',
+    ],
+    weightOz: 16, // TODO(owner): packed weight, a placeholder
+    // TODO(owner): the ship month is an estimate; confirm it.
+    preorder: { ships: 'Apr 2027', fcc: false },
+    media: [
+      { kind: 'render', src: '/shop/hardware/renders/panels.jpg', alt: 'Walnut face, mount top', caption: 'Walnut face, mount top' },
+      { kind: 'render', src: '/shop/hardware/renders/finishes.jpg', alt: 'Ink, Paper, Cobalt and Walnut', caption: 'Ink, Paper, Cobalt and Walnut' },
+      { kind: 'cad', src: '/shop/hardware/cad/clr-hw-702-drawer-modules.svg', alt: 'CLR-HW-702 · Panels and insert', caption: 'CLR-HW-702 · Panels and insert' },
+    ],
+    status: 'draft',
+  },
+  {
+    slug: 'full-counter',
+    section: 'for-shops',
+    name: 'Full counter',
+    line: 'Counter 10-inch, Tap, Drawer, printer and Point Large.',
+    description: 'Everything for one till. $1,265 bought one by one.',
+    priceCents: 114900,
+    kind: 'kit',
+    tone: 'ink',
+    category: FOR_SHOPS_CATEGORY,
+    variants: [
+      { id: 'one', label: 'One set', priceCents: 114900, depositCents: 91000 },
+    ],
+    details: [
+      'Clear Counter, 10-inch, with its stand',
+      'Clear Tap with an M2',
+      'Clear Drawer and a label printer',
+      'Clear Point, counter size',
+    ],
+    weightOz: 16, // TODO(owner): packed weight, a placeholder
+    // TODO(owner): the ship month is an estimate; confirm it.
+    preorder: { ships: 'Apr 2027', fcc: true },
+    // TODO(owner): counsel reviews this wording before launch.
+    fcc: 'The Point and the drawer in this set are awaiting FCC equipment authorization. Delivery is conditional on that authorization being granted. FCC rules do not address consumer protection, contract or other provisions. If it is not authorized, your deposit is refunded in full and nothing more is charged.',
+    media: [
+      { kind: 'render', src: '/shop/hardware/renders/kit.jpg', alt: 'Everything in the set', caption: 'Everything in the set' },
+      { kind: 'render', src: '/shop/hardware/renders/together.jpg', alt: 'One till', caption: 'One till' },
+      { kind: 'render', src: '/shop/hardware/renders/staff.jpg', alt: 'From the staff side', caption: 'From the staff side' },
+      { kind: 'cad', src: '/shop/hardware/cad/clr-hw-701-drawer.svg', alt: 'CLR-HW-701 · Drawer', caption: 'CLR-HW-701 · Drawer' },
+      { kind: 'cad', src: '/shop/hardware/cad/clr-hw-301-counter-stand.svg', alt: 'CLR-HW-301 · Swivel stand', caption: 'CLR-HW-301 · Swivel stand' },
+    ],
+    status: 'draft',
+  },
+
 ];
 
 /* The most of one line anyone can put in a bag. Keeps an order a parcel,
@@ -149,9 +533,45 @@ export const MINIBAG = {
   close: 'Close',
 } as const;
 
-/* 01 under the shelf. */
-export const WHY = {
+/* 01 under the shelf: the hardware, reserved before it is built. The
+   section's id is what the shelf's For shops chip scrolls to. */
+export const FOR_SHOPS = {
+  id: 'for-shops',
   n: '01',
+  kicker: 'For shops',
+  chip: 'Pre-order',
+  title: 'Made for the counter. Reserved at cost.',
+  aside: 'The hardware that runs Clear at a shop. Reserve it for what it costs us to build, and pay the rest when it ships.',
+  more: { href: '/shops/tools', label: 'What it all does' },
+  /* The grid's accessible name. */
+  label: 'For shops',
+  /* "From $89" when the variants differ in price, "$199" when they do not. */
+  from: (price: string) => `From ${price}`,
+  /* "Reserve $55 · ships Feb 2027", the figure in bold. */
+  reserve: 'Reserve',
+  ships: 'ships',
+  how: [
+    {
+      n: '01',
+      title: 'Reserve at cost.',
+      text: 'The deposit is what it costs us to build yours, plus a little for the unexpected. The rest is charged the day it ships.',
+    },
+    {
+      n: '02',
+      title: 'Refundable until we build it.',
+      text: 'We email before we start on yours. Cancel before then and the whole deposit comes back. Miss our ship date and you can cancel for a full refund too.',
+    },
+    {
+      n: '03',
+      title: 'For shops on Clear.',
+      text: 'Add anything to your bag. At checkout you sign in to your shop or set one up. If we can’t approve your shop, your deposit comes back automatically.',
+    },
+  ],
+} as const;
+
+/* 02 under the shelf. */
+export const WHY = {
+  n: '02',
   kicker: 'What it is for',
   title: 'Not a clothing business. Not cheap merch either.',
   aside: 'Made to last and priced like it. The margin only has to cover the line and help get the word out.',
@@ -203,6 +623,30 @@ export const PRODUCT_COPY = {
   also: { kicker: 'Also', label: 'In the shop' },
 } as const;
 
+/* A hardware product (/shop/[slug] for a 'for-shops' product). */
+export const HARDWARE_COPY = {
+  /* "For shops · 01 / 10" */
+  counter: (i: string, n: string) => `For shops · ${i} / ${n}`,
+  chip: 'Pre-order',
+  each: 'each',
+  reserveNow: 'Reserve now',
+  whenShips: 'When it ships',
+  ships: 'Ships',
+  estimated: (month: string) => `${month}, estimated`,
+  reserve: (amount: string) => `Reserve · ${amount}`,
+  forShops: 'For shops on Clear. Checkout asks you to sign in to your shop or set one up.',
+  fcc: 'FCC authorization pending',
+  refund: 'Refundable in full until we start building yours. We email you before we do.',
+  also: { kicker: 'Also', label: 'For shops', reserve: (amount: string) => `Reserve ${amount}` },
+  gallery: {
+    label: 'Views',
+    render: 'Render',
+    drawing: { b: 'Drawing', s: 'The shop’s drawing' },
+    cad: 'CAD',
+    note: 'Renders are made from our CAD models, not photographs. Prototype details may change.',
+  },
+} as const;
+
 /* The gallery's three views. The mark view is named by the product's own
    detail about its mark ("Embroidered mark"); the back by what is there. */
 export const GALLERY = {
@@ -211,7 +655,7 @@ export const GALLERY = {
   mark: { b: 'Mark' },
   back: {
     b: 'Back',
-    s: { tee: 'Nothing on it', cap: 'The strap', tote: 'The plain side' } satisfies Record<ProductKind, string>,
+    s: { tee: 'Nothing on it', cap: 'The strap', tote: 'The plain side' } satisfies Record<GoodsKind, string>,
   },
 } as const;
 

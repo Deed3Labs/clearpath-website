@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import type { PlateTone, ProductKind } from '@/content/shop';
+import type { GoodsKind, PlateTone } from '@/content/shop';
 import { GALLERY } from '@/content/shop';
 import { gsap, motionOK } from '@/lib/anim/gsap';
 import { FULL_VB, markViewBox, ProductPlate, type PlateView } from './ProductPlate';
@@ -22,7 +22,7 @@ export function Gallery({
   mark,
   back,
 }: {
-  kind: ProductKind;
+  kind: GoodsKind;
   tone: PlateTone;
   stitch: boolean;
   /* The product's own detail naming its mark, e.g. "Embroidered mark". */
