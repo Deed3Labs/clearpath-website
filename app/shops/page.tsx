@@ -1,4 +1,4 @@
-import { PageHero, Device, Button, Section, SectionHead, Close, Rail, Knob, Check } from '@/components/system';
+import { PageHero, Device, Button, Section, SectionHead, Close, Rail, Knob, Check, More } from '@/components/system';
 import { CounterHero } from './_parts/CounterHero';
 import { FeeCalc } from './_parts/FeeCalc';
 import { CounterSteps } from './_parts/CounterSteps';
@@ -66,7 +66,7 @@ export default function Shops() {
                 <h3>{p.title}</h3>
                 <p>{p.text}</p>
               </div>
-              <div className="c-f">
+              <div className={'more' in p ? 'c-f has-more' : 'c-f'}>
                 <span className="ck">{p.k}</span>
                 {'href' in p ? (
                   <a className="fig" href={p.href}>
@@ -75,6 +75,7 @@ export default function Shops() {
                 ) : (
                   <span className="fig">{p.v}</span>
                 )}
+                {'more' in p && <More href={p.more.href}>{p.more.label}</More>}
               </div>
             </div>
           ))}
@@ -118,7 +119,11 @@ export default function Shops() {
                 </li>
               ))}
             </ul>
-            <div className="c-f">{FIT.no.foot}</div>
+            <div className="c-f">
+              {FIT.no.foot}
+              <p className="fit-after">{FIT.no.after}</p>
+              <More href={FIT.no.more.href}>{FIT.no.more.label}</More>
+            </div>
           </div>
         </div>
       </Section>
@@ -190,7 +195,7 @@ export default function Shops() {
         <RefundHandoff />
       </Section>
 
-      <Close n={MEMBERSHIP.n} label={MEMBERSHIP.label} title={MEMBERSHIP.title} line={MEMBERSHIP.line} primary={MEMBERSHIP.primary} />
+      <Close n={MEMBERSHIP.n} label={MEMBERSHIP.label} title={MEMBERSHIP.title} line={MEMBERSHIP.line} primary={MEMBERSHIP.primary} ghost={MEMBERSHIP.ghost} />
     </div>
   );
 }

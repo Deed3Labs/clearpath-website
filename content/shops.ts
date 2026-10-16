@@ -6,7 +6,7 @@
 export const META = {
   title: 'For shops',
   description:
-    'Clear finances the customers who cannot pay that day at 2.5% of the ticket, pays you on net-30, and carries the default itself. No exclusivity and no hardware to buy.',
+    'Clear finances the customers who cannot pay that day at 2.5% of the ticket, pays you on net-30, and carries the default itself. No exclusivity and no hardware required.',
 } as const;
 
 export const HERO = {
@@ -132,11 +132,12 @@ export const COUNTER = {
       v: 'No exclusivity',
     },
     {
-      title: 'There is no hardware to buy.',
-      text: 'The merchant app installs from a browser. A tablet, a phone or the shop PC will do.',
+      title: 'No hardware required.',
+      text: 'The merchant app installs from a browser. A tablet, a phone or the shop PC will do. If you want ours, reserve it.',
       k: 'Runs at',
       v: 'merchant.useclear.org',
       href: 'https://merchant.useclear.org',
+      more: { href: '/shops/tools#hardware', label: 'See the hardware' },
     },
   ],
 } as const;
@@ -156,6 +157,9 @@ export const FIT = {
     title: 'It does not work for you if',
     items: ['Your average ticket is twelve dollars', 'You need the cash the same week', 'Waiting thirty days would strain the shop'],
     foot: 'We would rather say that now than sign you and lose you in month two.',
+    /* For the shops financing does not suit: the rest of Clear still might. */
+    after: 'Financing isn’t for you, but the rest might be: the till, tables, rewards and online payments, at 1.5% when they pay with Clear.',
+    more: { href: '/shops/tools', label: 'Everything else Clear does' },
   },
 } as const;
 
@@ -247,4 +251,5 @@ export const MEMBERSHIP = {
   title: 'Signing also makes you a partner member of the co-op.',
   line: 'You are not a vendor account. Both sides of every transaction are members of the same cooperative, which is why you appear in the directory members browse. You can leave any time.',
   primary: { href: '/join?as=shop', label: 'Start a conversation' },
+  ghost: { href: '/shops/tools', label: 'See the tools' },
 } as const;

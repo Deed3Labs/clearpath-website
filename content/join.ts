@@ -121,7 +121,7 @@ export const MODES: {
     key: 'shop',
     n: '02',
     tab: 'I run a shop',
-    sub: 'Take Clear Pay',
+    sub: 'Take Clear',
     nameLabel: 'Contact person',
     fields: [
       { kind: 'text', name: 'business', label: 'Business name', wide: true, autoComplete: 'organization' },

@@ -74,7 +74,7 @@ Owns: `app/events/**` (not the `.ics` routes or `error.tsx` logic), `app/directo
   list rows + sticky drawn map (town table in `content/directory.ts`; unmapped city lists
   without a pin), peek panel / By town, refer form as a framed cell with underline fields,
   ink section 02 drawings. Partner page: `Crumbbar`, body cell with small map, `Ticket`,
-  "Also takes Clear Pay" nearest three.
+  "Also takes Clear" nearest three.
 - `ReferForm` rebuilt as the framed cell with underline fields; endpoint and error strings
   unchanged. `NotifyForm` is already on `PillField` (Phase 1): pass `copy.placeholder` /
   `copy.note` from `content/events.ts`.

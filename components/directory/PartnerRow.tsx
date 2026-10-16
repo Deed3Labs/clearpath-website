@@ -16,7 +16,7 @@ function Hl({ s, q }: { s: string; q?: string }) {
   );
 }
 
-/* One partner in a list. Every partner takes Clear Pay, so a row only tags
+/* One partner in a list. Every partner takes Clear, so a row only tags
    what is extra (split plans). The name is the link and stretches over the
    whole row. */
 export function PartnerRow({ p, q, hot }: { p: Partner; q?: string; hot?: boolean }) {

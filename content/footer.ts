@@ -19,6 +19,7 @@ export const FOOTER_COLUMNS: { heading: string; links: FooterLink[] }[] = [
     heading: 'Partners',
     links: [
       { href: '/shops', label: 'For shops' },
+      { href: '/shops/tools', label: 'Tools for shops' },
       { href: '/contribute', label: 'Contribute land' },
       { href: '/capital', label: 'Clear Capital' },
       { href: 'https://merchant.useclear.org', label: 'Merchant app', external: true },

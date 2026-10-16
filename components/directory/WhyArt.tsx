@@ -6,7 +6,7 @@ import { gsap, ScrollTrigger, useGsap } from '@/lib/anim';
 import { WHY } from '@/content/directory';
 
 /* Section 02's three drawings: the member → partner → co-op loop with a dot
-   going round, Clear Pay paid at the sale against a card "paid, days later",
+   going round, Pay with Clear paid at the sale against a card "paid, days later",
    and a referred pin landing on the map.
 
    The markup is the end state (the dot at the top of the loop, the card
@@ -47,20 +47,21 @@ function Loop() {
   );
 }
 
+/* The rules start at 106 so "Pay with Clear" clears them (it ends near 98). */
 function Paid() {
   return (
     <svg viewBox="0 0 320 140">
-      <text x="0" y="40">{A.clearPay}</text>
-      <path className="r" d="M90 36 H310" />
-      <circle className="f" cx="110" cy="36" r="5" />
-      <circle className="g" id="why-paid" cx="110" cy="36" r="10" opacity=".35" />
-      <text x="102" y="20">{A.salePaid}</text>
+      <text x="0" y="40">{A.payWithClear}</text>
+      <path className="r" d="M106 36 H310" />
+      <circle className="f" cx="126" cy="36" r="5" />
+      <circle className="g" id="why-paid" cx="126" cy="36" r="10" opacity=".35" />
+      <text x="118" y="20">{A.salePaid}</text>
       <text x="0" y="98">{A.card}</text>
-      <path className="r" d="M90 94 H310" />
-      <circle className="f" cx="110" cy="94" r="5" />
-      <path className="o" id="why-card" d="M110 94 H282" />
+      <path className="r" d="M106 94 H310" />
+      <circle className="f" cx="126" cy="94" r="5" />
+      <path className="o" id="why-card" d="M126 94 H282" />
       <circle className="o" cx="282" cy="94" r="5" />
-      <text x="102" y="122">{A.sale}</text>
+      <text x="118" y="122">{A.sale}</text>
       <text x="282" y="122" textAnchor="middle">
         {A.later}
       </text>
