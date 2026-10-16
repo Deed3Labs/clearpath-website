@@ -137,7 +137,32 @@
   .sizes button[aria-checked='true'] { background: var(--color-ink); border-color: var(--color-ink); color: var(--color-paper); }
   .sizes button:disabled { color: var(--color-ink-28); border-color: var(--color-ink-13); text-decoration: line-through; cursor: not-allowed; }
 
-  /* ── 01 What it is for ───────────────────────────────────────────────── */
+  /* The For shops chip: a link down the page, drawn as one of the chips. */
+  .cats .catlink { display: inline-flex; align-items: center; gap: 8px; flex: none; min-height: 38px; padding-inline: 14px; border: 1px solid var(--color-ink-28); border-radius: var(--radius-pill); font-size: 14px; white-space: nowrap; transition: border-color 200ms var(--ease); }
+  .cats .catlink span { font-family: var(--font-mono); font-size: 11px; color: var(--color-ink-50); }
+  .cats .catlink:hover { border-color: var(--color-ink); }
+
+  /* ── A render in place of a drawing (For shops, Also, the mini-bag) ───── */
+  .plate.photo { position: relative; display: block; background: var(--color-paper); overflow: hidden; }
+  .plate.photo img { object-fit: cover; }
+  .pc.feat .plate.photo img { object-position: 50% 55%; }
+
+  /* ── 01 For shops: the hardware, in the shelf's grid ─────────────────── */
+  .hwsec { padding-top: clamp(56px, 6vw, 96px); scroll-margin-top: calc(var(--head-h, 68px) + 84px - clamp(56px, 6vw, 96px)); }
+  .hwsec .sec-label .chip { margin-left: auto; }
+  .hwgrid .pc .chip { margin-left: auto; }
+  .rs { grid-column: 1 / -1; font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--color-ink-50); margin-top: 6px; }
+  .rs b { font-weight: 400; color: var(--color-ink); }
+  /* The empty rack that closes the last row: one per layout, as on the shelf. */
+  .fill2 { display: none; place-items: center; background: var(--color-paper); color: var(--color-ink-28); min-height: 120px; }
+  .fill2 svg { width: min(300px, 80%); }
+  .fill2 path { fill: none; stroke: currentColor; stroke-width: 1.4; }
+  .fill2 text { font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em; fill: var(--color-ink-50); text-transform: uppercase; }
+  @media (min-width: 1101px) { .fill2[data-r='lg'] { display: grid; } }
+  @media (min-width: 641px) and (max-width: 1100px) { .fill2[data-r='md'] { display: grid; } }
+  @media (max-width: 640px) { .fill2[data-r='sm'] { display: grid; } .fill2 text { font-size: 16px; } }
+
+  /* ── 02 What it is for ───────────────────────────────────────────────── */
   .why3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .why3 > .cell + .cell { border-left: 1px solid var(--line); }
   .why3 .c-m { gap: 14px; }
