@@ -12,7 +12,14 @@
  * draw-in can run them), oc an occluding fill in the ground colour, tx / tx
  * big / tx mono / tx dim / tx neg the words on a screen, hl rules, qf / qd
  * QR finder squares and dots, pill and inv buttons, fl the floor line, scr a
- * screen's scaled group, and ns a group whose strokes do not scale. */
+ * screen's scaled group, and ns a group whose strokes do not scale.
+ *
+ * Besides one drawing per product kind (HW_SHAPES), there are named drawings
+ * for other pages (NAMED, by "pointStates.free" etc.): the table Point's four
+ * screens from the spec's Tables section, and the counter with the till and
+ * the Point with the bill from shops-updated.html #beyond. Each carries a
+ * viewBox cropped to the drawing. Where one is a product's drawing exactly,
+ * it reuses that drawing's nodes. */
 
 import type { HardwareKind } from '@/content/shop';
 
@@ -409,3 +416,139 @@ const SHAPES = {
 /* The spec draws one Point. The counter size (point-large) has no drawing of
    its own there, so it borrows the Point's until it gets one. */
 export const HW_SHAPES: Record<HardwareKind, HwShape> = { ...SHAPES, 'point-large': SHAPES.point };
+
+/* The table Point's four screens: free, seated (held), the bill, calling. */
+export const pointStates = {
+  /* Free: The number and the menu. */
+  free: { viewBox: '66 72 268 214', nodes: [
+      ['path', { className: 'bd', d: 'M88 258 H312 A4 4 0 0 1 316 262 V272 A4 4 0 0 1 312 276 H88 A4 4 0 0 1 84 272 V262 A4 4 0 0 1 88 258 Z', pathLength: 1 }],
+      ['path', { className: 'ln2', d: 'M176 276 V270 H224 V276', pathLength: 1 }],
+      ['path', { className: 'oc', d: 'M110 88 H290 A10 10 0 0 1 300 98 V254 A10 10 0 0 1 290 264 H110 A10 10 0 0 1 100 254 V98 A10 10 0 0 1 110 88 Z' }],
+      ['path', { className: 'bd', d: 'M110 88 H290 A10 10 0 0 1 300 98 V254 A10 10 0 0 1 290 264 H110 A10 10 0 0 1 100 254 V98 A10 10 0 0 1 110 88 Z', pathLength: 1 }],
+      ['circle', { className: 'ln2', cx: '200', cy: '95', r: '1.8' }],
+      ['path', { className: 'ln2', d: 'M110 101 H290 A2 2 0 0 1 292 103 V237 A2 2 0 0 1 290 239 H110 A2 2 0 0 1 108 237 V103 A2 2 0 0 1 110 101 Z', pathLength: 1 }],
+      ['g', { className: 'scr', transform: 'translate(108 101) scale(0.3067)' }, [
+        ['text', { className: 'tx mono', x: '26', y: '44', fontSize: '20', textAnchor: 'start' }, 'TABLE'],
+        ['text', { className: 'tx big', x: '16', y: '292', fontSize: '250', textAnchor: 'start' }, '12'],
+        ['rect', { className: 'qf', x: '372.0', y: '26.0', width: '72.8', height: '72.8' }],
+        ['rect', { className: 'qd', x: '395.8', y: '49.8', width: '25.2', height: '25.2' }],
+        ['rect', { className: 'qf', x: '495.2', y: '26.0', width: '72.8', height: '72.8' }],
+        ['rect', { className: 'qd', x: '519.0', y: '49.8', width: '25.2', height: '25.2' }],
+        ['rect', { className: 'qf', x: '372.0', y: '149.2', width: '72.8', height: '72.8' }],
+        ['rect', { className: 'qd', x: '395.8', y: '173.0', width: '25.2', height: '25.2' }],
+        ['rect', { className: 'qd', x: '467.2', y: '37.2', width: '23.8', height: '23.8' }],
+        ['rect', { className: 'qd', x: '467.2', y: '70.8', width: '23.8', height: '23.8' }],
+        ['rect', { className: 'qd', x: '467.2', y: '121.2', width: '23.8', height: '23.8' }],
+        ['rect', { className: 'qd', x: '500.8', y: '121.2', width: '23.8', height: '23.8' }],
+        ['rect', { className: 'qd', x: '534.4', y: '121.2', width: '23.8', height: '23.8' }],
+        ['rect', { className: 'qd', x: '500.8', y: '154.8', width: '23.8', height: '23.8' }],
+        ['rect', { className: 'qd', x: '534.4', y: '188.4', width: '23.8', height: '23.8' }],
+        ['rect', { className: 'qd', x: '500.8', y: '188.4', width: '23.8', height: '23.8' }],
+        ['rect', { className: 'qd', x: '467.2', y: '188.4', width: '23.8', height: '23.8' }],
+        ['rect', { className: 'qd', x: '383.2', y: '121.2', width: '23.8', height: '23.8' }],
+        ['rect', { className: 'qd', x: '416.8', y: '121.2', width: '23.8', height: '23.8' }],
+        ['rect', { className: 'qd', x: '467.2', y: '154.8', width: '23.8', height: '23.8' }],
+        ['rect', { className: 'qd', x: '433.6', y: '154.8', width: '23.8', height: '23.8' }],
+        ['rect', { className: 'qd', x: '534.4', y: '87.6', width: '23.8', height: '23.8' }],
+        ['text', { className: 'tx mono', x: '470', y: '262', fontSize: '17', textAnchor: 'middle' }, 'SCAN FOR THE MENU'],
+        ['text', { className: 'tx mono dim', x: '470', y: '288', fontSize: '15', textAnchor: 'middle' }, 'PAY HERE TOO'],
+        ['path', { className: 'hl', d: 'M0 330 H600' }],
+        ['text', { className: 'tx', x: '26', y: '386', fontSize: '32', textAnchor: 'start' }, 'Mi Casa Tacos'],
+        ['text', { className: 'tx mono', x: '26', y: '432', fontSize: '15', textAnchor: 'start' }, 'USECLEAR.ORG/P/A7K2'],
+        ['text', { className: 'tx mono', x: '574', y: '432', fontSize: '15', textAnchor: 'end' }, 'TAP PHONE BELOW'],
+      ]],
+      ['path', { className: 'ln2', d: 'M197.0 249.5 A2.5 2.5 0 0 1 197.0 254.5' }],
+      ['path', { className: 'ln2', d: 'M197.9 247.0 A5.0 5.0 0 0 1 197.9 257.0' }],
+      ['path', { className: 'ln2', d: 'M198.8 244.4 A7.6 7.6 0 0 1 198.8 259.6' }],
+      ['path', { className: 'fl', d: 'M70 276.5 H330' }],
+    ] },
+  /* Seated: Who it’s for. */
+  held: { viewBox: '66 72 268 214', nodes: [
+      ['path', { className: 'bd', d: 'M88 258 H312 A4 4 0 0 1 316 262 V272 A4 4 0 0 1 312 276 H88 A4 4 0 0 1 84 272 V262 A4 4 0 0 1 88 258 Z', pathLength: 1 }],
+      ['path', { className: 'ln2', d: 'M176 276 V270 H224 V276', pathLength: 1 }],
+      ['path', { className: 'oc', d: 'M110 88 H290 A10 10 0 0 1 300 98 V254 A10 10 0 0 1 290 264 H110 A10 10 0 0 1 100 254 V98 A10 10 0 0 1 110 88 Z' }],
+      ['path', { className: 'bd', d: 'M110 88 H290 A10 10 0 0 1 300 98 V254 A10 10 0 0 1 290 264 H110 A10 10 0 0 1 100 254 V98 A10 10 0 0 1 110 88 Z', pathLength: 1 }],
+      ['circle', { className: 'ln2', cx: '200', cy: '95', r: '1.8' }],
+      ['path', { className: 'ln2', d: 'M110 101 H290 A2 2 0 0 1 292 103 V237 A2 2 0 0 1 290 239 H110 A2 2 0 0 1 108 237 V103 A2 2 0 0 1 110 101 Z', pathLength: 1 }],
+      ['g', { className: 'scr', transform: 'translate(108 101) scale(0.3067)' }, [
+        ['rect', { className: 'inv', x: '0', y: '0', width: '600', height: '450' }],
+        ['text', { className: 'tx mono neg', x: '26', y: '44', fontSize: '20', textAnchor: 'start' }, 'TABLE'],
+        ['text', { className: 'tx big neg', x: '16', y: '292', fontSize: '250', textAnchor: 'start' }, '12'],
+        ['rect', { className: 'qbg', x: '356', y: '14', width: '228', height: '228' }],
+        ['rect', { className: 'qf', x: '372.0', y: '30.0', width: '72.8', height: '72.8' }],
+        ['rect', { className: 'qd', x: '395.8', y: '53.8', width: '25.2', height: '25.2' }],
+        ['rect', { className: 'qf', x: '495.2', y: '30.0', width: '72.8', height: '72.8' }],
+        ['rect', { className: 'qd', x: '519.0', y: '53.8', width: '25.2', height: '25.2' }],
+        ['rect', { className: 'qf', x: '372.0', y: '153.2', width: '72.8', height: '72.8' }],
+        ['rect', { className: 'qd', x: '395.8', y: '177.0', width: '25.2', height: '25.2' }],
+        ['rect', { className: 'qd', x: '467.2', y: '41.2', width: '23.8', height: '23.8' }],
+        ['rect', { className: 'qd', x: '467.2', y: '74.8', width: '23.8', height: '23.8' }],
+        ['rect', { className: 'qd', x: '467.2', y: '125.2', width: '23.8', height: '23.8' }],
+        ['rect', { className: 'qd', x: '500.8', y: '125.2', width: '23.8', height: '23.8' }],
+        ['rect', { className: 'qd', x: '534.4', y: '125.2', width: '23.8', height: '23.8' }],
+        ['rect', { className: 'qd', x: '500.8', y: '158.8', width: '23.8', height: '23.8' }],
+        ['rect', { className: 'qd', x: '534.4', y: '192.4', width: '23.8', height: '23.8' }],
+        ['rect', { className: 'qd', x: '500.8', y: '192.4', width: '23.8', height: '23.8' }],
+        ['rect', { className: 'qd', x: '467.2', y: '192.4', width: '23.8', height: '23.8' }],
+        ['rect', { className: 'qd', x: '383.2', y: '125.2', width: '23.8', height: '23.8' }],
+        ['rect', { className: 'qd', x: '416.8', y: '125.2', width: '23.8', height: '23.8' }],
+        ['rect', { className: 'qd', x: '467.2', y: '158.8', width: '23.8', height: '23.8' }],
+        ['rect', { className: 'qd', x: '433.6', y: '158.8', width: '23.8', height: '23.8' }],
+        ['rect', { className: 'qd', x: '534.4', y: '91.6', width: '23.8', height: '23.8' }],
+        ['text', { className: 'tx mono neg', x: '470', y: '274', fontSize: '17', textAnchor: 'middle' }, 'SEE THE MENU'],
+        ['text', { className: 'tx mono neg dim', x: '470', y: '298', fontSize: '15', textAnchor: 'middle' }, 'BEFORE WE COME OVER'],
+        ['path', { className: 'hl neg', d: 'M0 330 H600' }],
+        ['text', { className: 'tx neg', x: '26', y: '386', fontSize: '34', textAnchor: 'start' }, 'For Ana, party of 2.'],
+        ['text', { className: 'tx mono neg', x: '26', y: '432', fontSize: '15', textAnchor: 'start' }, 'WELCOME · SEATED 7:58 PM'],
+        ['text', { className: 'tx mono neg', x: '574', y: '432', fontSize: '15', textAnchor: 'end' }, 'SIT RIGHT HERE'],
+      ]],
+      ['path', { className: 'ln2', d: 'M197.0 249.5 A2.5 2.5 0 0 1 197.0 254.5' }],
+      ['path', { className: 'ln2', d: 'M197.9 247.0 A5.0 5.0 0 0 1 197.9 257.0' }],
+      ['path', { className: 'ln2', d: 'M198.8 244.4 A7.6 7.6 0 0 1 198.8 259.6' }],
+      ['path', { className: 'fl', d: 'M70 276.5 H330' }],
+    ] },
+  /* Bill: Scan or tap to pay. */
+  bill: { viewBox: '66 72 268 214', nodes: SHAPES['point'].nodes },
+  /* Calling: Someone’s coming over. */
+  call: { viewBox: '66 72 268 214', nodes: [
+      ['path', { className: 'bd', d: 'M88 258 H312 A4 4 0 0 1 316 262 V272 A4 4 0 0 1 312 276 H88 A4 4 0 0 1 84 272 V262 A4 4 0 0 1 88 258 Z', pathLength: 1 }],
+      ['path', { className: 'ln2', d: 'M176 276 V270 H224 V276', pathLength: 1 }],
+      ['path', { className: 'oc', d: 'M110 88 H290 A10 10 0 0 1 300 98 V254 A10 10 0 0 1 290 264 H110 A10 10 0 0 1 100 254 V98 A10 10 0 0 1 110 88 Z' }],
+      ['path', { className: 'bd', d: 'M110 88 H290 A10 10 0 0 1 300 98 V254 A10 10 0 0 1 290 264 H110 A10 10 0 0 1 100 254 V98 A10 10 0 0 1 110 88 Z', pathLength: 1 }],
+      ['circle', { className: 'ln2', cx: '200', cy: '95', r: '1.8' }],
+      ['path', { className: 'ln2', d: 'M110 101 H290 A2 2 0 0 1 292 103 V237 A2 2 0 0 1 290 239 H110 A2 2 0 0 1 108 237 V103 A2 2 0 0 1 110 101 Z', pathLength: 1 }],
+      ['g', { className: 'scr', transform: 'translate(108 101) scale(0.3067)' }, [
+        ['text', { className: 'tx', x: '26', y: '42', fontSize: '28', textAnchor: 'start' }, 'Mi Casa Tacos'],
+        ['text', { className: 'tx mono', x: '574', y: '40', fontSize: '15', textAnchor: 'end' }, 'TABLE 12'],
+        ['path', { className: 'hl', d: 'M0 62 H600' }],
+        ['text', { className: 'tx big', x: '24', y: '160', fontSize: '70', textAnchor: 'start' }, 'Someone’s'],
+        ['text', { className: 'tx big', x: '24', y: '232', fontSize: '70', textAnchor: 'start' }, 'coming over.'],
+        ['text', { className: 'tx', x: '26', y: '292', fontSize: '22', textAnchor: 'start' }, 'You pressed Call at 8:04 PM.'],
+        ['text', { className: 'tx dim', x: '26', y: '324', fontSize: '22', textAnchor: 'start' }, 'Press it again to cancel.'],
+        ['path', { className: 'hl', d: 'M0 398 H600' }],
+        ['text', { className: 'tx mono', x: '26', y: '432', fontSize: '15', textAnchor: 'start' }, 'CALL · 8:04 PM'],
+        ['text', { className: 'tx mono', x: '574', y: '432', fontSize: '15', textAnchor: 'end' }, 'TABLE 12'],
+      ]],
+      ['path', { className: 'ln2', d: 'M197.0 249.5 A2.5 2.5 0 0 1 197.0 254.5' }],
+      ['path', { className: 'ln2', d: 'M197.9 247.0 A5.0 5.0 0 0 1 197.9 257.0' }],
+      ['path', { className: 'ln2', d: 'M198.8 244.4 A7.6 7.6 0 0 1 198.8 259.6' }],
+      ['path', { className: 'fl', d: 'M70 276.5 H330' }],
+    ] },
+} satisfies Record<'free' | 'held' | 'bill' | 'call', HwShape>;
+
+/* The drawn counter showing the till (shops-updated.html #beyond). */
+export const counterTill: HwShape = { viewBox: '30 66 340 272', nodes: SHAPES['counter'].nodes };
+
+/* The drawn table Point showing the bill (shops-updated.html #beyond). */
+export const pointBill: HwShape = pointStates.bill;
+
+export const NAMED = {
+  'pointStates.free': pointStates.free,
+  'pointStates.held': pointStates.held,
+  'pointStates.bill': pointStates.bill,
+  'pointStates.call': pointStates.call,
+  counterTill,
+  pointBill,
+} satisfies Record<string, HwShape>;
+
+export type DrawingName = keyof typeof NAMED;

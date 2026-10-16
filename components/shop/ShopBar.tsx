@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -8,6 +9,7 @@ import { Check } from '@/components/system/icons';
 import { MINIBAG, PRODUCT_COPY, items } from '@/content/shop';
 import { gsap, motionOK } from '@/lib/anim/gsap';
 import { usd, usdExact } from '@/lib/shop/money';
+import { unitPrice } from '@/lib/shop/price';
 import { useBag } from './BagProvider';
 import { variantText, type ShopItem } from './item';
 import { fly, onAdded, type Added } from './motion';
@@ -128,14 +130,20 @@ export function ShopBar({ catalog, closed }: { catalog: ShopItem[]; closed: bool
                     </button>
                   </div>
                   <div className="mb-l">
-                    <ProductPlate kind={p.kind} tone={p.tone} />
+                    {p.render ? (
+                      <span className="plate photo">
+                        <Image src={p.render.src} alt="" fill sizes="56px" />
+                      </span>
+                    ) : (
+                      <ProductPlate kind={p.kind} tone={p.tone} />
+                    )}
                     <span>
                       {p.name}
                       <small>
-                        {variantText(p, mini.variant, PRODUCT_COPY.oneSize)} · {mini.qty} × {usd(p.priceCents)}
+                        {variantText(p, mini.variant, PRODUCT_COPY.oneSize)} · {mini.qty} × {usd(unitPrice(p, mini.variant))}
                       </small>
                     </span>
-                    <span className="fig">{usdExact(p.priceCents * mini.qty)}</span>
+                    <span className="fig">{usdExact(unitPrice(p, mini.variant) * mini.qty)}</span>
                   </div>
                   <div className="mb-a">
                     <Link className="btn" data-variant="primary" href="/shop/bag">

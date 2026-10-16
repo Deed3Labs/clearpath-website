@@ -2,11 +2,11 @@
 
 import Link from 'next/link';
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
-import { CatChips } from '@/components/system/CatChips';
 import { Chip } from '@/components/primitives';
 import { Plus } from '@/components/system/icons';
-import { SHELF } from '@/content/shop';
+import { FOR_SHOPS, FOR_SHOPS_CATEGORY, SHELF } from '@/content/shop';
 import { gsap, motionOK } from '@/lib/anim/gsap';
+import type { CatOption } from '@/components/system/CatChips';
 import { useIsoLayoutEffect } from '@/lib/anim/hooks';
 import { usd } from '@/lib/shop/money';
 import { useBag } from './BagProvider';
@@ -29,13 +29,18 @@ import { Sizes } from './Sizes';
      the three layouts and CSS shows the one that applies — no measuring,
      and it is right with JS off.
 
+   The grid holds the goods; the hardware has its own section below (For
+   shops, ForShopsGrid). The category chips count the whole catalog, and
+   For shops is one of them: it is a link that takes you down to that
+   section rather than a filter. The layout rules above count goods only.
+
    Every tile adds to the bag without leaving the shelf: one size goes
    straight in; with sizes, a row of them slides up over the foot of the
    drawing and choosing one adds it. */
 
 type Range = 'lg' | 'md' | 'sm';
 
-function columns(n: number): Record<Range, number> {
+export function columns(n: number): Record<Range, number> {
   if (n >= 5) return { lg: 4, md: 3, sm: 2 };
   if (n <= 1) return { lg: 2, md: 2, sm: 2 };
   return { lg: n, md: n, sm: 2 };
@@ -43,7 +48,7 @@ function columns(n: number): Record<Range, number> {
 
 /* Columns left empty in the last row, per layout. The featured tile takes
    four cells on three or four columns, and a full row on two. */
-function fillers(n: number, visible: number, feat: boolean) {
+export function fillers(n: number, visible: number, feat: boolean) {
   const cols = columns(n);
   return (Object.keys(cols) as Range[])
     .map((r) => {
@@ -71,7 +76,49 @@ function Rack({ r, span }: { r: Range; span: number }) {
   );
 }
 
-export function Shelf({ products }: { products: ShopItem[] }) {
+/* The shared CatChips row, plus the For shops chip as a link down the page.
+   Local because CatChips only renders filter toggles; the lead may fold a
+   link option back into it. The link is styled as a chip in shop.css. */
+function ShelfChips({
+  options,
+  value,
+  onChange,
+  forShops,
+}: {
+  options: readonly CatOption<string>[];
+  value: string;
+  onChange: (v: string) => void;
+  forShops: number;
+}) {
+  return (
+    <div className="cats" role="group" aria-label={SHELF.filterLabel}>
+      {options.map((o) => (
+        <button key={o.value} type="button" aria-pressed={o.value === value} onClick={() => onChange(o.value)}>
+          {o.label}
+          {o.count !== undefined && <span>{o.count}</span>}
+        </button>
+      ))}
+      {forShops > 0 && (
+        <a
+          className="catlink"
+          href={`#${FOR_SHOPS.id}`}
+          onClick={(e) => {
+            const el = document.getElementById(FOR_SHOPS.id);
+            if (!el || !motionOK()) return;
+            e.preventDefault();
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            history.replaceState(null, '', `#${FOR_SHOPS.id}`);
+          }}
+        >
+          {FOR_SHOPS_CATEGORY}
+          <span>{forShops}</span>
+        </a>
+      )}
+    </div>
+  );
+}
+
+export function Shelf({ products, forShops = 0 }: { products: ShopItem[]; forShops?: number }) {
   const { add } = useBag();
   const n = products.length;
   const [cat, setCat] = useState<string>(SHELF.all);
@@ -84,10 +131,10 @@ export function Shelf({ products }: { products: ShopItem[] }) {
     const order: string[] = [];
     for (const p of products) if (!order.includes(p.category)) order.push(p.category);
     return [
-      { value: SHELF.all, label: SHELF.all, count: n },
+      { value: SHELF.all, label: SHELF.all, count: n + forShops },
       ...order.map((c) => ({ value: c, label: c, count: products.filter((p) => p.category === c).length })),
     ];
-  }, [products, n]);
+  }, [products, n, forShops]);
 
   const featSlug = (products.find((p) => p.featured) ?? products[0])?.slug;
   const visible = products.filter((p) => cat === SHELF.all || p.category === cat);
@@ -165,10 +212,10 @@ export function Shelf({ products }: { products: ShopItem[] }) {
 
   return (
     <>
-      {n >= 5 && (
+      {n + forShops >= 5 && (
         <div className="shelfbar">
-          <CatChips label={SHELF.filterLabel} options={cats} value={cat} onChange={setCat} />
-          <span className="ck">{SHELF.pieces(n)}</span>
+          <ShelfChips options={cats} value={cat} onChange={setCat} forShops={forShops} />
+          <span className="ck">{SHELF.pieces(n + forShops)}</span>
         </div>
       )}
       <div

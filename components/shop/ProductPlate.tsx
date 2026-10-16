@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { createElement, type ReactNode } from 'react';
 import { LogoMark } from '@/components/marks/Logo';
 import { isGoodsKind, type GoodsKind, type PlateTone, type Product, type ProductKind } from '@/content/shop';
-import { HW_SHAPES, type HwNode } from './hardwareShapes';
+import { HW_SHAPES, NAMED, type DrawingName, type HwNode, type HwShape } from './hardwareShapes';
 import './hardware.css';
 
 /* The product, drawn, until there is a photograph.
@@ -23,7 +23,8 @@ import './hardware.css';
  * Hardware is drawn from HW_SHAPES (generated from the spec's drawings): one
  * view, with its screen. Those plates carry .hwplate, whose rules live in
  * hardware.css beside this file rather than in the shop's page CSS, so a
- * hardware plate is drawn right on any route. */
+ * hardware plate is drawn right on any route. Named drawings (the Point's
+ * screens, the counter with the till) render the same way, by `drawing`. */
 
 type Shape = { body: string; extra: string; back: string; mark: [number, number, number] };
 
@@ -87,14 +88,19 @@ function hwNode(n: HwNode, k: number): ReactNode {
 
 export function ProductPlate({
   kind,
+  drawing,
+  viewBox,
   tone,
   view = 'front',
   stitch,
   href,
   className,
   caption,
-}: {
-  kind: ProductKind;
+}: ({ kind: ProductKind; drawing?: undefined } | { kind?: ProductKind; drawing: DrawingName }) & {
+  /* `drawing`: a named drawing from hardwareShapes ("pointStates.bill",
+     "counterTill") in place of the product kind's own, drawn in its own
+     cropped viewBox. `viewBox` overrides the crop of either. */
+  viewBox?: string;
   tone: PlateTone;
   view?: PlateView;
   /* Draw the stitch ring round the mark (shown in the mark view). */
@@ -106,13 +112,14 @@ export function ProductPlate({
   className?: string;
   caption?: ReactNode;
 }) {
-  const hw = !isGoodsKind(kind);
-  const svg = hw ? (
-    <svg viewBox={HW_SHAPES[kind].viewBox} aria-hidden="true" focusable="false">
-      <g className="gar">{HW_SHAPES[kind].nodes.map(hwNode)}</g>
+  const shape: HwShape | null = drawing ? NAMED[drawing] : kind && !isGoodsKind(kind) ? HW_SHAPES[kind] : null;
+  const hw = !!shape;
+  const svg = shape ? (
+    <svg viewBox={viewBox ?? shape.viewBox} aria-hidden="true" focusable="false">
+      <g className="gar">{shape.nodes.map(hwNode)}</g>
     </svg>
   ) : (
-    <GoodsSvg kind={kind} view={view} stitch={stitch} />
+    <GoodsSvg kind={kind as GoodsKind} view={view} stitch={stitch} viewBox={viewBox} />
   );
   const cls = ['plate', hw && 'hwplate', className].filter(Boolean).join(' ');
   if (href) {
@@ -131,12 +138,12 @@ export function ProductPlate({
   );
 }
 
-function GoodsSvg({ kind, view, stitch }: { kind: GoodsKind; view: PlateView; stitch?: boolean }) {
+function GoodsSvg({ kind, view, stitch, viewBox }: { kind: GoodsKind; view: PlateView; stitch?: boolean; viewBox?: string }) {
   const s = SHAPES[kind];
   const [mx, my, size] = s.mark;
   const back = view === 'back';
   return (
-    <svg viewBox={view === 'mark' ? markViewBox(kind) : FULL_VB} aria-hidden="true" focusable="false">
+    <svg viewBox={viewBox ?? (view === 'mark' ? markViewBox(kind) : FULL_VB)} aria-hidden="true" focusable="false">
       <g className="gar">
         <path className="bd" d={s.body} pathLength={1} />
         <path className="ln2 fx" d={s.extra} pathLength={1} style={back ? hidden : undefined} />

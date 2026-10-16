@@ -1,15 +1,17 @@
-import { Bento, Chip, HeroWords, LiveDot, PageHero, Section, SectionHead } from '@/components/system';
+import { Bento, Chip, HeroWords, LiveDot, More, PageHero, Section, SectionHead } from '@/components/system';
 import { Arrow } from '@/components/system/icons';
 import { HeroScope } from '@/components/system/HeroScope';
 import { ShopNotify } from '@/components/shop/ShopNotify';
 import { Shelf } from '@/components/shop/Shelf';
+import { ForShopsGrid } from '@/components/shop/ForShopsGrid';
+import { HowReserving } from '@/components/shop/HowReserving';
 import { toItem } from '@/components/shop/item';
 import { WhyMotion } from '@/components/shop/WhyMotion';
 import { GoesArt, LastArt, RunsArt } from '@/components/shop/WhyArt';
 import { ClosedScene } from '@/components/shop/ClosedScene';
 import { BagRow, ClosedBeats, NotifyLink } from '@/components/shop/ClosedParts';
-import { CLOSED, CLOSED_REASONS, OPENING, SHOP_STATUS, SUPPORT_EMAIL, WHY } from '@/content/shop';
-import { goodsProducts, isShopOpen } from '@/lib/shop/catalog';
+import { CLOSED, CLOSED_REASONS, FOR_SHOPS, OPENING, SHOP_STATUS, SUPPORT_EMAIL, WHY } from '@/content/shop';
+import { forShopsProducts, goodsProducts, isShopOpen } from '@/lib/shop/catalog';
 
 export const metadata = {
   title: 'Shop',
@@ -20,7 +22,10 @@ export const metadata = {
  * (the shelf) and closed.
  *
  * Open: the hero with "Wear the co-op." on one line, the shelf (a grid that
- * grows with the catalog, see Shelf), and 01, what the shop is for.
+ * grows with the catalog, see Shelf), 01 For shops (the hardware, reserved
+ * before it is built, from reference/redesign/shops-tools.html), and 02,
+ * what the shop is for. For shops only renders when some hardware is
+ * visible, and like everything else here only while the shop is open.
  *
  * Closed is an ordinary state the shop goes into and comes out of — sold out,
  * restocking, packing a big batch of orders, a break, or not open yet. So it
@@ -36,6 +41,7 @@ export default function Shop() {
 
 function OpenShop() {
   const products = goodsProducts().map(toItem);
+  const hardware = forShopsProducts().map(toItem);
   return (
     <div className="pg-shop">
       <PageHero
@@ -46,8 +52,27 @@ function OpenShop() {
         lede={OPENING.lede}
         facts={OPENING.facts}
       >
-        <Shelf products={products} />
+        <Shelf products={products} forShops={hardware.length} />
       </PageHero>
+
+      {hardware.length > 0 && (
+        <Section id={FOR_SHOPS.id} className="hwsec">
+          <div className="head">
+            <div className="sec-label label">
+              <b>{FOR_SHOPS.n}</b>
+              {FOR_SHOPS.kicker}
+              <Chip tone="underway">{FOR_SHOPS.chip}</Chip>
+            </div>
+            <h2 className="h2">{FOR_SHOPS.title}</h2>
+            <div className="aside">
+              <p className="line">{FOR_SHOPS.aside}</p>
+              <More href={FOR_SHOPS.more.href}>{FOR_SHOPS.more.label}</More>
+            </div>
+          </div>
+          <ForShopsGrid products={hardware} />
+          <HowReserving items={FOR_SHOPS.how} />
+        </Section>
+      )}
 
       <Section id="why">
         <SectionHead n={WHY.n} label={WHY.kicker} title={WHY.title} line={WHY.aside} />

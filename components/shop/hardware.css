@@ -3,7 +3,9 @@
    one gets these rules. Not page CSS, so nothing here is under a .pg-*
    scope; each rule is scoped by a class only these components render
    (.hwplate, .how3) instead. Ported from reference/redesign/shops-tools.html
-   (the plate ~307–313 and ~812–828, how reserving ~1028 and ~1096). */
+   (the plate ~307–313 and ~812–828, how reserving ~1028 and ~1096) and
+   shops-updated.html (~500–540). No drawing sets .tx.serif yet, so Fraunces
+   is not loaded and the rule falls back to Georgia; load it if one does. */
 
 /* ── A hardware plate: the drawn ground, then the drawing's own classes ── */
 .plate.hwplate { --pg: var(--color-paper-2); --pl: #16211D; --pf: rgb(22 33 29 / .05); position: relative; display: block; background: var(--pg); color: var(--pl); overflow: hidden; }
@@ -19,6 +21,7 @@
 .hwplate .tx.big { font-family: var(--font-display); font-weight: 800; letter-spacing: -0.04em; }
 .hwplate .tx.mono { font-family: var(--font-mono); font-weight: 400; letter-spacing: .1em; }
 .hwplate .tx.dim { opacity: .55; }
+.hwplate .tx.serif { font-family: 'Fraunces', Georgia, serif; font-weight: 600; letter-spacing: -0.01em; }
 .hwplate .tx.neg { fill: var(--pg); }
 .hwplate .inv { fill: currentColor; }
 .hwplate .qbg { fill: var(--pg); }
