@@ -194,7 +194,8 @@
   .code .s { color: #6FCB9F; }
   .code .k { color: #9FB0EA; }
   .lnkf { min-height: 0; padding-block: 20px; }
-  .lnk { display: grid; grid-template-columns: minmax(0, 1fr) 88px; gap: 18px; align-items: center; }
+  /* The cell's foot is a flex row; the grid takes all of it, so the code sits at the right edge. */
+  .lnk { display: grid; grid-template-columns: minmax(0, 1fr) 88px; gap: 18px; align-items: center; width: 100%; }
   .lnk b { font-weight: 500; }
   .lnk .url { margin-top: 6px; }
   .lnk .note { margin-top: 4px; }
