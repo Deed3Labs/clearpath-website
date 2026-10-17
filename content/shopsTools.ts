@@ -153,7 +153,7 @@ export const TABLES = {
     { src: '/shops/tools/state-free.jpg', alt: 'A Clear Point at table 12, showing the number and the menu code', k: 'Free', v: 'The number and the menu' },
     { src: '/shops/tools/state-seated.jpg', alt: 'A Clear Point at table 12, held for Ana, party of 2', k: 'Seated', v: 'Who it’s for' },
     { src: '/shops/tools/state-bill.jpg', alt: 'A Clear Point at table 12, showing the bill, $48.20', k: 'Bill', v: 'Scan or tap to pay' },
-    { src: '/shops/tools/state-calling.jpg', alt: 'A Clear Point in its Pay case, saying someone’s coming over', k: 'Calling', v: 'Someone’s coming over' },
+    { src: '/shops/tools/state-calling.jpg', alt: 'A Clear Point at table 12, saying someone’s coming over', k: 'Calling', v: 'Someone’s coming over' },
   ],
 } as const;
 
