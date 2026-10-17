@@ -298,8 +298,6 @@
   .rsv dd.est { color: var(--color-ink-50); font-weight: 400; }
   .buy .c-m p.forshops { margin-top: 14px; font-size: 13.5px; color: var(--color-ink-50); max-width: none; }
   .buy .c-m p.fnd { margin-top: 18px; max-width: none; padding: 12px 14px; border-left: 2px solid var(--color-live); background: color-mix(in srgb, var(--color-live) 6%, transparent); font-size: 14px; color: var(--color-ink); }
-  .fcc { margin-top: 22px; padding: 14px 16px; border: 1px solid var(--color-ink-28); font-size: 13px; line-height: 1.55; color: var(--color-ink-70); display: grid; gap: 6px; }
-  .fcc b { font-family: var(--font-mono); font-weight: 400; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--color-underway); }
   .mini .plate.photo { position: relative; }
   @media (max-width: 1000px) {
     .pd.hw .gal { position: static; border-bottom: 1px solid var(--line); }

@@ -4,7 +4,6 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { Bento, Chip } from '@/components/system';
 import { AddToBag } from '@/components/shop/AddToBag';
-import { FccNotice } from '@/components/shop/FccNotice';
 import { Gallery } from '@/components/shop/Gallery';
 import { HardwareBuy } from '@/components/shop/HardwareBuy';
 import { HardwareGallery } from '@/components/shop/HardwareGallery';
@@ -200,7 +199,6 @@ function HardwarePage({ product }: { product: Product }) {
                   </li>
                 ))}
               </ol>
-              {product.preorder?.fcc && product.fcc && <FccNotice text={product.fcc} />}
             </div>
             <div className="c-f">
               <svg viewBox="0 0 18 18" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.3">
