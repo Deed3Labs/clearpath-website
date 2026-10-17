@@ -68,7 +68,7 @@ export function sessionParams(input: {
         unit_amount: l.unitCents,
         product_data: {
           name: lineName(l),
-          description: l.product.line,
+          description: l.product.ships ? BAG.goodsDescription(l.product.line, l.product.ships) : l.product.line,
           ...image(l, origin),
           metadata: { slug: l.slug, variant: l.variant },
         },

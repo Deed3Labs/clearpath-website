@@ -76,12 +76,13 @@ export default async function ProductPage({ params }: Props) {
               <span className="label">
                 {pad2(i + 1)} / {pad2(all.length)}
               </span>
-              <span className="ck">{PRODUCT_COPY.run}</span>
+              {product.ships ? <Chip tone="underway">{PRODUCT_COPY.preorder}</Chip> : <span className="ck">{PRODUCT_COPY.run}</span>}
             </div>
             <div className="c-m">
               <h1 className="pname">{product.name}</h1>
               <p className="pline">{product.line}</p>
               <span className="pprice fig">{usd(product.priceCents)}</span>
+              {product.ships && <p className="pships">{PRODUCT_COPY.ships(product.ships)}</p>}
               <p className="pdesc">{product.description}</p>
               <AddToBag
                 slug={product.slug}
@@ -112,7 +113,7 @@ export default async function ProductPage({ params }: Props) {
                 <circle cx="4.5" cy="13.5" r="1.4" />
                 <circle cx="13" cy="13.5" r="1.4" />
               </svg>
-              <span>{PRODUCT_COPY.shipping}</span>
+              <span>{product.ships ? `${PRODUCT_COPY.preorderNote} ${PRODUCT_COPY.shipping}` : PRODUCT_COPY.shipping}</span>
             </div>
           </div>
         </Bento>

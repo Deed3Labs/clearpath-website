@@ -378,7 +378,7 @@ export function BagView({ products, open }: { products: Product[]; open: boolean
               ? BAG.unavailable
               : pre
                 ? l.option!.label
-                : `${variantText(p!, l.variant, PRODUCT_COPY.oneSize)} · ${usd(l.order.unitCents)} ${BAG.each}`}
+                : `${variantText(p!, l.variant, PRODUCT_COPY.oneSize)} · ${usd(l.order.unitCents)} ${BAG.each}${p!.ships ? BAG.goodsShips(p!.ships) : ''}`}
           </span>
         </span>
         <span className="lt fig">{p && l.available ? usdExact(l.order.unitCents * l.qty) : ''}</span>
@@ -455,7 +455,7 @@ export function BagView({ products, open }: { products: Product[]; open: boolean
                 {goodsLines.length > 0 && (
                   <>
                     <div className="grp">
-                      <span>{BAG.shipsNow}</span>
+                      <span>{goodsLines.some((l) => l.product?.ships) ? BAG.goodsPreorder : BAG.shipsNow}</span>
                     </div>
                     <ul className="lines">{goodsLines.map(lineItem)}</ul>
                   </>

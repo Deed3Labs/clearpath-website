@@ -60,7 +60,7 @@ test('mixed bags: goods alone build exactly the session they always did', () => 
           unit_amount: 3200,
           product_data: {
             name: 'Member tee (M)',
-            description: 'Heavyweight cotton, mark on the chest.',
+            description: 'Pre-order: ships Jan 2027, estimated. Heavyweight cotton, mark on the chest.',
             metadata: { slug: 'member-tee', variant: 'm' },
           },
         },

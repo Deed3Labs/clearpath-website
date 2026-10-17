@@ -6,14 +6,18 @@
  * ask what it is. For shops is the hardware that runs Clear at a shop,
  * reserved before it is built (a deposit now, the rest when it ships).
  *
- * Nothing is on sale yet. Every product below is status 'draft', and drafts
- * only render in development or when SHOP_SHOW_DRAFTS=true (see
- * lib/shop/catalog.ts). In production the shop shows its closed state
- * until at least one product is 'live' — flip a status and redeploy.
+ * A product shows on production once its status is 'live'; drafts only
+ * render in development or when SHOP_SHOW_DRAFTS=true (see
+ * lib/shop/catalog.ts). Flip a status and redeploy.
  *
- * TODO(owner): the three drafts are layout stand-ins. Names, prices, sizes,
- * weights and details are placeholders to design against, not decisions.
+ * The goods are on pre-order: paid in full today, made in one run, shipped
+ * in GOODS_SHIPS. They are shown as drawings until there are photographs.
+ * TODO(owner): weights and details are still the first draft's.
  */
+
+/* The month the goods' first run ships, estimated: on every goods tile, page,
+   bag line and receipt. TODO(owner): confirm it with the maker. */
+export const GOODS_SHIPS = 'Jan 2027';
 
 /* Goods are drawn from SHAPES (components/shop/ProductPlate.tsx); hardware
    from HW_SHAPES (components/shop/hardwareShapes.ts, generated from the spec). */
@@ -77,6 +81,9 @@ export type Product = {
   weightOz: number;
   /* Photographs, in /public. Until there are some, the plate is drawn. */
   images?: { src: string; alt: string }[];
+  /* Goods sold before they are made: paid in full today, shipped in this
+     month (a display month). Hardware uses `preorder` instead. */
+  ships?: string;
   /* Hardware is reserved, not bought: a deposit now, the rest when it ships
      (`ships`, a display month). `fcc` marks a product awaiting FCC
      equipment authorization; its notice is `fcc` below. */
@@ -114,7 +121,8 @@ export const PRODUCTS: Product[] = [
     ],
     details: ['100% cotton', 'Embroidered mark', 'Relaxed fit'],
     weightOz: 8,
-    status: 'draft',
+    ships: GOODS_SHIPS,
+    status: 'live',
   },
   {
     slug: 'coop-cap',
@@ -130,7 +138,8 @@ export const PRODUCTS: Product[] = [
     variants: [{ id: 'one', label: 'One size' }],
     details: ['Cotton twill', 'Embroidered mark', 'One size, adjustable'],
     weightOz: 4,
-    status: 'draft',
+    ships: GOODS_SHIPS,
+    status: 'live',
   },
   {
     slug: 'canvas-tote',
@@ -146,13 +155,13 @@ export const PRODUCTS: Product[] = [
     variants: [{ id: 'one', label: 'One size' }],
     details: ['Heavy cotton canvas', 'Printed wordmark', 'Handles fit over a shoulder'],
     weightOz: 7,
-    status: 'draft',
+    ships: GOODS_SHIPS,
+    status: 'live',
   },
 
   /* ─── For shops: the hardware ───────────────────────────────────────────
      The hardware that runs Clear at a shop, reserved before it is built.
-     In the spec's order (reference/redesign/shops-tools.html). Every one is
-     a draft until the owner says otherwise.
+     In the spec's order (reference/redesign/shops-tools.html).
 
      Prices and deposits are per variant, in cents. The deposit is our build
      cost plus a margin for the unexpected, rounded up to the next $5, set by
@@ -195,7 +204,7 @@ export const PRODUCTS: Product[] = [
       { kind: 'cad', src: '/shop/hardware/cad/clr-pt-201-point-foot.svg', alt: 'CLR-PT-201 · Foot and assembly', caption: 'CLR-PT-201 · Foot and assembly' },
       { kind: 'cad', src: '/shop/hardware/cad/clr-pt-102-point-large.svg', alt: 'CLR-PT-102 · Counter size', caption: 'CLR-PT-102 · Counter size' },
     ],
-    status: 'draft',
+    status: 'live',
   },
   {
     slug: 'clear-tap',
@@ -227,7 +236,7 @@ export const PRODUCTS: Product[] = [
       { kind: 'render', src: '/shop/hardware/renders/tapdock.jpg', alt: 'The dock alone', caption: 'The dock alone' },
       { kind: 'cad', src: '/shop/hardware/cad/clr-hw-601-tap-dock.svg', alt: 'CLR-HW-601 · M2 dock', caption: 'CLR-HW-601 · M2 dock' },
     ],
-    status: 'draft',
+    status: 'live',
   },
   {
     slug: 'clear-counter',
@@ -259,7 +268,7 @@ export const PRODUCTS: Product[] = [
       { kind: 'cad', src: '/shop/hardware/cad/clr-hw-301-counter-stand.svg', alt: 'CLR-HW-301 · Swivel stand', caption: 'CLR-HW-301 · Swivel stand' },
       { kind: 'cad', src: '/shop/hardware/cad/clr-hw-101-mount.svg', alt: 'CLR-HW-101 · Clear Mount', caption: 'CLR-HW-101 · Clear Mount' },
     ],
-    status: 'draft',
+    status: 'live',
   },
   {
     slug: 'clear-drawer',
@@ -292,7 +301,7 @@ export const PRODUCTS: Product[] = [
       { kind: 'cad', src: '/shop/hardware/cad/clr-hw-701-drawer.svg', alt: 'CLR-HW-701 · Assembly', caption: 'CLR-HW-701 · Assembly' },
       { kind: 'cad', src: '/shop/hardware/cad/clr-hw-702-drawer-modules.svg', alt: 'CLR-HW-702 · Panels and insert', caption: 'CLR-HW-702 · Panels and insert' },
     ],
-    status: 'draft',
+    status: 'live',
   },
   {
     slug: 'label-printer',
@@ -320,7 +329,7 @@ export const PRODUCTS: Product[] = [
       { kind: 'render', src: '/shop/hardware/renders/printer.jpg', alt: 'A bag label', caption: 'A bag label' },
       { kind: 'render', src: '/shop/hardware/renders/printerside.jpg', alt: 'From the side', caption: 'From the side' },
     ],
-    status: 'draft',
+    status: 'live',
   },
   {
     slug: 'pay-case',
@@ -354,7 +363,7 @@ export const PRODUCTS: Product[] = [
       { kind: 'cad', src: '/shop/hardware/cad/clr-pt-301-pay-case.svg', alt: 'CLR-PT-301 · Table case', caption: 'CLR-PT-301 · Table case' },
       { kind: 'cad', src: '/shop/hardware/cad/clr-pt-302-pay-case-large.svg', alt: 'CLR-PT-302 · Counter case', caption: 'CLR-PT-302 · Counter case' },
     ],
-    status: 'draft',
+    status: 'live',
   },
   {
     slug: 'tap-phone',
@@ -383,7 +392,7 @@ export const PRODUCTS: Product[] = [
       { kind: 'render', src: '/shop/hardware/renders/tapphone.jpg', alt: 'Front, and the mount on the back', caption: 'Front, and the mount on the back' },
       { kind: 'cad', src: '/shop/hardware/cad/clr-hw-201-tap-phone-shell.svg', alt: 'CLR-HW-201 · Shell and bezel', caption: 'CLR-HW-201 · Shell and bezel' },
     ],
-    status: 'draft',
+    status: 'live',
   },
   {
     slug: 'clear-stand',
@@ -413,7 +422,7 @@ export const PRODUCTS: Product[] = [
       { kind: 'cad', src: '/shop/hardware/cad/clr-hw-302-stand.svg', alt: 'CLR-HW-302 · Fixed stand', caption: 'CLR-HW-302 · Fixed stand' },
       { kind: 'cad', src: '/shop/hardware/cad/clr-hw-101-mount.svg', alt: 'CLR-HW-101 · Clear Mount', caption: 'CLR-HW-101 · Clear Mount' },
     ],
-    status: 'draft',
+    status: 'live',
   },
   {
     slug: 'drawer-panels',
@@ -449,7 +458,7 @@ export const PRODUCTS: Product[] = [
       { kind: 'render', src: '/shop/hardware/renders/finishes.jpg', alt: 'Ink, Paper, Cobalt and Walnut', caption: 'Ink, Paper, Cobalt and Walnut' },
       { kind: 'cad', src: '/shop/hardware/cad/clr-hw-702-drawer-modules.svg', alt: 'CLR-HW-702 · Panels and insert', caption: 'CLR-HW-702 · Panels and insert' },
     ],
-    status: 'draft',
+    status: 'live',
   },
   {
     slug: 'full-counter',
@@ -482,7 +491,7 @@ export const PRODUCTS: Product[] = [
       { kind: 'cad', src: '/shop/hardware/cad/clr-hw-701-drawer.svg', alt: 'CLR-HW-701 · Drawer', caption: 'CLR-HW-701 · Drawer' },
       { kind: 'cad', src: '/shop/hardware/cad/clr-hw-301-counter-stand.svg', alt: 'CLR-HW-301 · Swivel stand', caption: 'CLR-HW-301 · Swivel stand' },
     ],
-    status: 'draft',
+    status: 'live',
   },
 
 ];
@@ -507,7 +516,7 @@ export const OPENING = {
   lede: 'A small run of well-made goods with the Clear name on them. Wear it and people ask what it is.',
   facts: [
     { k: 'Made', v: 'In small runs' },
-    { k: 'Ships', v: 'Within the US' },
+    { k: 'Ships', v: `From ${GOODS_SHIPS}, in the US` },
     { k: 'What it earns', v: 'Back into the co-op' },
   ],
 } as const;
@@ -523,6 +532,9 @@ export const SHELF = {
   /* The drawn rail that closes the last row when the tiles run short. */
   filler: 'Room on the rack',
   add: (name: string) => `Add ${name} to bag`,
+  /* A goods tile's header, in place of its category. */
+  preorder: 'Pre-order',
+  ships: (month: string) => `Pre-order · ships ${month}`,
 } as const;
 
 /* The panel that drops from the Bag pill after anything goes in. */
@@ -620,6 +632,10 @@ export const PRODUCT_COPY = {
   more: 'One more',
   details: 'Details',
   shipping: 'Ships within the US. Shipping is quoted at checkout from live carrier rates.',
+  /* A goods pre-order: paid today, made in the run, shipped in its month. */
+  preorder: 'Pre-order',
+  ships: (month: string) => `Ships ${month}, estimated`,
+  preorderNote: 'Paid in full today. We make the run once the orders are in, and email you tracking when yours ships.',
   also: { kicker: 'Also', label: 'In the shop' },
 } as const;
 
@@ -705,6 +721,11 @@ export const BAG = {
   /* ── Pre-orders (For shops) in the same bag ── */
   stepOf: (n: number, of: number) => `Step ${n} of ${of}`,
   shipsNow: 'Ships now',
+  /* The goods' group, and their line, when they are on pre-order. */
+  goodsPreorder: 'Pre-order · paid today',
+  goodsShips: (month: string) => ` · ships ${month}`,
+  /* A goods pre-order's description on Stripe's page and receipt. */
+  goodsDescription: (line: string, month: string) => `Pre-order: ships ${month}, estimated. ${line}`,
   preorderGroup: 'Pre-order · for shops',
   depositChip: 'Deposit now',
   /* "Reserve $220.00 now · $136.00 when it ships · Feb 2027", the deposit bold. */
@@ -815,7 +836,7 @@ export const SHOP_STATUS: {
   /* ISO date (YYYY-MM-DD) or null. Only set a date you will keep. */
   reopensAt: string | null;
 } = {
-  open: false,
+  open: true,
   reason: 'not-open-yet',
   reopensAt: null,
 };

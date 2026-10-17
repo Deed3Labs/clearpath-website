@@ -4,11 +4,11 @@ import type { Product } from '@/content/shop';
    no photographs beyond the first render. Prices travel for display only;
    checkout prices the order again on the server from the catalog.
 
-   Hardware also carries its section, its pre-order terms and its first
+   Goods on pre-order carry their ship month. Hardware also carries its section, its pre-order terms and its first
    render, so the shelf, the mini-bag and Also can show the render. */
 export type ShopItem = Pick<
   Product,
-  'slug' | 'section' | 'name' | 'line' | 'priceCents' | 'kind' | 'tone' | 'category' | 'featured' | 'variants' | 'variantLabel' | 'details' | 'preorder'
+  'slug' | 'section' | 'name' | 'line' | 'priceCents' | 'kind' | 'tone' | 'category' | 'featured' | 'variants' | 'variantLabel' | 'details' | 'preorder' | 'ships'
 > & { render?: { src: string; alt: string } };
 
 export const toItem = (p: Product): ShopItem => {
@@ -27,6 +27,7 @@ export const toItem = (p: Product): ShopItem => {
     variantLabel: p.variantLabel,
     details: p.details,
     preorder: p.preorder,
+    ships: p.ships,
     render: r ? { src: r.src, alt: r.alt } : undefined,
   };
 };

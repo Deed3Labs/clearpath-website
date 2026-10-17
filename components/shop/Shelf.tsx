@@ -242,7 +242,13 @@ export function Shelf({ products, forShops = 0 }: { products: ShopItem[]; forSho
             >
               <div className="c-h">
                 <span className="label">{pad2(i + 1)}</span>
-                {isFeat ? <Chip tone="live">{SHELF.featured}</Chip> : <span className="ck">{p.category}</span>}
+                {p.ships ? (
+                  isFeat ? <Chip tone="underway">{SHELF.preorder}</Chip> : <span className="ck">{SHELF.ships(p.ships)}</span>
+                ) : isFeat ? (
+                  <Chip tone="live">{SHELF.featured}</Chip>
+                ) : (
+                  <span className="ck">{p.category}</span>
+                )}
               </div>
               <div className="pw">
                 <ProductPlate kind={p.kind} tone={p.tone} href={`/shop/${p.slug}`} />
