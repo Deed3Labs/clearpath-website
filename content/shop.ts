@@ -86,7 +86,9 @@ export type Product = {
   ships?: string;
   /* Hardware is reserved, not bought: a deposit now, the rest when it ships
      (`ships`, a display month). `fcc` marks a product awaiting FCC
-     equipment authorization; its notice is `fcc` below. */
+     equipment authorization; its notice is `fcc` below. Neither is shown on
+     the site (the owner took the notice off the product pages); kept as the
+     record of which products await authorization. */
   preorder?: { ships: string; fcc: boolean };
   /* The FCC notice, worded for this product. */
   fcc?: string;
@@ -651,7 +653,6 @@ export const HARDWARE_COPY = {
   estimated: (month: string) => `${month}, estimated`,
   reserve: (amount: string) => `Reserve · ${amount}`,
   forShops: 'For shops on Clear. Checkout asks you to sign in to your shop or set one up.',
-  fcc: 'FCC authorization pending',
   refund: 'Refundable in full until we start building yours. We email you before we do.',
   also: { kicker: 'Also', label: 'For shops', reserve: (amount: string) => `Reserve ${amount}` },
   gallery: {
