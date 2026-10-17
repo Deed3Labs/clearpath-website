@@ -268,7 +268,9 @@
 
   /* ── A hardware product: the gallery, the reservation, the FCC notice ── */
   .pd.hw { align-items: start; }
-  .pd.hw .gal { border-right: 0; position: sticky; top: calc(var(--head-h, 68px) + 72px); grid-template-rows: auto auto auto; }
+  /* Sticks flush under the crumb bar (60px, app/styles/system.css): a gap there reads as part of the bar,
+     the way the events calendar's did, and the picture looks pushed down once stuck. */
+  .pd.hw .gal { border-right: 0; position: sticky; top: calc(env(safe-area-inset-top, 0px) + var(--head-h, 68px) + 60px); grid-template-rows: auto auto auto; }
   .pd.hw .buy { border-left: 1px solid var(--line); }
   .pd.hw .gal-wrap { position: relative; min-height: 0; aspect-ratio: 16 / 11; }
   .gslide { position: absolute; inset: 0; }
