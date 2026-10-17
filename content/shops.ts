@@ -165,8 +165,8 @@ export const FIT = {
 
 /* ── 04 · Beyond financing ─────────────────────────────────────────────
    For the shops financing does not suit: the rest of the app, one cell each,
-   pointing to /shops/tools. The pictures are the shop's drawings (the counter
-   on the till, a table Point showing the bill) and two real screens. */
+   pointing to /shops/tools. The pictures are renders of the hardware (the
+   counter on the till, a table Point showing the bill) and two real screens. */
 export const BEYOND = {
   n: '04',
   label: 'Beyond financing',
@@ -176,7 +176,7 @@ export const BEYOND = {
   cells: [
     {
       who: 'The till',
-      pic: { kind: 'drawing', drawing: 'counterTill' },
+      pic: { kind: 'render', src: '/shops/beyond-till.jpg', alt: 'A Clear Counter at the till: $42.00, and $8.00 change', w: 1000, h: 800 },
       title: 'Ring up anything.',
       text: 'Items, tips, tabs and cash. Card runs on your own Stripe, and the drawer opens itself.',
       k: 'Card sales',
@@ -184,7 +184,7 @@ export const BEYOND = {
     },
     {
       who: 'Tables',
-      pic: { kind: 'drawing', drawing: 'pointBill' },
+      pic: { kind: 'render', src: '/shops/beyond-tables.jpg', alt: 'A Clear Point on a table, showing the bill', w: 1000, h: 800 },
       title: 'Seat the floor.',
       text: 'A Clear Point on every table: the menu, who’s seated, a call button and the bill.',
       k: 'Clear Point',

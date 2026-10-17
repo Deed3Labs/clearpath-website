@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import { More, Section, SectionHead } from '@/components/system';
-import { ProductPlate } from '@/components/shop/ProductPlate';
 import { BEYOND } from '@/content/shops';
 import { PRODUCTS } from '@/content/shop';
 import { forShopsProducts, isShopOpen } from '@/lib/shop/catalog';
@@ -8,7 +7,7 @@ import { fromLabel } from '@/lib/shop/price';
 
 /* 04 Beyond financing: for the shops financing does not suit, the rest of
    the app in four cells, each with its picture, then a line about the
-   hardware. The drawings are the shop's own (the counter on the till, a
+   hardware. Two are renders of the hardware (the counter on the till, a
    table Point showing the bill); the other two are real screens. Static:
    the section is a pointer to /shops/tools, not a demo. */
 
@@ -21,8 +20,12 @@ function value(v: Cell['v']) {
 }
 
 function Pic({ pic }: { pic: Cell['pic'] }) {
-  if (pic.kind === 'drawing') {
-    return <ProductPlate drawing={pic.drawing} tone="paper" className="vis p" />;
+  if (pic.kind === 'render') {
+    return (
+      <div className="vis r">
+        <Image src={pic.src} alt={pic.alt} fill sizes="(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 340px" />
+      </div>
+    );
   }
   return (
     <div className={pic.frame === 'modal' ? 'vis s m' : 'vis s'}>

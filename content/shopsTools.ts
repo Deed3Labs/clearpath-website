@@ -146,14 +146,14 @@ export const TABLES = {
       { name: 'Priya', sub: ['Party of 2 · waited 6 min · told 15 min'], action: 'Seat at 1' },
     ] as readonly { name: string; next?: boolean; sub: readonly string[]; action: string; solid?: boolean }[],
   },
-  /* The Point on the table in its four states: line drawings of its real
-     screens (components/shop/hardwareShapes, pointStates). The caption
-     carries what the screen says, so the drawings are decorative. */
+  /* The Point on the table in its four states: renders of the real device
+     showing its real screens (public/shops/tools/state-*.jpg, cropped from
+     the shop's hardware renders). The caption says what each screen says. */
   points: [
-    { drawing: 'pointStates.free', k: 'Free', v: 'The number and the menu' },
-    { drawing: 'pointStates.held', k: 'Seated', v: 'Who it’s for' },
-    { drawing: 'pointStates.bill', k: 'Bill', v: 'Scan or tap to pay' },
-    { drawing: 'pointStates.call', k: 'Calling', v: 'Someone’s coming over' },
+    { src: '/shops/tools/state-free.jpg', alt: 'A Clear Point at table 12, showing the number and the menu code', k: 'Free', v: 'The number and the menu' },
+    { src: '/shops/tools/state-held.jpg', alt: 'A Clear Point at table 12, held for Ana, party of 2', k: 'Seated', v: 'Who it’s for' },
+    { src: '/shops/tools/state-bill.jpg', alt: 'A Clear Point at table 12, showing the bill, $48.20', k: 'Bill', v: 'Scan or tap to pay' },
+    { src: '/shops/tools/state-calling.jpg', alt: 'A Clear Point at table 12, saying someone’s coming over', k: 'Calling', v: 'Someone’s coming over' },
   ],
 } as const;
 
