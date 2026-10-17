@@ -43,7 +43,9 @@
 
   .board { --px: clamp(18px, 2vw, 28px); --line: var(--color-ink-28); display: grid; grid-template-columns: 340px minmax(0, 1fr); border: 1px solid var(--line); align-items: start; }
   .mcal { border-right: 1px solid var(--line); align-self: stretch; }
-  .mcal-in { position: sticky; top: calc(var(--head-h, 68px) + 16px); }
+  /* Sticks flush under the site header: a gap above it would read as part of its 64px header row
+     (the column has no line there), so the month title and arrows would sit off-centre once stuck. */
+  .mcal-in { position: sticky; top: calc(env(safe-area-inset-top, 0px) + var(--head-h, 68px)); }
   /* Both columns' headers are one 64px row, and the weekday row and the
      agenda's month rows are both 48px, so the two columns' lines meet. */
   .mcal .c-h { min-height: 64px; height: 64px; }
