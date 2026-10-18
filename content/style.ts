@@ -458,20 +458,54 @@ export const DOT = {
     ],
     body: 'In build, signing, not yet. The core and the glow, and no ping.',
   },
+  /* Every value on these rows is read from the dot's CSS (lib/brandTokens.ts
+     dotSpec, swatch). The words here only wrap them: {placeholders} are
+     filled in on the page. */
   anatomy: {
     who: 'Anatomy',
+    ck: 'Measured from the site',
+    inPill: '{v} in a pill',
     rows: [
       { k: 'Core', v: 'A solid circle in the dot colour.' },
-      { k: 'Glow', v: 'A soft blur of the same colour around it.' },
+      { k: 'Glow', v: 'A soft blur of the same colour around it.', pill: 'In a pill it softens to {blur} at {strength}.' },
       { k: 'Ping', v: 'A copy that grows and fades, then waits.' },
+      { k: 'Gap', v: 'The space between the dot and its word.' },
     ],
+  },
+  colour: { who: 'Colour', ck: 'It follows the button, not the band' },
+  colourRules: [
+    { where: 'On a light button', token: 'color-signal-deep', ground: 'paper', on: 'on light' },
+    { where: 'On a dark button', token: 'color-signal-light', ground: 'ink', on: 'on dark' },
+  ],
+  pillRule: { where: 'In a status pill', value: 'Its status', rule: 'The dot takes the pill’s own status colour.' },
+  recreate: {
+    dev: {
+      who: 'For developers',
+      ck: 'Plain CSS with hex values',
+      lang: 'CSS',
+      foot: 'Works outside this codebase. Generated from the site’s own values, so it cannot drift.',
+      /* The comment in the copied CSS. */
+      onDark: 'On a dark ground, use {hex}.',
+    },
+    design: {
+      who: 'For designers',
+      ck: 'Figma, After Effects or video',
+      rows: [
+        { k: 'Core layer', v: '{size} circle', d: 'Dot colour, 100% opacity.' },
+        { k: 'Glow', v: '{blur} blur', d: 'Drop shadow, no offset, {spread} spread, dot colour at {strength}.' },
+        { k: 'Ping at 0s', v: '{fromScale} · {fromOpacity}', d: 'A duplicate of the core, above it.' },
+        { k: 'Ping at {settle}s', v: '{toScale} · {toOpacity}', d: 'Ease out. Then hold, invisible, until {total}s.' },
+        { k: 'Loop', v: 'Every {total}s', d: 'Seamless. Nothing on the core moves.' },
+      ],
+    },
+    copy: { idle: 'Copy', copied: 'Copied', failed: 'Copy failed', saidCopied: 'CSS copied to the clipboard', saidFailed: 'Copy failed' },
   },
   rules: {
     who: 'Rules',
     items: [
       'Pulse only what is actually open.',
       'Never on every button, never as a bullet.',
-      'Always beside a word that says the same thing.',
+      'Always beside a word that says the same thing. The dot is never the only signal.',
       'With reduced motion, keep the dot and stop the ping.',
     ],
   },

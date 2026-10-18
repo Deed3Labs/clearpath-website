@@ -6,6 +6,7 @@ import { FieldRangeDual } from '@/components/interactive/FieldRangeDual';
 import { money } from '@/lib/format';
 import {
   bandSwatch,
+  dotSpec,
   download,
   ease,
   measure,
@@ -18,6 +19,7 @@ import {
 } from '@/lib/brandTokens';
 import { SegDemo, RailDemo, SubgridDemo, GrowBars } from './_parts/Demos';
 import { MotionDemos } from './_parts/MotionDemos';
+import { CodeBlock } from './_parts/CodeBlock';
 import './page.css';
 import {
   META,
@@ -104,6 +106,73 @@ function SwatchCell({ e, i }: { e: ColourEntry; i: number }) {
         </span>
       </div>
     </div>
+  );
+}
+
+/* ── The dot: every number read from its CSS ─────────────────────────── */
+
+/* The dot's construction (app/globals.css .live-dot, .chip .chip-dot and
+   @keyframes live-ping) and the colours it is drawn in. The rows, the
+   copyable CSS and the drawn dots all come from here, so none of them can
+   disagree with the dot on the site. */
+function dotValues() {
+  const d = dotSpec();
+  const deep = swatch('color-signal-deep');
+  const light = swatch('color-signal-light');
+  const underway = swatch('color-underway');
+  const num = (pct: string) => Number(pct.replace('%', '')) / 100;
+  /* CSS's short form: .55, but 0 and 1 stay as they are. */
+  const alpha = (pct: string) => num(pct).toString().replace(/^0\./, '.');
+  const total = Number(d.ping.duration.replace('s', ''));
+  const settle = (total * Number(d.ping.settlesAt.replace('%', ''))) / 100;
+  const css = `.live-dot {
+  position: relative;
+  display: inline-block;
+  width: ${d.button.size};
+  height: ${d.button.size};
+  border-radius: 50%;
+  background: ${deep.hex};
+  box-shadow: 0 0 ${d.button.glow.blur} ${d.button.glow.spread} rgb(${deep.rgb} / ${alpha(d.button.glow.strength)});
+}
+.live-dot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: inherit;
+  animation: live-ping ${d.ping.duration} ${d.ping.easing} infinite;
+}
+@keyframes live-ping {
+  0% { transform: scale(${num(d.ping.from.scale)}); opacity: ${alpha(d.ping.from.opacity)}; }
+  ${d.ping.settlesAt}, 100% { transform: scale(${num(d.ping.to.scale)}); opacity: ${alpha(d.ping.to.opacity)}; }
+}
+/* ${fill(DOT.recreate.dev.onDark, { hex: light.hex })} */
+@media (prefers-reduced-motion: reduce) {
+  .live-dot::after { animation: none; opacity: 0; }
+}`;
+  /* The drawn dots take the button dot's own proportions (times --k in the
+     CSS) rather than a transform, which Safari would rasterise soft. */
+  const px = (v: string) => (v === '0' ? '0px' : v);
+  const vars = {
+    '--d-size': d.button.size,
+    '--d-blur': px(d.button.glow.blur),
+    '--d-spread': px(d.button.glow.spread),
+    '--d-glow': d.button.glow.strength,
+    '--d-dur': d.ping.duration,
+    '--d-ease': d.ping.easing,
+    '--d-settle': d.ping.settlesAt,
+  } as CSSProperties;
+  return { d, deep, light, underway, total, settle, css, vars };
+}
+
+const ratioText = (r: number) => `${r.toFixed(1)}:1`;
+
+function BigDot({ colour, vars, still, sm }: { colour: string; vars: CSSProperties; still?: boolean; sm?: boolean }) {
+  return (
+    <span
+      className={['bigdot', still && 'still', sm && 'sm'].filter(Boolean).join(' ')}
+      style={{ ...vars, ['--dot' as string]: colour }}
+    />
   );
 }
 
@@ -217,6 +286,7 @@ export default function Style() {
   const spacing = scale('spacing');
   const max = measure().replace(/px$/, '');
   const rootStyle = { '--quiet-halo': quiet.halo.hex, '--quiet-core': quiet.core.hex } as CSSProperties;
+  const dot = dotValues();
 
   return (
     <div className="pg-style" style={rootStyle}>
@@ -682,12 +752,16 @@ export default function Style() {
         </Bento>
       </Section>
 
-      {/* 09 · The dot: pulsing when open, still when a status. */}
+      {/* 09 · The dot: pulsing when open, still when a status. Drawn large,
+          measured, and how to rebuild it. */}
       <Section id="dot">
         <SectionHead n={DOT.n} label={DOT.label} title={DOT.title} line={DOT.line} />
-        <Bento className="g2 body-gap">
+        <Bento className="g2 body-gap dotd">
           <div className="cell">
             <Head who={DOT.pulsing.who} ck={DOT.pulsing.ck} />
+            <div className="dstage" aria-hidden="true">
+              <BigDot colour={dot.deep.hex} vars={dot.vars} />
+            </div>
             <div className="c-m">
               <div className="stg">
                 <Button href={DOT.pulsing.button.href} live>
@@ -700,6 +774,9 @@ export default function Style() {
           </div>
           <div className="cell">
             <Head who={DOT.still.who} ck={DOT.still.ck} />
+            <div className="dstage" aria-hidden="true">
+              <BigDot colour={dot.underway.hex} vars={dot.vars} still />
+            </div>
             <div className="c-m">
               <div className="stg">
                 {DOT.still.chips.map((c) => (
@@ -716,19 +793,110 @@ export default function Style() {
         </Bento>
         <Bento className="g2">
           <div className="cell">
-            <Head who={DOT.anatomy.who} />
+            <Head who={DOT.anatomy.who} ck={DOT.anatomy.ck} />
             <div className="anat3">
-              {DOT.anatomy.rows.map((r) => (
-                <div key={r.k}>
-                  <b>{r.k}</b>
-                  <span>{r.v}</span>
-                </div>
-              ))}
+              {DOT.anatomy.rows.map((r) => {
+                const { d } = dot;
+                const inPill = (v: string) => fill(DOT.anatomy.inPill, { v });
+                const value = {
+                  Core: `${d.button.size} · ${inPill(d.chip.size)}`,
+                  Glow: `${d.button.glow.blur} blur · ${d.button.glow.strength}`,
+                  Ping: `${d.ping.to.scale} · ${d.ping.duration}`,
+                  Gap: `${d.button.gap} · ${inPill(d.chip.gap)}`,
+                }[r.k];
+                return (
+                  <div key={r.k}>
+                    <b>{r.k}</b>
+                    <em>{value}</em>
+                    <span>
+                      {r.v}
+                      {'pill' in r && ` ${fill(r.pill, { blur: d.chip.glow.blur, strength: d.chip.glow.strength })}`}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
           <div className="cell">
+            <Head who={DOT.colour.who} ck={DOT.colour.ck} />
+            <div className="anat3 col3">
+              {DOT.colourRules.map((c) => {
+                const sw = c.token === 'color-signal-deep' ? dot.deep : dot.light;
+                return (
+                  <div key={c.token}>
+                    <b>
+                      <i className="dsw" style={{ background: sw.hex }} aria-hidden="true" />
+                      {c.where}
+                    </b>
+                    <em>{sw.hex}</em>
+                    <span>
+                      <code>{`--${c.token}`}</code> · {ratioText(c.ground === 'paper' ? sw.onPaper : sw.onInk)} {c.on}
+                    </span>
+                  </div>
+                );
+              })}
+              <div>
+                <b>
+                  <i className="dsw pill" aria-hidden="true" />
+                  {DOT.pillRule.where}
+                </b>
+                <em>{DOT.pillRule.value}</em>
+                <span>{DOT.pillRule.rule}</span>
+              </div>
+            </div>
+          </div>
+        </Bento>
+        <Bento className="g2 recreate">
+          <div className="cell">
+            <Head who={DOT.recreate.dev.who} ck={DOT.recreate.dev.ck} />
+            <CodeBlock code={dot.css} language={DOT.recreate.dev.lang} copy={DOT.recreate.copy} />
+            <div className="c-f">
+              <span className="ck">{DOT.recreate.dev.foot}</span>
+            </div>
+          </div>
+          <div className="cell">
+            <Head who={DOT.recreate.design.who} ck={DOT.recreate.design.ck} />
+            <div className="ptime" aria-hidden="true" style={dot.vars}>
+              <BigDot colour={dot.deep.hex} vars={dot.vars} sm />
+              <div className="track">
+                <i className="grow" />
+                <i className="hold" />
+                <b className="head" />
+                <span className="t0">0s</span>
+                <span className="t1">{`${dot.settle}s`}</span>
+                <span className="t2">{`${dot.total}s`}</span>
+              </div>
+            </div>
+            <div className="anat3 keys">
+              {DOT.recreate.design.rows.map((r) => {
+                const { d } = dot;
+                const v = {
+                  size: d.button.size,
+                  blur: d.button.glow.blur,
+                  spread: d.button.glow.spread,
+                  strength: d.button.glow.strength,
+                  fromScale: d.ping.from.scale,
+                  fromOpacity: d.ping.from.opacity,
+                  toScale: d.ping.to.scale,
+                  toOpacity: d.ping.to.opacity,
+                  settle: dot.settle,
+                  total: dot.total,
+                };
+                return (
+                  <div key={r.k}>
+                    <b>{fill(r.k, v)}</b>
+                    <em>{fill(r.v, v)}</em>
+                    <span>{fill(r.d, v)}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </Bento>
+        <Bento>
+          <div className="cell">
             <Head who={DOT.rules.who} />
-            <ul className="rules">
+            <ul className="rules g2">
               {DOT.rules.items.map((r) => (
                 <li key={r}>{r}</li>
               ))}

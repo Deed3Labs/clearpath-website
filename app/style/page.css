@@ -312,10 +312,65 @@
   .dwk text.yt { fill: var(--color-live); }
 
   /* ── 09 The dot ────────────────────────────────────────────────────── */
-  .anat3 > div { display: grid; grid-template-columns: 90px minmax(0, 1fr); gap: 12px; padding: 12px var(--px); font-size: 14.5px; }
+  /* Pulsing and Still share their rows (head, stage, examples), so the two
+     stages and the two notes line up whatever the copy's length. */
+  .dotd > .cell { grid-row: span 3; grid-template-rows: subgrid; }
+  .dstage { display: grid; place-items: center; height: 240px; border-bottom: 1px solid var(--line); background: var(--color-paper-2); }
+  /* The dot drawn large: the button dot's own proportions (--d-*, read from
+     its CSS on the page) times --k, and the production ping. Never a
+     transform: Safari rasterises a scaled animated element, and the glow
+     comes out soft and clipped. */
+  .bigdot {
+    --k: 9;
+    position: relative;
+    display: block;
+    width: calc(var(--d-size) * var(--k));
+    height: calc(var(--d-size) * var(--k));
+    border-radius: var(--radius-pill);
+    background: var(--dot);
+    box-shadow: 0 0 calc(var(--d-blur) * var(--k)) calc(var(--d-spread) * var(--k)) color-mix(in srgb, var(--dot) var(--d-glow), transparent);
+  }
+  .bigdot::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: var(--dot); animation: live-ping var(--d-dur) var(--d-ease) infinite; }
+  .bigdot.still::after { animation: none; opacity: 0; }
+  .bigdot.sm { --k: 4; }
+  @media (max-width: 760px) { .dstage { height: 200px; } .bigdot:not(.sm) { --k: 7; } }
+
+  .anat3 > div { display: grid; grid-template-columns: 110px 150px minmax(0, 1fr); gap: 12px; align-items: baseline; padding: 12px var(--px); font-size: 14.5px; }
   .anat3 > div + div { border-top: 1px solid var(--color-ink-13); }
-  .anat3 b { font-weight: 600; }
+  .anat3.col3 > div { grid-template-columns: 170px 92px minmax(0, 1fr); }
+  .anat3.keys > div { grid-template-columns: 104px 104px minmax(0, 1fr); }
+  .anat3 b { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; }
+  .anat3 em { font-style: normal; font-family: var(--font-mono); font-size: 12px; letter-spacing: .02em; color: var(--color-ink); }
   .anat3 span { color: var(--color-ink-70); }
+  .anat3 code { font-family: var(--font-mono); font-size: 11.5px; }
+  .dsw { flex: none; width: 12px; height: 12px; border-radius: var(--radius-pill); }
+  .dsw.pill { background: linear-gradient(90deg, var(--color-settled) 0 33%, var(--color-underway) 33% 66%, var(--color-absent) 66%); }
+  @media (max-width: 760px) {
+    .anat3 > div, .anat3.col3 > div, .anat3.keys > div { grid-template-columns: minmax(0, 1fr) auto; }
+    .anat3 > div > span { grid-column: 1 / -1; }
+  }
+
+  /* How to rebuild it: the CSS to copy, and the motion as a designer reads it. */
+  .recreate > .cell { grid-template-rows: auto minmax(0, 1fr) auto; }
+  .codebox { display: grid; grid-template-rows: auto minmax(0, 1fr); margin: 20px var(--px); border: 1px solid var(--color-ink-28); background: var(--color-paper-2); min-width: 0; }
+  .cb-h { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 8px 8px 8px 14px; border-bottom: 1px solid var(--color-ink-13); }
+  .copy { min-height: 32px; padding-inline: 14px; border: 1px solid var(--color-ink-28); border-radius: var(--radius-pill); font-size: 13px; transition: border-color 200ms var(--ease), background-color 200ms var(--ease), color 200ms var(--ease); }
+  .copy:hover { border-color: var(--color-ink); }
+  .copy[data-state='copied'] { background: var(--color-ink); color: var(--color-paper); border-color: var(--color-ink); }
+  .cb { margin: 0; padding: 14px; overflow-x: auto; font-family: var(--font-mono); font-size: 12px; line-height: 1.6; color: var(--color-ink); tab-size: 2; }
+  .cb .k { color: var(--color-ink-50); }
+  .recreate .c-f .ck { line-height: 1.45; padding-block: 12px; }
+  .ptime { display: grid; grid-template-columns: 96px minmax(0, 1fr); align-items: center; gap: 20px; padding: 28px var(--px) 30px; border-bottom: 1px solid var(--color-ink-13); }
+  .ptime .bigdot { justify-self: center; }
+  /* The 2s loop: the ping grows over the first --d-settle, then holds. */
+  .track { position: relative; display: flex; height: 26px; border: 1px solid var(--color-ink-28); margin-bottom: 18px; }
+  .track .grow { flex: 0 0 var(--d-settle); background: linear-gradient(90deg, color-mix(in srgb, var(--color-settled) 30%, transparent), transparent); border-right: 1px dashed var(--color-ink-28); }
+  .track .hold { flex: 1; background: repeating-linear-gradient(45deg, transparent 0 5px, var(--color-ink-13) 5px 6px); }
+  .track .head { position: absolute; top: -5px; bottom: -5px; left: 0; width: 2px; background: var(--color-ink); animation: sg-head var(--d-dur) linear infinite; }
+  .track span { position: absolute; top: calc(100% + 6px); font-family: var(--font-mono); font-size: 10px; letter-spacing: .08em; color: var(--color-ink-50); }
+  .track .t0 { left: 0; }
+  .track .t1 { left: var(--d-settle); transform: translateX(-50%); }
+  .track .t2 { right: 0; }
 
   /* ── 10 Voice ──────────────────────────────────────────────────────── */
   .dd > div { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 5fr) minmax(0, 5fr); gap: 20px; padding: 16px var(--px); align-items: baseline; }
@@ -348,5 +403,11 @@
 
   @media (prefers-reduced-motion: reduce) {
     .rise .w { overflow: visible; }
+    /* The drawn dots keep their core and glow; the ping and the playhead stop. */
+    .bigdot::after { animation: none; opacity: 0; }
+    .track .head { animation: none; opacity: 0; }
   }
 }
+
+/* Keyframes cannot sit inside .pg-style; the sg- prefix keeps the name the guide's own. */
+@keyframes sg-head { from { left: 0; } to { left: calc(100% - 2px); } }

@@ -1,4 +1,3 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Clear Style Guide Redesign</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -528,9 +527,48 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 
 /* ── 09 The dot (on ink) ──────────────────────────────────────────────── */
 .dotd .stg { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; min-height: 64px; }
-.anat3 > div { display: grid; grid-template-columns: 90px minmax(0, 1fr); gap: 12px; padding: 12px var(--px); font-size: 14.5px; }
+/* The dot drawn large: the real element at size (not scaled, which blurs in
+   Safari), with the production glow and ping times --k. */
+.dotd > .cell { grid-template-rows: auto auto minmax(0, 1fr); }
+.dstage { display: grid; place-items: center; height: 240px; border-bottom: 1px solid var(--line); background: var(--paper-2); }
+.bigdot { --k: 9; position: relative; display: block; width: calc(7px * var(--k)); height: calc(7px * var(--k)); border-radius: 999px; background: var(--dot); box-shadow: 0 0 calc(6px * var(--k)) calc(1px * var(--k)) color-mix(in srgb, var(--dot) 55%, transparent); }
+.bigdot::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: var(--dot); animation: ping2 2s cubic-bezier(0, 0, .2, 1) infinite; }
+.bigdot.still::after { animation: none; opacity: 0; }
+.bigdot.sm { --k: 4; }
+@keyframes ping2 { 0% { transform: scale(1); opacity: .6 } 75%, 100% { transform: scale(3.4); opacity: 0 } }
+@media (max-width: 760px) { .dstage { height: 200px; } .bigdot { --k: 7; } }
+@media (prefers-reduced-motion: reduce) { .bigdot::after, .ptime .head { animation: none !important; opacity: 0; } }
+/* How to rebuild it */
+.recreate > .cell { grid-template-rows: auto minmax(0, 1fr) auto; }
+.codebox { display: grid; grid-template-rows: auto minmax(0, 1fr); margin: 20px var(--px); border: 1px solid var(--ink-28); background: var(--paper-2); min-width: 0; }
+.cb-h { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 8px 8px 8px 14px; border-bottom: 1px solid var(--ink-13); }
+.copy { min-height: 32px; padding-inline: 14px; border: 1px solid var(--ink-28); border-radius: 999px; font-size: 13px; transition: border-color 200ms var(--ease), background-color 200ms var(--ease), color 200ms var(--ease); }
+.copy:hover { border-color: var(--ink); }
+.copy[data-state="copied"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.cb { margin: 0; padding: 14px; overflow-x: auto; font-family: var(--f-mono); font-size: 12px; line-height: 1.6; color: var(--ink); tab-size: 2; }
+.cb .k { color: var(--ink-50); }
+.recreate .c-f .ck { line-height: 1.45; padding-block: 12px; }
+.ptime { display: grid; grid-template-columns: 96px minmax(0, 1fr); align-items: center; gap: 20px; padding: 28px var(--px) 30px; border-bottom: 1px solid var(--ink-13); }
+.ptime .bigdot { justify-self: center; }
+.track { position: relative; display: flex; height: 26px; border: 1px solid var(--ink-28); margin-bottom: 18px; }
+.track .grow { flex: 0 0 75%; background: linear-gradient(90deg, color-mix(in srgb, var(--settled) 30%, transparent), transparent); border-right: 1px dashed var(--ink-28); }
+.track .hold { flex: 1; background: repeating-linear-gradient(45deg, transparent 0 5px, var(--ink-13) 5px 6px); }
+.track .head { position: absolute; top: -5px; bottom: -5px; left: 0; width: 2px; background: var(--ink); animation: head 2s linear infinite; }
+@keyframes head { from { left: 0 } to { left: calc(100% - 2px) } }
+.track span { position: absolute; top: calc(100% + 6px); font-family: var(--f-mono); font-size: 10px; letter-spacing: .08em; color: var(--ink-50); }
+.track .t0 { left: 0; } .track .t1 { left: 75%; transform: translateX(-50%); } .track .t2 { right: 0; }
+.anat3 > div { display: grid; grid-template-columns: 110px 150px minmax(0, 1fr); gap: 12px; align-items: baseline; padding: 12px var(--px); font-size: 14.5px; }
+.anat3 em { font-style: normal; font-family: var(--f-mono); font-size: 12px; letter-spacing: .02em; color: var(--ink); }
+.anat3.col3 > div { grid-template-columns: 170px 92px minmax(0, 1fr); }
+.anat3.keys > div { grid-template-columns: 104px 104px minmax(0, 1fr); }
+.anat3 b { display: inline-flex; align-items: center; gap: 8px; }
+.anat3 code { font-family: var(--f-mono); font-size: 11.5px; }
+.sw { flex: none; width: 12px; height: 12px; border-radius: 999px; }
+.sw.pill { background: linear-gradient(90deg, var(--settled) 0 33%, var(--underway) 33% 66%, var(--absent) 66%); }
+@media (max-width: 760px) { .anat3 > div, .anat3.col3 > div, .anat3.keys > div { grid-template-columns: minmax(0, 1fr) auto; } .anat3 > div > span { grid-column: 1 / -1; } }
 .anat3 > div + div { border-top: 1px solid var(--ink-13); }
 .anat3 b { font-weight: 600; }
+
 .anat3 span { color: var(--ink-70); }
 
 /* ── 10 Voice ─────────────────────────────────────────────────────────── */
@@ -906,12 +944,50 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
         <div class="aside"><p class="line">It says something is open now, or it tags a status. Only the first job moves.</p></div>
       </div>
       <div class="bx g2 body-gap dotd">
-        <div class="cell"><div class="c-h"><span class="who">Pulsing</span><span class="ck">Open now</span></div><div class="c-m"><div class="stg"><a class="btn btn-primary" href="#dot"><span class="dot"></span>Join</a><span class="chip" data-tone="live"><span class="dot"></span>Invite-only</span></div><p>On Join, on each page’s main button, and on something open now. The ping runs.</p></div></div>
-        <div class="cell"><div class="c-h"><span class="who">Still</span><span class="ck">A status</span></div><div class="c-m"><div class="stg"><span class="chip" data-tone="underway"><span class="dot"></span>In build</span><span class="chip" data-tone="absent"><span class="dot"></span>Not yet</span></div><p>In build, signing, not yet. The core and the glow, and no ping. <span class="tag new">Updated</span></p></div></div>
+        <div class="cell"><div class="c-h"><span class="who">Pulsing</span><span class="ck">Open now</span></div>
+          <div class="dstage" aria-hidden="true"><span class="bigdot" style="--dot:#0E6B4E"></span></div>
+          <div class="c-m"><div class="stg"><a class="btn btn-primary" href="#dot"><span class="dot"></span>Join</a><span class="chip" data-tone="live"><span class="dot"></span>Invite-only</span></div><p>On Join, on each page’s main button, and on something open now. The ping runs.</p></div></div>
+        <div class="cell"><div class="c-h"><span class="who">Still</span><span class="ck">A status</span></div>
+          <div class="dstage" aria-hidden="true"><span class="bigdot still" style="--dot:#8A5512"></span></div>
+          <div class="c-m"><div class="stg"><span class="chip" data-tone="underway"><span class="dot"></span>In build</span><span class="chip" data-tone="absent"><span class="dot"></span>Not yet</span></div><p>In build, signing, not yet. The core and the glow, and no ping. <span class="tag new">Updated</span></p></div></div>
       </div>
       <div class="bx g2">
-        <div class="cell"><div class="c-h"><span class="who">Anatomy</span></div><div class="anat3"><div><b>Core</b><span>A solid circle in the dot colour.</span></div><div><b>Glow</b><span>A soft blur of the same colour around it.</span></div><div><b>Ping</b><span>A copy that grows and fades, then waits.</span></div></div></div>
-        <div class="cell"><div class="c-h"><span class="who">Rules</span></div><ul class="rules"><li>Pulse only what is actually open.</li><li>Never on every button, never as a bullet.</li><li>Always beside a word that says the same thing.</li><li>With reduced motion, keep the dot and stop the ping.</li></ul></div>
+        <div class="cell"><div class="c-h"><span class="who">Anatomy</span><span class="ck">Measured from the site</span></div>
+          <div class="anat3">
+            <div><b>Core</b><em>7px · 6px in a pill</em><span>A solid circle in the dot colour.</span></div>
+            <div><b>Glow</b><em>6px blur · 55%</em><span>A soft blur of the same colour around it. In a pill it softens to 4px at 45%.</span></div>
+            <div><b>Ping</b><em>340% · 2s</em><span>A copy that grows and fades, then waits.</span></div>
+            <div><b>Gap</b><em>10px · 7px in a pill</em><span>The space between the dot and its word.</span></div>
+          </div></div>
+        <div class="cell"><div class="c-h"><span class="who">Colour</span><span class="ck">It follows the button, not the band</span></div>
+          <div class="anat3 col3">
+            <div><b><i class="sw" style="background:#0E6B4E"></i>On a light button</b><em>#0E6B4E</em><span><code>--color-signal-deep</code> · <span id="cr-deep">5.0:1</span> on light</span></div>
+            <div><b><i class="sw" style="background:#6FCB9F"></i>On a dark button</b><em>#6FCB9F</em><span><code>--color-signal-light</code> · <span id="cr-light">8.4:1</span> on dark</span></div>
+            <div><b><i class="sw pill"></i>In a status pill</b><em>Its status</em><span>The dot takes the pill’s own status colour.</span></div>
+          </div></div>
+      </div>
+      <div class="bx g2 recreate">
+        <div class="cell"><div class="c-h"><span class="who">For developers</span><span class="ck">Plain CSS with hex values</span></div>
+          <div class="codebox">
+            <div class="cb-h"><span class="label">CSS</span><button type="button" class="copy" id="dot-copy">Copy</button></div>
+            <pre class="cb" id="dot-code"></pre>
+          </div>
+          <div class="c-f"><span class="ck">Works outside this codebase. Generated from the site’s own values, so it cannot drift.</span></div></div>
+        <div class="cell"><div class="c-h"><span class="who">For designers</span><span class="ck">Figma, After Effects or video</span></div>
+          <div class="ptime" aria-hidden="true">
+            <span class="bigdot sm" style="--dot:#0E6B4E"></span>
+            <div class="track"><i class="grow"></i><i class="hold"></i><b class="head"></b><span class="t0">0s</span><span class="t1">1.5s</span><span class="t2">2s</span></div>
+          </div>
+          <div class="anat3 keys">
+            <div><b>Core layer</b><em>7px circle</em><span>Dot colour, 100% opacity.</span></div>
+            <div><b>Glow</b><em>6px blur</em><span>Drop shadow, no offset, 1px spread, dot colour at 55%.</span></div>
+            <div><b>Ping at 0s</b><em>100% · 60%</em><span>A duplicate of the core, above it.</span></div>
+            <div><b>Ping at 1.5s</b><em>340% · 0%</em><span>Ease out. Then hold, invisible, until 2s.</span></div>
+            <div><b>Loop</b><em>Every 2s</em><span>Seamless. Nothing on the core moves.</span></div>
+          </div></div>
+      </div>
+      <div class="bx">
+        <div class="cell"><div class="c-h"><span class="who">Rules</span></div><ul class="rules g2"><li>Pulse only what is actually open.</li><li>Never on every button, never as a bullet.</li><li>Always beside a word that says the same thing. The dot is never the only signal.</li><li>With reduced motion, keep the dot and stop the ping.</li></ul></div>
       </div>
     </div>
   </section>
@@ -1114,7 +1190,41 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
       ['Ink 28 · 13', 'rgba(22,33,29,.28)', 'Borders and hairlines. Never text.', 'rule']]],
   ];
   const lum = hex => { const n = parseInt(hex.slice(1), 16), c = [n >> 16, (n >> 8) & 255, n & 255].map(v => { v /= 255; return v <= .03928 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4; }); return .2126 * c[0] + .7152 * c[1] + .0722 * c[2]; };
+  /* The dot's copy-and-paste CSS, written from the same values as the site. */
+  const DOTCSS = `.live-dot {
+  position: relative;
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #0E6B4E;
+  box-shadow: 0 0 6px 1px rgb(14 107 78 / .55);
+}
+.live-dot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: inherit;
+  animation: live-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+@keyframes live-ping {
+  0% { transform: scale(1); opacity: .6; }
+  75%, 100% { transform: scale(3.4); opacity: 0; }
+}
+/* On a dark ground, use #6FCB9F. */
+@media (prefers-reduced-motion: reduce) {
+  .live-dot::after { animation: none; opacity: 0; }
+}`;
+  $('#dot-code').innerHTML = DOTCSS.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/(\/\*.*?\*\/)/g, '<span class="k">$1</span>');
+  $('#dot-copy').addEventListener('click', async e => {
+    const b = e.currentTarget; let ok = false;
+    try { await navigator.clipboard.writeText(DOTCSS); ok = true; } catch { const t = document.createElement('textarea'); t.value = DOTCSS; t.style.position = 'fixed'; t.style.opacity = '0'; document.body.appendChild(t); t.select(); try { ok = document.execCommand('copy'); } catch {} t.remove(); }
+    b.dataset.state = ok ? 'copied' : 'failed'; b.textContent = ok ? 'Copied' : 'Copy failed';
+    setTimeout(() => { b.dataset.state = ''; b.textContent = 'Copy'; }, 2000);
+  });
   const ratio = (a, b) => { const x = lum(a), y = lum(b); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05); };
+  $('#cr-deep').textContent = ratio('#0E6B4E', '#DFE3DE').toFixed(1) + ':1'; $('#cr-light').textContent = ratio('#6FCB9F', '#16211D').toFixed(1) + ':1';
   const grade = (hex, ground, use) => {
     if (use === 'surface' || use === 'rule' || !hex.startsWith('#')) return `<span class="na">${ground === PAPER ? 'Paper' : 'Ink'} · n/a</span>`;
     const r = ratio(hex, ground), bar = use === 'text' ? 4.5 : 3;
@@ -1221,5 +1331,3 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   $$('.band-ink').forEach(band => ScrollTrigger.create({ trigger: band, start: 'top 34px', end: 'bottom 34px', onToggle: s => head.classList.toggle('on-ink', s.isActive) }));
 })();
 </script>
-
-</body></html>
