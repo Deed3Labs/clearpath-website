@@ -534,9 +534,8 @@ export const SHELF = {
   /* The drawn rail that closes the last row when the tiles run short. */
   filler: 'Room on the rack',
   add: (name: string) => `Add ${name} to bag`,
-  /* A goods tile's header, in place of its category. */
+  /* A goods pre-order tile's chip, in place of its category. */
   preorder: 'Pre-order',
-  ships: (month: string) => `Pre-order · ships ${month}`,
 } as const;
 
 /* The panel that drops from the Bag pill after anything goes in. */
