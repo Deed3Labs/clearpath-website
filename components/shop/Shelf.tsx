@@ -242,8 +242,10 @@ export function Shelf({ products, forShops = 0 }: { products: ShopItem[]; forSho
             >
               <div className="c-h">
                 <span className="label">{pad2(i + 1)}</span>
+                {/* A goods pre-order says so the way a hardware tile does: one chip, one
+                    line at any width. The ship month is on its page and in the bag. */}
                 {p.ships ? (
-                  isFeat ? <Chip tone="underway">{SHELF.preorder}</Chip> : <span className="ck">{SHELF.ships(p.ships)}</span>
+                  <Chip tone="underway">{SHELF.preorder}</Chip>
                 ) : isFeat ? (
                   <Chip tone="live">{SHELF.featured}</Chip>
                 ) : (
