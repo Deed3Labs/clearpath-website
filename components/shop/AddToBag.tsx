@@ -6,6 +6,8 @@ import { Check } from '@/components/system/icons';
 import { gsap, motionOK } from '@/lib/anim/gsap';
 import { usd } from '@/lib/shop/money';
 import { useBag } from './BagProvider';
+import { useColour } from './ColourContext';
+import { Colours } from './Colours';
 import { announceAdd } from './motion';
 import { Sizes } from './Sizes';
 
@@ -14,6 +16,10 @@ import { Sizes } from './Sizes';
    quantity. A sized product starts with nothing chosen — pre-selecting M is
    how people end up with the wrong shirt — so adding without a size nudges
    the sizes and says "Pick a size first".
+
+   A garment in colours has a colour picker above the sizes (ColourContext,
+   shared with the gallery). The sizes are that colour's; a size chosen
+   stays chosen across colours that have it.
 
    While the shop is closed the page passes `closed` (the notice and "See
    why"), which takes the buy row's place: nothing here can reach the bag. */
@@ -32,9 +38,16 @@ export function AddToBag({
   closed?: ReactNode;
 }) {
   const { add } = useBag();
-  const oneSize = variants.length <= 1;
+  const picked = useColour();
+  const colour = picked?.colour;
+  const oneSize = !colour && variants.length <= 1;
   const label = variantLabel ?? PRODUCT_COPY.sizeLabel;
+  /* With colours, the size's id ("m"); otherwise the variant's. */
   const [variant, setVariant] = useState<string | null>(oneSize ? variants[0]?.id ?? null : null);
+  /* The size pills: this colour's variants, named by size alone. */
+  const shown = colour
+    ? variants.filter((v) => v.colour === colour.id).map((v) => ({ ...v, id: v.size!, label: v.size!.toUpperCase() }))
+    : variants;
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
   const [nudge, setNudge] = useState(false);
@@ -48,7 +61,8 @@ export function AddToBag({
   }, [added]);
 
   const allSoldOut = variants.every((v) => v.soldOut);
-  const chosen = variants.find((v) => v.id === variant);
+  const chosen = colour ? variants.find((v) => v.colour === colour.id && v.size === variant) : variants.find((v) => v.id === variant);
+  const colourOut = (id: string) => variants.filter((v) => v.colour === id).every((v) => v.soldOut);
 
   function onAdd() {
     if (!chosen) {
@@ -65,14 +79,25 @@ export function AddToBag({
 
   return (
     <>
-      <div className="opt">
+      {picked && colour && (
+        <div className="opt">
+          <div className="row">
+            <span className="label">{PRODUCT_COPY.colourLabel}</span>
+            <span className="ck" aria-live="polite">
+              {colour.label}
+            </span>
+          </div>
+          <Colours label={PRODUCT_COPY.colourLabel} colours={picked.colours} value={colour.id} soldOut={colourOut} onPick={picked.pick} />
+        </div>
+      )}
+      <div className={colour ? 'opt sub' : 'opt'}>
         <div className="row">
           <span className="label">{label}</span>
           {oneSize ? (
             <span className="onesize">{PRODUCT_COPY.oneSize}</span>
           ) : (
             <span className="ck" data-bad={nudge && !chosen ? '' : undefined} aria-live="polite">
-              {chosen ? chosen.label : nudge ? PRODUCT_COPY.pickFirst(label) : PRODUCT_COPY.pickOne}
+              {chosen ? (colour ? chosen.size!.toUpperCase() : chosen.label) : nudge ? PRODUCT_COPY.pickFirst(label) : PRODUCT_COPY.pickOne}
             </span>
           )}
         </div>
@@ -80,7 +105,7 @@ export function AddToBag({
           <Sizes
             ref={sizes}
             label={label}
-            variants={variants}
+            variants={shown}
             value={variant}
             onPick={(id) => {
               setVariant(id);

@@ -21,7 +21,7 @@ export const GOODS_SHIPS = 'Jan 2027';
 
 /* Goods are drawn from SHAPES (components/shop/ProductPlate.tsx); hardware
    from HW_SHAPES (components/shop/hardwareShapes.ts, generated from the spec). */
-export type GoodsKind = 'tee' | 'cap' | 'tote';
+export type GoodsKind = 'tee' | 'tee-ls' | 'turtleneck' | 'hoodie' | 'cap' | 'tote';
 export type HardwareKind =
   | 'point'
   | 'point-large'
@@ -36,7 +36,7 @@ export type HardwareKind =
   | 'kit';
 export type ProductKind = GoodsKind | HardwareKind;
 
-const GOODS_KINDS: readonly string[] = ['tee', 'cap', 'tote'] satisfies GoodsKind[];
+const GOODS_KINDS: readonly string[] = ['tee', 'tee-ls', 'turtleneck', 'hoodie', 'cap', 'tote'] satisfies GoodsKind[];
 export const isGoodsKind = (k: ProductKind): k is GoodsKind => GOODS_KINDS.includes(k);
 
 /* The ground a product is drawn on when there is no photograph yet. Tokens,
@@ -45,13 +45,34 @@ export type PlateTone = 'ink' | 'land' | 'paper';
 
 /* A variant's price overrides the product's. `depositCents` is what a
    pre-order reserves now; the rest is charged when it ships. `per` replaces
-   "each" after the price ("for ten"). */
-export type Variant = { id: string; label: string; soldOut?: boolean; priceCents?: number; depositCents?: number; per?: string };
+   "each" after the price ("for ten").
+   A garment in colours lists every colour × size as its own variant, so
+   the bag, checkout, Stripe and the owner scripts still handle one
+   `variant` string: `{ id: 'black-m', label: 'Black · M', colour: 'black',
+   size: 'm' }`. */
+export type Variant = {
+  id: string;
+  label: string;
+  soldOut?: boolean;
+  priceCents?: number;
+  depositCents?: number;
+  per?: string;
+  /* A Colour's id, and the size's id ("m"), on a variant of a garment in colours. */
+  colour?: string;
+  size?: string;
+};
+
+/* A garment's colour. `swatch` is product data, the one colour on the site
+   that is not a token: it is passed to the picker as an inline custom
+   property. `tone` is the drawing's ground in that colour. */
+export type Colour = { id: string; label: string; swatch: string; tone: PlateTone };
 
 /* A hardware product's pictures, in gallery order: renders, then CAD sheets
    (the drawing from HW_SHAPES sits between them). `caption` follows the
-   kind's word in the gallery: "Render · On a table, with the bill". */
-export type Media = { kind: 'render' | 'cad'; src: string; alt: string; caption: string };
+   kind's word in the gallery: "Render · On a table, with the bill".
+   Goods take renders and mockups made from the flat sketches; a picture
+   with a `colour` (a Colour's id) shows only while that colour is picked. */
+export type Media = { kind: 'render' | 'mock' | 'cad'; src: string; alt: string; caption: string; colour?: string };
 
 export type Product = {
   slug: string;
@@ -76,6 +97,8 @@ export type Product = {
   /* Label for the variant picker, or omit for a one-size product. */
   variantLabel?: string;
   variants: Variant[];
+  /* A garment's colours, in display order; the first is the default. */
+  colours?: Colour[];
   details: string[];
   /* Packed weight of one unit, in ounces. Drives the Shippo parcel. */
   weightOz: number;
@@ -101,29 +124,135 @@ export type Product = {
 /* Every hardware product's category: the shelf's For shops chip. */
 export const FOR_SHOPS_CATEGORY = 'For shops';
 
+/* The garments' colours. Black and navy are drawn on ink, white and
+   off-white on paper, land on land. */
+export const COLOURS = {
+  black: { id: 'black', label: 'Black', swatch: '#232324', tone: 'ink' },
+  white: { id: 'white', label: 'White', swatch: '#EDEDEA', tone: 'paper' },
+  navy: { id: 'navy', label: 'Navy', swatch: '#252B3B', tone: 'ink' },
+  offwhite: { id: 'offwhite', label: 'Off-white', swatch: '#E8E5DD', tone: 'paper' },
+  land: { id: 'land', label: 'Land', swatch: '#6B7F5C', tone: 'land' },
+} as const satisfies Record<string, Colour>;
+
+/* Every garment comes in these sizes, in every colour it is made in. */
+export const SIZES = ['s', 'm', 'l', 'xl', 'xxl'] as const;
+
+/* A garment's variants: each colour × size, "black-m" labelled "Black · M". */
+function garment(colours: (keyof typeof COLOURS)[]): Variant[] {
+  return colours.flatMap((c) =>
+    SIZES.map((sz) => ({ id: `${c}-${sz}`, label: `${COLOURS[c].label} · ${sz.toUpperCase()}`, colour: c, size: sz })),
+  );
+}
+
 export const PRODUCTS: Product[] = [
+  /* ─── Goods: the wearables, from the owner's flat sketches ───────────────
+     reference/redesign/wearables/flats. Each carries the Clear patch (63.5 mm,
+     embroidered; clear-patch-spec.md beside the flats). `member-tee` keeps
+     its slug and kind for the short-sleeve mock tee: links point at it.
+     The galleries' pictures are listed in the manifest's order. */
   {
     slug: 'member-tee',
     section: 'goods',
-    name: 'Member tee',
-    line: 'Heavyweight cotton, mark on the chest.',
+    name: 'Mock tee',
+    line: 'Heavyweight cotton, mock neck, patch on the chest.',
     description:
-      'A plain, heavy tee with the Clear mark embroidered small on the chest. Nothing on the back, nothing to explain.',
-    priceCents: 3200,
+      'A heavy tee with a wide mock neck and the Clear patch stitched small on the chest. A woven tag at the hem, nothing on the back.',
+    priceCents: 4200,
     kind: 'tee',
     tone: 'ink',
     category: 'Wear',
+    featured: true,
     variantLabel: 'Size',
-    variants: [
-      { id: 's', label: 'S' },
-      { id: 'm', label: 'M' },
-      { id: 'l', label: 'L' },
-      { id: 'xl', label: 'XL' },
-      { id: 'xxl', label: 'XXL' },
-    ],
-    details: ['100% cotton', 'Embroidered mark', 'Relaxed fit'],
-    weightOz: 8,
+    colours: [COLOURS.black, COLOURS.white, COLOURS.navy],
+    variants: garment(['black', 'white', 'navy']),
+    details: ['Heavyweight cotton jersey', 'Embroidered patch', 'Mock neck, cover-stitched hems'],
+    weightOz: 9,
     ships: GOODS_SHIPS,
+    media: [
+      { kind: 'render', src: '/shop/goods/member-tee/render-black.jpg', colour: 'black', alt: 'The black mock tee, laid flat', caption: 'Black, laid flat' },
+      { kind: 'render', src: '/shop/goods/member-tee/render-white.jpg', colour: 'white', alt: 'The white mock tee, laid flat', caption: 'White, laid flat' },
+      { kind: 'render', src: '/shop/goods/member-tee/render-navy.jpg', colour: 'navy', alt: 'The navy mock tee, laid flat', caption: 'Navy, laid flat' },
+      { kind: 'render', src: '/shop/goods/member-tee/render-collar.jpg', alt: 'The collar and the patch, up close', caption: 'The collar and the patch, up close' },
+      { kind: 'render', src: '/shop/goods/member-tee/render-hem.jpg', alt: 'The woven tag and the stitched hem', caption: 'The woven tag and the stitched hem' },
+      { kind: 'mock', src: '/shop/goods/member-tee/mock-black.jpg', colour: 'black', alt: 'A mockup of the black mock tee', caption: 'Black' },
+      { kind: 'mock', src: '/shop/goods/member-tee/mock-white.jpg', colour: 'white', alt: 'A mockup of the white mock tee', caption: 'White' },
+      { kind: 'mock', src: '/shop/goods/member-tee/mock-navy.jpg', colour: 'navy', alt: 'A mockup of the navy mock tee', caption: 'Navy' },
+    ],
+    status: 'live',
+  },
+  {
+    slug: 'long-sleeve-mock-tee',
+    section: 'goods',
+    name: 'Long-sleeve mock tee',
+    line: 'The mock tee with long sleeves and rib cuffs.',
+    description:
+      'The same heavy mock-neck tee, with long sleeves finished in rib cuffs. The patch on the chest, a woven tag at the hem.',
+    priceCents: 5200,
+    kind: 'tee-ls',
+    tone: 'ink',
+    category: 'Wear',
+    variantLabel: 'Size',
+    colours: [COLOURS.black, COLOURS.offwhite],
+    variants: garment(['black', 'offwhite']),
+    details: ['Heavyweight cotton jersey', 'Embroidered patch', 'Mock neck, rib cuffs'],
+    weightOz: 11,
+    ships: GOODS_SHIPS,
+    media: [
+      { kind: 'render', src: '/shop/goods/long-sleeve-mock-tee/render-black.jpg', colour: 'black', alt: 'The black long-sleeve mock tee, laid flat', caption: 'Black, laid flat' },
+      { kind: 'render', src: '/shop/goods/long-sleeve-mock-tee/render-offwhite.jpg', colour: 'offwhite', alt: 'The off-white long-sleeve mock tee, laid flat', caption: 'Off-white, laid flat' },
+      { kind: 'mock', src: '/shop/goods/long-sleeve-mock-tee/mock-black.jpg', colour: 'black', alt: 'A mockup of the black long-sleeve mock tee', caption: 'Black' },
+      { kind: 'mock', src: '/shop/goods/long-sleeve-mock-tee/mock-offwhite.jpg', colour: 'offwhite', alt: 'A mockup of the off-white long-sleeve mock tee', caption: 'Off-white' },
+    ],
+    status: 'live',
+  },
+  {
+    slug: 'turtleneck',
+    section: 'goods',
+    name: 'Turtleneck',
+    line: 'A knit turtleneck with a folded collar.',
+    description:
+      'A knit turtleneck with a tall collar that folds over, and rib at the cuffs and hem. The patch on the chest.',
+    priceCents: 9800,
+    kind: 'turtleneck',
+    tone: 'ink',
+    category: 'Wear',
+    variantLabel: 'Size',
+    colours: [COLOURS.navy],
+    variants: garment(['navy']),
+    details: ['Knit body', 'Embroidered patch', 'Rib collar, cuffs and hem'],
+    weightOz: 20,
+    ships: GOODS_SHIPS,
+    media: [
+      { kind: 'render', src: '/shop/goods/turtleneck/render-navy.jpg', colour: 'navy', alt: 'The navy turtleneck, laid flat', caption: 'Navy, laid flat' },
+      { kind: 'render', src: '/shop/goods/turtleneck/render-collar.jpg', alt: 'The folded collar and the patch', caption: 'The folded collar and the patch' },
+      { kind: 'mock', src: '/shop/goods/turtleneck/mock-navy.jpg', colour: 'navy', alt: 'A mockup of the navy turtleneck', caption: 'Navy' },
+    ],
+    status: 'live',
+  },
+  {
+    slug: 'hoodie',
+    section: 'goods',
+    name: 'Hoodie',
+    line: 'Heavy fleece, kangaroo pocket, patch at the centre.',
+    description:
+      'A heavy pullover hoodie with a lined hood, drawcords and a kangaroo pocket. The patch sits at the centre of the chest.',
+    priceCents: 8800,
+    kind: 'hoodie',
+    tone: 'ink',
+    category: 'Wear',
+    variantLabel: 'Size',
+    colours: [COLOURS.black, COLOURS.land],
+    variants: garment(['black', 'land']),
+    details: ['Heavy cotton fleece', 'Embroidered patch', 'Kangaroo pocket, rib cuffs and hem'],
+    weightOz: 26,
+    ships: GOODS_SHIPS,
+    media: [
+      { kind: 'render', src: '/shop/goods/hoodie/render-black.jpg', colour: 'black', alt: 'The black hoodie, laid flat', caption: 'Black, laid flat' },
+      { kind: 'render', src: '/shop/goods/hoodie/render-land.jpg', colour: 'land', alt: 'The land hoodie, laid flat', caption: 'Land, laid flat' },
+      { kind: 'render', src: '/shop/goods/hoodie/render-detail.jpg', alt: 'The drawcords and the patch', caption: 'The drawcords and the patch' },
+      { kind: 'mock', src: '/shop/goods/hoodie/mock-black.jpg', colour: 'black', alt: 'A mockup of the black hoodie', caption: 'Black' },
+      { kind: 'mock', src: '/shop/goods/hoodie/mock-land.jpg', colour: 'land', alt: 'A mockup of the land hoodie', caption: 'Land' },
+    ],
     status: 'live',
   },
   {
@@ -132,13 +261,13 @@ export const PRODUCTS: Product[] = [
     name: 'Co-op cap',
     line: 'Six panels, unstructured, adjustable strap.',
     description:
-      'A soft six-panel cap with the mark on the front. One size, with a strap at the back.',
-    priceCents: 2800,
+      'A soft six-panel cap with the Clear patch on the front. One size, with a strap at the back.',
+    priceCents: 3200,
     kind: 'cap',
     tone: 'land',
     category: 'Headwear',
     variants: [{ id: 'one', label: 'One size' }],
-    details: ['Cotton twill', 'Embroidered mark', 'One size, adjustable'],
+    details: ['Cotton twill', 'Embroidered patch', 'One size, adjustable'],
     weightOz: 4,
     ships: GOODS_SHIPS,
     status: 'live',
@@ -149,13 +278,13 @@ export const PRODUCTS: Product[] = [
     name: 'Canvas tote',
     line: 'Heavy canvas, long handles, carries a week of groceries.',
     description:
-      'A heavy canvas tote with long handles and the wordmark printed on one side.',
-    priceCents: 2400,
+      'A heavy canvas tote with long handles and the Clear patch sewn on one side.',
+    priceCents: 2800,
     kind: 'tote',
     tone: 'paper',
     category: 'Carry',
     variants: [{ id: 'one', label: 'One size' }],
-    details: ['Heavy cotton canvas', 'Printed wordmark', 'Handles fit over a shoulder'],
+    details: ['Heavy cotton canvas', 'Embroidered patch', 'Handles fit over a shoulder'],
     weightOz: 7,
     ships: GOODS_SHIPS,
     status: 'live',
@@ -534,6 +663,8 @@ export const SHELF = {
   /* The drawn rail that closes the last row when the tiles run short. */
   filler: 'Room on the rack',
   add: (name: string) => `Add ${name} to bag`,
+  /* A garment in more than one colour: its tile's add opens its page. */
+  choose: (name: string) => `Choose a colour and size for the ${name.charAt(0).toLowerCase()}${name.slice(1)}`,
   /* A goods pre-order tile's chip, in place of its category. */
   preorder: 'Pre-order',
 } as const;
@@ -622,6 +753,7 @@ export const WHY = {
 export const PRODUCT_COPY = {
   run: 'Small run',
   sizeLabel: 'Size',
+  colourLabel: 'Colour',
   oneSize: 'One size',
   pickOne: 'Pick one',
   pickFirst: (label: string) => `Pick a ${label.toLowerCase()} first`,
@@ -668,11 +800,23 @@ export const HARDWARE_COPY = {
 export const GALLERY = {
   label: 'Views',
   front: { b: 'Front', s: 'As it is worn' },
-  mark: { b: 'Mark' },
+  mark: { b: 'Patch' },
   back: {
     b: 'Back',
-    s: { tee: 'Nothing on it', cap: 'The strap', tote: 'The plain side' } satisfies Record<GoodsKind, string>,
+    s: {
+      tee: 'Nothing on it',
+      'tee-ls': 'Nothing on it',
+      turtleneck: 'Nothing on it',
+      hoodie: 'Nothing on it',
+      cap: 'The strap',
+      tote: 'The plain side',
+    } satisfies Record<GoodsKind, string>,
   },
+  /* The gallery's kind words: "Render · Black, laid flat", "Drawing · Front". */
+  render: 'Render',
+  drawing: 'Drawing',
+  mock: 'Mockup',
+  note: 'Renders and mockups are made from our flat sketches, not photographs. The finished pieces may differ slightly.',
 } as const;
 
 /* ─── The bag (/shop/bag) ──────────────────────────────────────────────── */
@@ -685,6 +829,9 @@ export const BAG = {
   emptyLink: 'Back to the shop',
   each: 'each',
   unavailable: 'No longer available. Remove it to check out.',
+  /* When a saved bag held something the shop no longer has (a colour or
+     size that changed), the line is taken out and this is said once. */
+  dropped: 'Something in your bag changed in the shop, so we took it out.',
   unavailableName: 'Unavailable item',
   subtotal: 'Subtotal',
   shipping: 'Shipping',

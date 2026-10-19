@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { createElement, type ReactNode } from 'react';
 import { LogoMark } from '@/components/marks/Logo';
 import { isGoodsKind, type GoodsKind, type PlateTone, type Product, type ProductKind } from '@/content/shop';
+import { PATCH_ONLY, TRACED } from './goodsShapes';
 import { HW_SHAPES, NAMED, type DrawingName, type HwNode, type HwShape } from './hardwareShapes';
 import './hardware.css';
 
@@ -14,11 +15,16 @@ import './hardware.css';
  * product and the product page shows those instead.
  *
  * Three views, all in the one drawing so the gallery can turn between them:
- * the front (`fx` lines and the mark), the back (`bx2` lines, no mark), and
- * the mark close up, which is the front with the viewBox zoomed in to it.
- * Every path is pathLength 1, so the draw-in can run its dash from 1 to 0
- * whatever the shape's real length. The drawing is decoration: the product's
- * name always sits beside it in words.
+ * the front (`fx` lines and the patch), the back (`bx2` lines and the back
+ * outline, no patch), and the patch close up, which is the front with the
+ * viewBox zoomed in to it. Every path is pathLength 1, so the draw-in can run
+ * its dash from 1 to 0 whatever the shape's real length. The drawing is
+ * decoration: the product's name always sits beside it in words.
+ *
+ * The four garments are traced from the owner's flat sketches
+ * (goodsShapes.ts, generated: never redraw or simplify them). The patch is
+ * drawn at true scale, so on the garment it is small; the close-up is what
+ * makes it legible.
  *
  * Hardware is drawn from HW_SHAPES (generated from the spec's drawings): one
  * view, with its screen. Those plates carry .hwplate, whose rules live in
@@ -26,26 +32,30 @@ import './hardware.css';
  * hardware plate is drawn right on any route. Named drawings (the Point's
  * screens, the counter with the till) render the same way, by `drawing`. */
 
-type Shape = { body: string; extra: string; back: string; mark: [number, number, number] };
+/* `patch` is [cx, cy, side]: the centre and side of the square patch.
+   `backBody` is the outline from behind, where the neckline sits higher;
+   without one the back uses `body`. `traced` shapes carry many fine
+   interior lines, drawn thinner than the outline. */
+type Shape = { body: string; backBody?: string; extra: string; back: string; patch: [number, number, number]; traced?: boolean };
+
+const traced = (k: keyof typeof TRACED): Shape => ({ ...TRACED[k], traced: true });
 
 export const SHAPES: Record<GoodsKind, Shape> = {
-  tee: {
-    body: 'M140 92 L178 74 Q200 96 222 74 L260 92 L330 150 L298 192 L268 172 L268 334 L132 334 L132 172 L102 192 L70 150 Z',
-    extra: 'M178 74 Q200 112 222 74',
-    back: 'M178 74 Q200 88 222 74',
-    mark: [236, 132, 22],
-  },
+  tee: traced('tee'),
+  'tee-ls': traced('tee-ls'),
+  turtleneck: traced('turtleneck'),
+  hoodie: traced('hoodie'),
   cap: {
     body: 'M96 246 Q96 124 206 118 Q318 124 318 246 Z',
     extra: 'M96 246 Q40 250 48 276 Q170 300 318 250 M206 118 L206 104',
     back: 'M96 246 Q206 262 318 246 M180 248 Q206 214 232 248 M206 118 L206 104',
-    mark: [206, 190, 44],
+    patch: PATCH_ONLY.cap,
   },
   tote: {
     body: 'M112 168 L288 168 L300 336 L100 336 Z',
     extra: 'M140 168 C140 96 196 96 196 168 M204 168 C204 96 260 96 260 168',
     back: 'M140 168 C140 96 196 96 196 168 M204 168 C204 96 260 96 260 168',
-    mark: [200, 254, 58],
+    patch: PATCH_ONLY.tote,
   },
 };
 
@@ -53,20 +63,21 @@ export type PlateView = 'front' | 'mark' | 'back';
 
 export const FULL_VB = '0 0 400 400';
 
-/* The viewBox that frames the mark: a square a few marks wide round it. */
-export function markViewBox(kind: GoodsKind) {
-  const [mx, my, size] = SHAPES[kind].mark;
-  const k = Math.max(size * 3.6, 124);
-  return `${mx - k / 2} ${my - k / 2} ${k} ${k}`;
+/* The viewBox that frames the patch: a square a few patches wide round it,
+   so the patch is legible with some of the garment round it for context. */
+export function patchViewBox(kind: GoodsKind) {
+  const [cx, cy, side] = SHAPES[kind].patch;
+  const k = Math.max(side * 3.4, 64);
+  return `${cx - k / 2} ${cy - k / 2} ${k} ${k}`;
 }
 
-/* An embroidered mark gets stitch dashes in the close-up; a printed one does
-   not. Read from the product's own details, so the drawing never claims a
+/* An embroidered patch gets its running stitch in the close-up; a printed
+   mark does not. Read from the product's own details, so the drawing never claims a
    finish the copy does not. */
 export const isEmbroidered = (p: Pick<Product, 'details'>) => p.details.some((d) => /embroider/i.test(d));
 
-/* The detail that names the mark ("Embroidered mark", "Printed wordmark"). */
-export const markDetail = (p: Pick<Product, 'details'>) => p.details.find((d) => /mark/i.test(d)) ?? p.details[1] ?? '';
+/* The detail that names the patch or mark ("Embroidered patch", "Printed wordmark"). */
+export const markDetail = (p: Pick<Product, 'details'>) => p.details.find((d) => /patch|mark/i.test(d)) ?? p.details[1] ?? '';
 
 const hidden = { opacity: 0 } as const;
 
@@ -103,7 +114,7 @@ export function ProductPlate({
   viewBox?: string;
   tone: PlateTone;
   view?: PlateView;
-  /* Draw the stitch ring round the mark (shown in the mark view). */
+  /* Draw the patch's running stitch (shown in the close-up). */
   stitch?: boolean;
   /* The tile's drawing links to the product. The name beside it is the
      link a reader or a keyboard uses; this one is a larger target for a
@@ -140,23 +151,55 @@ export function ProductPlate({
 
 function GoodsSvg({ kind, view, stitch, viewBox }: { kind: GoodsKind; view: PlateView; stitch?: boolean; viewBox?: string }) {
   const s = SHAPES[kind];
-  const [mx, my, size] = s.mark;
   const back = view === 'back';
+  const thin = s.traced ? ' fine' : '';
   return (
-    <svg viewBox={viewBox ?? (view === 'mark' ? markViewBox(kind) : FULL_VB)} aria-hidden="true" focusable="false">
+    <svg viewBox={viewBox ?? (view === 'mark' ? patchViewBox(kind) : FULL_VB)} aria-hidden="true" focusable="false">
       <g className="gar">
-        <path className="bd" d={s.body} pathLength={1} />
-        <path className="ln2 fx" d={s.extra} pathLength={1} style={back ? hidden : undefined} />
-        <path className="ln2 bx2" d={s.back} pathLength={1} style={back ? undefined : hidden} />
+        {/* The front and back outlines turn with the faces (Gallery's faces()). */}
+        <path className={s.backBody ? 'bd fx' : 'bd'} d={s.body} pathLength={1} style={back && s.backBody ? hidden : undefined} />
+        {s.backBody && <path className="bd bx2" d={s.backBody} pathLength={1} style={back ? undefined : hidden} />}
+        <path className={`ln2 fx${thin}`} d={s.extra} pathLength={1} style={back ? hidden : undefined} />
+        <path className={`ln2 bx2${thin}`} d={s.back} pathLength={1} style={back ? undefined : hidden} />
         <g className="mkg" style={back ? hidden : undefined}>
-          <g transform={`translate(${mx - size / 2} ${my - size / 2})`}>
-            <g className="mk">
-              <LogoMark size={size} variant="solid" />
-            </g>
+          {/* .mk: the patch lands last in the draw-in, as the mark did. */}
+          <g className="mk">
+            <Patch at={s.patch} stitch={stitch} close={view === 'mark'} />
           </g>
-          {stitch && <circle className="st" cx={mx} cy={my} r={size * 0.8} style={view === 'mark' ? { opacity: 0.8 } : undefined} />}
         </g>
       </g>
     </svg>
+  );
+}
+
+/* The Clear patch (reference/redesign/wearables/clear-patch-spec.md): a
+   square in the plate's line colour with a border inset at 7.5% of its side
+   and the mark at 68%, both in the ground colour. Embroidered, it has a
+   running stitch just inside the edge, shown in the close-up (`.st`). */
+function Patch({ at: [cx, cy, side], stitch, close }: { at: [number, number, number]; stitch?: boolean; close: boolean }) {
+  const x = cx - side / 2, y = cy - side / 2;
+  const b = side * 0.075;
+  const m = side * 0.68;
+  const st = side * 0.035;
+  return (
+    <>
+      <rect className="pt" x={x} y={y} width={side} height={side} />
+      <rect className="pb" x={x + b} y={y + b} width={side - 2 * b} height={side - 2 * b} style={{ strokeWidth: side * 0.03 }} />
+      <g transform={`translate(${cx - m / 2} ${cy - m / 2})`}>
+        <g className="pm">
+          <LogoMark size={m} variant="solid" />
+        </g>
+      </g>
+      {stitch && (
+        <rect
+          className="st"
+          x={x + st}
+          y={y + st}
+          width={side - 2 * st}
+          height={side - 2 * st}
+          style={{ strokeWidth: side * 0.012, strokeDasharray: `${side * 0.03} ${side * 0.025}`, ...(close ? { opacity: 0.8 } : null) }}
+        />
+      )}
+    </>
   );
 }

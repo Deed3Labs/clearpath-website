@@ -38,8 +38,13 @@ const depositName = (l: PricedLine) =>
   `Deposit · ${l.product.name}${l.product.variants.length > 1 ? `, ${l.variantLabel}` : ''}`;
 
 /* The picture Stripe shows beside a line: a photograph or a render. */
+/* The line's picture on Stripe's page: a photograph, else the first render
+   of the colour bought (a garment's other colours' renders would show the
+   wrong one), else the first render. */
 function image(l: PricedLine, origin: string) {
-  const src = l.product.images?.[0]?.src ?? l.product.media?.find((m) => m.kind === 'render')?.src;
+  const colour = l.product.variants.find((v) => v.id === l.variant)?.colour;
+  const renders = l.product.media?.filter((m) => m.kind === 'render') ?? [];
+  const src = l.product.images?.[0]?.src ?? (colour ? renders.find((m) => m.colour === colour) : renders[0])?.src;
   return src ? { images: [`${origin}${src}`] } : {};
 }
 

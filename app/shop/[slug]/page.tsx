@@ -4,9 +4,10 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { Bento, Chip } from '@/components/system';
 import { AddToBag } from '@/components/shop/AddToBag';
-import { Gallery } from '@/components/shop/Gallery';
+import { ColourProvider } from '@/components/shop/ColourContext';
+import { GoodsGallery } from '@/components/shop/GoodsGallery';
 import { HardwareBuy } from '@/components/shop/HardwareBuy';
-import { HardwareGallery } from '@/components/shop/HardwareGallery';
+import { ProductGallery } from '@/components/shop/ProductGallery';
 import { PlateDraw } from '@/components/shop/PlateDraw';
 import { isEmbroidered, markDetail, ProductPlate } from '@/components/shop/ProductPlate';
 import { pad2 } from '@/components/shop/item';
@@ -47,10 +48,12 @@ export default async function ProductPage({ params }: Props) {
   const also = [...others.filter((p) => p.category === product.category), ...others.filter((p) => p.category !== product.category)].slice(0, 3);
   const open = isShopOpen();
 
-  return (
+  /* A garment in colours shares the colour picked between its gallery and
+     its buy panel. */
+  const page = (
     <div className="pg-shop">
       <section className="wrap vsec">
-        <Bento className="pd">
+        <Bento className={product.images?.length ? 'pd' : 'pd md gd'}>
           {product.images?.length ? (
             <div className="gal">
               <div className="gal-wrap photos">
@@ -61,11 +64,13 @@ export default async function ProductPage({ params }: Props) {
               </div>
             </div>
           ) : isGoodsKind(product.kind) ? (
-            <Gallery
+            <GoodsGallery
+              slug={product.slug}
               kind={product.kind}
               tone={product.tone}
+              media={product.media ?? []}
               stitch={isEmbroidered(product)}
-              mark={markDetail(product)}
+              patch={markDetail(product)}
               back={GALLERY.back.s[product.kind]}
             />
           ) : null}
@@ -126,7 +131,7 @@ export default async function ProductPage({ params }: Props) {
             <PlateDraw className="bx also2">
               {also.map((x) => (
                 <Link className="mini" href={`/shop/${x.slug}`} key={x.slug}>
-                  <ProductPlate kind={x.kind} tone={x.tone} />
+                  <ProductPlate kind={x.kind} tone={x.colours?.[0].tone ?? x.tone} />
                   <span>
                     <b>{x.name}</b>
                     <small>{x.line}</small>
@@ -140,6 +145,7 @@ export default async function ProductPage({ params }: Props) {
       </section>
     </div>
   );
+  return product.colours?.length ? <ColourProvider colours={product.colours}>{page}</ColourProvider> : page;
 }
 
 function ClosedNote() {
@@ -170,8 +176,15 @@ function HardwarePage({ product }: { product: Product }) {
   return (
     <div className="pg-shop">
       <section className="wrap vsec">
-        <Bento className="pd hw">
-          <HardwareGallery slug={product.slug} kind={product.kind} tone={product.tone} media={product.media ?? []} />
+        <Bento className="pd md hw">
+          <ProductGallery
+            slug={product.slug}
+            kind={product.kind}
+            tone={product.tone}
+            media={product.media ?? []}
+            copy={{ label: c.gallery.label, render: c.gallery.render, drawing: c.gallery.drawing.b, mock: '', cad: c.gallery.cad, note: c.gallery.note }}
+            drawing={[c.gallery.drawing]}
+          />
 
           <div className="buy">
             <div className="c-h">
