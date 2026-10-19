@@ -36,6 +36,10 @@ export const toItem = (p: Product): ShopItem => {
   };
 };
 
+/* A product's name inside a sentence ("The hoodie ships either way"): a
+   common name drops its capital, a proper one ("Logo Tee") keeps it. */
+export const inSentence = (name: string) => (/[A-Z]/.test(name.slice(1)) ? name : `${name.charAt(0).toLowerCase()}${name.slice(1)}`);
+
 /* The ground a line in the bag is drawn on: its colour's, else the product's. */
 export function toneOf(p: Pick<Product, 'variants' | 'colours' | 'tone'>, id: string): PlateTone {
   const c = p.variants.find((v) => v.id === id)?.colour;

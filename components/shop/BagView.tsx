@@ -12,7 +12,7 @@ import { usd, usdExact } from '@/lib/shop/money';
 import { hasGoods, hasPreorder, steps as stepsFor, totals, type OrderLine, type Step } from '@/lib/shop/order';
 import { deposit, unitPrice } from '@/lib/shop/price';
 import { useBag } from './BagProvider';
-import { toneOf, variantText } from './item';
+import { inSentence, toneOf, variantText } from './item';
 import { ProductPlate } from './ProductPlate';
 
 /* The bag, then checkout as steps that fold up once they are done: your
@@ -348,7 +348,7 @@ export function BagView({ products, open }: { products: Product[]; open: boolean
     if (!g.length) return '';
     if (g.length > 1) return BAG.goodsShipMany;
     const name = g[0].product!.name;
-    return BAG.goodsShip(`The ${name.charAt(0).toLowerCase()}${name.slice(1)}`);
+    return BAG.goodsShip(`The ${inSentence(name)}`);
   })();
 
   const lineItem = (l: (typeof priced)[number]) => {

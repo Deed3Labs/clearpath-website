@@ -46,10 +46,10 @@ test('a one-colour product still names its colour: "Navy · M"', () => {
   assert.deepEqual(names(lines), ['Turtleneck (Navy · M)']);
 });
 
-test('the Stripe line name is "Mock tee (Black · M)"', () => {
+test('the Stripe line name is "Logo Tee (Black · M)"', () => {
   const lines = priceBag([{ slug: 'member-tee', variant: 'black-m', qty: 1 }]);
   assert.ok(lines);
-  assert.deepEqual(names(lines), ['Mock tee (Black · M)']);
+  assert.deepEqual(names(lines), ['Logo Tee (Black · M)']);
 });
 
 test('a saved bag line with a vanished variant is dropped on load, not sent to checkout', () => {
