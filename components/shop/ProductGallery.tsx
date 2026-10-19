@@ -7,8 +7,9 @@ import { gsap, motionOK, useIsoLayoutEffect } from '@/lib/anim';
 import { usePlateDraw } from './motion';
 import { FULL_VB, patchViewBox, ProductPlate, type PlateView } from './ProductPlate';
 
-/* A product's pictures, as tabs over one frame: the renders, then the
- * shop's drawing, then the mockups (goods) or CAD sheets (hardware).
+/* A product's pictures, as tabs over one frame. Goods: the mockups, then
+ * the shop's drawing, then the renders (the order the owner chose).
+ * Hardware: the renders, the drawing, then the CAD sheets.
  *
  * - Renders and mockups cover the frame and are labelled for what they are
  *   (the note under the thumbs says how they were made). CAD sheets are
@@ -95,7 +96,7 @@ export function ProductGallery({
       cap: goods ? `${copy.drawing} · ${drawing[i].b}` : `${drawing[i].b} · ${drawing[i].s}`,
       view: v,
     }));
-    return [...ofColour('render'), ...drawn, ...ofColour('mock'), ...ofColour('cad')];
+    return goods ? [...ofColour('mock'), ...drawn, ...ofColour('render')] : [...ofColour('render'), ...drawn, ...ofColour('cad')];
   }, [media, colour, copy, drawing, goods]);
 
   const [picked, setPicked] = useState<{ key: string; kind: Kind }>({ key: slides[0].key, kind: slides[0].kind });
