@@ -12,7 +12,7 @@ import { usd, usdExact } from '@/lib/shop/money';
 import { hasGoods, hasPreorder, steps as stepsFor, totals, type OrderLine, type Step } from '@/lib/shop/order';
 import { deposit, unitPrice } from '@/lib/shop/price';
 import { useBag } from './BagProvider';
-import { variantText } from './item';
+import { toneOf, variantText } from './item';
 import { ProductPlate } from './ProductPlate';
 
 /* The bag, then checkout as steps that fold up once they are done: your
@@ -85,7 +85,7 @@ function CountTo({ cents }: { cents: number }) {
 }
 
 export function BagView({ products, open }: { products: Product[]; open: boolean }) {
-  const { lines, ready, setQty, remove } = useBag();
+  const { lines, ready, dropped, setQty, remove } = useBag();
   const [addr, setAddr] = useState<Addr>(EMPTY);
   const [bad, setBad] = useState<Set<keyof Addr>>(new Set());
   const [addrDone, setAddrDone] = useState(false);
@@ -365,7 +365,7 @@ export function BagView({ products, open }: { products: Product[]; open: boolean
                 <Image src={render.src} alt="" fill sizes="96px" />
               </span>
             ) : (
-              <ProductPlate kind={p.kind} tone={p.tone} />
+              <ProductPlate kind={p.kind} tone={toneOf(p, l.variant)} />
             )}
           </Link>
         ) : (
@@ -445,6 +445,11 @@ export function BagView({ products, open }: { products: Product[]; open: boolean
               <span className="who">{BAG.inBag}</span>
               <span className="ck">{BAG.limit}</span>
             </div>
+            {dropped > 0 && (
+              <p className="dropped" role="status">
+                {BAG.dropped}
+              </p>
+            )}
             {empty ? (
               <div className="c-m empty">
                 <p className="line">{BAG.empty}</p>

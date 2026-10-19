@@ -8,10 +8,11 @@ import './shop.css';
    tree, and a provider in the root layout would make it one. The bar is a
    client component and cannot read the catalog, so it is handed what it
    shows: names for the breadcrumb, and the drawing, name and price of
-   whatever just went in the bag. */
+   whatever just went in the bag. The provider is told what the shop has, so
+   a saved bag holding something it no longer sells is cleaned up on load. */
 export default function ShopLayout({ children }: { children: React.ReactNode }) {
   return (
-    <BagProvider>
+    <BagProvider known={visibleProducts().map((p) => ({ slug: p.slug, variants: p.variants.map((v) => v.id) }))}>
       <ShopBar catalog={visibleProducts().map(toItem)} closed={!isShopOpen()} />
       {children}
     </BagProvider>

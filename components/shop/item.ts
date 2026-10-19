@@ -1,18 +1,21 @@
-import type { Product } from '@/content/shop';
+import type { PlateTone, Product } from '@/content/shop';
 
 /* What a client component needs to show a product: no status, no weight,
    no photographs beyond the first render. Prices travel for display only;
    checkout prices the order again on the server from the catalog.
 
-   Goods on pre-order carry their ship month. Hardware also carries its section, its pre-order terms and its first
-   render, so the shelf, the mini-bag and Also can show the render. */
+   Goods on pre-order carry their ship month, and a garment its colours (a
+   plate is drawn on its colour's ground; `tone` is the first colour's).
+   Hardware also carries its section, its pre-order terms and its first
+   render, so the mini-bag and Also can show the render. The goods' renders
+   stay on their product pages: everywhere else a garment is drawn. */
 export type ShopItem = Pick<
   Product,
-  'slug' | 'section' | 'name' | 'line' | 'priceCents' | 'kind' | 'tone' | 'category' | 'featured' | 'variants' | 'variantLabel' | 'details' | 'preorder' | 'ships'
+  'slug' | 'section' | 'name' | 'line' | 'priceCents' | 'kind' | 'tone' | 'category' | 'featured' | 'variants' | 'variantLabel' | 'details' | 'preorder' | 'ships' | 'colours'
 > & { render?: { src: string; alt: string } };
 
 export const toItem = (p: Product): ShopItem => {
-  const r = p.media?.find((m) => m.kind === 'render');
+  const r = p.section === 'for-shops' ? p.media?.find((m) => m.kind === 'render') : undefined;
   return {
     slug: p.slug,
     section: p.section,
@@ -20,7 +23,7 @@ export const toItem = (p: Product): ShopItem => {
     line: p.line,
     priceCents: p.priceCents,
     kind: p.kind,
-    tone: p.tone,
+    tone: p.colours?.[0].tone ?? p.tone,
     category: p.category,
     featured: p.featured,
     variants: p.variants,
@@ -28,14 +31,23 @@ export const toItem = (p: Product): ShopItem => {
     details: p.details,
     preorder: p.preorder,
     ships: p.ships,
+    colours: p.colours,
     render: r ? { src: r.src, alt: r.alt } : undefined,
   };
 };
 
-/* "Size M", or "One size" for a product with one variant. */
+/* The ground a line in the bag is drawn on: its colour's, else the product's. */
+export function toneOf(p: Pick<Product, 'variants' | 'colours' | 'tone'>, id: string): PlateTone {
+  const c = p.variants.find((v) => v.id === id)?.colour;
+  return p.colours?.find((x) => x.id === c)?.tone ?? p.colours?.[0].tone ?? p.tone;
+}
+
+/* "Size M", "Black · M" for a garment in colours, or "One size" for a
+   product with one variant. */
 export function variantText(p: Pick<Product, 'variants' | 'variantLabel'>, id: string, oneSize: string) {
-  if (p.variants.length <= 1) return oneSize;
   const v = p.variants.find((x) => x.id === id);
+  if (v?.colour) return v.label;
+  if (p.variants.length <= 1) return oneSize;
   return `${p.variantLabel ?? ''} ${v?.label ?? id}`.trim();
 }
 

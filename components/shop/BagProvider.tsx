@@ -1,8 +1,9 @@
 'use client';
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { MAX_LINES, MAX_PER_LINE } from '@/content/shop';
+import { MAX_LINES } from '@/content/shop';
 import type { BagLine } from '@/lib/shop/catalog';
+import { clampQty, readBag, type Known } from './bagLines';
 
 /* The bag lives in localStorage and nowhere else until checkout. It holds
    what someone picked, never a price — prices are read from the catalog
@@ -15,6 +16,8 @@ type Bag = {
   /* False until storage has been read, so the server render and the first
      client render agree (an empty bag) and React does not throw. */
   ready: boolean;
+  /* Lines taken out on load because the shop no longer has them (bagLines). */
+  dropped: number;
   count: number;
   add: (slug: string, variant: string, qty: number) => void;
   setQty: (slug: string, variant: string, qty: number) => void;
@@ -24,31 +27,22 @@ type Bag = {
 
 const BagContext = createContext<Bag | null>(null);
 
-const clampQty = (n: number) => Math.max(0, Math.min(MAX_PER_LINE, Math.floor(Number.isFinite(n) ? n : 0)));
-
-function sanitize(raw: unknown): BagLine[] {
-  if (!Array.isArray(raw)) return [];
-  return raw
-    .filter(
-      (l): l is BagLine =>
-        !!l && typeof l.slug === 'string' && typeof l.variant === 'string' && typeof l.qty === 'number',
-    )
-    .map((l) => ({ slug: l.slug, variant: l.variant, qty: clampQty(l.qty) }))
-    .filter((l) => l.qty > 0)
-    .slice(0, MAX_LINES);
-}
-
-export function BagProvider({ children }: { children: React.ReactNode }) {
+export function BagProvider({ known, children }: { known?: Known; children: React.ReactNode }) {
   const [lines, setLines] = useState<BagLine[]>([]);
   const [ready, setReady] = useState(false);
+  const [dropped, setDropped] = useState(0);
 
   useEffect(() => {
     try {
-      setLines(sanitize(JSON.parse(window.localStorage.getItem(KEY) ?? '[]')));
+      const bag = readBag(JSON.parse(window.localStorage.getItem(KEY) ?? '[]'), known);
+      setLines(bag.lines);
+      setDropped(bag.dropped);
     } catch {
       // Blocked or corrupt storage: an empty bag is the right fallback.
     }
     setReady(true);
+    // Read once, on load: what the shop has does not change under an open page.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -84,8 +78,8 @@ export function BagProvider({ children }: { children: React.ReactNode }) {
   const clear = useCallback(() => setLines([]), []);
 
   const value = useMemo<Bag>(
-    () => ({ lines, ready, count: lines.reduce((n, l) => n + l.qty, 0), add, setQty, remove, clear }),
-    [lines, ready, add, setQty, remove, clear],
+    () => ({ lines, ready, dropped, count: lines.reduce((n, l) => n + l.qty, 0), add, setQty, remove, clear }),
+    [lines, ready, dropped, add, setQty, remove, clear],
   );
 
   return <BagContext.Provider value={value}>{children}</BagContext.Provider>;

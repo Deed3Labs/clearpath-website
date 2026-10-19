@@ -229,6 +229,11 @@ export function Shelf({ products, forShops = 0 }: { products: ShopItem[]; forSho
         {ordered.map((p) => {
           const i = products.indexOf(p);
           const multi = p.variants.length > 1;
+          /* More than one colour: the tile's add goes to the page, where the
+             colour is picked. One picker on a tile is the limit. */
+          const colours = (p.colours?.length ?? 0) > 1;
+          /* One colour: its sizes, named by size alone. */
+          const sizes = p.variants.map((v) => (v.size ? { ...v, label: v.size.toUpperCase() } : v));
           const isFeat = feat && p.slug === featSlug;
           const open = picking === p.slug;
           const sizesId = `psz-${p.slug}`;
@@ -254,33 +259,39 @@ export function Shelf({ products, forShops = 0 }: { products: ShopItem[]; forSho
               </div>
               <div className="pw">
                 <ProductPlate kind={p.kind} tone={p.tone} href={`/shop/${p.slug}`} />
-                {multi && (
+                {multi && !colours && (
                   <div className="psz" id={sizesId} hidden={!open}>
                     <span className="label">{p.variantLabel}</span>
                     <Sizes
                       label={p.variantLabel ?? ''}
-                      variants={p.variants}
+                      variants={sizes}
                       value={null}
                       arrows="move"
                       onPick={(v, el) => quickAdd(p, v, el)}
                     />
                   </div>
                 )}
-                <button
-                  type="button"
-                  className={['padd', done === p.slug && 'done'].filter(Boolean).join(' ')}
-                  data-add=""
-                  aria-label={SHELF.add(p.name)}
-                  aria-expanded={multi ? open : undefined}
-                  aria-controls={multi ? sizesId : undefined}
-                  disabled={p.variants.every((v) => v.soldOut)}
-                  onClick={(e) => {
-                    if (!multi) return quickAdd(p, p.variants[0].id, e.currentTarget);
-                    setPicking(open ? null : p.slug);
-                  }}
-                >
-                  <Plus />
-                </button>
+                {colours ? (
+                  <Link className="padd" href={`/shop/${p.slug}`} aria-label={SHELF.choose(p.name)}>
+                    <Plus />
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    className={['padd', done === p.slug && 'done'].filter(Boolean).join(' ')}
+                    data-add=""
+                    aria-label={SHELF.add(p.name)}
+                    aria-expanded={multi ? open : undefined}
+                    aria-controls={multi ? sizesId : undefined}
+                    disabled={p.variants.every((v) => v.soldOut)}
+                    onClick={(e) => {
+                      if (!multi) return quickAdd(p, p.variants[0].id, e.currentTarget);
+                      setPicking(open ? null : p.slug);
+                    }}
+                  >
+                    <Plus />
+                  </button>
+                )}
               </div>
               <div className="pf">
                 <Link className="pn" href={`/shop/${p.slug}`}>

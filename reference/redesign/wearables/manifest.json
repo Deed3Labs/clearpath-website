@@ -1,0 +1,146 @@
+{
+ "member-tee": [
+  {
+   "kind": "render",
+   "src": "/shop/goods/member-tee/render-black.jpg",
+   "colour": "black",
+   "alt": "The black mock tee, laid flat",
+   "caption": "Black, laid flat"
+  },
+  {
+   "kind": "render",
+   "src": "/shop/goods/member-tee/render-white.jpg",
+   "colour": "white",
+   "alt": "The white mock tee, laid flat",
+   "caption": "White, laid flat"
+  },
+  {
+   "kind": "render",
+   "src": "/shop/goods/member-tee/render-navy.jpg",
+   "colour": "navy",
+   "alt": "The navy mock tee, laid flat",
+   "caption": "Navy, laid flat"
+  },
+  {
+   "kind": "render",
+   "src": "/shop/goods/member-tee/render-collar.jpg",
+   "alt": "The collar and the patch, up close",
+   "caption": "The collar and the patch, up close"
+  },
+  {
+   "kind": "render",
+   "src": "/shop/goods/member-tee/render-hem.jpg",
+   "alt": "The woven tag and the stitched hem",
+   "caption": "The woven tag and the stitched hem"
+  },
+  {
+   "kind": "mock",
+   "src": "/shop/goods/member-tee/mock-black.jpg",
+   "colour": "black",
+   "alt": "A mockup of the black mock tee",
+   "caption": "Black"
+  },
+  {
+   "kind": "mock",
+   "src": "/shop/goods/member-tee/mock-white.jpg",
+   "colour": "white",
+   "alt": "A mockup of the white mock tee",
+   "caption": "White"
+  },
+  {
+   "kind": "mock",
+   "src": "/shop/goods/member-tee/mock-navy.jpg",
+   "colour": "navy",
+   "alt": "A mockup of the navy mock tee",
+   "caption": "Navy"
+  }
+ ],
+ "long-sleeve-mock-tee": [
+  {
+   "kind": "render",
+   "src": "/shop/goods/long-sleeve-mock-tee/render-black.jpg",
+   "colour": "black",
+   "alt": "The black long-sleeve mock tee, laid flat",
+   "caption": "Black, laid flat"
+  },
+  {
+   "kind": "render",
+   "src": "/shop/goods/long-sleeve-mock-tee/render-offwhite.jpg",
+   "colour": "offwhite",
+   "alt": "The off-white long-sleeve mock tee, laid flat",
+   "caption": "Off-white, laid flat"
+  },
+  {
+   "kind": "mock",
+   "src": "/shop/goods/long-sleeve-mock-tee/mock-black.jpg",
+   "colour": "black",
+   "alt": "A mockup of the black long-sleeve mock tee",
+   "caption": "Black"
+  },
+  {
+   "kind": "mock",
+   "src": "/shop/goods/long-sleeve-mock-tee/mock-offwhite.jpg",
+   "colour": "offwhite",
+   "alt": "A mockup of the off-white long-sleeve mock tee",
+   "caption": "Off-white"
+  }
+ ],
+ "turtleneck": [
+  {
+   "kind": "render",
+   "src": "/shop/goods/turtleneck/render-navy.jpg",
+   "colour": "navy",
+   "alt": "The navy turtleneck, laid flat",
+   "caption": "Navy, laid flat"
+  },
+  {
+   "kind": "render",
+   "src": "/shop/goods/turtleneck/render-collar.jpg",
+   "alt": "The folded collar and the patch",
+   "caption": "The folded collar and the patch"
+  },
+  {
+   "kind": "mock",
+   "src": "/shop/goods/turtleneck/mock-navy.jpg",
+   "colour": "navy",
+   "alt": "A mockup of the navy turtleneck",
+   "caption": "Navy"
+  }
+ ],
+ "hoodie": [
+  {
+   "kind": "render",
+   "src": "/shop/goods/hoodie/render-black.jpg",
+   "colour": "black",
+   "alt": "The black hoodie, laid flat",
+   "caption": "Black, laid flat"
+  },
+  {
+   "kind": "render",
+   "src": "/shop/goods/hoodie/render-land.jpg",
+   "colour": "land",
+   "alt": "The land hoodie, laid flat",
+   "caption": "Land, laid flat"
+  },
+  {
+   "kind": "render",
+   "src": "/shop/goods/hoodie/render-detail.jpg",
+   "alt": "The drawcords and the patch",
+   "caption": "The drawcords and the patch"
+  },
+  {
+   "kind": "mock",
+   "src": "/shop/goods/hoodie/mock-black.jpg",
+   "colour": "black",
+   "alt": "A mockup of the black hoodie",
+   "caption": "Black"
+  },
+  {
+   "kind": "mock",
+   "src": "/shop/goods/hoodie/mock-land.jpg",
+   "colour": "land",
+   "alt": "A mockup of the land hoodie",
+   "caption": "Land"
+  }
+ ]
+}
