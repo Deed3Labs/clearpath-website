@@ -667,8 +667,8 @@ export const SHELF = {
   /* The drawn rail that closes the last row when the tiles run short. */
   filler: 'Room on the rack',
   add: (name: string) => `Add ${name} to bag`,
-  /* A garment in more than one colour: its tile's add opens its page. */
-  choose: (name: string) => `Choose a colour and size for the ${name.charAt(0).toLowerCase()}${name.slice(1)}`,
+  /* A garment's tile offers one colour's sizes: "Size · Black". */
+  sizesIn: (label: string, colour: string) => `${label} · ${colour}`,
   /* A goods pre-order tile's chip, in place of its category. */
   preorder: 'Pre-order',
 } as const;

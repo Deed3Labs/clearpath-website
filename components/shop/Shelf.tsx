@@ -229,11 +229,14 @@ export function Shelf({ products, forShops = 0 }: { products: ShopItem[]; forSho
         {ordered.map((p) => {
           const i = products.indexOf(p);
           const multi = p.variants.length > 1;
-          /* More than one colour: the tile's add goes to the page, where the
-             colour is picked. One picker on a tile is the limit. */
-          const colours = (p.colours?.length ?? 0) > 1;
-          /* One colour: its sizes, named by size alone. */
-          const sizes = p.variants.map((v) => (v.size ? { ...v, label: v.size.toUpperCase() } : v));
+          /* A garment in colours offers the sizes of the colour its tile is
+             drawn in (the first), named by size alone; the row's label says
+             which colour, and its page offers the rest. */
+          const colour = p.colours?.[0];
+          const sizes = (colour ? p.variants.filter((v) => v.colour === colour.id) : p.variants).map((v) =>
+            v.size ? { ...v, label: v.size.toUpperCase() } : v,
+          );
+          const sizeLabel = colour ? SHELF.sizesIn(p.variantLabel ?? '', colour.label) : p.variantLabel;
           const isFeat = feat && p.slug === featSlug;
           const open = picking === p.slug;
           const sizesId = `psz-${p.slug}`;
@@ -259,11 +262,11 @@ export function Shelf({ products, forShops = 0 }: { products: ShopItem[]; forSho
               </div>
               <div className="pw">
                 <ProductPlate kind={p.kind} tone={p.tone} href={`/shop/${p.slug}`} />
-                {multi && !colours && (
+                {multi && (
                   <div className="psz" id={sizesId} hidden={!open}>
-                    <span className="label">{p.variantLabel}</span>
+                    <span className="label">{sizeLabel}</span>
                     <Sizes
-                      label={p.variantLabel ?? ''}
+                      label={sizeLabel ?? ''}
                       variants={sizes}
                       value={null}
                       arrows="move"
@@ -271,27 +274,21 @@ export function Shelf({ products, forShops = 0 }: { products: ShopItem[]; forSho
                     />
                   </div>
                 )}
-                {colours ? (
-                  <Link className="padd" href={`/shop/${p.slug}`} aria-label={SHELF.choose(p.name)}>
-                    <Plus />
-                  </Link>
-                ) : (
-                  <button
-                    type="button"
-                    className={['padd', done === p.slug && 'done'].filter(Boolean).join(' ')}
-                    data-add=""
-                    aria-label={SHELF.add(p.name)}
-                    aria-expanded={multi ? open : undefined}
-                    aria-controls={multi ? sizesId : undefined}
-                    disabled={p.variants.every((v) => v.soldOut)}
-                    onClick={(e) => {
-                      if (!multi) return quickAdd(p, p.variants[0].id, e.currentTarget);
-                      setPicking(open ? null : p.slug);
-                    }}
-                  >
-                    <Plus />
-                  </button>
-                )}
+                <button
+                  type="button"
+                  className={['padd', done === p.slug && 'done'].filter(Boolean).join(' ')}
+                  data-add=""
+                  aria-label={SHELF.add(colour ? `${p.name}, ${colour.label.toLowerCase()}` : p.name)}
+                  aria-expanded={multi ? open : undefined}
+                  aria-controls={multi ? sizesId : undefined}
+                  disabled={sizes.every((v) => v.soldOut)}
+                  onClick={(e) => {
+                    if (!multi) return quickAdd(p, p.variants[0].id, e.currentTarget);
+                    setPicking(open ? null : p.slug);
+                  }}
+                >
+                  <Plus />
+                </button>
               </div>
               <div className="pf">
                 <Link className="pn" href={`/shop/${p.slug}`}>
