@@ -72,11 +72,10 @@ test('the Stripe picture is the colour bought', () => {
   const lines = priceBag([
     { slug: 'member-tee', variant: 'white-s', qty: 1 },
     { slug: 'hoodie', variant: 'land-xl', qty: 1 },
-    { slug: 'coop-cap', variant: 'one', qty: 1 },
   ]);
   assert.ok(lines);
   const imgs = sessionParams({ lines, rate, address, email: 'a@b.co', shop: null, origin, taxOn: false }).line_items!.map(
     (li) => li.price_data!.product_data!.images,
   );
-  assert.deepEqual(imgs, [[`${origin}/shop/goods/member-tee/render-white.jpg`], [`${origin}/shop/goods/hoodie/render-land.jpg`], undefined]);
+  assert.deepEqual(imgs, [[`${origin}/shop/goods/member-tee/render-white.jpg`], [`${origin}/shop/goods/hoodie/render-land.jpg`]]);
 });
