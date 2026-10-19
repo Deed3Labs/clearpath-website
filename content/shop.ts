@@ -11,8 +11,10 @@
  * lib/shop/catalog.ts). Flip a status and redeploy.
  *
  * The goods are on pre-order: paid in full today, made in one run, shipped
- * in GOODS_SHIPS. They are shown as drawings until there are photographs.
- * TODO(owner): weights and details are still the first draft's.
+ * in GOODS_SHIPS. Their prices, colours and packed weights were decided with
+ * the wearables brief (reference/redesign/wearables/PROMPT.md). The shelf
+ * draws them; their pages add renders and mockups made from the flat
+ * sketches, labelled as such, until there are photographs (`images`).
  */
 
 /* The month the goods' first run ships, estimated: on every goods tile, page,
