@@ -272,7 +272,8 @@ export const PRODUCTS: Product[] = [
     details: ['Cotton twill', 'Embroidered patch', 'One size, adjustable'],
     weightOz: 4,
     ships: GOODS_SHIPS,
-    status: 'live',
+    // Off the shelf for now (the owner's call, 2026-10-19). 'live' brings it back.
+    status: 'draft',
   },
   {
     slug: 'canvas-tote',
@@ -289,7 +290,8 @@ export const PRODUCTS: Product[] = [
     details: ['Heavy cotton canvas', 'Embroidered patch', 'Handles fit over a shoulder'],
     weightOz: 7,
     ships: GOODS_SHIPS,
-    status: 'live',
+    // Off the shelf for now (the owner's call, 2026-10-19). 'live' brings it back.
+    status: 'draft',
   },
 
   /* ─── For shops: the hardware ───────────────────────────────────────────
