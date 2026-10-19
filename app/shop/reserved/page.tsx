@@ -7,6 +7,7 @@ import { currentShop } from '@/lib/shop/currentShop';
 import { usdExact } from '@/lib/shop/money';
 import { readReservation } from '@/lib/shop/order';
 import { getStripe, isStripeConfigured } from '@/lib/shop/stripe';
+import { inSentence } from '@/components/shop/item';
 
 export const metadata = {
   title: 'Reserved · Shop',
@@ -83,7 +84,7 @@ export default async function Reserved({ searchParams }: { searchParams: Promise
   const lede = !slip
     ? RESERVED.ledeOnly
     : slip.goods.length === 1
-      ? RESERVED.ledeGoods(`the ${slip.goods[0].charAt(0).toLowerCase()}${slip.goods[0].slice(1)}`)
+      ? RESERVED.ledeGoods(`the ${inSentence(slip.goods[0])}`)
       : slip.goods.length > 1
         ? RESERVED.ledeGoodsMany
         : RESERVED.ledeOnly;

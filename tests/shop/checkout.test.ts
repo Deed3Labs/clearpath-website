@@ -59,7 +59,7 @@ test('mixed bags: goods alone build exactly the session they always did', () => 
           currency: 'usd',
           unit_amount: 4200,
           product_data: {
-            name: 'Mock tee (Black · M)',
+            name: 'Logo Tee (Black · M)',
             description: 'Pre-order: ships Jan 2027, estimated. Heavyweight cotton, mock neck, patch on the chest.',
             images: [`${origin}/shop/goods/member-tee/render-black.jpg`],
             metadata: { slug: 'member-tee', variant: 'black-m' },
@@ -102,7 +102,7 @@ test('mixed bags: goods at full price, a deposit line per pre-order, the card sa
   assert.deepEqual(
     p.line_items!.map((li) => [li.price_data!.product_data!.name, li.price_data!.unit_amount, li.quantity]),
     [
-      ['Mock tee (Black · M)', 4200, 1],
+      ['Logo Tee (Black · M)', 4200, 1],
       ['Deposit · Clear Point, Table', 5500, 4],
       ['Deposit · Clear Tap, With an M2', 8000, 1],
     ],

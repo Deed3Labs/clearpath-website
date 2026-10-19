@@ -150,12 +150,12 @@ export const PRODUCTS: Product[] = [
   /* ─── Goods: the wearables, from the owner's flat sketches ───────────────
      reference/redesign/wearables/flats. Each carries the Clear patch (63.5 mm,
      embroidered; clear-patch-spec.md beside the flats). `member-tee` keeps
-     its slug and kind for the short-sleeve mock tee: links point at it.
+     its slug and kind for the Logo Tee (short sleeve): links point at it.
      The galleries' pictures are listed in the manifest's order. */
   {
     slug: 'member-tee',
     section: 'goods',
-    name: 'Mock tee',
+    name: 'Logo Tee',
     line: 'Heavyweight cotton, mock neck, patch on the chest.',
     description:
       'A heavy tee with a wide mock neck and the Clear patch stitched small on the chest. A woven tag at the hem, nothing on the back.',
@@ -171,22 +171,22 @@ export const PRODUCTS: Product[] = [
     weightOz: 9,
     ships: GOODS_SHIPS,
     media: [
-      { kind: 'render', src: '/shop/goods/member-tee/render-black.jpg', colour: 'black', alt: 'The black mock tee, laid flat', caption: 'Black, laid flat' },
-      { kind: 'render', src: '/shop/goods/member-tee/render-white.jpg', colour: 'white', alt: 'The white mock tee, laid flat', caption: 'White, laid flat' },
-      { kind: 'render', src: '/shop/goods/member-tee/render-navy.jpg', colour: 'navy', alt: 'The navy mock tee, laid flat', caption: 'Navy, laid flat' },
+      { kind: 'render', src: '/shop/goods/member-tee/render-black.jpg', colour: 'black', alt: 'The black Logo Tee, laid flat', caption: 'Black, laid flat' },
+      { kind: 'render', src: '/shop/goods/member-tee/render-white.jpg', colour: 'white', alt: 'The white Logo Tee, laid flat', caption: 'White, laid flat' },
+      { kind: 'render', src: '/shop/goods/member-tee/render-navy.jpg', colour: 'navy', alt: 'The navy Logo Tee, laid flat', caption: 'Navy, laid flat' },
       { kind: 'render', src: '/shop/goods/member-tee/render-collar.jpg', alt: 'The collar and the patch, up close', caption: 'The collar and the patch, up close' },
       { kind: 'render', src: '/shop/goods/member-tee/render-hem.jpg', alt: 'The woven tag and the stitched hem', caption: 'The woven tag and the stitched hem' },
-      { kind: 'mock', src: '/shop/goods/member-tee/mock-black.jpg', colour: 'black', alt: 'A mockup of the black mock tee', caption: 'Black' },
-      { kind: 'mock', src: '/shop/goods/member-tee/mock-white.jpg', colour: 'white', alt: 'A mockup of the white mock tee', caption: 'White' },
-      { kind: 'mock', src: '/shop/goods/member-tee/mock-navy.jpg', colour: 'navy', alt: 'A mockup of the navy mock tee', caption: 'Navy' },
+      { kind: 'mock', src: '/shop/goods/member-tee/mock-black.jpg', colour: 'black', alt: 'A mockup of the black Logo Tee', caption: 'Black' },
+      { kind: 'mock', src: '/shop/goods/member-tee/mock-white.jpg', colour: 'white', alt: 'A mockup of the white Logo Tee', caption: 'White' },
+      { kind: 'mock', src: '/shop/goods/member-tee/mock-navy.jpg', colour: 'navy', alt: 'A mockup of the navy Logo Tee', caption: 'Navy' },
     ],
     status: 'live',
   },
   {
     slug: 'long-sleeve-mock-tee',
     section: 'goods',
-    name: 'Long-sleeve mock tee',
-    line: 'The mock tee with long sleeves and rib cuffs.',
+    name: 'Long-sleeve Logo Tee',
+    line: 'The Logo Tee with long sleeves and rib cuffs.',
     description:
       'The same heavy mock-neck tee, with long sleeves finished in rib cuffs. The patch on the chest, a woven tag at the hem.',
     priceCents: 5200,
@@ -200,10 +200,10 @@ export const PRODUCTS: Product[] = [
     weightOz: 11,
     ships: GOODS_SHIPS,
     media: [
-      { kind: 'render', src: '/shop/goods/long-sleeve-mock-tee/render-black.jpg', colour: 'black', alt: 'The black long-sleeve mock tee, laid flat', caption: 'Black, laid flat' },
-      { kind: 'render', src: '/shop/goods/long-sleeve-mock-tee/render-offwhite.jpg', colour: 'offwhite', alt: 'The off-white long-sleeve mock tee, laid flat', caption: 'Off-white, laid flat' },
-      { kind: 'mock', src: '/shop/goods/long-sleeve-mock-tee/mock-black.jpg', colour: 'black', alt: 'A mockup of the black long-sleeve mock tee', caption: 'Black' },
-      { kind: 'mock', src: '/shop/goods/long-sleeve-mock-tee/mock-offwhite.jpg', colour: 'offwhite', alt: 'A mockup of the off-white long-sleeve mock tee', caption: 'Off-white' },
+      { kind: 'render', src: '/shop/goods/long-sleeve-mock-tee/render-black.jpg', colour: 'black', alt: 'The black long-sleeve Logo Tee, laid flat', caption: 'Black, laid flat' },
+      { kind: 'render', src: '/shop/goods/long-sleeve-mock-tee/render-offwhite.jpg', colour: 'offwhite', alt: 'The off-white long-sleeve Logo Tee, laid flat', caption: 'Off-white, laid flat' },
+      { kind: 'mock', src: '/shop/goods/long-sleeve-mock-tee/mock-black.jpg', colour: 'black', alt: 'A mockup of the black long-sleeve Logo Tee', caption: 'Black' },
+      { kind: 'mock', src: '/shop/goods/long-sleeve-mock-tee/mock-offwhite.jpg', colour: 'offwhite', alt: 'A mockup of the off-white long-sleeve Logo Tee', caption: 'Off-white' },
     ],
     status: 'live',
   },
