@@ -16,7 +16,7 @@ const names = (lines: PricedLine[]) =>
   sessionParams({ lines, rate, address, email: 'a@b.co', shop: null, origin, taxOn: false }).line_items!.map((li) => li.price_data!.product_data!.name);
 
 test('a colour/size variant prices from its product', () => {
-  const [l] = priceBag([{ slug: 'hoodie', variant: 'land-l', qty: 1 }]) ?? [];
+  const [l] = priceBag([{ slug: 'logo-hoodie', variant: 'land-l', qty: 1 }]) ?? [];
   assert.ok(l, 'hoodie/land-l is in the catalog');
   assert.equal(l.unitCents, 8800);
   assert.equal(l.variantLabel, 'Land · L');
@@ -40,10 +40,10 @@ test('a sold-out colour/size pair is refused like any sold-out variant', () => {
 });
 
 test('a one-colour product still names its colour: "Navy · M"', () => {
-  const lines = priceBag([{ slug: 'turtleneck', variant: 'navy-m', qty: 1 }]);
+  const lines = priceBag([{ slug: 'logo-turtleneck', variant: 'navy-m', qty: 1 }]);
   assert.ok(lines);
   assert.equal(lines[0].variantLabel, 'Navy · M');
-  assert.deepEqual(names(lines), ['Turtleneck (Navy · M)']);
+  assert.deepEqual(names(lines), ['Logo Turtleneck (Navy · M)']);
 });
 
 test('the Stripe line name is "Logo Tee (Black · M)"', () => {
@@ -56,13 +56,13 @@ test('a saved bag line with a vanished variant is dropped on load, not sent to c
   const known = PRODUCTS.map((p) => ({ slug: p.slug, variants: p.variants.map((v) => v.id) }));
   const saved = [
     { slug: 'logo-tee', variant: 'm', qty: 1 },
-    { slug: 'turtleneck', variant: 'navy-l', qty: 1 },
+    { slug: 'logo-turtleneck', variant: 'navy-l', qty: 1 },
   ];
   // As it was saved, the old line would refuse the whole bag at checkout.
   assert.equal(priceBag(saved), null);
   const bag = readBag(saved, known);
   assert.equal(bag.dropped, 1);
-  assert.deepEqual(bag.lines, [{ slug: 'turtleneck', variant: 'navy-l', qty: 1 }]);
+  assert.deepEqual(bag.lines, [{ slug: 'logo-turtleneck', variant: 'navy-l', qty: 1 }]);
   assert.ok(priceBag(bag.lines), 'what is left prices');
   // Never mapped to a colour.
   assert.equal(bag.lines.some((l) => l.slug === 'logo-tee'), false);
@@ -71,7 +71,7 @@ test('a saved bag line with a vanished variant is dropped on load, not sent to c
 test('the Stripe picture is the colour bought', () => {
   const lines = priceBag([
     { slug: 'logo-tee', variant: 'white-s', qty: 1 },
-    { slug: 'hoodie', variant: 'land-xl', qty: 1 },
+    { slug: 'logo-hoodie', variant: 'land-xl', qty: 1 },
   ]);
   assert.ok(lines);
   const imgs = sessionParams({ lines, rate, address, email: 'a@b.co', shop: null, origin, taxOn: false }).line_items!.map(
@@ -97,4 +97,15 @@ test('a saved bag under an old slug moves to the new one', () => {
   // The pre-colour size moved too, and was still dropped: its variant is gone.
   assert.equal(bag.dropped, 1);
   assert.ok(priceBag(bag.lines));
+});
+
+test('the turtleneck and hoodie moved to Logo slugs, and saved bags follow', () => {
+  const known = PRODUCTS.map((p) => ({ slug: p.slug, variants: p.variants.map((v) => v.id) }));
+  const bag = readBag([{ slug: 'turtleneck', variant: 'navy-m', qty: 1 }, { slug: 'hoodie', variant: 'land-l', qty: 1 }], known);
+  assert.deepEqual(bag.lines.map((l) => l.slug), ['logo-turtleneck', 'logo-hoodie']);
+  assert.equal(bag.dropped, 0);
+  assert.deepEqual(
+    PRODUCTS.filter((p) => p.slug === 'logo-turtleneck' || p.slug === 'logo-hoodie').map((p) => p.name),
+    ['Logo Turtleneck', 'Logo Hoodie'],
+  );
 });
