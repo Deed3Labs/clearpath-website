@@ -77,5 +77,5 @@ test('the Stripe picture is the colour bought', () => {
   const imgs = sessionParams({ lines, rate, address, email: 'a@b.co', shop: null, origin, taxOn: false }).line_items!.map(
     (li) => li.price_data!.product_data!.images,
   );
-  assert.deepEqual(imgs, [[`${origin}/shop/goods/member-tee/render-white.jpg`], [`${origin}/shop/goods/hoodie/render-land.jpg`]]);
+  assert.deepEqual(imgs, [[`${origin}/shop/goods/member-tee/mock-white.jpg`], [`${origin}/shop/goods/hoodie/mock-land.jpg`]]);
 });

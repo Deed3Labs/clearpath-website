@@ -151,7 +151,10 @@ export const PRODUCTS: Product[] = [
      reference/redesign/wearables/flats. Each carries the Clear patch (63.5 mm,
      embroidered; clear-patch-spec.md beside the flats). `member-tee` keeps
      its slug and kind for the Logo Tee (short sleeve): links point at it.
-     The galleries' pictures are listed in the manifest's order. */
+     The galleries show the mockups and the drawing. The renders were taken
+     out for now (the owner prefers the mockups); their files stay in
+     public/shop/goods and their entries in reference/redesign/wearables/
+     manifest.json, to put back as `{ kind: 'render', … }` lines. */
   {
     slug: 'member-tee',
     section: 'goods',
@@ -171,11 +174,6 @@ export const PRODUCTS: Product[] = [
     weightOz: 9,
     ships: GOODS_SHIPS,
     media: [
-      { kind: 'render', src: '/shop/goods/member-tee/render-black.jpg', colour: 'black', alt: 'The black Logo Tee, laid flat', caption: 'Black, laid flat' },
-      { kind: 'render', src: '/shop/goods/member-tee/render-white.jpg', colour: 'white', alt: 'The white Logo Tee, laid flat', caption: 'White, laid flat' },
-      { kind: 'render', src: '/shop/goods/member-tee/render-navy.jpg', colour: 'navy', alt: 'The navy Logo Tee, laid flat', caption: 'Navy, laid flat' },
-      { kind: 'render', src: '/shop/goods/member-tee/render-collar.jpg', alt: 'The collar and the patch, up close', caption: 'The collar and the patch, up close' },
-      { kind: 'render', src: '/shop/goods/member-tee/render-hem.jpg', alt: 'The woven tag and the stitched hem', caption: 'The woven tag and the stitched hem' },
       { kind: 'mock', src: '/shop/goods/member-tee/mock-black.jpg', colour: 'black', alt: 'A mockup of the black Logo Tee', caption: 'Black' },
       { kind: 'mock', src: '/shop/goods/member-tee/mock-white.jpg', colour: 'white', alt: 'A mockup of the white Logo Tee', caption: 'White' },
       { kind: 'mock', src: '/shop/goods/member-tee/mock-navy.jpg', colour: 'navy', alt: 'A mockup of the navy Logo Tee', caption: 'Navy' },
@@ -200,8 +198,6 @@ export const PRODUCTS: Product[] = [
     weightOz: 11,
     ships: GOODS_SHIPS,
     media: [
-      { kind: 'render', src: '/shop/goods/long-sleeve-mock-tee/render-black.jpg', colour: 'black', alt: 'The black long-sleeve Logo Tee, laid flat', caption: 'Black, laid flat' },
-      { kind: 'render', src: '/shop/goods/long-sleeve-mock-tee/render-offwhite.jpg', colour: 'offwhite', alt: 'The off-white long-sleeve Logo Tee, laid flat', caption: 'Off-white, laid flat' },
       { kind: 'mock', src: '/shop/goods/long-sleeve-mock-tee/mock-black.jpg', colour: 'black', alt: 'A mockup of the black long-sleeve Logo Tee', caption: 'Black' },
       { kind: 'mock', src: '/shop/goods/long-sleeve-mock-tee/mock-offwhite.jpg', colour: 'offwhite', alt: 'A mockup of the off-white long-sleeve Logo Tee', caption: 'Off-white' },
     ],
@@ -225,8 +221,6 @@ export const PRODUCTS: Product[] = [
     weightOz: 20,
     ships: GOODS_SHIPS,
     media: [
-      { kind: 'render', src: '/shop/goods/turtleneck/render-navy.jpg', colour: 'navy', alt: 'The navy turtleneck, laid flat', caption: 'Navy, laid flat' },
-      { kind: 'render', src: '/shop/goods/turtleneck/render-collar.jpg', alt: 'The folded collar and the patch', caption: 'The folded collar and the patch' },
       { kind: 'mock', src: '/shop/goods/turtleneck/mock-navy.jpg', colour: 'navy', alt: 'A mockup of the navy turtleneck', caption: 'Navy' },
     ],
     status: 'live',
@@ -249,9 +243,6 @@ export const PRODUCTS: Product[] = [
     weightOz: 26,
     ships: GOODS_SHIPS,
     media: [
-      { kind: 'render', src: '/shop/goods/hoodie/render-black.jpg', colour: 'black', alt: 'The black hoodie, laid flat', caption: 'Black, laid flat' },
-      { kind: 'render', src: '/shop/goods/hoodie/render-land.jpg', colour: 'land', alt: 'The land hoodie, laid flat', caption: 'Land, laid flat' },
-      { kind: 'render', src: '/shop/goods/hoodie/render-detail.jpg', alt: 'The drawcords and the patch', caption: 'The drawcords and the patch' },
       { kind: 'mock', src: '/shop/goods/hoodie/mock-black.jpg', colour: 'black', alt: 'A mockup of the black hoodie', caption: 'Black' },
       { kind: 'mock', src: '/shop/goods/hoodie/mock-land.jpg', colour: 'land', alt: 'A mockup of the land hoodie', caption: 'Land' },
     ],
@@ -820,7 +811,7 @@ export const GALLERY = {
   render: 'Render',
   drawing: 'Drawing',
   mock: 'Mockup',
-  note: 'Renders and mockups are made from our flat sketches, not photographs. The finished pieces may differ slightly.',
+  note: 'Mockups are made from our flat sketches, not photographs. The finished pieces may differ slightly.',
 } as const;
 
 /* ─── The bag (/shop/bag) ──────────────────────────────────────────────── */
