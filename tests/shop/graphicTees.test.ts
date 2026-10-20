@@ -8,7 +8,7 @@ import { unitPrice } from '@/lib/shop/price';
 import type { Quote } from '@/lib/shop/shippo';
 
 /* The Graphic Tees: the Logo Tee with a print, in Black, Cobalt and White,
-   drafts until the art and licences are final. */
+   on pre-order like the rest. */
 
 const SLUGS = ['graphic-tee-carousel-mall', 'graphic-tee-two-ten-overpass', 'graphic-tee-devore'];
 const address: Address = { name: 'Ana R.', street1: '1450 N Mountain Ave', city: 'Ontario', state: 'CA', zip: '91762', country: 'US' };
@@ -48,14 +48,16 @@ test('the plate draws the paper print on White and the ink print on Black and Co
     assert.equal(by.black, plate!.print!.src.ink, slug);
     assert.equal(by.cobalt, plate!.print!.src.ink, slug);
   }
-  assert.equal(printSrc(tee('member-tee').plate, 'ink'), null, 'a tee without a print draws none');
+  assert.equal(printSrc(tee('logo-tee').plate, 'ink'), null, 'a tee without a print draws none');
 });
 
-test('a Graphic Tee not yet on sale cannot go in the bag or to checkout', () => {
+test('the Graphic Tees are on sale (pre-order) even with drafts hidden, as on production', () => {
   for (const slug of SLUGS) {
-    assert.equal(tee(slug).status, 'draft');
-    assert.equal(drafts(false, () => priceBag([{ slug, variant: 'black-m', qty: 1 }])), null, slug);
+    assert.equal(tee(slug).status, 'live');
+    assert.ok(drafts(false, () => priceBag([{ slug, variant: 'black-m', qty: 1 }])), slug);
   }
+  // A draft still cannot reach checkout.
+  assert.equal(drafts(false, () => priceBag([{ slug: 'coop-cap', variant: 'one', qty: 1 }])), null);
 });
 
 test('the Stripe line name reads "Devore Tee (Black · M)"', () => {
@@ -76,8 +78,8 @@ test('the Graphic Tees category is exactly the three', () => {
 });
 
 test('the Logo Tees: $27 and $32, under their old slugs', () => {
-  assert.equal(tee('member-tee').name, 'Logo Tee');
-  assert.equal(tee('member-tee').priceCents, 2700);
-  assert.equal(tee('long-sleeve-mock-tee').name, 'Logo Long-Sleeve Tee');
-  assert.equal(tee('long-sleeve-mock-tee').priceCents, 3200);
+  assert.equal(tee('logo-tee').name, 'Logo Tee');
+  assert.equal(tee('logo-tee').priceCents, 2700);
+  assert.equal(tee('logo-long-sleeve-tee').name, 'Logo Long-Sleeve Tee');
+  assert.equal(tee('logo-long-sleeve-tee').priceCents, 3200);
 });

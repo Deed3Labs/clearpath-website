@@ -21,7 +21,7 @@ test('tampering: a price or deposit sent by the browser is dropped and ignored',
   const body = CheckoutBody.parse({
     lines: [
       { slug: 'clear-point', variant: 'table', qty: 1, priceCents: 1, depositCents: 1, unitCents: 1 },
-      { slug: 'member-tee', variant: 'black-m', qty: 1, priceCents: 1 },
+      { slug: 'logo-tee', variant: 'black-m', qty: 1, priceCents: 1 },
     ],
     address,
     email: 'ana@micasatacos.test',
@@ -43,11 +43,11 @@ test('the shop gate: a pre-order without a verified shop is refused', () => {
   assert.equal(gate(lines, MOCK_SHOP), null);
   assert.throws(() => sessionParams({ lines, rate: null, address, email: 'a@b.co', shop: null, origin, taxOn: false }));
   // Goods alone never need a shop.
-  assert.equal(gate(price([{ slug: 'member-tee', variant: 'black-m', qty: 1 }]), null), null);
+  assert.equal(gate(price([{ slug: 'logo-tee', variant: 'black-m', qty: 1 }]), null), null);
 });
 
 test('mixed bags: goods alone build exactly the session they always did', () => {
-  const lines = price([{ slug: 'member-tee', variant: 'black-m', qty: 2 }]);
+  const lines = price([{ slug: 'logo-tee', variant: 'black-m', qty: 2 }]);
   const params = sessionParams({ lines, rate, address, email: 'ana@micasatacos.test', shop: null, origin, taxOn: false });
   assert.deepEqual(params, {
     mode: 'payment',
@@ -62,7 +62,7 @@ test('mixed bags: goods alone build exactly the session they always did', () => 
             name: 'Logo Tee (Black · M)',
             description: 'Pre-order: ships Jan 2027, estimated. Heavyweight cotton, mock neck, patch on the chest.',
             images: [`${origin}/shop/goods/member-tee/mock-black.jpg`],
-            metadata: { slug: 'member-tee', variant: 'black-m' },
+            metadata: { slug: 'logo-tee', variant: 'black-m' },
           },
         },
       },
@@ -84,7 +84,7 @@ test('mixed bags: goods alone build exactly the session they always did', () => 
       },
     },
     automatic_tax: { enabled: false },
-    metadata: { shippo_rate_id: 'rate_1', items: 'member-tee/black-mx2' },
+    metadata: { shippo_rate_id: 'rate_1', items: 'logo-tee/black-mx2' },
     success_url: `${origin}/shop/thanks?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${origin}/shop/bag`,
   });
@@ -92,7 +92,7 @@ test('mixed bags: goods alone build exactly the session they always did', () => 
 
 test('mixed bags: goods at full price, a deposit line per pre-order, the card saved', () => {
   const lines = price([
-    { slug: 'member-tee', variant: 'black-m', qty: 1 },
+    { slug: 'logo-tee', variant: 'black-m', qty: 1 },
     { slug: 'clear-point', variant: 'table', qty: 4 },
     { slug: 'clear-tap', variant: 'm2', qty: 1 },
   ]);
@@ -121,15 +121,15 @@ test('mixed bags: goods at full price, a deposit line per pre-order, the card sa
     ],
   );
   assert.equal(p.metadata!.kind, 'reservation');
-  assert.equal(p.metadata!.items, 'member-tee/black-mx1');
+  assert.equal(p.metadata!.items, 'logo-tee/black-mx1');
 });
 
 test('shipping: a hardware-only bag skips the shipping step and sends no rate', () => {
   const hw = price([{ slug: 'clear-point', variant: 'table', qty: 1 }]);
   assert.deepEqual(steps(hw), ['shop', 'addr', 'pay']);
-  assert.deepEqual(steps(price([{ slug: 'member-tee', variant: 'black-m', qty: 1 }])), ['addr', 'ship', 'pay']);
+  assert.deepEqual(steps(price([{ slug: 'logo-tee', variant: 'black-m', qty: 1 }])), ['addr', 'ship', 'pay']);
   assert.deepEqual(
-    steps(price([{ slug: 'member-tee', variant: 'black-m', qty: 1 }, { slug: 'clear-tap', variant: 'dock', qty: 1 }])),
+    steps(price([{ slug: 'logo-tee', variant: 'black-m', qty: 1 }, { slug: 'clear-tap', variant: 'dock', qty: 1 }])),
     ['shop', 'addr', 'ship', 'pay'],
   );
   const p = sessionParams({ lines: hw, rate: null, address, email: 'a@b.co', shop: MOCK_SHOP, customerId: 'cus_1', origin, taxOn: false });
@@ -137,7 +137,7 @@ test('shipping: a hardware-only bag skips the shipping step and sends no rate', 
   assert.equal(p.metadata!.shippo_rate_id, undefined);
   // And a bag with goods cannot be built without a rate.
   assert.throws(() =>
-    sessionParams({ lines: price([{ slug: 'member-tee', variant: 'black-m', qty: 1 }]), rate: null, address, email: 'a@b.co', shop: null, origin, taxOn: false }),
+    sessionParams({ lines: price([{ slug: 'logo-tee', variant: 'black-m', qty: 1 }]), rate: null, address, email: 'a@b.co', shop: null, origin, taxOn: false }),
   );
 });
 

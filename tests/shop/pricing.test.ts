@@ -63,7 +63,7 @@ function priceBagByLabel(slug: string, label: string) {
 }
 
 test('goods are paid in full: no deposit, no balance', () => {
-  const [tee] = priceBag([{ slug: 'member-tee', variant: 'black-m', qty: 2 }]) ?? [];
+  const [tee] = priceBag([{ slug: 'logo-tee', variant: 'black-m', qty: 2 }]) ?? [];
   assert.equal(tee.preorder, false);
   assert.equal(tee.unitCents, 2700);
   assert.equal(tee.depositCents, 0);
@@ -72,7 +72,7 @@ test('goods are paid in full: no deposit, no balance', () => {
 
 test('the bag example: $333.40 today, $145.00 later, $327.00 before shipping', () => {
   const lines = priceBag([
-    { slug: 'member-tee', variant: 'black-m', qty: 1 },
+    { slug: 'logo-tee', variant: 'black-m', qty: 1 },
     { slug: 'clear-point', variant: 'table', qty: 4 },
     { slug: 'clear-tap', variant: 'm2', qty: 1 },
   ]);
