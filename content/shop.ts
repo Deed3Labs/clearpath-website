@@ -312,9 +312,9 @@ export const PRODUCTS: Product[] = [
       patch: [106.5, 178.2, 16.6],
       patchRotate: 3,
     },
-    // TODO(owner): final art (this was lifted from mockups and carries their wrinkle shadows), the body copy
-    // (lorem ipsum), the photo credit ("Photographer's name"), the full coordinates (latitude only) and the
-    // photograph's licence, all before the run is printed.
+    // TODO(owner), before the run is printed: final art (lifted from mockups, with their wrinkle shadows);
+    // confirm the credit (AWESTSIDESTORY) with the photographer; the coordinates are from published sources;
+    // the photograph's licence.
     status: 'live',
   },
   {
@@ -348,9 +348,8 @@ export const PRODUCTS: Product[] = [
       patch: [106.5, 178.2, 16.6],
       patchRotate: 3,
     },
-    // TODO(owner): final art (this was lifted from mockups and carries their wrinkle shadows), the body copy
-    // (lorem ipsum), the photo credit ("Photographer's name"), the full coordinates (latitude only) and the
-    // photograph's licence, all before the run is printed.
+    // TODO(owner), before the run is printed: final art (lifted from mockups, with their wrinkle shadows);
+    // the photo credit (still "Photographer's name"); the coordinates are the owner's pin; the photograph's licence.
     status: 'live',
   },
   {
@@ -384,9 +383,9 @@ export const PRODUCTS: Product[] = [
       patch: [106.5, 178.2, 16.6],
       patchRotate: 3,
     },
-    // TODO(owner): final art (this was lifted from mockups and carries their wrinkle shadows), the body copy
-    // (lorem ipsum), the photo credit ("Photographer's name"), the full coordinates (latitude only) and the
-    // photograph's licence, all before the run is printed.
+    // TODO(owner), before the run is printed: final art (lifted from mockups, with their wrinkle shadows);
+    // the photo credit (still "Photographer's name"); the coordinates are from published sources and may become
+    // the owner's own pin; the photograph's licence.
     status: 'live',
   },
   {
