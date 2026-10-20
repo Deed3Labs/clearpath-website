@@ -41,6 +41,12 @@ export const toItem = (p: Product): ShopItem => {
    common name drops its capital, a proper one ("Logo Tee") keeps it. */
 export const inSentence = (name: string) => (/[A-Z]/.test(name.slice(1)) ? name : `${name.charAt(0).toLowerCase()}${name.slice(1)}`);
 
+/* The swatch of a line's colour, else of the product's first colour. */
+export function swatchOf(p: Pick<Product, 'variants' | 'colours'>, id: string): string | undefined {
+  const c = p.variants.find((v) => v.id === id)?.colour;
+  return (p.colours?.find((x) => x.id === c) ?? p.colours?.[0])?.swatch;
+}
+
 /* The ground a line in the bag is drawn on: its colour's, else the product's. */
 export function toneOf(p: Pick<Product, 'variants' | 'colours' | 'tone'>, id: string): PlateTone {
   const c = p.variants.find((v) => v.id === id)?.colour;

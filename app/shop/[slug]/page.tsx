@@ -132,7 +132,7 @@ export default async function ProductPage({ params }: Props) {
             <PlateDraw className="bx also2">
               {also.map((x) => (
                 <Link className="mini" href={`/shop/${x.slug}`} key={x.slug}>
-                  <ProductPlate kind={x.kind} tone={x.colours?.[0].tone ?? x.tone} art={x.plate} />
+                  <ProductPlate kind={x.kind} tone={x.colours?.[0].tone ?? x.tone} art={x.plate} swatch={x.colours?.[0].swatch} />
                   <span>
                     <b>{x.name}</b>
                     <small>{x.line}</small>

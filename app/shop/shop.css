@@ -54,10 +54,11 @@
   .plate .pb { fill: none; stroke: var(--pg); }
   .plate .pm { color: var(--pg); }
   /* A dark printed tee (ProductPlate): the body filled in the line colour,
-     its seams muted so they read on the fill, the patch inverted. --pm is
-     the plate's muted line: a quarter of the way from the line to the ground. */
-  .plate { --pm: color-mix(in srgb, var(--pl) 76%, var(--pg)); }
-  .plate .bd.filled { fill: currentColor; }
+     its seams muted so they read on the fill, the patch inverted. --body is
+     the colour's swatch (set by ProductPlate), else the line colour; --pm,
+     the muted line, is a quarter of the way from the body to the ground. */
+  .plate { --pm: color-mix(in srgb, var(--body, var(--pl)) 76%, var(--pg)); }
+  .plate .bd.filled { fill: var(--body, currentColor); }
   .plate .ln2.muted { stroke: var(--pm); }
   .plate .inv .pt { fill: var(--pg); }
   .plate .inv .pb { stroke: var(--pl); }

@@ -65,6 +65,7 @@ export function ProductGallery({
   drawing,
   stitch,
   art,
+  swatch,
 }: {
   slug: string;
   kind: ProductKind;
@@ -79,6 +80,8 @@ export function ProductGallery({
   /* The product's own layer on its drawing: a print, a moved patch. With a
      print, the close-up frames the print, not the patch. */
   art?: PlateArt;
+  /* The colour picked's swatch: a dark printed tee's body is drawn in it. */
+  swatch?: string;
 }) {
   const goods = drawing.length === 3;
   const slides = useMemo(() => {
@@ -210,7 +213,7 @@ export function ProductGallery({
               hidden={!shown}
             >
               {s.kind === 'drawing' ? (
-                <ProductPlate kind={kind} tone={tone} stitch={stitch} art={art} className="gm" />
+                <ProductPlate kind={kind} tone={tone} stitch={stitch} art={art} swatch={swatch} className="gm" />
               ) : s.kind === 'cad' ? (
                 <div className="gm d">
                   {/* A drawing sheet, shown as drawn: an SVG, not a photo to optimise. */}
@@ -245,7 +248,7 @@ export function ProductGallery({
             onKeyDown={(e) => onKeyDown(e, i)}
           >
             {s.kind === 'drawing' ? (
-              <ProductPlate kind={kind} tone={tone} view={goods ? s.view : undefined} stitch={stitch} art={art} />
+              <ProductPlate kind={kind} tone={tone} view={goods ? s.view : undefined} stitch={stitch} art={art} swatch={swatch} />
             ) : s.kind === 'cad' ? (
               <span className="ti d">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
