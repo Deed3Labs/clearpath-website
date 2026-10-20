@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { printSrc } from '@/components/shop/plateArt';
+import { bodyFill, printSrc } from '@/components/shop/plateArt';
 import { COLOURS, GRAPHIC_TEES, PRODUCTS } from '@/content/shop';
 import { priceBag } from '@/lib/shop/catalog';
 import { sessionParams, type Address } from '@/lib/shop/checkout';
@@ -82,4 +82,12 @@ test('the Logo Tees: $27 and $32, under their old slugs', () => {
   assert.equal(tee('logo-tee').priceCents, 2700);
   assert.equal(tee('logo-long-sleeve-tee').name, 'Logo Long-Sleeve Tee');
   assert.equal(tee('logo-long-sleeve-tee').priceCents, 3200);
+});
+
+test('a dark Graphic Tee is drawn in its own colour: Cobalt blue, Black near-black, White unfilled', () => {
+  const { plate } = tee('graphic-tee-devore');
+  assert.equal(bodyFill(plate, COLOURS.cobalt.tone, COLOURS.cobalt.swatch), '#1F4FA8');
+  assert.equal(bodyFill(plate, COLOURS.black.tone, COLOURS.black.swatch), '#232324');
+  assert.equal(bodyFill(plate, COLOURS.white.tone, COLOURS.white.swatch), undefined);
+  assert.equal(bodyFill(tee('logo-tee').plate, COLOURS.navy.tone, COLOURS.navy.swatch), undefined, 'no print, no fill');
 });

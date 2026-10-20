@@ -1,9 +1,9 @@
 import Link from 'next/link';
-import { createElement, useId, type ReactNode } from 'react';
+import { createElement, useId, type CSSProperties, type ReactNode } from 'react';
 import { LogoMark } from '@/components/marks/Logo';
 import { isGoodsKind, type GoodsKind, type PlateArt, type PlateTone, type Product, type ProductKind } from '@/content/shop';
 import { PATCH_ONLY, TRACED } from './goodsShapes';
-import { isDarkPrint, printSrc } from './plateArt';
+import { bodyFill, isDarkPrint, printSrc } from './plateArt';
 import { HW_SHAPES, NAMED, type DrawingName, type HwNode, type HwShape } from './hardwareShapes';
 import './hardware.css';
 
@@ -114,6 +114,7 @@ export function ProductPlate({
   className,
   caption,
   art,
+  swatch,
 }: ({ kind: ProductKind; drawing?: undefined } | { kind?: ProductKind; drawing: DrawingName }) & {
   /* `drawing`: a named drawing from hardwareShapes ("pointStates.bill",
      "counterTill") in place of the product kind's own, drawn in its own
@@ -131,6 +132,8 @@ export function ProductPlate({
   caption?: ReactNode;
   /* The product's own layer: a print, a moved patch (content/shop.ts PlateArt). */
   art?: PlateArt;
+  /* The colour's swatch: a dark printed tee's body is filled with it. */
+  swatch?: string;
 }) {
   const shape: HwShape | null = drawing ? NAMED[drawing] : kind && !isGoodsKind(kind) ? HW_SHAPES[kind] : null;
   const hw = !!shape;
@@ -144,17 +147,19 @@ export function ProductPlate({
   /* A printed tee is always drawn on paper: its colour shows as the body's
      fill (dark) or its absence (White), as the print artwork expects. */
   const ground: PlateTone = art?.print ? 'paper' : tone;
+  const body = bodyFill(art, tone, swatch);
+  const style = body ? ({ '--body': body } as CSSProperties) : undefined;
   const cls = ['plate', hw && 'hwplate', className].filter(Boolean).join(' ');
   if (href) {
     return (
-      <Link href={href} className={cls} data-tone={ground} data-kind={kind} tabIndex={-1} aria-hidden="true">
+      <Link href={href} className={cls} data-tone={ground} data-kind={kind} style={style} tabIndex={-1} aria-hidden="true">
         {svg}
         {caption}
       </Link>
     );
   }
   return (
-    <div className={cls} data-tone={ground} data-kind={kind}>
+    <div className={cls} data-tone={ground} data-kind={kind} style={style}>
       {svg}
       {caption}
     </div>

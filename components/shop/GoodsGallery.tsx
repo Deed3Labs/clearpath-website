@@ -39,6 +39,7 @@ export function GoodsGallery({
       colour={picked?.colour.id}
       stitch={stitch}
       art={art}
+      swatch={picked?.colour.swatch}
       copy={{ label: GALLERY.label, render: GALLERY.render, drawing: GALLERY.drawing, mock: GALLERY.mock, cad: '', note: media.length ? GALLERY.note : '' }}
       drawing={[
         { b: GALLERY.front.b, s: GALLERY.front.s },
