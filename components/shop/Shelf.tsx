@@ -13,6 +13,7 @@ import { useBag } from './BagProvider';
 import { pad2, type ShopItem } from './item';
 import { announceAdd, usePlateDraw } from './motion';
 import { ProductPlate } from './ProductPlate';
+import { fillOf } from './plateArt';
 import { Sizes } from './Sizes';
 
 /* The shelf: one flat bento whose seams are a 1px gap over the rule colour,
@@ -261,7 +262,7 @@ export function Shelf({ products, forShops = 0 }: { products: ShopItem[]; forSho
                 )}
               </div>
               <div className="pw">
-                <ProductPlate kind={p.kind} tone={p.tone} art={p.plate} swatch={p.colours?.[0].swatch} href={`/shop/${p.slug}`} />
+                <ProductPlate kind={p.kind} tone={p.tone} art={p.plate} swatch={fillOf(p.colours?.[0])} href={`/shop/${p.slug}`} />
                 {multi && (
                   <div className="psz" id={sizesId} hidden={!open}>
                     <span className="label">{sizeLabel}</span>

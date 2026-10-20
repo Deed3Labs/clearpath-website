@@ -4,7 +4,7 @@ import { LogoMark } from '@/components/marks/Logo';
 import { isGoodsKind, type GoodsKind, type PlateArt, type PlateTone, type Product, type ProductKind } from '@/content/shop';
 import { PATCH_ONLY, TRACED } from './goodsShapes';
 import { PATCH_CLOSE_VB, PatchSvg, type PatchShape } from './PatchPlate';
-import { bodyFill, isDarkPrint, printSrc } from './plateArt';
+import { printSrc } from './plateArt';
 import { HW_SHAPES, NAMED, type DrawingName, type HwNode, type HwShape } from './hardwareShapes';
 import './hardware.css';
 
@@ -136,7 +136,7 @@ export function ProductPlate({
   caption?: ReactNode;
   /* The product's own layer: a print, a moved patch (content/shop.ts PlateArt). */
   art?: PlateArt;
-  /* The colour's swatch: a dark printed tee's body is filled with it. */
+  /* A colour its ground cannot show (fillOf: Cobalt): the body is filled with it. */
   swatch?: string;
   /* The patch's shape: the Logo Patch's own drawing, or the small patch on a
      garment. Square unless said, so every garment stays as it is. */
@@ -152,14 +152,13 @@ export function ProductPlate({
     kind === 'patch' ? (
       <PatchSvg shape={patchShape} view={view} viewBox={viewBox ?? (view === 'mark' ? PATCH_CLOSE_VB : FULL_VB)} />
     ) : (
-      <GoodsSvg kind={kind as Exclude<GoodsKind, 'patch'>} view={view} stitch={stitch} viewBox={viewBox} tone={tone} art={art} shape={patchShape} />
+      <GoodsSvg kind={kind as Exclude<GoodsKind, 'patch'>} view={view} stitch={stitch} viewBox={viewBox} tone={tone} art={art} shape={patchShape} filled={!!swatch} />
     )
   );
-  /* A printed tee is always drawn on paper: its colour shows as the body's
-     fill (dark) or its absence (White), as the print artwork expects. */
-  const ground: PlateTone = art?.print ? 'paper' : tone;
-  const body = bodyFill(art, tone, swatch);
-  const style = body ? ({ '--body': body } as CSSProperties) : undefined;
+  /* Every goods plate stands on its tone's ground: a printed tee too (Black
+     and Cobalt on the dark one, White on the light), so the boxes match. */
+  const ground: PlateTone = tone;
+  const style = swatch ? ({ '--body': swatch } as CSSProperties) : undefined;
   const cls = ['plate', hw && 'hwplate', className].filter(Boolean).join(' ');
   if (href) {
     return (
@@ -185,6 +184,7 @@ function GoodsSvg({
   tone,
   art,
   shape = 'square',
+  filled,
 }: {
   kind: Exclude<GoodsKind, 'patch'>;
   view: PlateView;
@@ -193,18 +193,17 @@ function GoodsSvg({
   tone: PlateTone;
   art?: PlateArt;
   shape?: PatchShape;
+  filled?: boolean;
 }) {
   const s = SHAPES[kind];
   const back = view === 'back';
   const thin = s.traced ? ' fine' : '';
   const clip = useId();
   const print = art?.print;
-  /* A dark printed tee (Black, Cobalt): the body filled in the line colour,
-     its seams in a muted line so they read on the fill, the print on top
-     and the patch inverted. White (paper) is drawn as every other plate. */
-  const dark = isDarkPrint(art, tone);
-  const fill = dark ? ' filled' : '';
-  const lines = `${thin}${dark ? ' muted' : ''}`;
+  /* A colour the ground cannot show (Cobalt) fills the body; everything
+     else is drawn as the other goods are, the print over it. */
+  const fill = filled ? ' filled' : '';
+  const lines = thin;
   return (
     <svg viewBox={viewBox ?? (view === 'mark' ? closeViewBox(kind, art) : FULL_VB)} aria-hidden="true" focusable="false">
       {print && (
@@ -235,7 +234,7 @@ function GoodsSvg({
             data-back={back ? '' : undefined}
           />
         )}
-        <g className={dark ? 'mkg inv' : 'mkg'} style={back ? hidden : undefined}>
+        <g className="mkg" style={back ? hidden : undefined}>
           {/* .mk: the patch lands last in the draw-in, as the mark did. */}
           <g className="mk">
             <g transform={art?.patchRotate ? `rotate(${art.patchRotate} ${(art.patch ?? s.patch)[0]} ${(art.patch ?? s.patch)[1]})` : undefined}>

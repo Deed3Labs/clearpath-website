@@ -53,16 +53,10 @@
   .plate .pt { fill: currentColor; }
   .plate .pb { fill: none; stroke: var(--pg); }
   .plate .pm { color: var(--pg); }
-  /* A dark printed tee (ProductPlate): the body filled in the line colour,
-     its seams muted so they read on the fill, the patch inverted. --body is
-     the colour's swatch (set by ProductPlate), else the line colour; --pm,
-     the muted line, is a quarter of the way from the body to the ground. */
-  .plate { --pm: color-mix(in srgb, var(--body, var(--pl)) 76%, var(--pg)); }
+  /* A filled body: a colour its ground cannot show (Cobalt) in its swatch,
+     --body, set by ProductPlate; otherwise (the Logo Patch's own drawing)
+     the line colour. */
   .plate .bd.filled { fill: var(--body, currentColor); }
-  .plate .ln2.muted { stroke: var(--pm); }
-  .plate .inv .pt { fill: var(--pg); }
-  .plate .inv .pb { stroke: var(--pl); }
-  .plate .inv .pm { color: var(--pl); }
   /* The Logo Patch's own drawing (PatchPlate): the stitches in the ground
      colour on the front, in the line colour on the back. */
   .plate .pt-st { stroke: var(--pg); stroke-opacity: .1; stroke-width: .6; fill: none; }
