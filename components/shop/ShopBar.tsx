@@ -135,7 +135,7 @@ export function ShopBar({ catalog, closed }: { catalog: ShopItem[]; closed: bool
                         <Image src={p.render.src} alt="" fill sizes="56px" />
                       </span>
                     ) : (
-                      <ProductPlate kind={p.kind} tone={toneOf(p, mini.variant)} />
+                      <ProductPlate kind={p.kind} tone={toneOf(p, mini.variant)} art={p.plate} />
                     )}
                     <span>
                       {p.name}

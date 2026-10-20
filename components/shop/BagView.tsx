@@ -365,7 +365,7 @@ export function BagView({ products, open }: { products: Product[]; open: boolean
                 <Image src={render.src} alt="" fill sizes="96px" />
               </span>
             ) : (
-              <ProductPlate kind={p.kind} tone={toneOf(p, l.variant)} />
+              <ProductPlate kind={p.kind} tone={toneOf(p, l.variant)} art={p.plate} />
             )}
           </Link>
         ) : (

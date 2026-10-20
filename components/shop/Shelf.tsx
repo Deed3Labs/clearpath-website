@@ -261,7 +261,7 @@ export function Shelf({ products, forShops = 0 }: { products: ShopItem[]; forSho
                 )}
               </div>
               <div className="pw">
-                <ProductPlate kind={p.kind} tone={p.tone} href={`/shop/${p.slug}`} />
+                <ProductPlate kind={p.kind} tone={p.tone} art={p.plate} href={`/shop/${p.slug}`} />
                 {multi && (
                   <div className="psz" id={sizesId} hidden={!open}>
                     <span className="label">{sizeLabel}</span>

@@ -65,12 +65,12 @@ function priceBagByLabel(slug: string, label: string) {
 test('goods are paid in full: no deposit, no balance', () => {
   const [tee] = priceBag([{ slug: 'member-tee', variant: 'black-m', qty: 2 }]) ?? [];
   assert.equal(tee.preorder, false);
-  assert.equal(tee.unitCents, 4200);
+  assert.equal(tee.unitCents, 2700);
   assert.equal(tee.depositCents, 0);
   assert.equal(tee.balanceCents, 0);
 });
 
-test('the bag example: $348.40 today, $145.00 later, $342.00 before shipping', () => {
+test('the bag example: $333.40 today, $145.00 later, $327.00 before shipping', () => {
   const lines = priceBag([
     { slug: 'member-tee', variant: 'black-m', qty: 1 },
     { slug: 'clear-point', variant: 'table', qty: 4 },
@@ -78,12 +78,12 @@ test('the bag example: $348.40 today, $145.00 later, $342.00 before shipping', (
   ]);
   assert.ok(lines);
   const before = totals(lines, null);
-  assert.equal(before.goodsCents, 4200);
+  assert.equal(before.goodsCents, 2700);
   assert.equal(before.depositsCents, 30000);
-  assert.equal(before.todayCents, 34200);
+  assert.equal(before.todayCents, 32700);
   assert.equal(before.laterCents, 14500);
   const after = totals(lines, 640);
-  assert.equal(after.todayCents, 34840);
+  assert.equal(after.todayCents, 33340);
   assert.equal(after.laterCents, 14500);
   // $136.00 for the four table Points and $9.00 for the Tap with an M2.
   assert.deepEqual(

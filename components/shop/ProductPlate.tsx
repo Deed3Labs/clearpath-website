@@ -1,8 +1,9 @@
 import Link from 'next/link';
-import { createElement, type ReactNode } from 'react';
+import { createElement, useId, type ReactNode } from 'react';
 import { LogoMark } from '@/components/marks/Logo';
-import { isGoodsKind, type GoodsKind, type PlateTone, type Product, type ProductKind } from '@/content/shop';
+import { isGoodsKind, type GoodsKind, type PlateArt, type PlateTone, type Product, type ProductKind } from '@/content/shop';
 import { PATCH_ONLY, TRACED } from './goodsShapes';
+import { isDarkPrint, printSrc } from './plateArt';
 import { HW_SHAPES, NAMED, type DrawingName, type HwNode, type HwShape } from './hardwareShapes';
 import './hardware.css';
 
@@ -65,10 +66,15 @@ export const FULL_VB = '0 0 400 400';
 
 /* The viewBox that frames the patch: a square a few patches wide round it,
    so the patch is legible with some of the garment round it for context. */
-export function patchViewBox(kind: GoodsKind) {
-  const [cx, cy, side] = SHAPES[kind].patch;
+export function patchViewBox(kind: GoodsKind, art?: PlateArt) {
+  const [cx, cy, side] = art?.patch ?? SHAPES[kind].patch;
   const k = Math.max(side * 3.4, 64);
   return `${cx - k / 2} ${cy - k / 2} ${k} ${k}`;
+}
+
+/* The close-up: the print, on a product that has one, else the patch. */
+export function closeViewBox(kind: GoodsKind, art?: PlateArt) {
+  return art?.print ? art.print.viewBox.join(' ') : patchViewBox(kind, art);
 }
 
 /* An embroidered patch gets its running stitch in the close-up; a printed
@@ -107,6 +113,7 @@ export function ProductPlate({
   href,
   className,
   caption,
+  art,
 }: ({ kind: ProductKind; drawing?: undefined } | { kind?: ProductKind; drawing: DrawingName }) & {
   /* `drawing`: a named drawing from hardwareShapes ("pointStates.bill",
      "counterTill") in place of the product kind's own, drawn in its own
@@ -122,6 +129,8 @@ export function ProductPlate({
   href?: string;
   className?: string;
   caption?: ReactNode;
+  /* The product's own layer: a print, a moved patch (content/shop.ts PlateArt). */
+  art?: PlateArt;
 }) {
   const shape: HwShape | null = drawing ? NAMED[drawing] : kind && !isGoodsKind(kind) ? HW_SHAPES[kind] : null;
   const hw = !!shape;
@@ -130,41 +139,90 @@ export function ProductPlate({
       <g className="gar">{shape.nodes.map(hwNode)}</g>
     </svg>
   ) : (
-    <GoodsSvg kind={kind as GoodsKind} view={view} stitch={stitch} viewBox={viewBox} />
+    <GoodsSvg kind={kind as GoodsKind} view={view} stitch={stitch} viewBox={viewBox} tone={tone} art={art} />
   );
+  /* A printed tee is always drawn on paper: its colour shows as the body's
+     fill (dark) or its absence (White), as the print artwork expects. */
+  const ground: PlateTone = art?.print ? 'paper' : tone;
   const cls = ['plate', hw && 'hwplate', className].filter(Boolean).join(' ');
   if (href) {
     return (
-      <Link href={href} className={cls} data-tone={tone} data-kind={kind} tabIndex={-1} aria-hidden="true">
+      <Link href={href} className={cls} data-tone={ground} data-kind={kind} tabIndex={-1} aria-hidden="true">
         {svg}
         {caption}
       </Link>
     );
   }
   return (
-    <div className={cls} data-tone={tone} data-kind={kind}>
+    <div className={cls} data-tone={ground} data-kind={kind}>
       {svg}
       {caption}
     </div>
   );
 }
 
-function GoodsSvg({ kind, view, stitch, viewBox }: { kind: GoodsKind; view: PlateView; stitch?: boolean; viewBox?: string }) {
+function GoodsSvg({
+  kind,
+  view,
+  stitch,
+  viewBox,
+  tone,
+  art,
+}: {
+  kind: GoodsKind;
+  view: PlateView;
+  stitch?: boolean;
+  viewBox?: string;
+  tone: PlateTone;
+  art?: PlateArt;
+}) {
   const s = SHAPES[kind];
   const back = view === 'back';
   const thin = s.traced ? ' fine' : '';
+  const clip = useId();
+  const print = art?.print;
+  /* A dark printed tee (Black, Cobalt): the body filled in the line colour,
+     its seams in a muted line so they read on the fill, the print on top
+     and the patch inverted. White (paper) is drawn as every other plate. */
+  const dark = isDarkPrint(art, tone);
+  const fill = dark ? ' filled' : '';
+  const lines = `${thin}${dark ? ' muted' : ''}`;
   return (
-    <svg viewBox={viewBox ?? (view === 'mark' ? patchViewBox(kind) : FULL_VB)} aria-hidden="true" focusable="false">
+    <svg viewBox={viewBox ?? (view === 'mark' ? closeViewBox(kind, art) : FULL_VB)} aria-hidden="true" focusable="false">
+      {print && (
+        <defs>
+          <clipPath id={clip}>
+            <path d={s.body} />
+          </clipPath>
+        </defs>
+      )}
       <g className="gar">
         {/* The front and back outlines turn with the faces (Gallery's faces()). */}
-        <path className={s.backBody ? 'bd fx' : 'bd'} d={s.body} pathLength={1} style={back && s.backBody ? hidden : undefined} />
-        {s.backBody && <path className="bd bx2" d={s.backBody} pathLength={1} style={back ? undefined : hidden} />}
-        <path className={`ln2 fx${thin}`} d={s.extra} pathLength={1} style={back ? hidden : undefined} />
-        <path className={`ln2 bx2${thin}`} d={s.back} pathLength={1} style={back ? undefined : hidden} />
-        <g className="mkg" style={back ? hidden : undefined}>
+        <path className={`${s.backBody ? 'bd fx' : 'bd'}${fill}`} d={s.body} pathLength={1} style={back && s.backBody ? hidden : undefined} />
+        {s.backBody && <path className={`bd bx2${fill}`} d={s.backBody} pathLength={1} style={back ? undefined : hidden} />}
+        <path className={`ln2 fx${lines}`} d={s.extra} pathLength={1} style={back ? hidden : undefined} />
+        <path className={`ln2 bx2${lines}`} d={s.back} pathLength={1} style={back ? undefined : hidden} />
+        {print && (
+          /* .pr: drawn in the plate's own space, so it is placed as the art
+             was (Two Ten Overpass sits off to one side on purpose). */
+          <image
+            className="pr fx"
+            href={printSrc(art, tone)!}
+            x={0}
+            y={0}
+            width={400}
+            height={400}
+            clipPath={`url(#${clip})`}
+            style={back ? hidden : undefined}
+            data-back={back ? '' : undefined}
+          />
+        )}
+        <g className={dark ? 'mkg inv' : 'mkg'} style={back ? hidden : undefined}>
           {/* .mk: the patch lands last in the draw-in, as the mark did. */}
           <g className="mk">
-            <Patch at={s.patch} stitch={stitch} close={view === 'mark'} />
+            <g transform={art?.patchRotate ? `rotate(${art.patchRotate} ${(art.patch ?? s.patch)[0]} ${(art.patch ?? s.patch)[1]})` : undefined}>
+              <Patch at={art?.patch ?? s.patch} stitch={stitch && !print} close={view === 'mark'} />
+            </g>
           </g>
         </g>
       </g>

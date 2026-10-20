@@ -120,7 +120,22 @@ export type Product = {
   /* The founding-partner note under the reserve button. */
   founding?: string;
   media?: Media[];
+  /* What a product draws on top of its kind's plate (see PlateArt). */
+  plate?: PlateArt;
   status: 'draft' | 'live';
+};
+
+/* A product's own layer on its kind's drawing: a Graphic Tee is the Logo
+   Tee's plate with a print on the front, and its patch moved to the sleeve.
+   - print: the print as drawn in the plate's 400 × 400 space, one image
+     for a dark tee (`ink`) and one for the White tee (`paper`); `box` is
+     where the print sits, `viewBox` the close-up that frames it.
+   - patch: [cx, cy, side] in place of the kind's, turned `patchRotate`
+     degrees about its centre (0 when left out). */
+export type PlateArt = {
+  print?: { src: { ink: string; paper: string }; box: [number, number, number, number]; viewBox: [number, number, number, number] };
+  patch?: [number, number, number];
+  patchRotate?: number;
 };
 
 /* Every hardware product's category: the shelf's For shops chip. */
@@ -134,6 +149,7 @@ export const COLOURS = {
   navy: { id: 'navy', label: 'Navy', swatch: '#252B3B', tone: 'ink' },
   offwhite: { id: 'offwhite', label: 'Off-white', swatch: '#E8E5DD', tone: 'paper' },
   land: { id: 'land', label: 'Land', swatch: '#6B7F5C', tone: 'land' },
+  cobalt: { id: 'cobalt', label: 'Cobalt', swatch: '#1F4FA8', tone: 'ink' },
 } as const satisfies Record<string, Colour>;
 
 /* Every garment comes in these sizes, in every colour it is made in. */
@@ -145,6 +161,9 @@ function garment(colours: (keyof typeof COLOURS)[]): Variant[] {
     SIZES.map((sz) => ({ id: `${c}-${sz}`, label: `${COLOURS[c].label} · ${sz.toUpperCase()}`, colour: c, size: sz })),
   );
 }
+
+/* The shelf's category for the printed tees: its own filter chip. */
+export const GRAPHIC_TEES = 'Graphic Tees';
 
 export const PRODUCTS: Product[] = [
   /* ─── Goods: the wearables, from the owner's flat sketches ───────────────
@@ -162,7 +181,7 @@ export const PRODUCTS: Product[] = [
     line: 'Heavyweight cotton, mock neck, patch on the chest.',
     description:
       'A heavy tee with a wide mock neck and the Clear patch stitched small on the chest. A woven tag at the hem, nothing on the back.',
-    priceCents: 4200,
+    priceCents: 2700,
     kind: 'tee',
     tone: 'ink',
     category: 'Wear',
@@ -183,11 +202,11 @@ export const PRODUCTS: Product[] = [
   {
     slug: 'long-sleeve-mock-tee',
     section: 'goods',
-    name: 'Long-sleeve Logo Tee',
+    name: 'Logo Long-Sleeve Tee',
     line: 'The Logo Tee with long sleeves and rib cuffs.',
     description:
       'The same heavy mock-neck tee, with long sleeves finished in rib cuffs. The patch on the chest, a woven tag at the hem.',
-    priceCents: 5200,
+    priceCents: 3200,
     kind: 'tee-ls',
     tone: 'ink',
     category: 'Wear',
@@ -198,8 +217,8 @@ export const PRODUCTS: Product[] = [
     weightOz: 11,
     ships: GOODS_SHIPS,
     media: [
-      { kind: 'mock', src: '/shop/goods/long-sleeve-mock-tee/mock-black.jpg', colour: 'black', alt: 'A mockup of the black long-sleeve Logo Tee', caption: 'Black' },
-      { kind: 'mock', src: '/shop/goods/long-sleeve-mock-tee/mock-offwhite.jpg', colour: 'offwhite', alt: 'A mockup of the off-white long-sleeve Logo Tee', caption: 'Off-white' },
+      { kind: 'mock', src: '/shop/goods/long-sleeve-mock-tee/mock-black.jpg', colour: 'black', alt: 'A mockup of the black Logo Long-Sleeve Tee', caption: 'Black' },
+      { kind: 'mock', src: '/shop/goods/long-sleeve-mock-tee/mock-offwhite.jpg', colour: 'offwhite', alt: 'A mockup of the off-white Logo Long-Sleeve Tee', caption: 'Off-white' },
     ],
     status: 'live',
   },
@@ -247,6 +266,121 @@ export const PRODUCTS: Product[] = [
       { kind: 'mock', src: '/shop/goods/hoodie/mock-land.jpg', colour: 'land', alt: 'A mockup of the land hoodie', caption: 'Land' },
     ],
     status: 'live',
+  },
+  /* ─── Graphic Tees ─────────────────────────────────────────────────────
+     The Logo Tee with a photograph printed on the front
+     (reference/redesign/graphic-tees: plate data, print spec and the art
+     for the factory). The patch moves to the wearer's right sleeve. Drafts
+     until the art and the licences are final: the catalog's only
+     not-on-sale status, so they show in development and on a preview with
+     SHOP_SHOW_DRAFTS=true, and nowhere on production. */
+  {
+    slug: 'graphic-tee-carousel-mall',
+    section: 'goods',
+    name: 'Carousel Mall Tee',
+    line: 'The old Carousel Mall, printed big on the front.',
+    description:
+      'A photograph of San Bernardino’s Carousel Mall, printed large across the front of the Logo Tee. The patch moves to the sleeve.',
+    priceCents: 4200,
+    kind: 'tee',
+    tone: 'ink',
+    category: GRAPHIC_TEES,
+    variantLabel: 'Size',
+    colours: [COLOURS.black, COLOURS.cobalt, COLOURS.white],
+    variants: garment(['black', 'cobalt', 'white']),
+    details: ['Heavyweight cotton jersey', 'Embroidered patch on the sleeve', 'Large printed front, mock neck'],
+    weightOz: 9,
+    ships: GOODS_SHIPS,
+    media: [
+      { kind: 'mock', src: '/shop/goods/graphic-tee-carousel-mall/mock-black.jpg', colour: 'black', alt: 'A mockup of the Carousel Mall Tee in Black, front', caption: 'Black' },
+      { kind: 'mock', src: '/shop/goods/graphic-tee-carousel-mall/mock-cobalt.jpg', colour: 'cobalt', alt: 'A mockup of the Carousel Mall Tee in Cobalt, front', caption: 'Cobalt' },
+      { kind: 'mock', src: '/shop/goods/graphic-tee-carousel-mall/mock-white.jpg', colour: 'white', alt: 'A mockup of the Carousel Mall Tee in White, front', caption: 'White' },
+    ],
+    plate: {
+      print: {
+        src: { ink: '/shop/goods/graphic-tee-carousel-mall/plate-print.png', paper: '/shop/goods/graphic-tee-carousel-mall/plate-print-light.png' },
+        box: [150.3, 110.4, 99.6, 86.8],
+        viewBox: [138.3, 92.0, 123.5, 123.5],
+      },
+      patch: [106.5, 178.2, 16.6],
+      patchRotate: 3,
+    },
+    // TODO(owner): final art (this was lifted from mockups and carries their wrinkle shadows), the body copy
+    // (lorem ipsum), the photo credit ("Photographer's name"), the full coordinates (latitude only) and the
+    // photograph's licence. Until then it stays a draft: not on the shelf, refused at checkout.
+    status: 'draft',
+  },
+  {
+    slug: 'graphic-tee-two-ten-overpass',
+    section: 'goods',
+    name: 'Two Ten Overpass Tee',
+    line: 'The 210 overpass sign, printed tall down one side.',
+    description:
+      'A photograph of the San Bernardino sign over the 210, printed tall down one side of the Logo Tee. The patch moves to the sleeve.',
+    priceCents: 4200,
+    kind: 'tee',
+    tone: 'ink',
+    category: GRAPHIC_TEES,
+    variantLabel: 'Size',
+    colours: [COLOURS.black, COLOURS.cobalt, COLOURS.white],
+    variants: garment(['black', 'cobalt', 'white']),
+    details: ['Heavyweight cotton jersey', 'Embroidered patch on the sleeve', 'Large printed front, mock neck'],
+    weightOz: 9,
+    ships: GOODS_SHIPS,
+    media: [
+      { kind: 'mock', src: '/shop/goods/graphic-tee-two-ten-overpass/mock-black.jpg', colour: 'black', alt: 'A mockup of the Two Ten Overpass Tee in Black, front', caption: 'Black' },
+      { kind: 'mock', src: '/shop/goods/graphic-tee-two-ten-overpass/mock-cobalt.jpg', colour: 'cobalt', alt: 'A mockup of the Two Ten Overpass Tee in Cobalt, front', caption: 'Cobalt' },
+      { kind: 'mock', src: '/shop/goods/graphic-tee-two-ten-overpass/mock-white.jpg', colour: 'white', alt: 'A mockup of the Two Ten Overpass Tee in White, front', caption: 'White' },
+    ],
+    plate: {
+      print: {
+        src: { ink: '/shop/goods/graphic-tee-two-ten-overpass/plate-print.png', paper: '/shop/goods/graphic-tee-two-ten-overpass/plate-print-light.png' },
+        box: [190.1, 99.9, 70.3, 115.7],
+        viewBox: [153.5, 86.0, 143.5, 143.5],
+      },
+      patch: [106.5, 178.2, 16.6],
+      patchRotate: 3,
+    },
+    // TODO(owner): final art (this was lifted from mockups and carries their wrinkle shadows), the body copy
+    // (lorem ipsum), the photo credit ("Photographer's name"), the full coordinates (latitude only) and the
+    // photograph's licence. Until then it stays a draft: not on the shelf, refused at checkout.
+    status: 'draft',
+  },
+  {
+    slug: 'graphic-tee-devore',
+    section: 'goods',
+    name: 'Devore Tee',
+    line: 'Devore from above, printed big on the front.',
+    description:
+      'A photograph looking down over Devore toward the mountains, printed large across the front of the Logo Tee. The patch moves to the sleeve.',
+    priceCents: 4200,
+    kind: 'tee',
+    tone: 'ink',
+    category: GRAPHIC_TEES,
+    variantLabel: 'Size',
+    colours: [COLOURS.black, COLOURS.cobalt, COLOURS.white],
+    variants: garment(['black', 'cobalt', 'white']),
+    details: ['Heavyweight cotton jersey', 'Embroidered patch on the sleeve', 'Large printed front, mock neck'],
+    weightOz: 9,
+    ships: GOODS_SHIPS,
+    media: [
+      { kind: 'mock', src: '/shop/goods/graphic-tee-devore/mock-black.jpg', colour: 'black', alt: 'A mockup of the Devore Tee in Black, front', caption: 'Black' },
+      { kind: 'mock', src: '/shop/goods/graphic-tee-devore/mock-cobalt.jpg', colour: 'cobalt', alt: 'A mockup of the Devore Tee in Cobalt, front', caption: 'Cobalt' },
+      { kind: 'mock', src: '/shop/goods/graphic-tee-devore/mock-white.jpg', colour: 'white', alt: 'A mockup of the Devore Tee in White, front', caption: 'White' },
+    ],
+    plate: {
+      print: {
+        src: { ink: '/shop/goods/graphic-tee-devore/plate-print.png', paper: '/shop/goods/graphic-tee-devore/plate-print-light.png' },
+        box: [153.7, 110.4, 92.8, 93.1],
+        viewBox: [142.4, 99.2, 115.4, 115.4],
+      },
+      patch: [106.5, 178.2, 16.6],
+      patchRotate: 3,
+    },
+    // TODO(owner): final art (this was lifted from mockups and carries their wrinkle shadows), the body copy
+    // (lorem ipsum), the photo credit ("Photographer's name"), the full coordinates (latitude only) and the
+    // photograph's licence. Until then it stays a draft: not on the shelf, refused at checkout.
+    status: 'draft',
   },
   {
     slug: 'coop-cap',
@@ -796,6 +930,8 @@ export const GALLERY = {
   label: 'Views',
   front: { b: 'Front', s: 'As it is worn' },
   mark: { b: 'Patch' },
+  /* The close-up on a Graphic Tee frames its print instead of its patch. */
+  print: { b: 'Print', s: 'The printed front' },
   back: {
     b: 'Back',
     s: {

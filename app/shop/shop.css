@@ -53,6 +53,15 @@
   .plate .pt { fill: currentColor; }
   .plate .pb { fill: none; stroke: var(--pg); }
   .plate .pm { color: var(--pg); }
+  /* A dark printed tee (ProductPlate): the body filled in the line colour,
+     its seams muted so they read on the fill, the patch inverted. --pm is
+     the plate's muted line: a quarter of the way from the line to the ground. */
+  .plate { --pm: color-mix(in srgb, var(--pl) 76%, var(--pg)); }
+  .plate .bd.filled { fill: currentColor; }
+  .plate .ln2.muted { stroke: var(--pm); }
+  .plate .inv .pt { fill: var(--pg); }
+  .plate .inv .pb { stroke: var(--pl); }
+  .plate .inv .pm { color: var(--pl); }
   .plate .gar { transform-box: view-box; }
   .plate:is([data-kind='tee'], [data-kind='tee-ls'], [data-kind='turtleneck'], [data-kind='hoodie']) .gar { transform-origin: 200px 60px; }
   .plate[data-kind='cap'] .gar { transform-origin: 206px 250px; }
@@ -554,6 +563,7 @@
      as rendered. */
   :where(html.motion) & [data-draw] .plate:not([data-drawn]) :is(.bd, .ln2) { stroke-dasharray: 1; stroke-dashoffset: 1; fill-opacity: 0; }
   :where(html.motion) & [data-draw] .plate:not([data-drawn]) .mk { opacity: 0; }
+  :where(html.motion) & [data-draw] .plate:not([data-drawn]) .pr { opacity: 0; }
   :where(html.motion) & [data-draw] .plate.hwplate:not([data-drawn]) .gar :is(text, rect, circle, .hl, .fl, .pill, .inv, :is(.bd, .ln2):not([pathLength])) { opacity: 0; }
 }
 

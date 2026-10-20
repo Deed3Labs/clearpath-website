@@ -1,6 +1,6 @@
 'use client';
 
-import { GALLERY, type GoodsKind, type Media, type PlateTone } from '@/content/shop';
+import { GALLERY, type GoodsKind, type Media, type PlateArt, type PlateTone } from '@/content/shop';
 import { useColour } from './ColourContext';
 import { ProductGallery } from './ProductGallery';
 
@@ -15,6 +15,7 @@ export function GoodsGallery({
   stitch,
   patch,
   back,
+  art,
 }: {
   slug: string;
   kind: GoodsKind;
@@ -25,6 +26,8 @@ export function GoodsGallery({
   patch: string;
   /* What is on the back, e.g. "Nothing on it". */
   back: string;
+  /* A Graphic Tee's print and sleeve patch: its close-up is the print. */
+  art?: PlateArt;
 }) {
   const picked = useColour();
   return (
@@ -35,10 +38,11 @@ export function GoodsGallery({
       media={media}
       colour={picked?.colour.id}
       stitch={stitch}
+      art={art}
       copy={{ label: GALLERY.label, render: GALLERY.render, drawing: GALLERY.drawing, mock: GALLERY.mock, cad: '', note: media.length ? GALLERY.note : '' }}
       drawing={[
         { b: GALLERY.front.b, s: GALLERY.front.s },
-        { b: GALLERY.mark.b, s: patch },
+        art?.print ? { b: GALLERY.print.b, s: GALLERY.print.s } : { b: GALLERY.mark.b, s: patch },
         { b: GALLERY.back.b, s: back },
       ]}
     />
