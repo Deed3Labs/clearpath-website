@@ -167,6 +167,8 @@ function garment(colours: (keyof typeof COLOURS)[]): Variant[] {
 export const MOVED: Readonly<Record<string, string>> = {
   'member-tee': 'logo-tee',
   'long-sleeve-mock-tee': 'logo-long-sleeve-tee',
+  turtleneck: 'logo-turtleneck',
+  hoodie: 'logo-hoodie',
 };
 
 /* The shelf's category for the printed tees: its own filter chip. */
@@ -175,9 +177,10 @@ export const GRAPHIC_TEES = 'Graphic Tees';
 export const PRODUCTS: Product[] = [
   /* ─── Goods: the wearables, from the owner's flat sketches ───────────────
      reference/redesign/wearables/flats. Each carries the Clear patch (63.5 mm,
-     embroidered; clear-patch-spec.md beside the flats). The Logo Tees were
-     `member-tee` and `long-sleeve-mock-tee`: MOVED (below) sends their old
-     links and saved bags to the new slugs. Their pictures keep their folders.
+     embroidered; clear-patch-spec.md beside the flats). The Logo pieces were
+     `member-tee`, `long-sleeve-mock-tee`, `turtleneck` and `hoodie`: MOVED
+     (below) sends their old links and saved bags to the new slugs. Their
+     pictures keep their folders.
      The galleries show the mockups and the drawing. The renders were taken
      out for now (the owner prefers the mockups); their files stay in
      public/shop/goods and their entries in reference/redesign/wearables/
@@ -231,9 +234,9 @@ export const PRODUCTS: Product[] = [
     status: 'live',
   },
   {
-    slug: 'turtleneck',
+    slug: 'logo-turtleneck',
     section: 'goods',
-    name: 'Turtleneck',
+    name: 'Logo Turtleneck',
     line: 'A knit turtleneck with a folded collar.',
     description:
       'A knit turtleneck with a tall collar that folds over, and rib at the cuffs and hem. The patch on the chest.',
@@ -248,14 +251,14 @@ export const PRODUCTS: Product[] = [
     weightOz: 20,
     ships: GOODS_SHIPS,
     media: [
-      { kind: 'mock', src: '/shop/goods/turtleneck/mock-navy.jpg', colour: 'navy', alt: 'A mockup of the navy turtleneck', caption: 'Navy' },
+      { kind: 'mock', src: '/shop/goods/turtleneck/mock-navy.jpg', colour: 'navy', alt: 'A mockup of the navy Logo Turtleneck', caption: 'Navy' },
     ],
     status: 'live',
   },
   {
-    slug: 'hoodie',
+    slug: 'logo-hoodie',
     section: 'goods',
-    name: 'Hoodie',
+    name: 'Logo Hoodie',
     line: 'Heavy fleece, kangaroo pocket, patch at the centre.',
     description:
       'A heavy pullover hoodie with a lined hood, drawcords and a kangaroo pocket. The patch sits at the centre of the chest.',
@@ -270,8 +273,8 @@ export const PRODUCTS: Product[] = [
     weightOz: 26,
     ships: GOODS_SHIPS,
     media: [
-      { kind: 'mock', src: '/shop/goods/hoodie/mock-black.jpg', colour: 'black', alt: 'A mockup of the black hoodie', caption: 'Black' },
-      { kind: 'mock', src: '/shop/goods/hoodie/mock-land.jpg', colour: 'land', alt: 'A mockup of the land hoodie', caption: 'Land' },
+      { kind: 'mock', src: '/shop/goods/hoodie/mock-black.jpg', colour: 'black', alt: 'A mockup of the black Logo Hoodie', caption: 'Black' },
+      { kind: 'mock', src: '/shop/goods/hoodie/mock-land.jpg', colour: 'land', alt: 'A mockup of the land Logo Hoodie', caption: 'Land' },
     ],
     status: 'live',
   },

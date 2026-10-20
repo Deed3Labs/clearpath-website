@@ -56,6 +56,8 @@ const config: NextConfig = {
       // Shop slugs that changed (content/shop.ts MOVED).
       { source: '/shop/member-tee',           destination: '/shop/logo-tee',             statusCode: 301 },
       { source: '/shop/long-sleeve-mock-tee', destination: '/shop/logo-long-sleeve-tee', statusCode: 301 },
+      { source: '/shop/turtleneck',           destination: '/shop/logo-turtleneck',      statusCode: 301 },
+      { source: '/shop/hoodie',               destination: '/shop/logo-hoodie',          statusCode: 301 },
     ];
   },
 };
