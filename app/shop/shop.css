@@ -63,6 +63,22 @@
   .plate .inv .pt { fill: var(--pg); }
   .plate .inv .pb { stroke: var(--pl); }
   .plate .inv .pm { color: var(--pl); }
+  /* The Logo Patch's own drawing (PatchPlate): the stitches in the ground
+     colour on the front, in the line colour on the back. */
+  .plate .pt-st { stroke: var(--pg); stroke-opacity: .1; stroke-width: .6; fill: none; }
+  .plate .pt-tw { stroke: var(--pl); stroke-opacity: .16; stroke-width: .8; fill: none; }
+  .plate .psa { stroke: var(--pg); stroke-opacity: .75; stroke-width: .7; fill: none; }
+  .plate .pin { stroke: var(--pg); stroke-width: 1.2; fill: none; }
+  .plate .pmk { color: var(--pg); }
+  .plate .pms path { stroke: var(--pl); stroke-opacity: .28; stroke-width: 1.09; fill: none; }
+  .plate .pbo { stroke: var(--pl); stroke-opacity: .35; stroke-width: .6; fill: none; }
+  .plate .pol { stroke: var(--pl); stroke-width: 2.5; fill: none; }
+  .plate .pin2 { stroke: var(--pl); stroke-width: 1.2; fill: none; }
+  .plate .psew { stroke: var(--pl); stroke-width: 1.3; stroke-dasharray: 5 4; fill: none; }
+  .plate .pmb { color: var(--pl); opacity: .32; }
+  .plate .dim path { stroke: var(--pl); stroke-width: 1.2; fill: none; }
+  .plate .dim rect { fill: var(--pg); }
+  .plate .dim text { font-family: var(--font-mono); font-size: 11px; letter-spacing: 1px; fill: var(--pl); }
   .plate .gar { transform-box: view-box; }
   .plate:is([data-kind='tee'], [data-kind='tee-ls'], [data-kind='turtleneck'], [data-kind='hoodie']) .gar { transform-origin: 200px 60px; }
   .plate[data-kind='cap'] .gar { transform-origin: 206px 250px; }

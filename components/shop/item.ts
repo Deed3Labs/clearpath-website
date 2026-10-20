@@ -1,4 +1,5 @@
 import type { PlateTone, Product } from '@/content/shop';
+import { patchShapeOf } from './gallerySlides';
 
 /* What a client component needs to show a product: no status, no weight,
    no photographs beyond the first render. Prices travel for display only;
@@ -46,6 +47,9 @@ export function swatchOf(p: Pick<Product, 'variants' | 'colours'>, id: string): 
   const c = p.variants.find((v) => v.id === id)?.colour;
   return (p.colours?.find((x) => x.id === c) ?? p.colours?.[0])?.swatch;
 }
+
+/* The patch's shape for a line in the bag: round for the circle. */
+export const shapeOf = (p: Pick<Product, 'kind'>, id: string) => patchShapeOf(p.kind, id);
 
 /* The ground a line in the bag is drawn on: its colour's, else the product's. */
 export function toneOf(p: Pick<Product, 'variants' | 'colours' | 'tone'>, id: string): PlateTone {

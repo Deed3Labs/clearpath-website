@@ -11,7 +11,7 @@ import { gsap, motionOK } from '@/lib/anim/gsap';
 import { usd, usdExact } from '@/lib/shop/money';
 import { unitPrice } from '@/lib/shop/price';
 import { useBag } from './BagProvider';
-import { swatchOf, toneOf, variantText, type ShopItem } from './item';
+import { shapeOf, swatchOf, toneOf, variantText, type ShopItem } from './item';
 import { fly, onAdded, type Added } from './motion';
 import { ProductPlate } from './ProductPlate';
 
@@ -135,7 +135,7 @@ export function ShopBar({ catalog, closed }: { catalog: ShopItem[]; closed: bool
                         <Image src={p.render.src} alt="" fill sizes="56px" />
                       </span>
                     ) : (
-                      <ProductPlate kind={p.kind} tone={toneOf(p, mini.variant)} art={p.plate} swatch={swatchOf(p, mini.variant)} />
+                      <ProductPlate kind={p.kind} tone={toneOf(p, mini.variant)} art={p.plate} swatch={swatchOf(p, mini.variant)} patchShape={shapeOf(p, mini.variant)} />
                     )}
                     <span>
                       {p.name}

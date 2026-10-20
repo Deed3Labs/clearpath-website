@@ -3,6 +3,7 @@ import { createElement, useId, type CSSProperties, type ReactNode } from 'react'
 import { LogoMark } from '@/components/marks/Logo';
 import { isGoodsKind, type GoodsKind, type PlateArt, type PlateTone, type Product, type ProductKind } from '@/content/shop';
 import { PATCH_ONLY, TRACED } from './goodsShapes';
+import { PATCH_CLOSE_VB, PatchSvg, type PatchShape } from './PatchPlate';
 import { bodyFill, isDarkPrint, printSrc } from './plateArt';
 import { HW_SHAPES, NAMED, type DrawingName, type HwNode, type HwShape } from './hardwareShapes';
 import './hardware.css';
@@ -41,7 +42,8 @@ type Shape = { body: string; backBody?: string; extra: string; back: string; pat
 
 const traced = (k: keyof typeof TRACED): Shape => ({ ...TRACED[k], traced: true });
 
-export const SHAPES: Record<GoodsKind, Shape> = {
+/* Every goods kind but the patch, which is drawn as itself (PatchPlate). */
+export const SHAPES: Record<Exclude<GoodsKind, 'patch'>, Shape> = {
   tee: traced('tee'),
   'tee-ls': traced('tee-ls'),
   turtleneck: traced('turtleneck'),
@@ -67,6 +69,7 @@ export const FULL_VB = '0 0 400 400';
 /* The viewBox that frames the patch: a square a few patches wide round it,
    so the patch is legible with some of the garment round it for context. */
 export function patchViewBox(kind: GoodsKind, art?: PlateArt) {
+  if (kind === 'patch') return PATCH_CLOSE_VB;
   const [cx, cy, side] = art?.patch ?? SHAPES[kind].patch;
   const k = Math.max(side * 3.4, 64);
   return `${cx - k / 2} ${cy - k / 2} ${k} ${k}`;
@@ -115,6 +118,7 @@ export function ProductPlate({
   caption,
   art,
   swatch,
+  patchShape,
 }: ({ kind: ProductKind; drawing?: undefined } | { kind?: ProductKind; drawing: DrawingName }) & {
   /* `drawing`: a named drawing from hardwareShapes ("pointStates.bill",
      "counterTill") in place of the product kind's own, drawn in its own
@@ -134,6 +138,9 @@ export function ProductPlate({
   art?: PlateArt;
   /* The colour's swatch: a dark printed tee's body is filled with it. */
   swatch?: string;
+  /* The patch's shape: the Logo Patch's own drawing, or the small patch on a
+     garment. Square unless said, so every garment stays as it is. */
+  patchShape?: PatchShape;
 }) {
   const shape: HwShape | null = drawing ? NAMED[drawing] : kind && !isGoodsKind(kind) ? HW_SHAPES[kind] : null;
   const hw = !!shape;
@@ -142,7 +149,11 @@ export function ProductPlate({
       <g className="gar">{shape.nodes.map(hwNode)}</g>
     </svg>
   ) : (
-    <GoodsSvg kind={kind as GoodsKind} view={view} stitch={stitch} viewBox={viewBox} tone={tone} art={art} />
+    kind === 'patch' ? (
+      <PatchSvg shape={patchShape} view={view} viewBox={viewBox ?? (view === 'mark' ? PATCH_CLOSE_VB : FULL_VB)} />
+    ) : (
+      <GoodsSvg kind={kind as Exclude<GoodsKind, 'patch'>} view={view} stitch={stitch} viewBox={viewBox} tone={tone} art={art} shape={patchShape} />
+    )
   );
   /* A printed tee is always drawn on paper: its colour shows as the body's
      fill (dark) or its absence (White), as the print artwork expects. */
@@ -173,13 +184,15 @@ function GoodsSvg({
   viewBox,
   tone,
   art,
+  shape = 'square',
 }: {
-  kind: GoodsKind;
+  kind: Exclude<GoodsKind, 'patch'>;
   view: PlateView;
   stitch?: boolean;
   viewBox?: string;
   tone: PlateTone;
   art?: PlateArt;
+  shape?: PatchShape;
 }) {
   const s = SHAPES[kind];
   const back = view === 'back';
@@ -226,7 +239,7 @@ function GoodsSvg({
           {/* .mk: the patch lands last in the draw-in, as the mark did. */}
           <g className="mk">
             <g transform={art?.patchRotate ? `rotate(${art.patchRotate} ${(art.patch ?? s.patch)[0]} ${(art.patch ?? s.patch)[1]})` : undefined}>
-              <Patch at={art?.patch ?? s.patch} stitch={stitch && !print} close={view === 'mark'} />
+              <Patch at={art?.patch ?? s.patch} shape={shape} stitch={stitch && !print} close={view === 'mark'} />
             </g>
           </g>
         </g>
@@ -239,15 +252,27 @@ function GoodsSvg({
    square in the plate's line colour with a border inset at 7.5% of its side
    and the mark at 68%, both in the ground colour. Embroidered, it has a
    running stitch just inside the edge, shown in the close-up (`.st`). */
-function Patch({ at: [cx, cy, side], stitch, close }: { at: [number, number, number]; stitch?: boolean; close: boolean }) {
+function Patch({
+  at: [cx, cy, side],
+  shape,
+  stitch,
+  close,
+}: {
+  at: [number, number, number];
+  shape: PatchShape;
+  stitch?: boolean;
+  close: boolean;
+}) {
   const x = cx - side / 2, y = cy - side / 2;
+  /* Round: the same square, cornered all the way. */
+  const r = (w: number) => (shape === 'circle' ? w / 2 : 0);
   const b = side * 0.075;
   const m = side * 0.68;
   const st = side * 0.035;
   return (
     <>
-      <rect className="pt" x={x} y={y} width={side} height={side} />
-      <rect className="pb" x={x + b} y={y + b} width={side - 2 * b} height={side - 2 * b} style={{ strokeWidth: side * 0.03 }} />
+      <rect className="pt" x={x} y={y} width={side} height={side} rx={r(side)} />
+      <rect className="pb" x={x + b} y={y + b} width={side - 2 * b} height={side - 2 * b} rx={r(side - 2 * b)} style={{ strokeWidth: side * 0.03 }} />
       <g transform={`translate(${cx - m / 2} ${cy - m / 2})`}>
         <g className="pm">
           <LogoMark size={m} variant="solid" />
@@ -260,6 +285,7 @@ function Patch({ at: [cx, cy, side], stitch, close }: { at: [number, number, num
           y={y + st}
           width={side - 2 * st}
           height={side - 2 * st}
+          rx={r(side - 2 * st)}
           style={{ strokeWidth: side * 0.012, strokeDasharray: `${side * 0.03} ${side * 0.025}`, ...(close ? { opacity: 0.8 } : null) }}
         />
       )}

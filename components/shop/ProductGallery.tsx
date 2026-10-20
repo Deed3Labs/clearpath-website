@@ -5,6 +5,7 @@ import { useMemo, useRef, useState } from 'react';
 import type { GoodsKind, Media, PlateArt, PlateTone, ProductKind } from '@/content/shop';
 import { gsap, motionOK, useIsoLayoutEffect } from '@/lib/anim';
 import { usePlateDraw } from './motion';
+import { gallerySlides, patchShapeOf, type SlideKind } from './gallerySlides';
 import { closeViewBox, FULL_VB, ProductPlate, type PlateView } from './ProductPlate';
 
 /* A product's pictures, as tabs over one frame. Goods: the mockups, then
@@ -28,20 +29,7 @@ import { closeViewBox, FULL_VB, ProductPlate, type PlateView } from './ProductPl
  * activation, as tabs do). The drawing draws itself in the first time it is
  * shown: hidden, it never intersects, so the draw-in waits for it. */
 
-type Kind = 'render' | 'drawing' | 'mock' | 'cad';
-
-type Slide = {
-  /* Stays the same across colours: the n-th render of a colour, a picture
-     with no colour by its file, a drawing by its view. */
-  key: string;
-  kind: Kind;
-  b: string;
-  s: string;
-  cap: string;
-  src?: string;
-  alt?: string;
-  view?: PlateView;
-};
+type Kind = SlideKind;
 
 export type GalleryCopy = {
   label: string;
@@ -66,6 +54,7 @@ export function ProductGallery({
   stitch,
   art,
   swatch,
+  variant,
 }: {
   slug: string;
   kind: ProductKind;
@@ -82,29 +71,13 @@ export function ProductGallery({
   art?: PlateArt;
   /* The colour picked's swatch: a dark printed tee's body is drawn in it. */
   swatch?: string;
+  /* The variant picked, on a product whose pictures and drawing follow it
+     (the patch's shape). */
+  variant?: string;
 }) {
   const goods = drawing.length === 3;
-  const slides = useMemo(() => {
-    const ofColour = (k: Media['kind']) => {
-      let n = 0;
-      return media
-        .filter((m) => m.kind === k && (!m.colour || !colour || m.colour === colour))
-        .map<Slide>((m) => {
-          const word = k === 'render' ? copy.render : k === 'mock' ? copy.mock : copy.cad;
-          return { key: m.colour ? `${k}:${n++}` : m.src, kind: k, b: word, s: m.caption, cap: `${word} · ${m.caption}`, src: m.src, alt: m.alt };
-        });
-    };
-    const views: PlateView[] = goods ? ['front', 'mark', 'back'] : ['front'];
-    const drawn = views.map<Slide>((v, i) => ({
-      key: `drawing:${v}`,
-      kind: 'drawing',
-      b: drawing[i].b,
-      s: drawing[i].s,
-      cap: goods ? `${copy.drawing} · ${drawing[i].b}` : `${drawing[i].b} · ${drawing[i].s}`,
-      view: v,
-    }));
-    return goods ? [...ofColour('mock'), ...drawn, ...ofColour('render')] : [...ofColour('render'), ...drawn, ...ofColour('cad')];
-  }, [media, colour, copy, drawing, goods]);
+  const slides = useMemo(() => gallerySlides(media, { colour, variant }, copy, drawing), [media, colour, variant, copy, drawing]);
+  const shape = patchShapeOf(kind, variant);
 
   const [picked, setPicked] = useState<{ key: string; kind: Kind }>({ key: slides[0].key, kind: slides[0].kind });
   /* The colour changed and the picture shown has no match in it: the first
@@ -137,6 +110,23 @@ export function ProductGallery({
       tw.revert();
     };
   }, [panel]);
+
+  /* A new shape (the patch's Square / Circle) turns in the way the back
+     does: the piece widens from edge-on, already in its new shape. */
+  const firstShape = useRef(true);
+  useIsoLayoutEffect(() => {
+    if (firstShape.current) {
+      firstShape.current = false;
+      return;
+    }
+    const gar = main.current?.querySelector('[data-panel="drawing"] .gar');
+    if (!gar || slide.kind !== 'drawing' || !motionOK()) return;
+    const tw = gsap.fromTo(gar, { scaleX: 0 }, { scaleX: 1, duration: 0.42, ease: 'power3.out', svgOrigin: '200 200', clearProps: 'transform' });
+    return () => {
+      tw.kill();
+    };
+    // Only on a change of shape; the slide shown is read as it is then.
+  }, [shape]);
 
   /* From one drawing view to another while the drawing shows: zoom to the
      patch, or turn the piece round. From a picture, the view is just set.
@@ -213,7 +203,7 @@ export function ProductGallery({
               hidden={!shown}
             >
               {s.kind === 'drawing' ? (
-                <ProductPlate kind={kind} tone={tone} stitch={stitch} art={art} swatch={swatch} className="gm" />
+                <ProductPlate kind={kind} tone={tone} stitch={stitch} art={art} swatch={swatch} patchShape={shape} className="gm" />
               ) : s.kind === 'cad' ? (
                 <div className="gm d">
                   {/* A drawing sheet, shown as drawn: an SVG, not a photo to optimise. */}
@@ -248,7 +238,7 @@ export function ProductGallery({
             onKeyDown={(e) => onKeyDown(e, i)}
           >
             {s.kind === 'drawing' ? (
-              <ProductPlate kind={kind} tone={tone} view={goods ? s.view : undefined} stitch={stitch} art={art} swatch={swatch} />
+              <ProductPlate kind={kind} tone={tone} view={goods ? s.view : undefined} stitch={stitch} art={art} swatch={swatch} patchShape={shape} />
             ) : s.kind === 'cad' ? (
               <span className="ti d">
                 {/* eslint-disable-next-line @next/next/no-img-element */}

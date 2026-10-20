@@ -1,5 +1,7 @@
 # Clear patch — production spec
 
+_Updated: the patch is also sold on its own, square or round (see “Sold on its own” at the end)._
+
 One patch for the whole line: tee, cap, tote, and anything worn that comes later.
 
 | | |
@@ -34,3 +36,22 @@ Thread is matched by eye to the brand hex values; the supplier picks the nearest
 ## Before ordering
 
 Ask for a physical strike-off of each colourway and check: the ring reads as one clean curve, the small ring's hole stays open, and the border corners are square.
+
+## Sold on its own
+
+The shop sells the patch by itself at $9, in two shapes. Both are the Ink colourway: an ink ground with a paper-coloured border and mark.
+
+| | Square | Round |
+|---|---|---|
+| Size | 63.5 × 63.5 mm | 63.5 mm across |
+| Edge | Laser-cut (hot-cut), with a satin border mitred at the corners | Merrowed. A round edge suits a merrow border and wears better than a hot-cut one |
+| Border | Satin, 3 mm | Merrow cord, about 3 mm, in the mark colour |
+| Mark | Centred, 43 mm across | Centred, 43 mm across (it fits inside the 57.5 mm field) |
+| Backing | Twill, sew-on (no iron-on) | Twill, sew-on (no iron-on) |
+| Artwork | `clear-patch-square-ink.svg` | `clear-patch-round-ink.svg` |
+
+Land and Paper round artwork are included too, for later.
+
+Packing: one patch on a backing card with a short note on sewing it on, in a rigid mailer, so it can ship as a flat.
+
+Before ordering the round version, ask for its own strike-off. Check that the merrow cord sits evenly round the whole edge and that the mark is centred.
