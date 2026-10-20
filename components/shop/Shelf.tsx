@@ -4,13 +4,13 @@ import Link from 'next/link';
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { Chip } from '@/components/primitives';
 import { Plus } from '@/components/system/icons';
-import { FOR_SHOPS, FOR_SHOPS_CATEGORY, SHELF } from '@/content/shop';
+import { FOR_SHOPS, FOR_SHOPS_CATEGORY, SHELF, SHELF_FILTERS } from '@/content/shop';
 import { gsap, motionOK } from '@/lib/anim/gsap';
 import type { CatOption } from '@/components/system/CatChips';
 import { useIsoLayoutEffect } from '@/lib/anim/hooks';
 import { usd } from '@/lib/shop/money';
 import { useBag } from './BagProvider';
-import { pad2, type ShopItem } from './item';
+import { inFilter, pad2, type ShopItem } from './item';
 import { announceAdd, usePlateDraw } from './motion';
 import { ProductPlate } from './ProductPlate';
 import { fillOf } from './plateArt';
@@ -128,20 +128,24 @@ export function Shelf({ products, forShops = 0 }: { products: ShopItem[]; forSho
   const grid = useRef<HTMLDivElement>(null);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
+  /* The filters: the shelf's own order first (Wear, Logo, Graphic Tees,
+     Accessories), then any other category in the catalog's order. A
+     product can sit under several (inFilter). */
   const cats = useMemo(() => {
-    const order: string[] = [];
-    for (const p of products) if (!order.includes(p.category)) order.push(p.category);
+    const order: string[] = SHELF_FILTERS.filter((f) => products.some((p) => inFilter(p, f)));
+    for (const p of products) for (const f of [p.category, ...(p.alsoIn ?? [])]) if (!order.includes(f)) order.push(f);
     return [
       { value: SHELF.all, label: SHELF.all, count: n + forShops },
-      ...order.map((c) => ({ value: c, label: c, count: products.filter((p) => p.category === c).length })),
+      ...order.map((c) => ({ value: c, label: c, count: products.filter((p) => inFilter(p, c)).length })),
     ];
   }, [products, n, forShops]);
 
   const featSlug = (products.find((p) => p.featured) ?? products[0])?.slug;
-  const visible = products.filter((p) => cat === SHELF.all || p.category === cat);
+  const visible = products.filter((p) => cat === SHELF.all || inFilter(p, cat));
   const feat = n >= 5 && cat === SHELF.all && visible.length >= 4;
-  /* The featured tile leads, so the dense flow packs the rest round it. */
-  const ordered = feat ? [...products].sort((a, b) => Number(b.slug === featSlug) - Number(a.slug === featSlug)) : products;
+  /* The shelf keeps the catalog's order (cheapest first); the featured tile
+     takes its place in it, and the dense flow packs the rest round it. */
+  const ordered = products;
 
   usePlateDraw(grid, { first: 0.4 });
 
