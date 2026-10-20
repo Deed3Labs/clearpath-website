@@ -61,7 +61,7 @@ test('mixed bags: goods alone build exactly the session they always did', () => 
           product_data: {
             name: 'Logo Tee (Black · M)',
             description: 'Pre-order: ships Jan 2027, estimated. Heavyweight cotton, mock neck, patch on the chest.',
-            images: [`${origin}/shop/goods/member-tee/render-black.jpg`],
+            images: [`${origin}/shop/goods/member-tee/mock-black.jpg`],
             metadata: { slug: 'member-tee', variant: 'black-m' },
           },
         },
