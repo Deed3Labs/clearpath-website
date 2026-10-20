@@ -349,7 +349,8 @@ export const PRODUCTS: Product[] = [
       patchRotate: 3,
     },
     // TODO(owner), before the run is printed: final art (lifted from mockups, with their wrinkle shadows);
-    // the photo credit (still "Photographer's name"); the coordinates are the owner's pin; the photograph's licence.
+    // confirm the credit (Christa Connelly) with the photographer; the coordinates are the owner's pin; the
+    // photograph's licence.
     status: 'live',
   },
   {
@@ -384,8 +385,8 @@ export const PRODUCTS: Product[] = [
       patchRotate: 3,
     },
     // TODO(owner), before the run is printed: final art (lifted from mockups, with their wrinkle shadows);
-    // the photo credit (still "Photographer's name"); the coordinates are from published sources and may become
-    // the owner's own pin; the photograph's licence.
+    // confirm the credit (Michael Rymer) with the photographer; the coordinates are from published sources and
+    // may become the owner's own pin; the photograph's licence.
     status: 'live',
   },
   {
