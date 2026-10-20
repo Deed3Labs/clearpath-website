@@ -117,7 +117,7 @@ Plain and short, in the shop's voice. Keep three details. Put the patch detail s
 
 - **Paid orders:** if anyone has paid for a Mock tee at the old $42, decide what to tell them (refund the difference or not) before the price change ships.
 - **The Graphic Tee artwork isn't final:**
-  - the body text is real now (short local histories). Carousel Mall is credited to AWESTSIDESTORY (owner to confirm with the photographer); the overpass and Devore credits still read "Photographer's name";
+  - the body text is real now (short local histories). Credits: Carousel Mall to AWESTSIDESTORY, Two Ten Overpass to Christa Connelly, Devore to Michael Rymer (owner to confirm each with the photographer);
   - the corner coordinates: Carousel Mall and Devore are full pairs from published sources (Devore may change to the owner's own pin); the overpass uses the owner's pin;
   - the art was lifted from mockups and carries their wrinkle shadows.
 - **Photo licences:** the photographs need a licence from whoever took them before the shirts are sold.
