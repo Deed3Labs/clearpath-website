@@ -955,7 +955,7 @@ export const PRODUCT_COPY = {
   fewer: 'One fewer',
   more: 'One more',
   details: 'Details',
-  shipping: 'Ships within the US, free on orders of $30 or more. Shipping is quoted at checkout from live carrier rates.',
+  shipping: 'Ships within the US, free on orders of $35 or more. Shipping is quoted at checkout from live carrier rates.',
   /* A goods pre-order: paid today, made in the run, shipped in its month. */
   preorder: 'Pre-order',
   ships: (month: string) => `Ships ${month}, estimated`,
@@ -1051,7 +1051,7 @@ export const BAG = {
   getRates: 'Get shipping rates',
   gettingRates: 'Checking carriers…',
   ratesHeading: 'Choose shipping',
-  /* Free shipping from $30 of goods (lib/shop/order.ts): the cheapest rate
+  /* Free shipping from $35 of goods (lib/shop/order.ts): the cheapest rate
      shows as Free, and the bag says how far off it is. */
   free: 'Free',
   freeYes: 'Free shipping on this order: the standard rate is on us.',

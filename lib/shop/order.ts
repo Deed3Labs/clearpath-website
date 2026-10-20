@@ -42,12 +42,12 @@ export function totals(lines: OrderLine[], shippingCents: number | null): Totals
   return { goodsCents, depositsCents, todayCents: goodsCents + depositsCents + (shippingCents ?? 0), laterCents };
 }
 
-/* Free shipping: once the goods that ship now come to $30, the cheapest
+/* Free shipping: once the goods that ship now come to $35, the cheapest
    way to send them is free, and a faster one costs only what it adds over
    that. Pre-order deposits do not count (they ship, and are charged for
    shipping, when they are built). The rates route and checkout both apply
    this, checkout from the carrier's own figures, never the browser's. */
-export const FREE_SHIPPING_FROM_CENTS = 3000;
+export const FREE_SHIPPING_FROM_CENTS = 3500;
 
 export function shippingCents(goodsCents: number, rateCents: number, cheapestCents: number): number {
   return goodsCents >= FREE_SHIPPING_FROM_CENTS ? Math.max(0, rateCents - cheapestCents) : rateCents;

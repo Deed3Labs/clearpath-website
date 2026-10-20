@@ -4,15 +4,15 @@ import { priceBag } from '@/lib/shop/catalog';
 import { sessionParams, type Address } from '@/lib/shop/checkout';
 import { FREE_SHIPPING_FROM_CENTS, shippingCents, totals } from '@/lib/shop/order';
 
-/* Free shipping from $30 of goods: the cheapest rate is free, a faster one
+/* Free shipping from $35 of goods: the cheapest rate is free, a faster one
    costs what it adds over that. Pre-order deposits do not count. */
 
 const address: Address = { name: 'Ana R.', street1: '1450 N Mountain Ave', city: 'Ontario', state: 'CA', zip: '91762', country: 'US' };
 
-test('$30 of goods and over ships free on the cheapest rate', () => {
-  assert.equal(FREE_SHIPPING_FROM_CENTS, 3000);
-  assert.equal(shippingCents(2999, 624, 624), 624, 'under $30, the rate as quoted');
-  assert.equal(shippingCents(3000, 624, 624), 0, 'at $30, the cheapest is free');
+test('$35 of goods and over ships free on the cheapest rate', () => {
+  assert.equal(FREE_SHIPPING_FROM_CENTS, 3500);
+  assert.equal(shippingCents(3499, 624, 624), 624, 'under $35, the rate as quoted');
+  assert.equal(shippingCents(3500, 624, 624), 0, 'at $35, the cheapest is free');
   assert.equal(shippingCents(4200, 922, 624), 298, 'a faster rate costs only the difference');
 });
 
