@@ -9,6 +9,7 @@ import { OptionProvider } from '@/components/shop/OptionContext';
 import { GoodsGallery } from '@/components/shop/GoodsGallery';
 import { HardwareBuy } from '@/components/shop/HardwareBuy';
 import { ProductGallery } from '@/components/shop/ProductGallery';
+import { fillOf } from '@/components/shop/plateArt';
 import { PlateDraw } from '@/components/shop/PlateDraw';
 import { isEmbroidered, markDetail, ProductPlate } from '@/components/shop/ProductPlate';
 import { pad2 } from '@/components/shop/item';
@@ -133,7 +134,7 @@ export default async function ProductPage({ params }: Props) {
             <PlateDraw className="bx also2">
               {also.map((x) => (
                 <Link className="mini" href={`/shop/${x.slug}`} key={x.slug}>
-                  <ProductPlate kind={x.kind} tone={x.colours?.[0].tone ?? x.tone} art={x.plate} swatch={x.colours?.[0].swatch} />
+                  <ProductPlate kind={x.kind} tone={x.colours?.[0].tone ?? x.tone} art={x.plate} swatch={fillOf(x.colours?.[0])} />
                   <span>
                     <b>{x.name}</b>
                     <small>{x.line}</small>

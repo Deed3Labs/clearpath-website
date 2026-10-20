@@ -67,7 +67,15 @@ export type Variant = {
 /* A garment's colour. `swatch` is product data, the one colour on the site
    that is not a token: it is passed to the picker as an inline custom
    property. `tone` is the drawing's ground in that colour. */
-export type Colour = { id: string; label: string; swatch: string; tone: PlateTone };
+export type Colour = {
+  id: string;
+  label: string;
+  swatch: string;
+  tone: PlateTone;
+  /* Drawn filled with its swatch: a colour its tone's ground cannot show
+     (Cobalt, on the dark ground). */
+  fill?: boolean;
+};
 
 /* A hardware product's pictures, in gallery order: renders, then CAD sheets
    (the drawing from HW_SHAPES sits between them). `caption` follows the
@@ -151,7 +159,7 @@ export const COLOURS = {
   navy: { id: 'navy', label: 'Navy', swatch: '#252B3B', tone: 'ink' },
   offwhite: { id: 'offwhite', label: 'Off-white', swatch: '#E8E5DD', tone: 'paper' },
   land: { id: 'land', label: 'Land', swatch: '#6B7F5C', tone: 'land' },
-  cobalt: { id: 'cobalt', label: 'Cobalt', swatch: '#1F4FA8', tone: 'ink' },
+  cobalt: { id: 'cobalt', label: 'Cobalt', swatch: '#1F4FA8', tone: 'ink', fill: true },
 } as const satisfies Record<string, Colour>;
 
 /* Every garment comes in these sizes, in every colour it is made in. */

@@ -1,5 +1,6 @@
 import type { PlateTone, Product } from '@/content/shop';
 import { patchShapeOf } from './gallerySlides';
+import { fillOf } from './plateArt';
 
 /* What a client component needs to show a product: no status, no weight,
    no photographs beyond the first render. Prices travel for display only;
@@ -42,10 +43,11 @@ export const toItem = (p: Product): ShopItem => {
    common name drops its capital, a proper one ("Logo Tee") keeps it. */
 export const inSentence = (name: string) => (/[A-Z]/.test(name.slice(1)) ? name : `${name.charAt(0).toLowerCase()}${name.slice(1)}`);
 
-/* The swatch of a line's colour, else of the product's first colour. */
+/* The body fill for a line's colour (or the product's first): only a colour
+   its ground cannot show has one (plateArt fillOf). */
 export function swatchOf(p: Pick<Product, 'variants' | 'colours'>, id: string): string | undefined {
   const c = p.variants.find((v) => v.id === id)?.colour;
-  return (p.colours?.find((x) => x.id === c) ?? p.colours?.[0])?.swatch;
+  return fillOf(p.colours?.find((x) => x.id === c) ?? p.colours?.[0]);
 }
 
 /* The patch's shape for a line in the bag: round for the circle. */
