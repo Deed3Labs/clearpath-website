@@ -302,8 +302,8 @@ export const PRODUCTS: Product[] = [
         box: [150.3, 110.4, 99.6, 86.8],
         viewBox: [138.3, 92.0, 123.5, 123.5],
       },
-      patch: [109.8, 157.8, 16.6],
-      patchRotate: -9,
+      patch: [106.5, 178.2, 16.6],
+      patchRotate: 3,
     },
     // TODO(owner): final art (this was lifted from mockups and carries their wrinkle shadows), the body copy
     // (lorem ipsum), the photo credit ("Photographer's name"), the full coordinates (latitude only) and the
@@ -338,8 +338,8 @@ export const PRODUCTS: Product[] = [
         box: [190.1, 99.9, 70.3, 115.7],
         viewBox: [153.5, 86.0, 143.5, 143.5],
       },
-      patch: [109.8, 157.8, 16.6],
-      patchRotate: -9,
+      patch: [106.5, 178.2, 16.6],
+      patchRotate: 3,
     },
     // TODO(owner): final art (this was lifted from mockups and carries their wrinkle shadows), the body copy
     // (lorem ipsum), the photo credit ("Photographer's name"), the full coordinates (latitude only) and the
@@ -374,8 +374,8 @@ export const PRODUCTS: Product[] = [
         box: [153.7, 110.4, 92.8, 93.1],
         viewBox: [142.4, 99.2, 115.4, 115.4],
       },
-      patch: [109.8, 157.8, 16.6],
-      patchRotate: -9,
+      patch: [106.5, 178.2, 16.6],
+      patchRotate: 3,
     },
     // TODO(owner): final art (this was lifted from mockups and carries their wrinkle shadows), the body copy
     // (lorem ipsum), the photo credit ("Photographer's name"), the full coordinates (latitude only) and the
