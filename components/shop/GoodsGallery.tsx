@@ -2,6 +2,7 @@
 
 import { GALLERY, type GoodsKind, type Media, type PlateArt, type PlateTone } from '@/content/shop';
 import { useColour } from './ColourContext';
+import { useOption } from './OptionContext';
 import { ProductGallery } from './ProductGallery';
 
 /* A goods product's gallery: its renders and mockups in the colour picked
@@ -30,6 +31,7 @@ export function GoodsGallery({
   art?: PlateArt;
 }) {
   const picked = useColour();
+  const option = useOption();
   return (
     <ProductGallery
       slug={slug}
@@ -40,9 +42,10 @@ export function GoodsGallery({
       stitch={stitch}
       art={art}
       swatch={picked?.colour.swatch}
+      variant={option?.variant}
       copy={{ label: GALLERY.label, render: GALLERY.render, drawing: GALLERY.drawing, mock: GALLERY.mock, cad: '', note: media.length ? GALLERY.note : '' }}
       drawing={[
-        { b: GALLERY.front.b, s: GALLERY.front.s },
+        { b: GALLERY.front.b, s: kind === 'patch' ? GALLERY.front.patch : GALLERY.front.s },
         art?.print ? { b: GALLERY.print.b, s: GALLERY.print.s } : { b: GALLERY.mark.b, s: patch },
         { b: GALLERY.back.b, s: back },
       ]}

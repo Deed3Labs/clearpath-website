@@ -8,6 +8,7 @@ import { usd } from '@/lib/shop/money';
 import { useBag } from './BagProvider';
 import { useColour } from './ColourContext';
 import { Colours } from './Colours';
+import { useOption } from './OptionContext';
 import { announceAdd } from './motion';
 import { Sizes } from './Sizes';
 
@@ -42,8 +43,13 @@ export function AddToBag({
   const colour = picked?.colour;
   const oneSize = !colour && variants.length <= 1;
   const label = variantLabel ?? PRODUCT_COPY.sizeLabel;
-  /* With colours, the size's id ("m"); otherwise the variant's. */
-  const [variant, setVariant] = useState<string | null>(oneSize ? variants[0]?.id ?? null : null);
+  /* With colours, the size's id ("m"); otherwise the variant's. A product
+     whose gallery follows its variant (the patch's shape) shares it through
+     OptionContext, and starts on its first. */
+  const option = useOption();
+  const [own, setOwn] = useState<string | null>(oneSize ? variants[0]?.id ?? null : null);
+  const variant = option ? option.variant : own;
+  const setVariant = (id: string | null) => (option && id ? option.pick(id) : setOwn(id));
   /* The size pills: this colour's variants, named by size alone. */
   const shown = colour
     ? variants.filter((v) => v.colour === colour.id).map((v) => ({ ...v, id: v.size!, label: v.size!.toUpperCase() }))

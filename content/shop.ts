@@ -23,7 +23,7 @@ export const GOODS_SHIPS = 'Jan 2027';
 
 /* Goods are drawn from SHAPES (components/shop/ProductPlate.tsx); hardware
    from HW_SHAPES (components/shop/hardwareShapes.ts, generated from the spec). */
-export type GoodsKind = 'tee' | 'tee-ls' | 'turtleneck' | 'hoodie' | 'cap' | 'tote';
+export type GoodsKind = 'tee' | 'tee-ls' | 'turtleneck' | 'hoodie' | 'cap' | 'tote' | 'patch';
 export type HardwareKind =
   | 'point'
   | 'point-large'
@@ -38,7 +38,7 @@ export type HardwareKind =
   | 'kit';
 export type ProductKind = GoodsKind | HardwareKind;
 
-const GOODS_KINDS: readonly string[] = ['tee', 'tee-ls', 'turtleneck', 'hoodie', 'cap', 'tote'] satisfies GoodsKind[];
+const GOODS_KINDS: readonly string[] = ['tee', 'tee-ls', 'turtleneck', 'hoodie', 'cap', 'tote', 'patch'] satisfies GoodsKind[];
 export const isGoodsKind = (k: ProductKind): k is GoodsKind => GOODS_KINDS.includes(k);
 
 /* The ground a product is drawn on when there is no photograph yet. Tokens,
@@ -73,8 +73,10 @@ export type Colour = { id: string; label: string; swatch: string; tone: PlateTon
    (the drawing from HW_SHAPES sits between them). `caption` follows the
    kind's word in the gallery: "Render · On a table, with the bill".
    Goods take renders and mockups made from the flat sketches; a picture
-   with a `colour` (a Colour's id) shows only while that colour is picked. */
-export type Media = { kind: 'render' | 'mock' | 'cad'; src: string; alt: string; caption: string; colour?: string };
+   with a `colour` (a Colour's id) shows only while that colour is picked.
+   A picture with a `variant` (a variant's id, as the patch's shapes) shows
+   only while that variant is picked; one with neither shows for all. */
+export type Media = { kind: 'render' | 'mock' | 'cad'; src: string; alt: string; caption: string; colour?: string; variant?: string };
 
 export type Product = {
   slug: string;
@@ -170,6 +172,10 @@ export const MOVED: Readonly<Record<string, string>> = {
   turtleneck: 'logo-turtleneck',
   hoodie: 'logo-hoodie',
 };
+
+/* The shelf's category for small things: the patch. (The cap and the tote,
+   both drafts, keep Headwear and Carry.) */
+export const ACCESSORIES = 'Accessories';
 
 /* The shelf's category for the printed tees: its own filter chip. */
 export const GRAPHIC_TEES = 'Graphic Tees';
@@ -427,6 +433,44 @@ export const PRODUCTS: Product[] = [
     ships: GOODS_SHIPS,
     // Off the shelf for now (the owner's call, 2026-10-19). 'live' brings it back.
     status: 'draft',
+  },
+
+  /* ─── The patch, on its own ─────────────────────────────────────────────
+     The same embroidered patch the wearables carry, square or round
+     (reference/redesign/patch: plates, art and spec). Its drawing is the
+     patch itself, large and stitched (components/shop/PatchPlate.tsx);
+     picking a shape swaps the drawing and the pictures. */
+  {
+    slug: 'logo-patch',
+    section: 'goods',
+    name: 'Logo Patch',
+    line: 'The Clear patch on its own, square or round.',
+    description:
+      'The same embroidered patch we sew on everything, to put on your own jacket, bag or cap. 63.5 mm across, with a satin border on the square and a merrowed edge on the round. It sews on; it isn’t iron-on, because iron-on peels.',
+    priceCents: 900,
+    kind: 'patch',
+    tone: 'paper',
+    category: ACCESSORIES,
+    variantLabel: 'Shape',
+    variants: [
+      { id: 'square', label: 'Square' },
+      { id: 'circle', label: 'Circle' },
+    ],
+    details: ['Embroidered, twill backing', 'Embroidered patch, 63.5 mm', 'Sew-on, square or round'],
+    weightOz: 0.5,
+    ships: GOODS_SHIPS,
+    media: [
+      { kind: 'mock', src: '/shop/goods/clear-patch/mock-square.jpg', variant: 'square', alt: 'The square Logo Patch on canvas', caption: 'Square' },
+      { kind: 'mock', src: '/shop/goods/clear-patch/detail-square.jpg', variant: 'square', alt: 'The square patch’s satin border and stitched mark, up close', caption: 'Square, up close' },
+      { kind: 'mock', src: '/shop/goods/clear-patch/mock-back-square.jpg', variant: 'square', alt: 'The square patch beside its twill backing', caption: 'Square, front and back' },
+      { kind: 'mock', src: '/shop/goods/clear-patch/mock-circle.jpg', variant: 'circle', alt: 'The round Logo Patch on canvas', caption: 'Circle' },
+      { kind: 'mock', src: '/shop/goods/clear-patch/detail-circle.jpg', variant: 'circle', alt: 'The round patch’s merrowed edge and stitched mark, up close', caption: 'Circle, up close' },
+      { kind: 'mock', src: '/shop/goods/clear-patch/mock-back-circle.jpg', variant: 'circle', alt: 'The round patch beside its twill backing', caption: 'Circle, front and back' },
+      { kind: 'mock', src: '/shop/goods/clear-patch/mock-pair.jpg', alt: 'The square and round Logo Patches side by side', caption: 'Both shapes' },
+    ],
+    // TODO(owner): order a strike-off of the round patch (merrowed edge) before its run; the square is the
+    // one already on the garments.
+    status: 'live',
   },
 
   /* ─── For shops: the hardware ───────────────────────────────────────────
@@ -903,7 +947,7 @@ export const PRODUCT_COPY = {
   fewer: 'One fewer',
   more: 'One more',
   details: 'Details',
-  shipping: 'Ships within the US. Shipping is quoted at checkout from live carrier rates.',
+  shipping: 'Ships within the US, free on orders of $30 or more. Shipping is quoted at checkout from live carrier rates.',
   /* A goods pre-order: paid today, made in the run, shipped in its month. */
   preorder: 'Pre-order',
   ships: (month: string) => `Ships ${month}, estimated`,
@@ -938,7 +982,7 @@ export const HARDWARE_COPY = {
    detail about its mark ("Embroidered mark"); the back by what is there. */
 export const GALLERY = {
   label: 'Views',
-  front: { b: 'Front', s: 'As it is worn' },
+  front: { b: 'Front', s: 'As it is worn', patch: 'The stitched face' },
   mark: { b: 'Patch' },
   /* The close-up on a Graphic Tee frames its print instead of its patch. */
   print: { b: 'Print', s: 'The printed front' },
@@ -950,6 +994,7 @@ export const GALLERY = {
       turtleneck: 'Nothing on it',
       hoodie: 'Nothing on it',
       cap: 'The strap',
+      patch: 'Twill backing, sew-on',
       tote: 'The plain side',
     } satisfies Record<GoodsKind, string>,
   },
@@ -998,6 +1043,11 @@ export const BAG = {
   getRates: 'Get shipping rates',
   gettingRates: 'Checking carriers…',
   ratesHeading: 'Choose shipping',
+  /* Free shipping from $30 of goods (lib/shop/order.ts): the cheapest rate
+     shows as Free, and the bag says how far off it is. */
+  free: 'Free',
+  freeYes: 'Free shipping on this order: the standard rate is on us.',
+  freeTo: (amount: string) => `Add ${amount} more for free shipping.`,
   days: (n: number) => (n === 1 ? '1 business day' : `${n} business days`),
   payHeading: 'Pay',
   pay: 'Pay with card',

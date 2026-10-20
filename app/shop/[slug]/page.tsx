@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Bento, Chip } from '@/components/system';
 import { AddToBag } from '@/components/shop/AddToBag';
 import { ColourProvider } from '@/components/shop/ColourContext';
+import { OptionProvider } from '@/components/shop/OptionContext';
 import { GoodsGallery } from '@/components/shop/GoodsGallery';
 import { HardwareBuy } from '@/components/shop/HardwareBuy';
 import { ProductGallery } from '@/components/shop/ProductGallery';
@@ -146,7 +147,11 @@ export default async function ProductPage({ params }: Props) {
       </section>
     </div>
   );
-  return product.colours?.length ? <ColourProvider colours={product.colours}>{page}</ColourProvider> : page;
+  if (product.colours?.length) return <ColourProvider colours={product.colours}>{page}</ColourProvider>;
+  /* A product whose pictures follow its variant (the patch's shape) shares
+     the variant picked the same way, starting on the first. */
+  if (product.media?.some((m) => m.variant)) return <OptionProvider initial={product.variants[0].id}>{page}</OptionProvider>;
+  return page;
 }
 
 function ClosedNote() {

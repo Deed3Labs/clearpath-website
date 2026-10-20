@@ -1,0 +1,25 @@
+{
+ "slug": "clear-patch",
+ "name": "Clear Patch",
+ "price": 9,
+ "variants": [
+  {
+   "id": "square",
+   "label": "Square"
+  },
+  {
+   "id": "circle",
+   "label": "Circle"
+  }
+ ],
+ "plate": {
+  "centre": [
+   200,
+   196
+  ],
+  "side": 236,
+  "border": 0.075,
+  "mark": 0.68,
+  "note": "Front: the patch drawn large in the plate patch style; back: backing view. See plates/*.svg."
+ }
+}
