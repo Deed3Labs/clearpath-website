@@ -53,9 +53,10 @@
   .plate .pt { fill: currentColor; }
   .plate .pb { fill: none; stroke: var(--pg); }
   .plate .pm { color: var(--pg); }
-  /* A colour its ground cannot show (Cobalt): the body filled with its
-     swatch, --body, set by ProductPlate. */
-  .plate .bd.filled { fill: var(--body); }
+  /* A filled body: a colour its ground cannot show (Cobalt) in its swatch,
+     --body, set by ProductPlate; otherwise (the Logo Patch's own drawing)
+     the line colour. */
+  .plate .bd.filled { fill: var(--body, currentColor); }
   /* The Logo Patch's own drawing (PatchPlate): the stitches in the ground
      colour on the front, in the line colour on the back. */
   .plate .pt-st { stroke: var(--pg); stroke-opacity: .1; stroke-width: .6; fill: none; }
