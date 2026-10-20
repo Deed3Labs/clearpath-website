@@ -162,20 +162,28 @@ function garment(colours: (keyof typeof COLOURS)[]): Variant[] {
   );
 }
 
+/* Slugs that changed, old → new. next.config.ts redirects the old pages,
+   and a saved bag's lines move with them (components/shop/bagLines.ts). */
+export const MOVED: Readonly<Record<string, string>> = {
+  'member-tee': 'logo-tee',
+  'long-sleeve-mock-tee': 'logo-long-sleeve-tee',
+};
+
 /* The shelf's category for the printed tees: its own filter chip. */
 export const GRAPHIC_TEES = 'Graphic Tees';
 
 export const PRODUCTS: Product[] = [
   /* ─── Goods: the wearables, from the owner's flat sketches ───────────────
      reference/redesign/wearables/flats. Each carries the Clear patch (63.5 mm,
-     embroidered; clear-patch-spec.md beside the flats). `member-tee` keeps
-     its slug and kind for the Logo Tee (short sleeve): links point at it.
+     embroidered; clear-patch-spec.md beside the flats). The Logo Tees were
+     `member-tee` and `long-sleeve-mock-tee`: MOVED (below) sends their old
+     links and saved bags to the new slugs. Their pictures keep their folders.
      The galleries show the mockups and the drawing. The renders were taken
      out for now (the owner prefers the mockups); their files stay in
      public/shop/goods and their entries in reference/redesign/wearables/
      manifest.json, to put back as `{ kind: 'render', … }` lines. */
   {
-    slug: 'member-tee',
+    slug: 'logo-tee',
     section: 'goods',
     name: 'Logo Tee',
     line: 'Heavyweight cotton, mock neck, patch on the chest.',
@@ -200,7 +208,7 @@ export const PRODUCTS: Product[] = [
     status: 'live',
   },
   {
-    slug: 'long-sleeve-mock-tee',
+    slug: 'logo-long-sleeve-tee',
     section: 'goods',
     name: 'Logo Long-Sleeve Tee',
     line: 'The Logo Tee with long sleeves and rib cuffs.',
@@ -270,10 +278,9 @@ export const PRODUCTS: Product[] = [
   /* ─── Graphic Tees ─────────────────────────────────────────────────────
      The Logo Tee with a photograph printed on the front
      (reference/redesign/graphic-tees: plate data, print spec and the art
-     for the factory). The patch moves to the wearer's right sleeve. Drafts
-     until the art and the licences are final: the catalog's only
-     not-on-sale status, so they show in development and on a preview with
-     SHOP_SHOW_DRAFTS=true, and nowhere on production. */
+     for the factory). The patch moves to the wearer's right sleeve. On
+     pre-order like the rest (the owner's call, 2026-10-20), with the art
+     and licences still to finish before the run is printed. */
   {
     slug: 'graphic-tee-carousel-mall',
     section: 'goods',
@@ -305,10 +312,10 @@ export const PRODUCTS: Product[] = [
       patch: [106.5, 178.2, 16.6],
       patchRotate: 3,
     },
-    // TODO(owner): final art (this was lifted from mockups and carries their wrinkle shadows), the body copy
-    // (lorem ipsum), the photo credit ("Photographer's name"), the full coordinates (latitude only) and the
-    // photograph's licence. Until then it stays a draft: not on the shelf, refused at checkout.
-    status: 'draft',
+    // TODO(owner), before the run is printed: final art (lifted from mockups, with their wrinkle shadows);
+    // confirm the credit (AWESTSIDESTORY) with the photographer; the coordinates are from published sources;
+    // the photograph's licence.
+    status: 'live',
   },
   {
     slug: 'graphic-tee-two-ten-overpass',
@@ -341,10 +348,9 @@ export const PRODUCTS: Product[] = [
       patch: [106.5, 178.2, 16.6],
       patchRotate: 3,
     },
-    // TODO(owner): final art (this was lifted from mockups and carries their wrinkle shadows), the body copy
-    // (lorem ipsum), the photo credit ("Photographer's name"), the full coordinates (latitude only) and the
-    // photograph's licence. Until then it stays a draft: not on the shelf, refused at checkout.
-    status: 'draft',
+    // TODO(owner), before the run is printed: final art (lifted from mockups, with their wrinkle shadows);
+    // the photo credit (still "Photographer's name"); the coordinates are the owner's pin; the photograph's licence.
+    status: 'live',
   },
   {
     slug: 'graphic-tee-devore',
@@ -377,10 +383,10 @@ export const PRODUCTS: Product[] = [
       patch: [106.5, 178.2, 16.6],
       patchRotate: 3,
     },
-    // TODO(owner): final art (this was lifted from mockups and carries their wrinkle shadows), the body copy
-    // (lorem ipsum), the photo credit ("Photographer's name"), the full coordinates (latitude only) and the
-    // photograph's licence. Until then it stays a draft: not on the shelf, refused at checkout.
-    status: 'draft',
+    // TODO(owner), before the run is printed: final art (lifted from mockups, with their wrinkle shadows);
+    // the photo credit (still "Photographer's name"); the coordinates are from published sources and may become
+    // the owner's own pin; the photograph's licence.
+    status: 'live',
   },
   {
     slug: 'coop-cap',

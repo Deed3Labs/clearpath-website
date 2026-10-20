@@ -53,6 +53,9 @@ const config: NextConfig = {
       { source: '/clearcapital',      destination: '/capital', statusCode: 301 },
       { source: '/clearcapital.html', destination: '/capital', statusCode: 301 },
       { source: '/index.html',        destination: '/',        statusCode: 301 },
+      // Shop slugs that changed (content/shop.ts MOVED).
+      { source: '/shop/member-tee',           destination: '/shop/logo-tee',             statusCode: 301 },
+      { source: '/shop/long-sleeve-mock-tee', destination: '/shop/logo-long-sleeve-tee', statusCode: 301 },
     ];
   },
 };

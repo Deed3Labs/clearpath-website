@@ -29,11 +29,11 @@ test('a colour/size variant prices from its product', () => {
 });
 
 test('a sold-out colour/size pair is refused like any sold-out variant', () => {
-  const v = PRODUCTS.find((p) => p.slug === 'member-tee')!.variants.find((x) => x.id === 'navy-xl')!;
+  const v = PRODUCTS.find((p) => p.slug === 'logo-tee')!.variants.find((x) => x.id === 'navy-xl')!;
   v.soldOut = true;
   try {
-    assert.equal(priceBag([{ slug: 'member-tee', variant: 'navy-xl', qty: 1 }]), null);
-    assert.ok(priceBag([{ slug: 'member-tee', variant: 'navy-l', qty: 1 }]), 'another size of that colour still sells');
+    assert.equal(priceBag([{ slug: 'logo-tee', variant: 'navy-xl', qty: 1 }]), null);
+    assert.ok(priceBag([{ slug: 'logo-tee', variant: 'navy-l', qty: 1 }]), 'another size of that colour still sells');
   } finally {
     delete v.soldOut;
   }
@@ -47,7 +47,7 @@ test('a one-colour product still names its colour: "Navy · M"', () => {
 });
 
 test('the Stripe line name is "Logo Tee (Black · M)"', () => {
-  const lines = priceBag([{ slug: 'member-tee', variant: 'black-m', qty: 1 }]);
+  const lines = priceBag([{ slug: 'logo-tee', variant: 'black-m', qty: 1 }]);
   assert.ok(lines);
   assert.deepEqual(names(lines), ['Logo Tee (Black · M)']);
 });
@@ -55,7 +55,7 @@ test('the Stripe line name is "Logo Tee (Black · M)"', () => {
 test('a saved bag line with a vanished variant is dropped on load, not sent to checkout', () => {
   const known = PRODUCTS.map((p) => ({ slug: p.slug, variants: p.variants.map((v) => v.id) }));
   const saved = [
-    { slug: 'member-tee', variant: 'm', qty: 1 },
+    { slug: 'logo-tee', variant: 'm', qty: 1 },
     { slug: 'turtleneck', variant: 'navy-l', qty: 1 },
   ];
   // As it was saved, the old line would refuse the whole bag at checkout.
@@ -65,12 +65,12 @@ test('a saved bag line with a vanished variant is dropped on load, not sent to c
   assert.deepEqual(bag.lines, [{ slug: 'turtleneck', variant: 'navy-l', qty: 1 }]);
   assert.ok(priceBag(bag.lines), 'what is left prices');
   // Never mapped to a colour.
-  assert.equal(bag.lines.some((l) => l.slug === 'member-tee'), false);
+  assert.equal(bag.lines.some((l) => l.slug === 'logo-tee'), false);
 });
 
 test('the Stripe picture is the colour bought', () => {
   const lines = priceBag([
-    { slug: 'member-tee', variant: 'white-s', qty: 1 },
+    { slug: 'logo-tee', variant: 'white-s', qty: 1 },
     { slug: 'hoodie', variant: 'land-xl', qty: 1 },
   ]);
   assert.ok(lines);
@@ -78,4 +78,23 @@ test('the Stripe picture is the colour bought', () => {
     (li) => li.price_data!.product_data!.images,
   );
   assert.deepEqual(imgs, [[`${origin}/shop/goods/member-tee/mock-white.jpg`], [`${origin}/shop/goods/hoodie/mock-land.jpg`]]);
+});
+
+test('a saved bag under an old slug moves to the new one', () => {
+  const known = PRODUCTS.map((p) => ({ slug: p.slug, variants: p.variants.map((v) => v.id) }));
+  const bag = readBag(
+    [
+      { slug: 'member-tee', variant: 'black-m', qty: 2 },
+      { slug: 'long-sleeve-mock-tee', variant: 'offwhite-l', qty: 1 },
+      { slug: 'member-tee', variant: 'm', qty: 1 },
+    ],
+    known,
+  );
+  assert.deepEqual(bag.lines, [
+    { slug: 'logo-tee', variant: 'black-m', qty: 2 },
+    { slug: 'logo-long-sleeve-tee', variant: 'offwhite-l', qty: 1 },
+  ]);
+  // The pre-colour size moved too, and was still dropped: its variant is gone.
+  assert.equal(bag.dropped, 1);
+  assert.ok(priceBag(bag.lines));
 });
