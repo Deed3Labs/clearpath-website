@@ -1,4 +1,5 @@
 import { PRODUCTS, SHOP_STATUS, type Product } from '@/content/shop';
+import { fromPrice } from './price';
 
 /* Which products exist, as far as this build is concerned.
  *
@@ -25,8 +26,14 @@ export function getProduct(slug: string): Product | undefined {
 }
 
 /* The shelf's goods, and the For shops hardware, as far as this build shows. */
+/* The goods run from cheapest to dearest, on the shelf and everywhere they
+   are counted ("01 / 08"); products at one price keep the catalog's order. */
 export function goodsProducts(): Product[] {
-  return visibleProducts().filter((p) => p.section === 'goods');
+  return visibleProducts()
+    .filter((p) => p.section === 'goods')
+    .map((p, i) => ({ p, i }))
+    .sort((a, b) => fromPrice(a.p) - fromPrice(b.p) || a.i - b.i)
+    .map(({ p }) => p);
 }
 
 export function forShopsProducts(): Product[] {

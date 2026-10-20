@@ -95,6 +95,10 @@ export type Product = {
   /* The shelf's filter, and the tile's header: "Wear", "Headwear", "Carry"…
      The category chips only appear once five or more products are live. */
   category: string;
+  /* More shelf filters this product is listed under, besides its category:
+     a Logo garment is Wear and Logo, a Graphic Tee is Graphic Tees and
+     Wear. */
+  alsoIn?: string[];
   /* The large tile, once five or more products are live. Without one, the
      first product takes it. */
   featured?: boolean;
@@ -173,12 +177,21 @@ export const MOVED: Readonly<Record<string, string>> = {
   hoodie: 'logo-hoodie',
 };
 
+/* The shelf's filters, in the order its chips show: every garment is Wear;
+   the Logo line (the four Logo garments and the Logo Patch) is Logo; the
+   printed tees are Graphic Tees; the patch is Accessories. */
+export const WEAR = 'Wear';
+export const LOGO = 'Logo';
+
 /* The shelf's category for small things: the patch. (The cap and the tote,
    both drafts, keep Headwear and Carry.) */
 export const ACCESSORIES = 'Accessories';
 
 /* The shelf's category for the printed tees: its own filter chip. */
 export const GRAPHIC_TEES = 'Graphic Tees';
+
+/* The order the shelf's filter chips show in. */
+export const SHELF_FILTERS: readonly string[] = [WEAR, LOGO, GRAPHIC_TEES, ACCESSORIES];
 
 export const PRODUCTS: Product[] = [
   /* ─── Goods: the wearables, from the owner's flat sketches ───────────────
@@ -201,8 +214,8 @@ export const PRODUCTS: Product[] = [
     priceCents: 2700,
     kind: 'tee',
     tone: 'ink',
-    category: 'Wear',
-    featured: true,
+    category: WEAR,
+    alsoIn: [LOGO],
     variantLabel: 'Size',
     colours: [COLOURS.black, COLOURS.white, COLOURS.navy],
     variants: garment(['black', 'white', 'navy']),
@@ -226,7 +239,8 @@ export const PRODUCTS: Product[] = [
     priceCents: 3200,
     kind: 'tee-ls',
     tone: 'ink',
-    category: 'Wear',
+    category: WEAR,
+    alsoIn: [LOGO],
     variantLabel: 'Size',
     colours: [COLOURS.black, COLOURS.offwhite],
     variants: garment(['black', 'offwhite']),
@@ -249,7 +263,8 @@ export const PRODUCTS: Product[] = [
     priceCents: 9800,
     kind: 'turtleneck',
     tone: 'ink',
-    category: 'Wear',
+    category: WEAR,
+    alsoIn: [LOGO],
     variantLabel: 'Size',
     colours: [COLOURS.navy],
     variants: garment(['navy']),
@@ -271,7 +286,8 @@ export const PRODUCTS: Product[] = [
     priceCents: 8800,
     kind: 'hoodie',
     tone: 'ink',
-    category: 'Wear',
+    category: WEAR,
+    alsoIn: [LOGO],
     variantLabel: 'Size',
     colours: [COLOURS.black, COLOURS.land],
     variants: garment(['black', 'land']),
@@ -301,6 +317,7 @@ export const PRODUCTS: Product[] = [
     kind: 'tee',
     tone: 'ink',
     category: GRAPHIC_TEES,
+    alsoIn: [WEAR],
     variantLabel: 'Size',
     colours: [COLOURS.black, COLOURS.cobalt, COLOURS.white],
     variants: garment(['black', 'cobalt', 'white']),
@@ -337,6 +354,7 @@ export const PRODUCTS: Product[] = [
     kind: 'tee',
     tone: 'ink',
     category: GRAPHIC_TEES,
+    alsoIn: [WEAR],
     variantLabel: 'Size',
     colours: [COLOURS.black, COLOURS.cobalt, COLOURS.white],
     variants: garment(['black', 'cobalt', 'white']),
@@ -373,6 +391,7 @@ export const PRODUCTS: Product[] = [
     kind: 'tee',
     tone: 'ink',
     category: GRAPHIC_TEES,
+    alsoIn: [WEAR],
     variantLabel: 'Size',
     colours: [COLOURS.black, COLOURS.cobalt, COLOURS.white],
     variants: garment(['black', 'cobalt', 'white']),
@@ -451,6 +470,10 @@ export const PRODUCTS: Product[] = [
     kind: 'patch',
     tone: 'paper',
     category: ACCESSORIES,
+    alsoIn: [LOGO],
+    /* The shelf's large tile: the first piece, so the shelf reads cheapest
+       first at every width. */
+    featured: true,
     variantLabel: 'Shape',
     variants: [
       { id: 'square', label: 'Square' },

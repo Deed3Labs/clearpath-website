@@ -12,7 +12,7 @@ import { patchShapeOf } from './gallerySlides';
    stay on their product pages: everywhere else a garment is drawn. */
 export type ShopItem = Pick<
   Product,
-  'slug' | 'section' | 'name' | 'line' | 'priceCents' | 'kind' | 'tone' | 'category' | 'featured' | 'variants' | 'variantLabel' | 'details' | 'preorder' | 'ships' | 'colours' | 'plate'
+  'slug' | 'section' | 'name' | 'line' | 'priceCents' | 'kind' | 'tone' | 'category' | 'featured' | 'variants' | 'variantLabel' | 'details' | 'preorder' | 'ships' | 'colours' | 'plate' | 'alsoIn'
 > & { render?: { src: string; alt: string } };
 
 export const toItem = (p: Product): ShopItem => {
@@ -34,6 +34,7 @@ export const toItem = (p: Product): ShopItem => {
     ships: p.ships,
     colours: p.colours,
     plate: p.plate,
+    alsoIn: p.alsoIn,
     render: r ? { src: r.src, alt: r.alt } : undefined,
   };
 };
@@ -47,6 +48,10 @@ export function swatchOf(p: Pick<Product, 'variants' | 'colours'>, id: string): 
   const c = p.variants.find((v) => v.id === id)?.colour;
   return (p.colours?.find((x) => x.id === c) ?? p.colours?.[0])?.swatch;
 }
+
+/* Whether a product is listed under a shelf filter: its category, or one
+   of the filters it is also in. */
+export const inFilter = (p: Pick<Product, 'category' | 'alsoIn'>, f: string) => p.category === f || !!p.alsoIn?.includes(f);
 
 /* The patch's shape for a line in the bag: round for the circle. */
 export const shapeOf = (p: Pick<Product, 'kind'>, id: string) => patchShapeOf(p.kind, id);
