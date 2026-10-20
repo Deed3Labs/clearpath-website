@@ -81,6 +81,8 @@ export type Quote = {
   estimatedDays: number | null;
 };
 
+const cents = (amount: string | number | undefined) => Math.round(Number(amount) * 100);
+
 export async function quoteRates(to: ShipAddress, lines: PricedLine[]): Promise<Quote[]> {
   const shipment = await getShippo().shipments.create({
     addressFrom: shipFrom(),
@@ -103,16 +105,26 @@ export async function quoteRates(to: ShipAddress, lines: PricedLine[]): Promise<
 /* The bag posts back a rate id, and the amount for it is about to be charged.
    The browser is not a source for that amount, so checkout reads the rate
    from Shippo again and bills what the carrier quoted. */
-export async function getRate(rateId: string): Promise<Quote> {
+export async function getRate(rateId: string): Promise<Quote & { shipment: string | null }> {
   const r = await getShippo().rates.get(rateId);
-  const amountCents = Math.round(Number(r.amount) * 100);
+  const amountCents = cents(r.amount);
   if (!Number.isFinite(amountCents)) throw new Error('rate has no amount');
   return {
     rateId: r.objectId,
     label: [r.provider, r.servicelevel?.name].filter(Boolean).join(' ') || 'Shipping',
     amountCents,
     estimatedDays: r.estimatedDays ?? null,
+    shipment: typeof r.shipment === 'string' ? r.shipment : null,
   };
+}
+
+/* The cheapest rate the carriers quoted for a shipment: the part of any
+   rate that free shipping covers (lib/shop/order.ts shippingCents). */
+export async function cheapestCents(shipmentId: string): Promise<number> {
+  const s = await getShippo().shipments.get(shipmentId);
+  const all = (s.rates ?? []).map((r) => cents(r.amount)).filter((c) => Number.isFinite(c) && c > 0);
+  if (!all.length) throw new Error('shipment has no rates');
+  return Math.min(...all);
 }
 
 /* Spends real money on the Shippo account, so only the webhook calls it, and

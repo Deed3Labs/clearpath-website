@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { isShopOpen, priceBag } from '@/lib/shop/catalog';
 import { RatesBody } from '@/lib/shop/schema';
+import { shippingCents, totals } from '@/lib/shop/order';
 import { isShippoConfigured, quoteRates } from '@/lib/shop/shippo';
 
 export const runtime = 'nodejs';
@@ -47,7 +48,10 @@ export async function POST(request: Request) {
         { status: 422 },
       );
     }
-    return NextResponse.json({ rates });
+    /* $30 of goods or more: the cheapest is free, the rest cost the difference. */
+    const { goodsCents } = totals(lines, null);
+    const cheapest = rates[0].amountCents;
+    return NextResponse.json({ rates: rates.map((r) => ({ ...r, amountCents: shippingCents(goodsCents, r.amountCents, cheapest) })) });
   } catch (err) {
     console.error('[shop/rates]', err);
     return NextResponse.json({ error: 'We could not reach the carriers just now.' }, { status: 502 });

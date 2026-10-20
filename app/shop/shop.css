@@ -266,6 +266,8 @@
   .qty.sm { height: 38px; }
   .qty.sm button { width: 36px; height: 36px; font-size: 16px; }
   .addb { min-height: 48px; gap: 10px; }
+  /* Over the rates: free shipping, or how far off it is. */
+  .freeship { margin-bottom: 12px; font-size: 14px; line-height: 1.5; color: var(--color-ink-70); }
   /* The bag's one line when a saved line was taken out on load. */
   .dropped { padding: 12px var(--px); border-bottom: 1px solid var(--color-ink-13); border-left: 2px solid var(--color-underway); background: color-mix(in srgb, var(--color-underway) 7%, transparent); font-size: 14px; line-height: 1.5; }
   .addb[disabled] { opacity: 1; }

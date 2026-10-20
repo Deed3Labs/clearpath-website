@@ -9,7 +9,7 @@ import { More } from '@/components/system';
 import { gsap, motionOK } from '@/lib/anim/gsap';
 import { useIsoLayoutEffect } from '@/lib/anim/hooks';
 import { usd, usdExact } from '@/lib/shop/money';
-import { hasGoods, hasPreorder, steps as stepsFor, totals, type OrderLine, type Step } from '@/lib/shop/order';
+import { FREE_SHIPPING_FROM_CENTS, hasGoods, hasPreorder, steps as stepsFor, totals, type OrderLine, type Step } from '@/lib/shop/order';
 import { deposit, unitPrice } from '@/lib/shop/price';
 import { useBag } from './BagProvider';
 import { inSentence, shapeOf, swatchOf, toneOf, variantText } from './item';
@@ -128,6 +128,8 @@ export function BagView({ products, open }: { products: Product[]; open: boolean
   const flow = stepsFor(orderLines);
   const rate = rates?.find((r) => r.rateId === rateId) ?? null;
   const t = totals(orderLines, rate?.amountCents ?? null);
+  /* What a shipping amount reads as: Free at nothing. */
+  const ship = (c: number) => (c === 0 ? BAG.free : usdExact(c));
   const unavailable = priced.some((l) => !l.available);
   const count = lines.reduce((n, l) => n + l.qty, 0);
   const shop = account?.shop ?? null;
@@ -481,7 +483,7 @@ export function BagView({ products, open }: { products: Product[]; open: boolean
                       </div>
                       <div>
                         <span>{BAG.shippingGoods}</span>
-                        {rate ? <b className="fig">{usdExact(rate.amountCents)}</b> : <b className="wait">{BAG.shippingWait}</b>}
+                        {rate ? <b className="fig">{ship(rate.amountCents)}</b> : <b className="wait">{BAG.shippingWait}</b>}
                       </div>
                     </>
                   )}
@@ -509,7 +511,7 @@ export function BagView({ products, open }: { products: Product[]; open: boolean
                   </div>
                   <div>
                     <span>{BAG.shipping}</span>
-                    {rate ? <b className="fig">{usdExact(rate.amountCents)}</b> : <b className="wait">{BAG.shippingWait}</b>}
+                    {rate ? <b className="fig">{ship(rate.amountCents)}</b> : <b className="wait">{BAG.shippingWait}</b>}
                   </div>
                   <div className="gt">
                     <span>{BAG.total}</span>
@@ -647,7 +649,7 @@ export function BagView({ products, open }: { products: Product[]; open: boolean
                   <div className="stp-h">
                     <b>{num('ship')}</b>
                     <h2 className="t">{BAG.ratesHeading}</h2>
-                    <span className="sum">{rate ? `${rate.label} · ${usdExact(rate.amountCents)}` : ''}</span>
+                    <span className="sum">{rate ? `${rate.label} · ${ship(rate.amountCents)}` : ''}</span>
                     {rate && (
                       <button type="button" className="chg" onClick={() => change('ship')}>
                         {BAG.change}
@@ -656,6 +658,9 @@ export function BagView({ products, open }: { products: Product[]; open: boolean
                   </div>
                   <div className="stp-b" hidden={stateOf('ship') !== 'open'}>
                     <div className="stp-in">
+                      <p className="freeship">
+                        {t.goodsCents >= FREE_SHIPPING_FROM_CENTS ? BAG.freeYes : BAG.freeTo(usd(FREE_SHIPPING_FROM_CENTS - t.goodsCents))}
+                      </p>
                       <div className="rates" role="radiogroup" aria-label={BAG.ratesHeading}>
                         {(rates ?? []).map((r) => (
                           <label className="rate" key={r.rateId}>
@@ -672,7 +677,7 @@ export function BagView({ products, open }: { products: Product[]; open: boolean
                               <b>{r.label}</b>
                               {r.estimatedDays !== null && <small>{BAG.days(r.estimatedDays)}</small>}
                             </span>
-                            <span className="amt fig">{usdExact(r.amountCents)}</span>
+                            <span className="amt fig">{ship(r.amountCents)}</span>
                           </label>
                         ))}
                       </div>

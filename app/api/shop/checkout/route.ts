@@ -2,9 +2,9 @@ import { NextResponse } from 'next/server';
 import { isShopOpen, priceBag } from '@/lib/shop/catalog';
 import { gate, sessionParams, shopCustomer } from '@/lib/shop/checkout';
 import { currentShop } from '@/lib/shop/currentShop';
-import { hasGoods, hasPreorder } from '@/lib/shop/order';
+import { FREE_SHIPPING_FROM_CENTS, hasGoods, hasPreorder, shippingCents, totals } from '@/lib/shop/order';
 import { CheckoutBody } from '@/lib/shop/schema';
-import { getRate, isShippoConfigured, type Quote } from '@/lib/shop/shippo';
+import { cheapestCents, getRate, isShippoConfigured, type Quote } from '@/lib/shop/shippo';
 import { getStripe, isStripeConfigured } from '@/lib/shop/stripe';
 
 export const runtime = 'nodejs';
@@ -49,7 +49,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Choose shipping first. Nothing was charged.' }, { status: 400 });
     }
     try {
-      rate = await getRate(rateId);
+      const r = await getRate(rateId);
+      const { goodsCents } = totals(lines, null);
+      /* Free shipping from $30 of goods, from the carrier's own quotes for
+         this shipment: the cheapest of them, not anything the bag sent. */
+      const amountCents =
+        goodsCents >= FREE_SHIPPING_FROM_CENTS && r.shipment ? shippingCents(goodsCents, r.amountCents, await cheapestCents(r.shipment)) : r.amountCents;
+      rate = { rateId: r.rateId, label: r.label, amountCents, estimatedDays: r.estimatedDays };
     } catch (err) {
       console.error('[shop/checkout] could not re-read rate', rateId, err);
       return NextResponse.json(
