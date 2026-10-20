@@ -45,7 +45,7 @@ export function GoodsGallery({
       variant={option?.variant}
       copy={{ label: GALLERY.label, render: GALLERY.render, drawing: GALLERY.drawing, mock: GALLERY.mock, cad: '', note: media.length ? GALLERY.note : '' }}
       drawing={[
-        { b: GALLERY.front.b, s: GALLERY.front.s },
+        { b: GALLERY.front.b, s: kind === 'patch' ? GALLERY.front.patch : GALLERY.front.s },
         art?.print ? { b: GALLERY.print.b, s: GALLERY.print.s } : { b: GALLERY.mark.b, s: patch },
         { b: GALLERY.back.b, s: back },
       ]}

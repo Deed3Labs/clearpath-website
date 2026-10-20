@@ -142,10 +142,12 @@ export function ProductGallery({
     const vb = k === 'mark' ? closeViewBox(kind as GoodsKind, art) : FULL_VB;
     const fx = root.querySelectorAll('.fx'), bx = root.querySelectorAll('.bx2'), mk = root.querySelectorAll('.mkg'), st = root.querySelector('.st');
     const gar = root.querySelector('.gar');
+    /* Only what this drawing has: the patch's own drawing has no small mark. */
+    const set = (t: NodeListOf<Element>, opacity: number) => t.length && gsap.set(t, { opacity });
     const faces = () => {
-      gsap.set(fx, { opacity: toBack ? 0 : 1 });
-      gsap.set(bx, { opacity: toBack ? 1 : 0 });
-      gsap.set(mk, { opacity: toBack ? 0 : 1 });
+      set(fx, toBack ? 0 : 1);
+      set(bx, toBack ? 1 : 0);
+      set(mk, toBack ? 0 : 1);
     };
     tl.current?.progress(1).kill();
     if (!motionOK() || slide.kind !== 'drawing') {

@@ -58,6 +58,7 @@ function satin(shape: PatchShape, step: number) {
   for (let q = 0; q < 4; q++) {
     const r = (q * Math.PI) / 2;
     for (let x = CX - H + 1.6; x <= CX - IN + 0.01; x += step) seg(rot(CX - IN, CY - IN, r), rot(x, CY - H, r));
+    for (let x = CX + IN; x <= CX + H - 1.6 + 0.01; x += step) seg(rot(CX + IN, CY - IN, r), rot(x, CY - H, r));
     for (let x = CX - IN + 0.7; x <= CX + IN - 1.6; x += step) seg(rot(x, CY - IN, r), rot(x + 1.6, CY - H, r));
   }
   return out.join('');

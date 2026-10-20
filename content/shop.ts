@@ -982,7 +982,7 @@ export const HARDWARE_COPY = {
    detail about its mark ("Embroidered mark"); the back by what is there. */
 export const GALLERY = {
   label: 'Views',
-  front: { b: 'Front', s: 'As it is worn' },
+  front: { b: 'Front', s: 'As it is worn', patch: 'The stitched face' },
   mark: { b: 'Patch' },
   /* The close-up on a Graphic Tee frames its print instead of its patch. */
   print: { b: 'Print', s: 'The printed front' },
