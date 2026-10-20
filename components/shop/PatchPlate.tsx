@@ -1,9 +1,11 @@
 import { useId } from 'react';
 import { LogoMark } from '@/components/marks/Logo';
 
-/* The Logo Patch's own drawing: the patch itself, large and stitched, on the
- * paper plate (light ground, the patch in the line colour, as the real Ink
- * patch is). Matches reference/redesign/patch/plates/clear-patch-*.svg.
+/* The Logo Patch's own drawing: the patch itself, large and stitched, in the
+ * plate's two colours: the patch in the line colour, its stitches and mark
+ * in the ground colour. The shop draws it on the dark green ground, like the
+ * garments' boxes, so the patch reads light there; on paper it is the real
+ * Ink patch (reference/redesign/patch/plates/clear-patch-*.svg).
  *
  * Front: the shape filled in the line colour; a satin border 7.5% of the
  * side wide, its stitches slanting across it in the ground colour (fanned

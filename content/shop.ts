@@ -476,7 +476,9 @@ export const PRODUCTS: Product[] = [
       'The same embroidered patch we sew on everything, to put on your own jacket, bag or cap. 63.5 mm across, with a satin border on the square and a merrowed edge on the round. It sews on; it isn’t iron-on, because iron-on peels.',
     priceCents: 900,
     kind: 'patch',
-    tone: 'paper',
+    /* On the dark green ground, as every garment's box is: the patch
+       drawn light on it (the mockups show the real Ink patch). */
+    tone: 'ink',
     category: ACCESSORIES,
     alsoIn: [LOGO],
     /* The shelf's large tile: the first piece, so the shelf reads cheapest
