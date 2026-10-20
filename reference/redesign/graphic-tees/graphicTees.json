@@ -1,0 +1,95 @@
+{
+ "graphic-tee-carousel-mall": {
+  "name": "Carousel Mall Tee",
+  "printLayer": {
+   "ink": "/shop/goods/graphic-tee-carousel-mall/plate-print.png",
+   "paper": "/shop/goods/graphic-tee-carousel-mall/plate-print-light.png"
+  },
+  "printBox": [
+   150.3,
+   110.4,
+   99.6,
+   86.8
+  ],
+  "cornerText": [
+   238.0,
+   326.3,
+   18.8,
+   4.5
+  ],
+  "patch": [
+   109.8,
+   157.8,
+   16.6
+  ],
+  "patchRotate": -9,
+  "printViewBox": [
+   138.3,
+   92.0,
+   123.5,
+   123.5
+  ]
+ },
+ "graphic-tee-two-ten-overpass": {
+  "name": "Two Ten Overpass Tee",
+  "printLayer": {
+   "ink": "/shop/goods/graphic-tee-two-ten-overpass/plate-print.png",
+   "paper": "/shop/goods/graphic-tee-two-ten-overpass/plate-print-light.png"
+  },
+  "printBox": [
+   190.1,
+   99.9,
+   70.3,
+   115.7
+  ],
+  "cornerText": [
+   238.0,
+   326.3,
+   18.8,
+   4.5
+  ],
+  "patch": [
+   109.8,
+   157.8,
+   16.6
+  ],
+  "patchRotate": -9,
+  "printViewBox": [
+   153.5,
+   86.0,
+   143.5,
+   143.5
+  ]
+ },
+ "graphic-tee-devore": {
+  "name": "Devore Tee",
+  "printLayer": {
+   "ink": "/shop/goods/graphic-tee-devore/plate-print.png",
+   "paper": "/shop/goods/graphic-tee-devore/plate-print-light.png"
+  },
+  "printBox": [
+   153.7,
+   110.4,
+   92.8,
+   93.1
+  ],
+  "cornerText": [
+   238.0,
+   326.3,
+   18.8,
+   4.5
+  ],
+  "patch": [
+   109.8,
+   157.8,
+   16.6
+  ],
+  "patchRotate": -9,
+  "printViewBox": [
+   142.4,
+   99.2,
+   115.4,
+   115.4
+  ]
+ }
+}

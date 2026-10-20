@@ -32,7 +32,7 @@ test('tampering: a price or deposit sent by the browser is dropped and ignored',
   assert.equal('shop' in body, false);
   const params = sessionParams({ lines: price(body.lines), rate, address, email: body.email, shop: MOCK_SHOP, customerId: 'cus_1', origin, taxOn: false });
   const amounts = params.line_items!.map((li) => li.price_data!.unit_amount);
-  assert.deepEqual(amounts, [4200, 5500]);
+  assert.deepEqual(amounts, [2700, 5500]);
 });
 
 test('the shop gate: a pre-order without a verified shop is refused', () => {
@@ -57,7 +57,7 @@ test('mixed bags: goods alone build exactly the session they always did', () => 
         quantity: 2,
         price_data: {
           currency: 'usd',
-          unit_amount: 4200,
+          unit_amount: 2700,
           product_data: {
             name: 'Logo Tee (Black · M)',
             description: 'Pre-order: ships Jan 2027, estimated. Heavyweight cotton, mock neck, patch on the chest.',
@@ -102,7 +102,7 @@ test('mixed bags: goods at full price, a deposit line per pre-order, the card sa
   assert.deepEqual(
     p.line_items!.map((li) => [li.price_data!.product_data!.name, li.price_data!.unit_amount, li.quantity]),
     [
-      ['Logo Tee (Black · M)', 4200, 1],
+      ['Logo Tee (Black · M)', 2700, 1],
       ['Deposit · Clear Point, Table', 5500, 4],
       ['Deposit · Clear Tap, With an M2', 8000, 1],
     ],

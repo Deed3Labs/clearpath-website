@@ -2,10 +2,10 @@
 
 import Image from 'next/image';
 import { useMemo, useRef, useState } from 'react';
-import type { GoodsKind, Media, PlateTone, ProductKind } from '@/content/shop';
+import type { GoodsKind, Media, PlateArt, PlateTone, ProductKind } from '@/content/shop';
 import { gsap, motionOK, useIsoLayoutEffect } from '@/lib/anim';
 import { usePlateDraw } from './motion';
-import { FULL_VB, patchViewBox, ProductPlate, type PlateView } from './ProductPlate';
+import { closeViewBox, FULL_VB, ProductPlate, type PlateView } from './ProductPlate';
 
 /* A product's pictures, as tabs over one frame. Goods: the mockups, then
  * the shop's drawing, then the renders (the order the owner chose).
@@ -64,6 +64,7 @@ export function ProductGallery({
   copy,
   drawing,
   stitch,
+  art,
 }: {
   slug: string;
   kind: ProductKind;
@@ -75,6 +76,9 @@ export function ProductGallery({
   /* Hardware: one view ({ b, s } of its drawing). Goods: front, patch, back. */
   drawing: DrawingViews;
   stitch?: boolean;
+  /* The product's own layer on its drawing: a print, a moved patch. With a
+     print, the close-up frames the print, not the patch. */
+  art?: PlateArt;
 }) {
   const goods = drawing.length === 3;
   const slides = useMemo(() => {
@@ -142,7 +146,7 @@ export function ProductGallery({
     const from = view;
     setView(k);
     const toBack = k === 'back';
-    const vb = k === 'mark' ? patchViewBox(kind as GoodsKind) : FULL_VB;
+    const vb = k === 'mark' ? closeViewBox(kind as GoodsKind, art) : FULL_VB;
     const fx = root.querySelectorAll('.fx'), bx = root.querySelectorAll('.bx2'), mk = root.querySelectorAll('.mkg'), st = root.querySelector('.st');
     const gar = root.querySelector('.gar');
     const faces = () => {
@@ -206,7 +210,7 @@ export function ProductGallery({
               hidden={!shown}
             >
               {s.kind === 'drawing' ? (
-                <ProductPlate kind={kind} tone={tone} stitch={stitch} className="gm" />
+                <ProductPlate kind={kind} tone={tone} stitch={stitch} art={art} className="gm" />
               ) : s.kind === 'cad' ? (
                 <div className="gm d">
                   {/* A drawing sheet, shown as drawn: an SVG, not a photo to optimise. */}
@@ -241,7 +245,7 @@ export function ProductGallery({
             onKeyDown={(e) => onKeyDown(e, i)}
           >
             {s.kind === 'drawing' ? (
-              <ProductPlate kind={kind} tone={tone} view={goods ? s.view : undefined} stitch={stitch} />
+              <ProductPlate kind={kind} tone={tone} view={goods ? s.view : undefined} stitch={stitch} art={art} />
             ) : s.kind === 'cad' ? (
               <span className="ti d">
                 {/* eslint-disable-next-line @next/next/no-img-element */}

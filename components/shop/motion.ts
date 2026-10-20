@@ -49,14 +49,20 @@ function startState(pl: Element) {
   setIf(paths, { strokeDasharray: 1, strokeDashoffset: 1, fillOpacity: 0 });
   setIf(restOf(pl), { opacity: 0 });
   setIf(pl.querySelectorAll('.mk'), { scale: 0, transformOrigin: '50% 50%' });
+  setIf(prints(pl), { opacity: 0 });
   return paths;
 }
+
+/* A printed tee's print (.pr): it fades in with the fill. One drawn hidden
+   for the back view ([data-back]) is left alone. */
+const prints = (pl: Element) => pl.querySelectorAll<SVGElement>('.pr:not([data-back])');
 
 /* The outline runs (D), the fill and the other parts come in .35s before
    it ends, the mark lands .3s before it ends, then every inline style is
    cleared. Absolute times, so a missing part leaves the rest in step. */
 export function drawPlate(pl: Element, delay = 0) {
   const paths = startState(pl);
+  const pr = prints(pl);
   const rest = restOf(pl);
   const mk = pl.querySelectorAll('.mk');
   const stagger = paths.length > 6 ? 0.04 : 0.18;
@@ -70,6 +76,9 @@ export function drawPlate(pl: Element, delay = 0) {
   }
   if (some(rest)) {
     tl.to(rest, { opacity: (_: number, el: SVGElement) => restingOpacity(el), duration: 0.5 }, d - 0.35).set(rest, { clearProps: 'opacity' }, end);
+  }
+  if (some(pr)) {
+    tl.to(pr, { opacity: 1, duration: 0.6 }, d - 0.35).set(pr, { clearProps: 'opacity' }, end);
   }
   if (some(mk)) {
     tl.to(mk, { scale: 1, duration: 0.55, ease: 'back.out(2.2)' }, d - 0.3).set(mk, { clearProps: 'transform' }, end);
@@ -114,6 +123,7 @@ export function usePlateDraw(root: RefObject<HTMLElement | null>, { first = 0 }:
         setIf(p.querySelectorAll(LINES), { clearProps: 'strokeDasharray,strokeDashoffset,fillOpacity' });
         setIf(restOf(p), { clearProps: 'opacity' });
         setIf(p.querySelectorAll('.mk'), { clearProps: 'transform' });
+        setIf(prints(p), { clearProps: 'opacity' });
       });
     };
   }, [root]);

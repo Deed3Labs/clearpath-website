@@ -11,7 +11,7 @@ import type { PlateTone, Product } from '@/content/shop';
    stay on their product pages: everywhere else a garment is drawn. */
 export type ShopItem = Pick<
   Product,
-  'slug' | 'section' | 'name' | 'line' | 'priceCents' | 'kind' | 'tone' | 'category' | 'featured' | 'variants' | 'variantLabel' | 'details' | 'preorder' | 'ships' | 'colours'
+  'slug' | 'section' | 'name' | 'line' | 'priceCents' | 'kind' | 'tone' | 'category' | 'featured' | 'variants' | 'variantLabel' | 'details' | 'preorder' | 'ships' | 'colours' | 'plate'
 > & { render?: { src: string; alt: string } };
 
 export const toItem = (p: Product): ShopItem => {
@@ -32,6 +32,7 @@ export const toItem = (p: Product): ShopItem => {
     preorder: p.preorder,
     ships: p.ships,
     colours: p.colours,
+    plate: p.plate,
     render: r ? { src: r.src, alt: r.alt } : undefined,
   };
 };

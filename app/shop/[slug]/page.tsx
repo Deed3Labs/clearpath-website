@@ -72,6 +72,7 @@ export default async function ProductPage({ params }: Props) {
               stitch={isEmbroidered(product)}
               patch={markDetail(product)}
               back={GALLERY.back.s[product.kind]}
+              art={product.plate}
             />
           ) : null}
 
@@ -131,7 +132,7 @@ export default async function ProductPage({ params }: Props) {
             <PlateDraw className="bx also2">
               {also.map((x) => (
                 <Link className="mini" href={`/shop/${x.slug}`} key={x.slug}>
-                  <ProductPlate kind={x.kind} tone={x.colours?.[0].tone ?? x.tone} />
+                  <ProductPlate kind={x.kind} tone={x.colours?.[0].tone ?? x.tone} art={x.plate} />
                   <span>
                     <b>{x.name}</b>
                     <small>{x.line}</small>
