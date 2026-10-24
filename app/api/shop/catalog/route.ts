@@ -1,6 +1,6 @@
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { NextResponse } from 'next/server';
-import { PRODUCTS, type Product } from '@/content/shop';
+import { MOVED, PRODUCTS, type Product } from '@/content/shop';
 
 export const runtime = 'nodejs';
 
@@ -8,12 +8,13 @@ export const runtime = 'nodejs';
    sells from here instead of keeping a copy that would drift. Live products
    for anyone; drafts too when asked with COMMAND_CATALOG_TOKEN (the same
    value in the API's env). Only what Command needs: no descriptions, media
-   or weights. Read-only; nothing here changes the shop. */
+   or weights; and the renamed slugs. Read-only; nothing here changes the shop. */
 export async function GET(request: Request) {
   const drafts = isCommand(request.headers.get('authorization'));
   const products = PRODUCTS.filter((p) => drafts || p.status === 'live').map(pick);
+  /* moved: old slugs to new, so a record kept under an old one still finds its product */
   return NextResponse.json(
-    { products },
+    { products, moved: MOVED },
     { headers: { 'Cache-Control': drafts ? 'private, no-store' : 'public, max-age=300' } },
   );
 }
