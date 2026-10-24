@@ -8,6 +8,7 @@ import { LiveDot } from '@/components/primitives/Button';
 import { FieldSelect } from './FieldSelect';
 import { FieldRange } from './FieldRange';
 import { FieldRangeDual } from './FieldRangeDual';
+import { track } from '@/components/analytics/Analytics';
 
 /* The join form: four answers, one set of fields, two notes.
  *
@@ -183,6 +184,9 @@ export function JoinForm({ initialMode }: { initialMode: ModeKey }) {
       setStatus('error');
       return;
     }
+
+    /* Counted as a join only now, once the endpoint has kept it: which answer, nothing personal. */
+    track('Join', { as: shown });
 
     /* Confirmed by the endpoint: repeat back what was sent. */
     const rows: [string, string][] = [

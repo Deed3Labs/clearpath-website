@@ -4,6 +4,7 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { HeaderInk } from '@/components/layout/HeaderInk';
 import { DebugGrid } from '@/components/dev/DebugGrid';
+import { Analytics } from '@/components/analytics/Analytics';
 import { HERO } from '@/content/home';
 import './globals.css';
 import './styles/system.css';
@@ -72,6 +73,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Footer />
         <GlowDefs />
         <DebugGrid />
+        <Analytics />
       </body>
     </html>
   );
