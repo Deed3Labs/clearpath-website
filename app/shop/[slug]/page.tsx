@@ -15,20 +15,24 @@ import { isEmbroidered, markDetail, ProductPlate } from '@/components/shop/Produ
 import { pad2 } from '@/components/shop/item';
 import { CLOSED, GALLERY, HARDWARE_COPY, PRODUCT_COPY, isGoodsKind, type Product } from '@/content/shop';
 import { forShopsProducts, fromDeposit, fromPrice, getProduct, goodsProducts, isShopOpen, visibleProducts } from '@/lib/shop/catalog';
+import { shopCatalog } from '@/lib/shop/source';
 import { usd } from '@/lib/shop/money';
 
 /* Only what this build sells gets a page. A draft's URL 404s in production
-   rather than rendering a page whose button checkout would refuse. */
-export const dynamicParams = false;
+   rather than rendering a page whose button checkout would refuse. A
+   product added in the Command Center after the build gets its page on its
+   first visit (its slug isn't known at build time), and a slug the catalog
+   doesn't sell 404s the same way. */
+export const dynamicParams = true;
 
-export function generateStaticParams() {
-  return visibleProducts().map((p) => ({ slug: p.slug }));
+export async function generateStaticParams() {
+  return visibleProducts(await shopCatalog()).map((p) => ({ slug: p.slug }));
 }
 
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const product = getProduct((await params).slug);
+  const product = getProduct((await params).slug, await shopCatalog());
   if (!product) return {};
   return { title: `${product.name} · Shop`, description: product.description };
 }
@@ -40,15 +44,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
    Hardware (section 'for-shops') has its own page, from shops-tools.html:
    the renders, drawing and CAD sheets beside the reservation. */
 export default async function ProductPage({ params }: Props) {
-  const product = getProduct((await params).slug);
+  const catalog = await shopCatalog();
+  const product = getProduct((await params).slug, catalog);
   if (!product) notFound();
-  if (product.section === 'for-shops') return <HardwarePage product={product} />;
+  if (product.section === 'for-shops') return <HardwarePage product={product} catalog={catalog} />;
 
-  const all = goodsProducts();
+  const all = goodsProducts(catalog);
   const i = all.findIndex((p) => p.slug === product.slug);
   const others = all.filter((p) => p.slug !== product.slug);
   const also = [...others.filter((p) => p.category === product.category), ...others.filter((p) => p.category !== product.category)].slice(0, 3);
-  const open = isShopOpen();
+  const open = isShopOpen(catalog);
 
   /* A garment in colours shares the colour picked between its gallery and
      its buy panel. */
@@ -169,15 +174,15 @@ function ClosedNote() {
 const ALSO_POINT = ['pay-case', 'clear-stand', 'clear-tap'];
 const ALSO_REST = ['clear-point', 'clear-tap', 'clear-counter', 'clear-drawer'];
 
-function HardwarePage({ product }: { product: Product }) {
-  const all = forShopsProducts();
+function HardwarePage({ product, catalog }: { product: Product; catalog: Product[] }) {
+  const all = forShopsProducts(catalog);
   const i = all.findIndex((p) => p.slug === product.slug);
   const also = (product.slug === 'clear-point' ? ALSO_POINT : ALSO_REST)
     .filter((s) => s !== product.slug)
-    .map((s) => getProduct(s))
+    .map((s) => getProduct(s, catalog))
     .filter((p): p is Product => !!p)
     .slice(0, 3);
-  const open = isShopOpen();
+  const open = isShopOpen(catalog);
   const c = HARDWARE_COPY;
 
   return (

@@ -1,8 +1,9 @@
 import Image from 'next/image';
 import { More, Section, SectionHead } from '@/components/system';
 import { BEYOND } from '@/content/shops';
-import { PRODUCTS } from '@/content/shop';
+import { type Product } from '@/content/shop';
 import { forShopsProducts, isShopOpen } from '@/lib/shop/catalog';
+import { shopCatalog } from '@/lib/shop/source';
 import { fromLabel } from '@/lib/shop/price';
 
 /* 04 Beyond financing: for the shops financing does not suit, the rest of
@@ -13,9 +14,9 @@ import { fromLabel } from '@/lib/shop/price';
 
 type Cell = (typeof BEYOND.cells)[number];
 
-function value(v: Cell['v']) {
+function value(v: Cell['v'], all: Product[]) {
   if (typeof v === 'string') return v;
-  const p = PRODUCTS.find((x) => x.slug === v.fromPrice);
+  const p = all.find((x) => x.slug === v.fromPrice);
   return p ? fromLabel(p) : '';
 }
 
@@ -34,10 +35,11 @@ function Pic({ pic }: { pic: Cell['pic'] }) {
   );
 }
 
-export function Beyond() {
+export async function Beyond() {
   /* The hardware line goes to the shop once any hardware is for sale there,
      and to the hardware on /shops/tools until then (drafts 404). */
-  const forSale = isShopOpen() && forShopsProducts().length > 0;
+  const all = await shopCatalog();
+  const forSale = isShopOpen(all) && forShopsProducts(all).length > 0;
   const hw = BEYOND.hardware;
   return (
     <Section id="beyond">
@@ -55,7 +57,7 @@ export function Beyond() {
             </div>
             <div className="c-f">
               <span className="ck">{c.k}</span>
-              <span className="fig">{value(c.v)}</span>
+              <span className="fig">{value(c.v, all)}</span>
             </div>
           </div>
         ))}

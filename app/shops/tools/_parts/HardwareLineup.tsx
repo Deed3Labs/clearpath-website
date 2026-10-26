@@ -1,7 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { PRODUCTS, type Product } from '@/content/shop';
+import { type Product } from '@/content/shop';
 import { getProduct, fromLabel, fromDeposit } from '@/lib/shop/catalog';
+import { shopCatalog } from '@/lib/shop/source';
 import { usd } from '@/lib/shop/money';
 import { HARDWARE } from '@/content/shopsTools';
 import { Rise } from './Rise';
@@ -12,11 +13,7 @@ import { Rise } from './Rise';
    on a default build the tiles are not links. The render is decorative: the
    name sits under it. */
 
-const lineup = HARDWARE.lineup
-  .map((slug) => PRODUCTS.find((p) => p.slug === slug))
-  .filter((p): p is Product => Boolean(p));
-
-function Tile({ p }: { p: Product }) {
+function Tile({ p, all }: { p: Product; all: Product[] }) {
   const render = p.media?.find((m) => m.kind === 'render');
   const body = (
     <>
@@ -32,7 +29,7 @@ function Tile({ p }: { p: Product }) {
       </div>
     </>
   );
-  return getProduct(p.slug) ? (
+  return getProduct(p.slug, all) ? (
     <Link className="cell" href={`/shop/${p.slug}`}>
       {body}
     </Link>
@@ -41,11 +38,14 @@ function Tile({ p }: { p: Product }) {
   );
 }
 
-export function HardwareLineup() {
+export async function HardwareLineup() {
+  /* the catalog's, so a price changed in the Command Center shows here too */
+  const all = await shopCatalog();
+  const lineup = HARDWARE.lineup.map((slug) => all.find((p) => p.slug === slug)).filter((p): p is Product => Boolean(p));
   return (
     <Rise className="bx c5 body-gap">
       {lineup.map((p) => (
-        <Tile key={p.slug} p={p} />
+        <Tile key={p.slug} p={p} all={all} />
       ))}
     </Rise>
   );

@@ -16,6 +16,7 @@ import { Rise } from './_parts/Rise';
 import { HardwareLineup } from './_parts/HardwareLineup';
 import { HowReserving } from '@/components/shop/HowReserving';
 import { forShopsProducts } from '@/lib/shop/catalog';
+import { shopCatalog } from '@/lib/shop/source';
 import './page.css';
 import { META, HERO, FEES, TABLES, REWARDS, ONLINE, HARDWARE, COSTS, CLOSE } from '@/content/shopsTools';
 
@@ -26,9 +27,9 @@ export const metadata: Metadata = { title: META.title, description: HERO.lede };
    sale costs, tables on ink, rewards, online, the hardware on ink, what it
    costs, and the close. */
 
-export default function ShopsTools() {
+export default async function ShopsTools() {
   /* The links into the shop show only when it has hardware to show. */
-  const hardwareVisible = forShopsProducts().length > 0;
+  const hardwareVisible = forShopsProducts(await shopCatalog()).length > 0;
 
   return (
     <div className="pg-shops-tools">

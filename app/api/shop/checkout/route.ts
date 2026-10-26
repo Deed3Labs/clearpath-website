@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { isShopOpen, priceBag } from '@/lib/shop/catalog';
+import { shopCatalog } from '@/lib/shop/source';
 import { gate, sessionParams, shopCustomer } from '@/lib/shop/checkout';
 import { currentShop } from '@/lib/shop/currentShop';
 import { FREE_SHIPPING_FROM_CENTS, hasGoods, hasPreorder, shippingCents, totals } from '@/lib/shop/order';
@@ -10,7 +11,9 @@ import { getStripe, isStripeConfigured } from '@/lib/shop/stripe';
 export const runtime = 'nodejs';
 
 export async function POST(request: Request) {
-  if (!isShopOpen()) {
+  /* priced from the catalog the pages showed: the Command Center's, or the content file's */
+  const all = await shopCatalog();
+  if (!isShopOpen(all)) {
     return NextResponse.json({ error: 'The shop is closed right now. Nothing was charged.' }, { status: 503 });
   }
   if (!isStripeConfigured() || !isShippoConfigured()) {
@@ -29,7 +32,7 @@ export async function POST(request: Request) {
   /* Every amount on the session comes from the server: prices and deposits
      from the catalog, shipping re-read from Shippo. The browser only says
      WHAT and HOW MANY. */
-  const lines = priceBag(parsed.data.lines);
+  const lines = priceBag(parsed.data.lines, all);
   if (!lines) {
     return NextResponse.json(
       { error: 'Something in your bag is no longer for sale. Remove it and try again.' },
