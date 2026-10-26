@@ -3,6 +3,10 @@ import { fromPrice } from './price';
 
 /* Which products exist, as far as this build is concerned.
  *
+ * Each helper takes the catalog it works on: the one lib/shop/source.ts
+ * loaded for this render (the Command Center's, or the content file's), or
+ * by default the content file, as the tests use it.
+ *
  * Drafts render in `next dev` so the pages can be designed against something,
  * and on any deploy with SHOP_SHOW_DRAFTS=true (set it on Vercel Preview to
  * review a product before it goes live). They are refused by checkout in the
@@ -16,37 +20,37 @@ export function showDrafts(): boolean {
   return process.env.NODE_ENV === 'development';
 }
 
-export function visibleProducts(): Product[] {
+export function visibleProducts(all: Product[] = PRODUCTS): Product[] {
   const drafts = showDrafts();
-  return PRODUCTS.filter((p) => p.status === 'live' || drafts);
+  return all.filter((p) => p.status === 'live' || drafts);
 }
 
-export function getProduct(slug: string): Product | undefined {
-  return visibleProducts().find((p) => p.slug === slug);
+export function getProduct(slug: string, all: Product[] = PRODUCTS): Product | undefined {
+  return visibleProducts(all).find((p) => p.slug === slug);
 }
 
 /* The shelf's goods, and the For shops hardware, as far as this build shows. */
 /* The goods run from cheapest to dearest, on the shelf and everywhere they
    are counted ("01 / 08"); products at one price keep the catalog's order. */
-export function goodsProducts(): Product[] {
-  return visibleProducts()
+export function goodsProducts(all: Product[] = PRODUCTS): Product[] {
+  return visibleProducts(all)
     .filter((p) => p.section === 'goods')
     .map((p, i) => ({ p, i }))
     .sort((a, b) => fromPrice(a.p) - fromPrice(b.p) || a.i - b.i)
     .map(({ p }) => p);
 }
 
-export function forShopsProducts(): Product[] {
-  return visibleProducts().filter((p) => p.section === 'for-shops');
+export function forShopsProducts(all: Product[] = PRODUCTS): Product[] {
+  return visibleProducts(all).filter((p) => p.section === 'for-shops');
 }
 
 export { deposit, fromDeposit, fromLabel, fromPrice, priceVaries, unitPrice } from './price';
 
 /* Open means the switch is on AND there is something to buy. */
-export function isShopOpen(): boolean {
+export function isShopOpen(all: Product[] = PRODUCTS): boolean {
   const env = process.env.SHOP_OPEN;
   const open = env === 'true' ? true : env === 'false' ? false : SHOP_STATUS.open;
-  return open && visibleProducts().length > 0;
+  return open && visibleProducts(all).length > 0;
 }
 
 export type BagLine = { slug: string; variant: string; qty: number };
@@ -72,10 +76,10 @@ export type PricedLine = BagLine & {
    both call it, and the browser only ever says what and how many. A
    pre-order variant without a deposit, or with one that is not below its
    price, is a catalog mistake and refuses the bag the same way. */
-export function priceBag(lines: BagLine[]): PricedLine[] | null {
+export function priceBag(lines: BagLine[], all: Product[] = PRODUCTS): PricedLine[] | null {
   const out: PricedLine[] = [];
   for (const line of lines) {
-    const product = getProduct(line.slug);
+    const product = getProduct(line.slug, all);
     const variant = product?.variants.find((v) => v.id === line.variant);
     if (!product || !variant || variant.soldOut) return null;
     const unitCents = variant.priceCents ?? product.priceCents;

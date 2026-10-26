@@ -1,6 +1,6 @@
-import { createHash, timingSafeEqual } from 'node:crypto';
 import { NextResponse } from 'next/server';
 import { MOVED, PRODUCTS, type Product } from '@/content/shop';
+import { isCommand } from '@/lib/shop/commandToken';
 import { full } from '@/lib/shop/fullRecord';
 
 export const runtime = 'nodejs';
@@ -17,21 +17,15 @@ export async function GET(request: Request) {
   const drafts = isCommand(request.headers.get('authorization'));
   const whole = drafts && new URL(request.url).searchParams.get('full') === '1';
   const products = PRODUCTS.filter((p) => drafts || p.status === 'live').map((p) => (whole ? full(p) : pick(p)));
-  /* moved: old slugs to new, so a record kept under an old one still finds its product */
+  /* moved: old slugs to new, so a record kept under an old one still finds its product.
+     The CDN keys its cache by address, not by who asks: a public answer
+     cached for ?full=1 was served to Command's request with the token. So
+     ?full=1 is never cached, and the rest varies by Authorization. */
+  const asked = new URL(request.url).searchParams.get('full') === '1';
   return NextResponse.json(
     { products, moved: MOVED },
-    { headers: { 'Cache-Control': drafts ? 'private, no-store' : 'public, max-age=300' } },
+    { headers: { 'Cache-Control': drafts || asked ? 'private, no-store' : 'public, max-age=300', Vary: 'Authorization' } },
   );
-}
-
-function isCommand(header: string | null): boolean {
-  const want = process.env.COMMAND_CATALOG_TOKEN?.trim();
-  const got = header?.replace(/^Bearer\s+/i, '').trim();
-  if (!want || !got) return false;
-  /* compared as hashes, so the comparison takes the same time whatever the length */
-  const a = createHash('sha256').update(want).digest();
-  const b = createHash('sha256').update(got).digest();
-  return timingSafeEqual(a, b);
 }
 
 function pick(p: Product) {

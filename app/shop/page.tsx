@@ -10,8 +10,9 @@ import { WhyMotion } from '@/components/shop/WhyMotion';
 import { GoesArt, LastArt, RunsArt } from '@/components/shop/WhyArt';
 import { ClosedScene } from '@/components/shop/ClosedScene';
 import { BagRow, ClosedBeats, NotifyLink } from '@/components/shop/ClosedParts';
-import { CLOSED, CLOSED_REASONS, FOR_SHOPS, OPENING, SHOP_STATUS, SUPPORT_EMAIL, WHY } from '@/content/shop';
+import { CLOSED, CLOSED_REASONS, FOR_SHOPS, OPENING, SHOP_STATUS, SUPPORT_EMAIL, WHY, type Product } from '@/content/shop';
 import { forShopsProducts, goodsProducts, isShopOpen } from '@/lib/shop/catalog';
+import { shopCatalog } from '@/lib/shop/source';
 
 export const metadata = {
   title: 'Shop',
@@ -35,13 +36,14 @@ export const metadata = {
  * someone arriving needs: their order still ships, how to hear when it
  * reopens, who to ask. The words come from SHOP_STATUS.reason. */
 
-export default function Shop() {
-  return isShopOpen() ? <OpenShop /> : <ClosedShop />;
+export default async function Shop() {
+  const all = await shopCatalog();
+  return isShopOpen(all) ? <OpenShop all={all} /> : <ClosedShop />;
 }
 
-function OpenShop() {
-  const products = goodsProducts().map(toItem);
-  const hardware = forShopsProducts().map(toItem);
+function OpenShop({ all }: { all: Product[] }) {
+  const products = goodsProducts(all).map(toItem);
+  const hardware = forShopsProducts(all).map(toItem);
   return (
     <div className="pg-shop">
       <PageHero

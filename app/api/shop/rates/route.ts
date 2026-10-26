@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { isShopOpen, priceBag } from '@/lib/shop/catalog';
+import { shopCatalog } from '@/lib/shop/source';
 import { RatesBody } from '@/lib/shop/schema';
 import { shippingCents, totals } from '@/lib/shop/order';
 import { isShippoConfigured, quoteRates } from '@/lib/shop/shippo';
@@ -10,7 +11,9 @@ export const runtime = 'nodejs';
    the bag collects the address, this quotes Shippo, and the customer picks a
    rate BEFORE paying. Checkout then charges that rate and nothing else. */
 export async function POST(request: Request) {
-  if (!isShopOpen()) {
+  /* priced from the catalog the pages showed: the Command Center's, or the content file's */
+  const all = await shopCatalog();
+  if (!isShopOpen(all)) {
     return NextResponse.json({ error: 'The shop is closed right now. Nothing was charged.' }, { status: 503 });
   }
   if (!isShippoConfigured()) {
@@ -25,7 +28,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Check the address and try again.' }, { status: 400 });
   }
 
-  const lines = priceBag(parsed.data.lines);
+  const lines = priceBag(parsed.data.lines, all);
   if (!lines) {
     return NextResponse.json(
       { error: 'Something in your bag is no longer for sale. Remove it and try again.' },
