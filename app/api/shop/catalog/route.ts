@@ -1,6 +1,7 @@
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { NextResponse } from 'next/server';
 import { MOVED, PRODUCTS, type Product } from '@/content/shop';
+import { full } from '@/lib/shop/fullRecord';
 
 export const runtime = 'nodejs';
 
@@ -8,10 +9,14 @@ export const runtime = 'nodejs';
    sells from here instead of keeping a copy that would drift. Live products
    for anyone; drafts too when asked with COMMAND_CATALOG_TOKEN (the same
    value in the API's env). Only what Command needs: no descriptions, media
-   or weights; and the renamed slugs. Read-only; nothing here changes the shop. */
+   or weights; and the renamed slugs. Read-only; nothing here changes the shop.
+   With the token and ?full=1, each product's whole record but how it's drawn
+   (lib/shop/fullRecord): Command imports the catalog from it once (Phase 11), and from
+   then on runs it. */
 export async function GET(request: Request) {
   const drafts = isCommand(request.headers.get('authorization'));
-  const products = PRODUCTS.filter((p) => drafts || p.status === 'live').map(pick);
+  const whole = drafts && new URL(request.url).searchParams.get('full') === '1';
+  const products = PRODUCTS.filter((p) => drafts || p.status === 'live').map((p) => (whole ? full(p) : pick(p)));
   /* moved: old slugs to new, so a record kept under an old one still finds its product */
   return NextResponse.json(
     { products, moved: MOVED },
