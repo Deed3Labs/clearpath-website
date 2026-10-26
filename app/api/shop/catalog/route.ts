@@ -8,10 +8,14 @@ export const runtime = 'nodejs';
    sells from here instead of keeping a copy that would drift. Live products
    for anyone; drafts too when asked with COMMAND_CATALOG_TOKEN (the same
    value in the API's env). Only what Command needs: no descriptions, media
-   or weights; and the renamed slugs. Read-only; nothing here changes the shop. */
+   or weights; and the renamed slugs. Read-only; nothing here changes the shop.
+   With the token and ?full=1, each product's whole record but how it's drawn
+   (full, below): Command imports the catalog from it once (Phase 11), and from
+   then on runs it. */
 export async function GET(request: Request) {
   const drafts = isCommand(request.headers.get('authorization'));
-  const products = PRODUCTS.filter((p) => drafts || p.status === 'live').map(pick);
+  const whole = drafts && new URL(request.url).searchParams.get('full') === '1';
+  const products = PRODUCTS.filter((p) => drafts || p.status === 'live').map((p) => (whole ? full(p) : pick(p)));
   /* moved: old slugs to new, so a record kept under an old one still finds its product */
   return NextResponse.json(
     { products, moved: MOVED },
@@ -52,4 +56,15 @@ function pick(p: Product) {
       ...(v.soldOut && { soldOut: true }),
     })),
   };
+}
+
+/* A product for Command's import: everything an owner changes, without how
+   the site draws it (the plate's tone and art, the renders and CAD sheets),
+   which stays here, matched by slug. */
+export function full(p: Product): Omit<Product, 'tone' | 'plate' | 'media'> {
+  const out: Partial<Product> = { ...p, alsoIn: p.alsoIn ?? [], colours: p.colours ?? [] };
+  delete out.tone;
+  delete out.plate;
+  delete out.media;
+  return out as Omit<Product, 'tone' | 'plate' | 'media'>;
 }
