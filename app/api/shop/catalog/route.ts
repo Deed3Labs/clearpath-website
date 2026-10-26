@@ -1,6 +1,7 @@
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { NextResponse } from 'next/server';
 import { MOVED, PRODUCTS, type Product } from '@/content/shop';
+import { full } from '@/lib/shop/fullRecord';
 
 export const runtime = 'nodejs';
 
@@ -10,7 +11,7 @@ export const runtime = 'nodejs';
    value in the API's env). Only what Command needs: no descriptions, media
    or weights; and the renamed slugs. Read-only; nothing here changes the shop.
    With the token and ?full=1, each product's whole record but how it's drawn
-   (full, below): Command imports the catalog from it once (Phase 11), and from
+   (lib/shop/fullRecord): Command imports the catalog from it once (Phase 11), and from
    then on runs it. */
 export async function GET(request: Request) {
   const drafts = isCommand(request.headers.get('authorization'));
@@ -56,15 +57,4 @@ function pick(p: Product) {
       ...(v.soldOut && { soldOut: true }),
     })),
   };
-}
-
-/* A product for Command's import: everything an owner changes, without how
-   the site draws it (the plate's tone and art, the renders and CAD sheets),
-   which stays here, matched by slug. */
-export function full(p: Product): Omit<Product, 'tone' | 'plate' | 'media'> {
-  const out: Partial<Product> = { ...p, alsoIn: p.alsoIn ?? [], colours: p.colours ?? [] };
-  delete out.tone;
-  delete out.plate;
-  delete out.media;
-  return out as Omit<Product, 'tone' | 'plate' | 'media'>;
 }

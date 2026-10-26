@@ -1,7 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { PRODUCTS } from '../../content/shop';
-import { full, GET } from '../../app/api/shop/catalog/route';
+import { GET } from '../../app/api/shop/catalog/route';
+import { full } from '../../lib/shop/fullRecord';
 
 /* The catalog's full records, for Command's import (Phase 11): only with the token and ?full=1, and
    each one the content file's product less how it's drawn. */
