@@ -85,6 +85,15 @@
   /* Older, narrower gutter, still used by the stat row and the tiles. */
   --gutter:     40px;
 
+  /* The dense scale, for the product only: inside cells and lists in the
+     apps and the Command Center. Pages and sections keep the six spacing
+     steps above. */
+  --d1: 4px;
+  --d2: 8px;
+  --d3: 12px;
+  --d4: 16px;
+  --d5: 24px;
+
   /* Motion. */
   --ease:     cubic-bezier(0.16, 1, 0.3, 1); /* power3.out */
   --hover:    200ms;

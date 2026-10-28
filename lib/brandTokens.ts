@@ -130,6 +130,13 @@ export function scale(prefix: 'spacing' | 'radius'): { token: string; value: str
     .map((m) => ({ token: `--${m[1]}`, value: m[2].trim() }));
 }
 
+/* The product's dense scale, --d1 to --d5, from :root in tokens.css. */
+export function denseScale(): { token: string; value: string }[] {
+  const steps = [...tokensCss.matchAll(/--(d\d):\s*([^;]+);/g)].map((m) => ({ token: `--${m[1]}`, value: m[2].trim() }));
+  if (!steps.length) throw new Error('brandTokens: --d1 to --d5 are not defined in lib/tokens.css');
+  return steps;
+}
+
 /* ── The live dot ──────────────────────────────────────────────────────────
    Its construction, read from globals.css the same way the colours are read
    from tokens.css. If the dot's CSS changes shape, a value goes missing and

@@ -6,6 +6,7 @@ import { FieldRangeDual } from '@/components/interactive/FieldRangeDual';
 import { money } from '@/lib/format';
 import {
   bandSwatch,
+  denseScale,
   dotSpec,
   download,
   ease,
@@ -41,6 +42,7 @@ import {
   type ColourEntry,
   type DrawingKind,
   type Download,
+  type Mark,
 } from '@/content/style';
 
 export const metadata = { title: META.title, description: META.description };
@@ -57,7 +59,9 @@ export const metadata = { title: META.title, description: META.description };
  * Hero: the index and a cover plate. Then twelve sections, paper and ink in
  * turn: logo, colour (ink), type, space (ink), layout, components (ink),
  * motion, drawings (ink), the dot, voice (ink), social and print, downloads
- * (ink). */
+ * (ink). Colour, type, space, layout, components, drawings, the dot and
+ * voice each end with the product's notes: the apps and the Command
+ * Center. */
 
 const quiet = quietTrace();
 const fill = (s: string, vars: Record<string, string | number>) => s.replace(/\{(\w+)\}/g, (_, k: string) => String(vars[k]));
@@ -176,6 +180,26 @@ function BigDot({ colour, vars, still, sm }: { colour: string; vars: CSSProperti
   );
 }
 
+/* ── Product pieces ───────────────────────────────────────────────────── */
+
+/* A status square in its token's colour, as the band it sits on binds it. */
+function Sq({ token, hex }: { token?: string; hex?: string }) {
+  return <i className="sq" style={{ '--c': hex ?? `var(--${token})` } as CSSProperties} aria-hidden="true" />;
+}
+
+const NewTag = () => <span className="tag new">{NEW}</span>;
+
+/* A tag set after a line of copy, with the space before it. */
+function After({ mark }: { mark?: Mark | boolean }) {
+  if (!mark) return null;
+  return (
+    <>
+      {' '}
+      <span className="tag new">{mark === 'updated' ? UPDATED : NEW}</span>
+    </>
+  );
+}
+
 /* ── Drawings: the drafting language, one line each ───────────────────── */
 
 function Drawing({ kind, tag }: { kind: DrawingKind; tag: string }) {
@@ -200,7 +224,7 @@ function Drawing({ kind, tag }: { kind: DrawingKind; tag: string }) {
           <rect className="bx2" x="14" y="10" width="60" height="22" />
           <rect className="bx2 dash" x="126" y="10" width="60" height="22" />
           <path className="s2" d="M44 32V52H156V32" />
-          <text x="64" y="66">
+          <text className="mid" x="100" y="64">
             {tag}
           </text>
         </>,
@@ -209,7 +233,7 @@ function Drawing({ kind, tag }: { kind: DrawingKind; tag: string }) {
       return svg(
         <>
           <rect x="50" y="14" width="100" height="40" className="s3" />
-          <text x="62" y="38">
+          <text className="mid c" x="100" y="34">
             {tag}
           </text>
         </>,
@@ -232,7 +256,7 @@ function Drawing({ kind, tag }: { kind: DrawingKind; tag: string }) {
         <>
           <rect className="tl" x="66" y="10" width="68" height="50" />
           <rect className="yr" x="72" y="16" width="56" height="38" />
-          <text className="yt" x="84" y="39">
+          <text className="yt mid c" x="100" y="35">
             {tag}
           </text>
         </>,
@@ -250,6 +274,56 @@ function Drawing({ kind, tag }: { kind: DrawingKind; tag: string }) {
       );
     case 'label':
       return <Chip>{tag}</Chip>;
+    case 'productHatch':
+      return svg(
+        <>
+          <defs>
+            <pattern id="sg-hp" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <line x1="0" y1="0" x2="0" y2="6" className="hl" />
+            </pattern>
+          </defs>
+          <path className="hl" d="M14 64H186" />
+          <rect className="bar" x="34" y="36" width="30" height="28" />
+          <rect className="bar" x="85" y="24" width="30" height="40" />
+          <rect className="est" x="136" y="14" width="30" height="50" />
+          <text className="mid" x="151" y="9">
+            {tag}
+          </text>
+        </>,
+      );
+    case 'arrow':
+      return svg(
+        <>
+          <rect className="bx2" x="10" y="24" width="52" height="22" />
+          <rect className="bx2" x="138" y="24" width="52" height="22" />
+          <path className="s1" d="M62 35H136M128 29l8 6-8 6" />
+        </>,
+      );
+    case 'end':
+      return svg(
+        <>
+          <path className="s1" d="M22 35H100" />
+          <path className="s2" d="M100 35H176" />
+          <path className="s1 end" d="M178 25V45" />
+        </>,
+      );
+    case 'legend':
+      return svg(
+        <>
+          {DRAWINGS.legend.map((k, i) => (
+            <g key={k}>
+              <rect className={`k-${k}`} x="14" y={14 + i * 17} width="9" height="9" />
+              <text x="30" y={22 + i * 17}>
+                {k}
+              </text>
+            </g>
+          ))}
+          <path className="hl" d="M100 62H190" />
+          <path className="ln k-housing" d="M100 54L124 36L150 42L174 22L190 10" />
+          <path className="ln k-land" d="M100 60L124 52L150 54L174 44L190 40" />
+          <path className="ln k-shop" d="M100 46L124 50L150 30L174 34L190 26" />
+        </>,
+      );
   }
 }
 
@@ -276,8 +350,14 @@ function Head({ who, ck, tag }: { who: string; ck?: string; tag?: { text: string
   return (
     <div className="c-h">
       <span className="who">{who}</span>
-      {ck && <span className="ck">{ck}</span>}
-      {tag && <span className={tag.isNew ? 'tag new' : 'tag'}>{tag.text}</span>}
+      {ck && (
+        <span className="ck">
+          {ck}
+          {tag && ' · '}
+          {tag && <span className={tag.isNew ? 'tag new' : 'tag'}>{tag.text}</span>}
+        </span>
+      )}
+      {!ck && tag && <span className={tag.isNew ? 'tag new' : 'tag'}>{tag.text}</span>}
     </div>
   );
 }
@@ -287,6 +367,8 @@ export default function Style() {
   const max = measure().replace(/px$/, '');
   const rootStyle = { '--quiet-halo': quiet.halo.hex, '--quiet-core': quiet.core.hex } as CSSProperties;
   const dot = dotValues();
+  const dense = denseScale();
+  const isNew = { text: NEW, isNew: true };
 
   return (
     <div className="pg-style" style={rootStyle}>
@@ -429,6 +511,24 @@ export default function Style() {
             </div>
           </div>
         </Bento>
+        <Bento>
+          <Head who={COLOUR.product.who} tag={isNew} />
+          <div className="rows">
+            {COLOUR.product.rows.map((r) => (
+              <div key={r.k}>
+                <span className="k">
+                  {r.token && <Sq token={r.token} />}
+                  {r.k}
+                </span>
+                <span className="v">{r.v}</span>
+                <span className="d">
+                  {r.d}
+                  <After mark={r.isNew} />
+                </span>
+              </div>
+            ))}
+          </div>
+        </Bento>
       </Section>
 
       {/* 03 · Type: three faces on subgrid, then the scale. */}
@@ -457,6 +557,28 @@ export default function Style() {
               </span>
             </div>
           ))}
+        </Bento>
+        <Bento>
+          <Head who={TYPE.product.who} ck={TYPE.product.ck} tag={isNew} />
+          <div className="scale">
+            {TYPE.product.scale.map((t) => (
+              <div key={t.key}>
+                <span className="n">{t.n}</span>
+                <span className="s">
+                  {t.s}
+                  <After mark={t.isNew} />
+                </span>
+                <span className="x" data-k={t.key}>
+                  {t.x}
+                </span>
+              </div>
+            ))}
+          </div>
+          <div className="c-f">
+            <span className="ck">
+              {TYPE.product.foot} <NewTag />
+            </span>
+          </div>
         </Bento>
       </Section>
 
@@ -513,6 +635,39 @@ export default function Style() {
             {SPACE.meet.note} <span className="tag new">{SPACE.meet.tag}</span>
           </div>
         </Bento>
+        <Bento className="g2 rows3">
+          <div className="cell">
+            <Head who={SPACE.dense.who} ck={SPACE.dense.ck} tag={isNew} />
+            <GrowBars>
+              {dense.map((s) => (
+                <div key={s.token}>
+                  <span className="t">{s.token}</span>
+                  <span className="px">{s.value}</span>
+                  <span className="bar" style={{ width: s.value }} aria-hidden="true" />
+                </div>
+              ))}
+            </GrowBars>
+            <div className="c-f">
+              <span className="ck">{SPACE.dense.foot}</span>
+            </div>
+          </div>
+          <div className="cell">
+            <Head who={SPACE.heights.who} ck={SPACE.heights.ck} tag={isNew} />
+            <div className="c-m">
+              <ul className="factsd">
+                {SPACE.heights.rows.map((r) => (
+                  <li key={r.k}>
+                    <span>{r.k}</span>
+                    <span>{r.v}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="c-f">
+              <span className="ck">{SPACE.heights.foot}</span>
+            </div>
+          </div>
+        </Bento>
       </Section>
 
       {/* 05 · Layout: the four ways every section is built. */}
@@ -526,10 +681,18 @@ export default function Style() {
                 <div className="lr">
                   <b>{LAYOUT.head.demo.n}</b>
                   {LAYOUT.head.demo.label}
+                  <span className="call">{LAYOUT.head.demo.rule}</span>
                 </div>
                 <div className="hrow">
                   <span className="hl">{LAYOUT.head.demo.title}</span>
                   <span className="as">{LAYOUT.head.demo.aside}</span>
+                </div>
+                <div className="cols">
+                  {LAYOUT.head.demo.cols.map((c) => (
+                    <span className="call" key={c}>
+                      {c}
+                    </span>
+                  ))}
                 </div>
               </div>
               <p>{LAYOUT.head.body}</p>
@@ -541,17 +704,17 @@ export default function Style() {
               <div className="anat-cell" aria-hidden="true">
                 <div className="h">
                   <span className="who">{LAYOUT.cell.demo.who}</span>
-                  <span>{LAYOUT.cell.demo.header}</span>
+                  <span className="call">{LAYOUT.cell.demo.header}</span>
                 </div>
                 <div className="m">
-                  <span>{LAYOUT.cell.demo.main}</span>
+                  <span className="call">{LAYOUT.cell.demo.main}</span>
                   <i style={{ width: '70%' }} />
                   <i style={{ width: '90%' }} />
                   <i style={{ width: '50%' }} />
                 </div>
                 <div className="f">
                   <span className="ck">{LAYOUT.cell.demo.foot}</span>
-                  <span>{LAYOUT.cell.demo.footer}</span>
+                  <span className="call">{LAYOUT.cell.demo.footer}</span>
                 </div>
               </div>
               <p>{LAYOUT.cell.body}</p>
@@ -585,7 +748,10 @@ export default function Style() {
               <ul className="factsd">
                 {LAYOUT.widths.rows.map((r) => (
                   <li key={r.k}>
-                    <span>{r.k}</span>
+                    <span>
+                      {r.k}
+                      <After mark={r.isNew} />
+                    </span>
                     <span>{fill(r.v, { max })}</span>
                   </li>
                 ))}
@@ -593,6 +759,97 @@ export default function Style() {
               <p>{LAYOUT.widths.body}</p>
             </div>
           </div>
+        </Bento>
+        <Bento className="g2">
+          <div className="cell">
+            <Head who={LAYOUT.page.who} ck={LAYOUT.page.ck} tag={isNew} />
+            <div className="c-m">
+              <div className="pga" aria-hidden="true">
+                <div>
+                  <span className="ctx">
+                    <i />
+                    {LAYOUT.page.context}
+                  </span>
+                  <em className="cl">{LAYOUT.page.calls.context}</em>
+                </div>
+                <div>
+                  <span className="brief">
+                    {LAYOUT.page.brief.before}
+                    <u>{LAYOUT.page.brief.link}</u>
+                    {LAYOUT.page.brief.after}
+                  </span>
+                  <em className="cl">{LAYOUT.page.calls.brief}</em>
+                </div>
+                <div>
+                  <span className="vit">
+                    {LAYOUT.page.vitals.map((v) => (
+                      <span key={v.k}>
+                        <small>{v.k}</small>
+                        <b>{v.v}</b>
+                        <i style={{ '--w': `${v.w}%` } as CSSProperties} />
+                      </span>
+                    ))}
+                  </span>
+                  <em className="cl">{LAYOUT.page.calls.vitals}</em>
+                </div>
+                <div>
+                  <span className="tabs">
+                    {LAYOUT.page.tabs.map((t, i) => (
+                      <span className={i === 0 ? 'on' : undefined} key={t}>
+                        {t}
+                      </span>
+                    ))}
+                  </span>
+                  <em className="cl">{LAYOUT.page.calls.tabs}</em>
+                </div>
+              </div>
+              <p>{LAYOUT.page.body}</p>
+            </div>
+          </div>
+          <div className="cell">
+            <Head who={LAYOUT.list.who} ck={LAYOUT.list.ck} tag={isNew} />
+            <div className="c-m">
+              <div className="lsd" aria-hidden="true">
+                <div className="lh">
+                  {LAYOUT.list.cols.map((c) => (
+                    <span key={c}>{c}</span>
+                  ))}
+                </div>
+                {LAYOUT.list.bands.map((b) => [
+                  <div className="lb" key={b.day}>
+                    <span>{b.day}</span>
+                    <span>{b.rows.length}</span>
+                  </div>,
+                  ...b.rows.map((r) => (
+                    <div className="lr" key={r.name}>
+                      <span>
+                        <b>{r.name}</b>
+                        <small>{r.sub}</small>
+                      </span>
+                      <span className="stat">
+                        <Sq token={r.status} />
+                        {r.word}
+                      </span>
+                    </div>
+                  )),
+                ])}
+                <div className="lx hatch" />
+                <div className="lf">
+                  <span>{LAYOUT.list.foot.count}</span>
+                  <b>{LAYOUT.list.foot.link}</b>
+                </div>
+              </div>
+              <p>{LAYOUT.list.body}</p>
+            </div>
+          </div>
+        </Bento>
+        <Bento>
+          <Head who={LAYOUT.listRules.who} tag={isNew} />
+          <ul className="rules g2">
+            {LAYOUT.listRules.items.map((r) => (
+              <li key={r}>{r}</li>
+            ))}
+          </ul>
         </Bento>
       </Section>
 
@@ -623,6 +880,10 @@ export default function Style() {
                     {c.label}
                   </Chip>
                 ))}
+                <span className="stat">
+                  <Sq token={COMPONENTS.chips.stat.token} />
+                  {COMPONENTS.chips.stat.label}
+                </span>
               </div>
               <p className="use">
                 {COMPONENTS.chips.use} <span className="tag new">{UPDATED}</span>
@@ -712,6 +973,152 @@ export default function Style() {
             </div>
           </div>
         </Bento>
+        <Bento className="g3 cmp-c">
+          <div className="cell">
+            <Head who={COMPONENTS.leaf.who} tag={isNew} />
+            <div className="c-m">
+              <div className="stg">
+                <div className="leafs pw">
+                  {COMPONENTS.leaf.items.map((l) => (
+                    <div className="lfr" key={l.title}>
+                      {l.date ? (
+                        <span className="leaf">
+                          <small>{l.day}</small>
+                          <b>{l.date}</b>
+                          <small>{l.month}</small>
+                        </span>
+                      ) : (
+                        <span className="leaf tie" aria-hidden="true" />
+                      )}
+                      <span className="lt">
+                        <b>{l.title}</b>
+                        <small>{l.sub}</small>
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <p className="use">{COMPONENTS.leaf.use}</p>
+            </div>
+          </div>
+          <div className="cell">
+            <Head who={COMPONENTS.panel.who} tag={isNew} />
+            <div className="c-m">
+              <div className="stg">
+                <div className="pnd pw" aria-hidden="true">
+                  <div className="pm">
+                    {[80, 60, 70, 45].map((w) => (
+                      <i style={{ width: `${w}%` }} key={w} />
+                    ))}
+                  </div>
+                  <div className="pp">
+                    <div className="ph">
+                      <span className="lab">{COMPONENTS.panel.title}</span>
+                      <span className="lab">{COMPONENTS.panel.close}</span>
+                    </div>
+                    <div className="pb">
+                      {[85, 60, 70].map((w) => (
+                        <i style={{ width: `${w}%` }} key={w} />
+                      ))}
+                    </div>
+                    <div className="pf">
+                      <span className="pbtn">{COMPONENTS.panel.actions.secondary}</span>
+                      <span className="pbtn s">{COMPONENTS.panel.actions.main}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <p className="use">{COMPONENTS.panel.use}</p>
+            </div>
+          </div>
+          <div className="cell">
+            <Head who={COMPONENTS.toast.who} tag={isNew} />
+            <div className="c-m">
+              <div className="stg">
+                {/* The toast is drawn light on the band, so its square takes
+                    underway's paper value, not the band's. */}
+                <div className="tst pw">
+                  <Sq hex={swatch('color-underway').hex} />
+                  <span>
+                    <b>{COMPONENTS.toast.lead}</b>
+                    {COMPONENTS.toast.rest}
+                  </span>
+                </div>
+              </div>
+              <p className="use">{COMPONENTS.toast.use}</p>
+            </div>
+          </div>
+          <div className="cell">
+            <Head who={COMPONENTS.masked.who} tag={isNew} />
+            <div className="c-m">
+              <div className="stg">
+                <div className="mkd pw">
+                  <div className="mini-led">
+                    {COMPONENTS.masked.rows.map((r) => (
+                      <div key={r.k}>
+                        <span>{r.k}</span>
+                        <b>{r.v}</b>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="rv">
+                    <span>{COMPONENTS.masked.reason}</span>
+                    <span className="pbtn">{COMPONENTS.masked.reveal}</span>
+                  </div>
+                </div>
+              </div>
+              <p className="use">{COMPONENTS.masked.use}</p>
+            </div>
+          </div>
+          <div className="cell">
+            <Head who={COMPONENTS.twoPerson.who} tag={isNew} />
+            <div className="c-m">
+              <div className="stg">
+                <div className="tpr pw">
+                  {COMPONENTS.twoPerson.steps.map((st) => (
+                    <div className={st.hatch ? 'hatch' : st.off ? 'off' : undefined} key={st.label}>
+                      <b>
+                        <Sq token={st.token} />
+                        {st.label}
+                      </b>
+                      <small>{st.by}</small>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <p className="use">{COMPONENTS.twoPerson.use}</p>
+            </div>
+          </div>
+          <div className="cell">
+            <Head who={COMPONENTS.access.who} tag={isNew} />
+            <div className="c-m">
+              <div className="stg">
+                {/* Each level fills one more of four squares. */}
+                <div className="lvl pw">
+                  {COMPONENTS.access.levels.map((l, i) => (
+                    <span key={l}>
+                      <span className="q" aria-hidden="true">
+                        {[0, 1, 2, 3].map((q) => (
+                          <i className={q < i ? 'f' : undefined} key={q} />
+                        ))}
+                      </span>
+                      {l}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <p className="use">{COMPONENTS.access.use}</p>
+            </div>
+          </div>
+        </Bento>
+        <Bento>
+          <Head who={COMPONENTS.trust.who} ck={COMPONENTS.trust.ck} tag={isNew} />
+          <ul className="rules g2">
+            {COMPONENTS.trust.items.map((r) => (
+              <li key={r}>{r}</li>
+            ))}
+          </ul>
+        </Bento>
       </Section>
 
       {/* 07 · Motion: the four moves, working, then the rules. */}
@@ -745,7 +1152,10 @@ export default function Style() {
                 <div className="stg">
                   <Drawing kind={d.kind} tag={d.tag} />
                 </div>
-                <p>{d.body}</p>
+                <p>
+                  {d.body}
+                  <After mark={'mark' in d ? d.mark : undefined} />
+                </p>
               </div>
             </div>
           ))}
@@ -900,6 +1310,11 @@ export default function Style() {
               {DOT.rules.items.map((r) => (
                 <li key={r}>{r}</li>
               ))}
+              {DOT.rules.added.map((r) => (
+                <li key={r}>
+                  {r} <NewTag />
+                </li>
+              ))}
             </ul>
           </div>
         </Bento>
@@ -934,7 +1349,10 @@ export default function Style() {
         <Bento className="rows">
           {VOICE.rows.map((r) => (
             <div key={r.k}>
-              <span className="k">{r.k}</span>
+              <span className="k">
+                {r.k}
+                <After mark={r.isNew} />
+              </span>
               <span className="v">{r.v}</span>
               <span className="d">{r.d}</span>
             </div>
