@@ -20,19 +20,19 @@ export const UPDATED = 'Updated';
 export const HERO = {
   label: { kicker: 'Brand', title: 'Style guide' },
   lines: ['How Clear looks,', 'sounds and is built.'],
-  lede: 'The reference for anything with the Clear name on it: a site, an app, a flyer or a post. Every value here is the one the website is built from.',
+  lede: 'The reference for anything with the Clear name on it: a site, an app, a flyer or a post. Every value here is the one the website is built from, and the product notes are the ones the apps are built from.',
   indexLabel: 'On this page',
   index: [
     { id: 'logo', n: '01', label: 'Logo', isNew: false },
-    { id: 'colour', n: '02', label: 'Colour', isNew: false },
-    { id: 'type', n: '03', label: 'Type', isNew: false },
-    { id: 'space', n: '04', label: 'Space and shape', isNew: false },
+    { id: 'colour', n: '02', label: 'Colour', isNew: true },
+    { id: 'type', n: '03', label: 'Type', isNew: true },
+    { id: 'space', n: '04', label: 'Space and shape', isNew: true },
     { id: 'layout', n: '05', label: 'Layout', isNew: true },
-    { id: 'components', n: '06', label: 'Components', isNew: false },
-    { id: 'motion', n: '07', label: 'Motion', isNew: true },
+    { id: 'components', n: '06', label: 'Components', isNew: true },
+    { id: 'motion', n: '07', label: 'Motion', isNew: false },
     { id: 'drawings', n: '08', label: 'Drawings', isNew: true },
-    { id: 'dot', n: '09', label: 'The dot', isNew: false },
-    { id: 'voice', n: '10', label: 'Voice', isNew: false },
+    { id: 'dot', n: '09', label: 'The dot', isNew: true },
+    { id: 'voice', n: '10', label: 'Voice', isNew: true },
     { id: 'applications', n: '11', label: 'Social and print', isNew: false },
     { id: 'downloads', n: '12', label: 'Downloads', isNew: false },
   ],
@@ -168,6 +168,28 @@ export const COLOUR = {
     live: 'Green light runs along a line when something is live: a payment going through.',
     quiet: 'Faded cobalt is the quiet version, for pointing at something without calling it live.',
   },
+  /* What colour means in the apps and the Command Center. `token` is the
+     status colour drawn as a square beside the name. */
+  product: {
+    who: 'In the product',
+    rows: [
+      {
+        k: 'Colour means status',
+        v: 'Only',
+        d: 'In a list, colour says where a thing is. Kind, area and group are plain text; their colours live in charts and the legend beside them.',
+      },
+      { k: 'Settled', token: 'color-settled', v: 'Done', d: 'Paid, approved, sent, live.' },
+      { k: 'Underway', token: 'color-underway', v: 'Waiting', d: 'On a second person, in progress, on the way.' },
+      { k: 'Absent', token: 'color-absent', v: 'Stopped', d: 'Declined, failed, overdue, blocked.' },
+      {
+        k: 'Cobalt',
+        token: 'color-live',
+        v: 'Current',
+        d: 'The current tab, the selected row, the figure that is moving. In a tool it can appear once per cell rather than once per view.',
+        isNew: true,
+      },
+    ] as { k: string; token?: string; v: string; d: string; isNew?: boolean }[],
+  },
 } as const;
 
 /* ── 03 Type ──────────────────────────────────────────────────────────── */
@@ -210,6 +232,22 @@ export const TYPE = {
     { key: 'figure', n: 'Figure', s: 'Instrument 600 · tabular · −2%', x: '$1,062.20' },
     { key: 'label', n: 'Label', s: 'Plex Mono 400 · 11.5px · caps +10%', x: '04 · You pick the split' },
   ],
+  /* The product's scale: the same faces, set denser. `key` picks the style
+     the sample is set in (page.css .scale .x[data-k]). */
+  product: {
+    who: 'In the product',
+    ck: 'Denser, for tools used all day',
+    scale: [
+      { key: 'p-brief', n: 'Page brief', s: 'Bricolage 800 · 28–34px · −3.5%', x: 'Three materials are low.' },
+      { key: 'p-title', n: 'Panel title', s: 'Bricolage 800 · 22px · −3%', x: 'Order 1042' },
+      { key: 'p-vital', n: 'Vital', s: 'Instrument 600 · 26px · tabular', x: '$4,182.50' },
+      { key: 'p-row', n: 'Row, primary', s: 'Instrument 600 · 13.5px', x: 'Natural canvas tote' },
+      { key: 'p-sub', n: 'Row, secondary', s: 'Instrument 400 · 12px · ink 50', x: 'Made to order · 6 in stock' },
+      { key: 'p-col', n: 'Column header', s: 'Plex Mono 400 · 10px · caps +10%', x: 'Status' },
+      { key: 'p-id', n: 'Identifier', s: 'Plex Mono 400 · 11.5px · as written', x: 'ORD-1042 · 0x4f2a…91c3', isNew: true },
+    ] as { key: string; n: string; s: string; x: string; isNew?: boolean }[],
+    foot: '10px is the floor, and only for column headers. Order numbers, addresses and hashes are set in mono so they can be read character by character.',
+  },
 } as const;
 
 /* ── 04 Space and shape ───────────────────────────────────────────────── */
@@ -236,6 +274,24 @@ export const SPACE = {
     note: 'The rule was “draw rules, not boxes.” It still is: a bordered bento is rules that meet, so it passes. A floating card does not.',
     tag: 'Restated',
   },
+  /* The product's own scale; its values are read from lib/tokens.css. */
+  dense: {
+    who: 'The dense scale',
+    ck: 'Product only',
+    foot: 'A separate scale for tools, inside cells and lists. Pages and sections keep the six steps.',
+  },
+  heights: {
+    who: 'Fixed heights',
+    ck: 'So rows line up across cells',
+    rows: [
+      { k: 'Cell header and footer', v: '56px' },
+      { k: 'Column header row', v: '38px' },
+      { k: 'Section band in a list', v: '32px' },
+      { k: 'Input', v: '34px' },
+      { k: 'Small button', v: '30px' },
+    ],
+    foot: 'Rows keep their natural height. Only these are fixed.',
+  },
 } as const;
 
 /* ── 05 Layout ────────────────────────────────────────────────────────── */
@@ -247,7 +303,15 @@ export const LAYOUT = {
   head: {
     who: 'The section head',
     ck: '7 / 5, stacks below 900px',
-    demo: { n: '02', label: 'The split', title: 'The land is why this works.', aside: 'One line that adds what the headline does not.' },
+    demo: {
+      n: '02',
+      label: 'The split',
+      title: 'The land is why this works.',
+      aside: 'One line that adds what the headline does not.',
+      /* The call-outs drawn over it. */
+      rule: 'Label rule',
+      cols: ['7 · Headline', '5 · Aside'],
+    },
     body: 'A full-width label rule with the number in cobalt, the headline, and one aside line. Hero headlines sit on two set lines from tablet up.',
   },
   cell: {
@@ -289,8 +353,55 @@ export const LAYOUT = {
       { k: 'Desktop', v: '{max} max, 1440 tested' },
       { k: 'Tablet', v: '900' },
       { k: 'Phone', v: '390, nothing scrolls sideways at 360' },
+      { k: 'Apps', v: 'Breaks at 1180, 1024, 760', isNew: true },
+    ] as { k: string; v: string; isNew?: boolean }[],
+    body: 'Visitors split evenly across the three, so each is designed on its own terms, not squeezed. Apps are designed desktop first.',
+  },
+  /* The product page, drawn: its four parts in order, each called out. The
+     brief's `link` is the words underlined, as a link in it would be. */
+  page: {
+    who: 'The product page',
+    ck: 'Every page, same order',
+    context: 'Shop · Inland Empire · Demo data',
+    brief: { before: 'Orders are up this month, and ', link: 'three materials', after: ' are below their reorder point.' },
+    vitals: [
+      { k: 'Orders', v: '148', w: 62 },
+      { k: 'Revenue', v: '$6.2k', w: 48 },
+      { k: 'Margin', v: '41%', w: 41 },
+      { k: 'Low stock', v: '3', w: 20 },
     ],
-    body: 'Visitors split evenly across the three, so each is designed on its own terms, not squeezed.',
+    tabs: ['Overview', 'Products', 'Materials', 'Orders'],
+    calls: { context: 'Context', brief: 'Brief', vitals: 'Vitals', tabs: 'Tabs' },
+    body: 'A mono context line with the live dot, one sentence written from the data with links inside it, four vitals that open the tab they describe, then tabs kept in the address.',
+  },
+  /* A product list, drawn. `status` is the colour token of each row's square. */
+  list: {
+    who: 'A product list',
+    ck: 'Rows, bands, leftover',
+    cols: ['Order', 'Status'],
+    bands: [
+      {
+        day: 'Today',
+        rows: [
+          { name: 'Ana Torres', sub: 'Canvas tote · pickup', status: 'color-underway', word: 'Packing' },
+          { name: 'Marcus Bell', sub: 'Tee, medium · shipping', status: 'color-settled', word: 'Sent' },
+        ],
+      },
+      { day: 'Yesterday', rows: [{ name: 'June Park', sub: 'Cap · shipping', status: 'color-absent', word: 'Refunded' }] },
+    ],
+    foot: { count: '3 orders', link: 'All orders' },
+    body: 'Column headers over their columns, a tinted band per day, status last on the row, and the hatch where the list runs out.',
+  },
+  listRules: {
+    who: 'Rules for product lists',
+    items: [
+      'Rows keep their natural height. Space under a short list takes the hatch; a sliver under 12px takes nothing.',
+      'The last row has no line before the footer, and nothing draws a line under a header that already has one.',
+      'Column headers sit exactly over their columns. Numbers and status align right, and so do their headers.',
+      'Section bands group rows, such as days in a log or months in documents. Never one band for a single item.',
+      'Cells in one band are the same height, and their 56px headers and footers line up.',
+      'Details open in a side panel: the label and close at the top, actions at the bottom, the main one on the right.',
+    ],
   },
 } as const;
 
@@ -314,7 +425,9 @@ export const COMPONENTS = {
       { tone: 'underway', label: 'In build' },
       { tone: 'absent', label: 'Not yet' },
     ],
-    use: 'Say exactly where a thing is. “Invite-only” over “beta”: it is the honest word.',
+    /* The product's form: a square and a word. */
+    stat: { token: 'color-underway', label: 'Waiting' },
+    use: 'Two forms. The pill, on the site and for a page’s own status. In product lists, a square and a word, always at the end of the row. Say exactly where a thing is: “Invite-only” over “beta”.',
   },
   seg: {
     who: 'Segmented toggle',
@@ -368,6 +481,65 @@ export const COMPONENTS = {
       { k: 'Tax distributions', v: 'Mandatory' },
     ],
   },
+  /* The product's components, drawn small. */
+  leaf: {
+    who: 'Calendar leaf',
+    items: [
+      { day: 'Wed', date: '21', month: 'Oct', title: 'Board vote', sub: '6:00 pm · Town hall' },
+      /* Same day: no leaf of its own, tied to the one above. */
+      { title: 'Payout batch', sub: '9:00 pm · Money' },
+    ] as { day?: string; date?: string; month?: string; title: string; sub: string }[],
+    use: 'Weekday, day, month, at the left of a dated row. Items on the same day share one leaf, joined by a tie line.',
+  },
+  panel: {
+    who: 'Side panel',
+    title: 'Order 1042',
+    close: '✕',
+    actions: { secondary: 'Decline', main: 'Approve' },
+    use: 'Details open on the right without leaving the page. The header stays put, the body scrolls, and the main action sits bottom right.',
+  },
+  toast: {
+    who: 'Toast',
+    lead: 'Buy proposed.',
+    rest: ' It waits on Dana Ruiz in Money. Logged in Records.',
+    use: 'Confirms what happened, says what happens next, and says where it was logged.',
+  },
+  masked: {
+    who: 'Masked details',
+    rows: [
+      { k: 'Email', v: 'a•••@g•••.com' },
+      { k: 'Phone', v: '(•••) •••-••12' },
+    ],
+    reason: 'Reason: shipping question',
+    reveal: 'Reveal',
+    use: 'Hidden for everyone by default. Each reveal asks why, and logs who, whose, which fields and the reason.',
+  },
+  twoPerson: {
+    who: 'Two-person rule',
+    /* `token` is the square's colour; `hatch` marks the step still waiting,
+       `off` the one not reached. */
+    steps: [
+      { label: 'Proposed', by: 'Marcus Bell', token: 'color-settled' },
+      { label: 'Waiting', by: 'On Dana Ruiz', token: 'color-underway', hatch: true },
+      { label: 'Approved', by: 'Not yet', token: 'color-ink-28', off: true },
+    ] as { label: string; by: string; token: string; hatch?: boolean; off?: boolean }[],
+    use: 'Money, on-chain, access and settings changes need a second person. Nobody approves their own.',
+  },
+  access: {
+    who: 'Access levels',
+    levels: ['None', 'Totals', 'See', 'Propose', 'Approve'],
+    use: 'Set per group for each page, never per person. Totals shows co-op numbers with no names, emails or accounts.',
+  },
+  trust: {
+    who: 'Trust, built in',
+    ck: 'Product rules',
+    items: [
+      'Read-only views hide actions entirely. Opening and reading still work.',
+      'Hiding a button is not security. The server checks the level on every request.',
+      'Locked settings cannot be edited. They link to where they are decided: a vote, the bylaws, a policy or the law.',
+      'The log only grows. A correction is a new entry that points back to the old one.',
+    ],
+  },
 } as const;
 
 /* ── 07 Motion ────────────────────────────────────────────────────────── */
@@ -416,24 +588,73 @@ export const MOTION = {
 } as const;
 
 /* ── 08 Drawings ──────────────────────────────────────────────────────── */
-export type DrawingKind = 'solid' | 'dotted' | 'dashed' | 'dashdot' | 'hatch' | 'cobalt' | 'cobaltHatch' | 'label';
+export type DrawingKind =
+  | 'solid'
+  | 'dotted'
+  | 'dashed'
+  | 'dashdot'
+  | 'hatch'
+  | 'cobalt'
+  | 'cobaltHatch'
+  | 'label'
+  | 'productHatch'
+  | 'arrow'
+  | 'end'
+  | 'legend';
+
+/* The tag after a drawing's note, if it is new or changed in this edition. */
+export type Mark = 'new' | 'updated';
 
 export const DRAWINGS = {
   n: '08',
   label: 'Drawings',
   title: 'A line means one thing, everywhere it appears.',
-  line: 'Plans, plats and org charts share one drafting language, so a reader learns it once.',
+  line: 'Plans, plats, org charts and the product’s charts share one drafting language, so a reader learns it once.',
   /* `kind` picks the drawing; `tag` is the word set inside it, if any. */
   items: [
     { kind: 'solid', who: 'Solid', ck: 'Owns', tag: '', body: 'An ownership line. Every coordinate derived, never typed.' },
     { kind: 'dotted', who: 'Dotted', ck: 'Contract', tag: 'contracts', body: 'A relationship that is not ownership. Always labelled.' },
     { kind: 'dashed', who: 'Dashed box', ck: 'Ownerless', tag: 'foundation', body: 'Means ownerless and nothing else. One per drawing at most.' },
     { kind: 'dashdot', who: 'Dash-dot', ck: 'Lot and parcel', tag: '', body: 'A legal boundary: the parcel, a lot line, the title.' },
-    { kind: 'hatch', who: 'Hatch', ck: 'Held in common', tag: '', body: 'Land the members hold together. Never “ours” against “yours”.' },
+    {
+      kind: 'hatch',
+      who: 'Hatch',
+      ck: 'Held in common',
+      tag: '',
+      body: 'Land the members hold together, in drawings. Never “ours” against “yours”.',
+      mark: 'updated',
+    },
     { kind: 'cobalt', who: 'Cobalt', ck: 'Yours, or current', tag: 'yours', body: 'The one home, seat or figure the reader should find first.' },
     { kind: 'cobaltHatch', who: 'Cobalt hatch', ck: 'Housing side', tag: '', body: 'Land and property when a drawing splits money from housing.' },
     { kind: 'label', who: 'The label', ck: 'Every sample figure', tag: 'Figures illustrative', body: 'Any made-up number says so right beside it, not in a footnote.' },
-  ] satisfies { kind: DrawingKind; who: string; ck: string; tag: string; body: string }[],
+    {
+      kind: 'productHatch',
+      who: 'Product hatch',
+      ck: 'Not real yet',
+      tag: 'est.',
+      body: 'In the product: pending, estimated, or nothing to show yet. A different thing from the land hatch.',
+      mark: 'new',
+    },
+    {
+      kind: 'arrow',
+      who: 'Open arrow',
+      ck: 'Moves to',
+      tag: '',
+      body: 'A payment, a payout, a handoff. The head is two drawn lines, never a filled triangle.',
+      mark: 'new',
+    },
+    { kind: 'end', who: 'Line to a bar', ck: 'Stops here', tag: '', body: 'Something that ends: a lease term, a contract, a retired version.', mark: 'new' },
+    {
+      kind: 'legend',
+      who: 'The legend',
+      ck: 'Category colour',
+      tag: '',
+      body: 'Charts may colour by category, always with a legend. List rows never do.',
+      mark: 'new',
+    },
+  ] satisfies { kind: DrawingKind; who: string; ck: string; tag: string; body: string; mark?: Mark }[],
+  /* The legend drawing's three categories. */
+  legend: ['land', 'housing', 'shop'],
 } as const;
 
 /* ── 09 The dot ───────────────────────────────────────────────────────── */
@@ -508,6 +729,11 @@ export const DOT = {
       'Always beside a word that says the same thing. The dot is never the only signal.',
       'With reduced motion, keep the dot and stop the ping.',
     ],
+    /* New in this edition, for the product. */
+    added: [
+      'In the product, the dot means live only: a sync running, a payment going through.',
+      'A status in a product list is a square, so a dot never reads as a bullet.',
+    ],
   },
 } as const;
 
@@ -530,13 +756,23 @@ export const VOICE = {
     { k: 'Honest status', y: 'Invite-only.', n: 'Live. Now in beta.', isNew: true },
     { k: 'The land', y: 'The land is held in common by members.', n: 'The land stays ours. The house becomes yours.', isNew: true },
     { k: 'Less to read', y: 'One headline, one line, then show it.', n: 'A paragraph explaining a figure the reader can see.', isNew: true },
+    { k: 'Name the person', y: 'Waiting on Dana Ruiz in Money.', n: 'Pending approval.', isNew: true },
+    { k: 'Say what happens next', y: 'Buy proposed. Dana Ruiz approves or declines it. Logged in Records.', n: 'Success!', isNew: true },
+    { k: 'Dates people read', y: 'Wed 21 Oct, 6:00 pm', n: '10/21/2026 18:00', isNew: true },
+    { k: 'Money in tables', y: '$500.00', n: '$500, 500 USD', isNew: true },
   ],
   rows: [
     { k: 'Paragraphs', v: 'Three lines', d: 'At most, in a cell, at every width from 1100px up. Longer does not get read.' },
     { k: 'Names', v: 'Clear · ClearPath', d: 'Clear is the co-op. ClearPath is the housing programme. “Shares”, not units, on the partner pages.' },
     { k: 'Never', v: 'Bank, yield, insured', d: 'Do not call Clear a bank, publish a rate or return, or say deposits are insured.' },
     { k: 'Place', v: 'Inland Empire', d: 'Inland Empire, California.' },
-  ],
+    {
+      k: 'Demo data',
+      v: 'Say so on the page',
+      d: 'Until the numbers are real, “Demo data” sits in every product page’s context line, the same way “Figures illustrative” sits beside a sample figure.',
+      isNew: true,
+    },
+  ] as { k: string; v: string; d: string; isNew?: boolean }[],
 } as const;
 
 /* ── 11 Social and print ──────────────────────────────────────────────── */
