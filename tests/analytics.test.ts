@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { beforeSend, cleanUrl, tracker } from '../components/analytics/Analytics';
+import { beforeSend, cleanUrl, leaver, tracker } from '../components/analytics/Analytics';
 
 /* Umami on useclear.org: only the co-op's own tracker loads, and an address is counted without its
    hash or any parameter but utm_ (a poster's QR says utm_source=poster). */
@@ -28,4 +28,17 @@ test('an address keeps only its utm_ parameters, whole or as a path', () => {
 test('every event leaves cleaned, its page and where it came from', () => {
   const out = beforeSend('event', { website: ID, url: 'https://www.useclear.org/join?email=a@b.c&utm_source=poster', referrer: 'https://news.example/post?id=9#c', name: 'Join' });
   assert.deepEqual(out, { website: ID, url: 'https://www.useclear.org/join?utm_source=poster', referrer: 'https://news.example/post', name: 'Join' });
+});
+
+test('Leave goes once a page view, however the page is left', () => {
+  let sent = 0;
+  const l = leaver(() => sent++);
+  l.leave('/how');
+  l.leave('/how');
+  assert.equal(sent, 1, 'hidden, then closed: one Leave');
+  l.leave('/how?utm_source=poster');
+  assert.equal(sent, 2, 'a new address is a new page view');
+  l.arm();
+  l.leave('/how?utm_source=poster');
+  assert.equal(sent, 3, 'back on a page already left, after navigating: armed again');
 });

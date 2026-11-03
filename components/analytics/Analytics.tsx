@@ -1,5 +1,6 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 
 /* Umami on useclear.org, for the Clear Command Center's Growth page, which
@@ -64,7 +65,40 @@ export function beforeSend(_type: string, payload: Payload): Payload {
   };
 }
 
+/* Leave, once a page view, as the page closes or its tab goes hidden: Growth times a page from its
+   view to the visit's next event, so without it the last page of a visit has no time. Leaving the
+   same address again sends nothing; a new page view arms it again. Only the event's name goes. */
+export function leaver(send: () => void): { leave: (at: string) => void; arm: () => void } {
+  let left: string | null = null;
+  return {
+    leave(at) {
+      if (left === at) return;
+      left = at;
+      send();
+    },
+    arm() {
+      left = null;
+    },
+  };
+}
+
+const leaving = leaver(() => track('Leave'));
+
 export function Analytics() {
+  const pathname = usePathname();
+  useEffect(() => leaving.arm(), [pathname]);
+
+  useEffect(() => {
+    const leave = () => leaving.leave(window.location.pathname + window.location.search);
+    const hidden = () => document.visibilityState === 'hidden' && leave();
+    window.addEventListener('pagehide', leave);
+    document.addEventListener('visibilitychange', hidden);
+    return () => {
+      window.removeEventListener('pagehide', leave);
+      document.removeEventListener('visibilitychange', hidden);
+    };
+  }, []);
+
   useEffect(() => {
     const t = tracker(process.env.NEXT_PUBLIC_UMAMI_SRC, process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID);
     if (!t || !LIVE_HOSTS.includes(window.location.hostname) || document.querySelector(`script[src="${t.src}"]`)) return;
