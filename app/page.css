@@ -2,15 +2,12 @@
    loaded after you leave it, so nothing here may be global). */
 
 .pg-home {
-  /* ── Hero: the member app's Home, on its own ground ─────────────────────
-     Desktop canvas 1200 wide, drawn from the live app: the balance first,
-     then the cycle, the temporary slot, and the accounts slab. */
-  .hb { padding: 30px 40px 40px; display: grid; gap: 22px; }
+  /* ── The member app's Home, on its own ground ───────────────────────────
+     Drawn from the live app: the balance first, then the cycle, the
+     temporary slot, and the accounts slab. Shown on a phone in 04. */
   .bal { display: flex; justify-content: space-between; align-items: end; gap: 24px; }
   .bal-l { display: grid; gap: 6px; }
   .bal-n { font-size: 46px; line-height: 1; letter-spacing: -0.035em; margin-top: 4px; }
-  .acts { display: grid; grid-template-columns: repeat(2, 150px); gap: 10px; }
-  .acts .pillb { height: 36px; font-size: 13.5px; }
   .cyc { border: 1px solid var(--a-line); background: var(--a-2); }
   .cyc-r1 { display: flex; justify-content: space-between; align-items: start; padding: 18px 20px; }
   .cyc-r1 .lbl { display: block; }
@@ -27,39 +24,138 @@
   .slab2 > .blk:nth-child(even) { border-left: 1px solid var(--a-line); }
   .bh .num span { color: var(--a-50); font-weight: 500; font-size: 13px; }
   .bm { padding: 16px 20px; display: grid; align-content: start; gap: 14px; }
-  .bf.col { display: grid; gap: 10px; align-content: center; justify-content: stretch; }
   .comp { display: flex; height: 6px; gap: 0; }
   .trows { display: grid; gap: 6px; font-size: 13px; color: var(--a-70); }
   .trows.big { gap: 0; font-size: 14px; }
   .trows.big div { padding-block: 11px; border-bottom: 1px solid var(--a-line); }
   .trows.big div:first-child { padding-top: 0; color: var(--a-50); font-size: 13px; }
   .trows.big div:last-child { border-bottom: 0; color: var(--a-fg); padding-bottom: 0; }
-  .three { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-  .cred { position: relative; height: 4px; background: var(--a-2); }
-  .cred i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--a-ok); transform-origin: 0 50%; }
-  .plan { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 3px 12px; padding-bottom: 12px; border-bottom: 1px solid var(--a-line); align-items: center; }
-  .plan + .plan, .sub-rule + .plan { padding-top: 0; }
-  .plan .d { grid-column: 1 / -1; color: var(--a-50); font-size: 12.5px; }
-  .plan .d b { color: var(--a-ok); font-weight: 500; }
-  .plan.locked > span:first-child { color: var(--a-70); }
-  .lk { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--a-50); border: 1px solid var(--a-line); border-radius: 999px; padding: 3px 8px; }
-  .sub-rule { color: var(--a-50); }
-  .split-foot { display: grid; grid-template-columns: 1fr 1px 1fr; width: 100%; align-items: center; gap: 14px; }
-  .split-foot i { height: 18px; background: var(--a-line); }
-  .split-foot b { color: var(--a-fg); font-weight: 500; }
-  .dd { display: inline-flex; align-items: center; gap: 7px; height: 28px; padding-inline: 11px; border-radius: 999px; border: 1px solid rgb(111 203 159 / .35); color: var(--a-ok); font-size: 12.5px; }
-  .dd i { width: 6px; height: 6px; border-radius: 999px; background: var(--a-ok); }
-  
-  /* Member home, phone canvas 390 x 860 — the same components, stacked */
+
+  /* Member home, phone canvas 390 x 860 — the components, stacked */
   .ph-body { padding: 22px 18px 96px; display: grid; gap: 16px; }
   .ph-body .bal { display: grid; gap: 16px; }
   .ph-body .bal-n { font-size: 38px; }
-  .ph-body .acts { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
-  .ph-body .acts .pillb { padding-inline: 6px; font-size: 12.5px; }
   .ph-body .slab2 { grid-template-columns: minmax(0, 1fr); }
   .ph-body .slab2 > .blk:nth-child(2) { border-top: 1px solid var(--a-line); border-left: 0; }
   .ph-body .cyc-r1 .amt { font-size: 24px; }
-  .plan.last { border-bottom: 0; }
+
+  /* ── The Clear Card, put together on scroll ─────────────────────────────
+     Ported from docs/card-section/reference/card-section.html. The section
+     pins under the header (its live height, --head-h). Scrolling brings the
+     four pieces together (back, core, chip, face), then turns the card to
+     its back; scrolling up runs it in reverse. The steps follow along. */
+  .cardsec { position: relative; height: calc(100svh - var(--head-h, 94px)); min-height: 600px; background: var(--color-paper); overflow-x: clip; }
+  .cardsec > .wrap { height: 100%; display: grid; grid-template-rows: auto minmax(0, 1fr); padding-top: 4px; padding-bottom: clamp(20px, 3vw, 40px); }
+  .card-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding-bottom: var(--spacing-2); border-bottom: 1px solid var(--color-ink-13); }
+  .card-count { display: inline-flex; align-items: center; gap: 10px; font-variant-numeric: tabular-nums; }
+  .card-count b { font-weight: 400; color: var(--color-live); }
+  .card-count i { width: 22px; height: 1px; background: var(--color-ink-28); }
+  .card-body { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: clamp(32px, 5vw, 88px); min-height: 0; }
+  .card-view { position: relative; min-height: 0; }
+  .card-view canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; touch-action: pan-y; opacity: 0; transition: opacity 1200ms var(--ease);
+    /* the shadow never meets a hard canvas edge */
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 7%, #000 86%, transparent), linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+    -webkit-mask-composite: source-in; mask-image: linear-gradient(to bottom, transparent, #000 7%, #000 86%, transparent), linear-gradient(to right, transparent, #000 5%, #000 95%, transparent); mask-composite: intersect; }
+  /* Callouts: a dot on the card, a short rule, a name. Positioned every frame. */
+  .card-labels { position: absolute; inset: 0; pointer-events: none; }
+  .cl { position: absolute; left: 0; top: 0; display: flex; align-items: center; height: 0; font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; opacity: 0; will-change: transform, opacity; }
+  .cl::before { content: ''; flex: none; width: 5px; height: 5px; margin-left: -2.5px; border-radius: var(--radius-pill); background: var(--color-ink); box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-paper) 70%, transparent); }
+  .cl i { flex: none; width: 40px; height: 1px; margin: 0 10px 0 3px; background: var(--color-ink-50); }
+  .cl b { font-weight: 400; color: var(--color-ink); }
+  .cl span { text-shadow: 0 0 3px var(--color-paper), 0 0 6px var(--color-paper), 0 0 10px var(--color-paper); }
+  .cl.l { flex-direction: row-reverse; }
+  .cl.l::before { margin-left: 0; margin-right: -2.5px; }
+  .cl.l i { margin: 0 3px 0 10px; }
+  .cl em { font-style: normal; color: var(--color-ink-50); margin-left: 10px; }
+  .cl[data-k="edge"] { flex-direction: column; align-items: flex-start; height: auto; margin-top: -2.5px; }
+  .cl[data-k="edge"] i { width: 1px; height: 44px; margin: 3px 0 10px 0; }
+  .cl[data-k="edge"] span { display: grid; gap: 2px; }
+  .cl[data-k="edge"] em { margin: 0; }
+  /* The scroll cue: a word and a short rule that keeps falling. */
+  .card-cue { position: absolute; left: 0; bottom: 2%; display: grid; justify-items: start; gap: 10px; transition: opacity 400ms var(--ease); pointer-events: none; }
+  .card-cue i { position: relative; width: 1px; height: 34px; background: var(--color-ink-13); overflow: hidden; }
+  .card-cue i::after { content: ''; position: absolute; left: 0; top: 0; width: 1px; height: 12px; background: var(--color-ink); animation: home-cue 1.8s cubic-bezier(.65, 0, .35, 1) infinite; }
+  @media (prefers-reduced-motion: reduce) { .card-cue { display: none; } }
+  .card-view.ready canvas { opacity: 1; }
+  .card-fallback { display: none; position: absolute; left: 6%; top: 6%; width: 88%; height: 88%; object-fit: contain; }
+  .card-view.nogl .card-fallback { display: block; }
+  .card-view.nogl canvas { display: none; }
+  .card-side { display: grid; align-content: center; gap: var(--spacing-4); padding-bottom: 6px; }
+  /* Desktop: the stage never grows past a comfortable height, and it sits
+     centred in the pinned screen, so the card and the copy share one centre
+     line instead of the copy sinking to the bottom of a tall box. */
+  @media (min-width: 1001px) { .card-body { align-self: center; height: min(100%, 720px); } }
+  .card-intro { display: grid; gap: 10px; }
+  .card-intro h2 { font-family: var(--font-display); font-weight: 800; font-size: clamp(30px, 2.9vw, 44px); line-height: 1; letter-spacing: -0.035em; text-wrap: balance; }
+  .card-intro p { color: var(--color-ink-70); font-size: clamp(16px, 1.25vw, 18px); line-height: 1.5; max-width: 40ch; }
+  /* Steps: a vertical rule that fills with the scroll; the current step lights. */
+  .steps { position: relative; display: grid; border-left: 1px solid var(--color-ink-13); }
+  .steps-fill { position: absolute; left: -1px; top: 0; bottom: 0; width: 2px; background: var(--color-ink); transform-origin: 50% 0; transform: scaleY(0); pointer-events: none; }
+  .step { display: grid; grid-template-columns: 34px minmax(0, 1fr); align-items: baseline; text-align: left; padding: 13px 0 13px 20px; color: var(--color-ink-50); transition: color 300ms var(--ease); }
+  .step .n { font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; transition: color 300ms var(--ease); }
+  .step .t { font-family: var(--font-display); font-weight: 600; font-size: clamp(18px, 1.5vw, 22px); line-height: 1.2; letter-spacing: -0.02em; }
+  .step .d { grid-column: 2; display: grid; grid-template-rows: 0fr; opacity: 0; font-size: 14.5px; line-height: 1.45; color: var(--color-ink-70); transition: grid-template-rows 420ms var(--ease), opacity 300ms var(--ease), margin 420ms var(--ease); }
+  .step .d > span { overflow: hidden; }
+  .step.on { color: var(--color-ink); }
+  .step.on .n { color: var(--color-live); }
+  .step.on .d { grid-template-rows: 1fr; opacity: 1; margin-top: 6px; }
+  .step:hover { color: var(--color-ink); }
+  .steps-seg { display: none; }
+  /* The off switch: appears with step 04 and drives the chip on the card.
+     Its row always keeps its height, so nothing shifts when it appears. */
+  .chipsw-row { display: flex; align-items: center; gap: 14px; min-height: 40px; opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity 300ms var(--ease), transform 420ms var(--ease), visibility 0s linear 420ms; }
+  .chipsw-row.show { opacity: 1; visibility: visible; transform: none; transition: opacity 420ms var(--ease), transform 520ms var(--ease), visibility 0s; }
+  .chipsw { display: inline-flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 16px 0 6px; border: 1px solid var(--color-ink); border-radius: var(--radius-pill); font-size: 14.5px; font-weight: 500; color: var(--color-ink); transition: border-color 200ms var(--ease), color 200ms var(--ease); }
+  .chipsw .track { position: relative; width: 44px; height: 28px; border-radius: var(--radius-pill); background: var(--color-ink); transition: background-color 260ms var(--ease); }
+  .chipsw .track i { position: absolute; top: 3px; left: 19px; width: 22px; height: 22px; border-radius: var(--radius-pill); background: var(--color-paper); box-shadow: 0 0 0 0 transparent; transition: left 320ms cubic-bezier(.3, 1.4, .5, 1), box-shadow 300ms var(--ease); }
+  .chipsw .track i::after { content: ''; position: absolute; inset: 7px; border-radius: var(--radius-pill); background: var(--color-signal-light); transition: background-color 260ms var(--ease), transform 260ms var(--ease); }
+  .chipsw .off-t { display: none; }
+  .chipsw[aria-checked="false"] { border-color: var(--color-ink-28); color: var(--color-ink-70); }
+  .chipsw[aria-checked="false"] .track { background: var(--color-ink-28); }
+  .chipsw[aria-checked="false"] .track i { left: 3px; }
+  .chipsw[aria-checked="false"] .track i::after { background: var(--color-ink-28); transform: scale(.7); }
+  .chipsw[aria-checked="false"] .on-t { display: none; }
+  .chipsw[aria-checked="false"] .off-t { display: inline; }
+  /* Editions: the same card in three stains. */
+  .card-controls { display: grid; gap: var(--spacing-3); }
+  .editions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .editions .label { margin-right: 6px; }
+  .ed { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding-inline: 13px 15px; border: 1px solid var(--color-ink-28); border-radius: var(--radius-pill); font-size: 14px; color: var(--color-ink-70); transition: border-color 200ms var(--ease), color 200ms var(--ease); }
+  .ed:hover { color: var(--color-ink); border-color: var(--color-ink); }
+  .ed[aria-pressed="true"] { color: var(--color-ink); border-color: var(--color-ink); }
+  .ed i { width: 12px; height: 12px; border-radius: var(--radius-pill); background: linear-gradient(90deg, var(--f) 0 50%, var(--c) 50% 100%); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-ink) 18%, transparent); }
+  /* Tablet and phone: the card on top, one step at a time underneath. */
+  @media (max-width: 1000px) {
+    .cardsec { min-height: 560px; }
+    .card-body { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; }
+    .card-side { gap: var(--spacing-3); padding-bottom: 0; }
+    .card-intro { display: none; }
+    .steps { border-left: 0; padding-top: 18px; }
+    .steps-fill { display: none; }
+    .steps-seg { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; position: absolute; left: 0; right: 0; top: 0; height: 2px; }
+    .steps-seg i { background: var(--color-ink-13); position: relative; overflow: hidden; }
+    .steps-seg i::after { content: ''; position: absolute; inset: 0; background: var(--color-ink); transform-origin: 0 50%; transform: scaleX(var(--k, 0)); }
+    .step { grid-area: 2 / 1; padding: 0; opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity 260ms var(--ease), transform 360ms var(--ease), visibility 0s linear 360ms; }
+    .steps { grid-template-rows: auto auto; }
+    .step.on { opacity: 1; visibility: visible; transform: none; transition: opacity 360ms var(--ease) 80ms, transform 460ms var(--ease) 80ms, visibility 0s; }
+    .step .d { grid-template-rows: 1fr; opacity: 1; margin-top: 6px; }
+    .step .t { font-size: 21px; }
+    /* the switch sits on the editions' line, at the right; the space is kept
+       while it is hidden, so nothing moves when step 04 brings it in */
+    .card-controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .card-controls .editions { order: 1; flex-wrap: nowrap; }
+    .card-controls .chipsw-row { order: 2; min-height: 0; }
+  }
+  @media (max-width: 560px) {
+    .card-top .card-hint span { display: none; }
+    /* phones: the editions shrink to swatches so the switch fits beside them */
+    .ed { justify-content: center; width: 36px; padding: 0; }
+    .ed .ed-t { display: none; }
+    .ed i { width: 14px; height: 14px; }
+    .chipsw-row .label { display: none; }
+    .chipsw { padding-right: 13px; font-size: 14px; }
+  }
+  @media (max-height: 640px) and (min-width: 1001px) { .card-intro p { display: none; } .step { padding-block: 9px; } }
 
   /* ── 01 The gap: two columns, one clock ───────────────────────────────── */
   .cmp { --line: var(--color-ink-28); --px: clamp(20px, 2.8vw, 40px); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); border: 1px solid var(--line); }
@@ -254,6 +350,24 @@
     .rows .chip { grid-column: 2; grid-row: 1; }
   }
 
+  /* The rows beside the member app on a phone (from the homepage mockup's
+     status grid); below 900px the phone goes under them, centred. Its screen
+     is cropped (Screen crop) and fades out over its last fifth. */
+  .status-grid { display: grid; grid-template-columns: minmax(0, 1fr) clamp(280px, 25vw, 340px); column-gap: clamp(32px, 6vw, 112px); align-items: start; }
+  .status-grid .rows { grid-template-columns: minmax(0, 5fr) minmax(0, 5fr) 110px; column-gap: clamp(20px, 3vw, 48px); }
+  .shot .screen { -webkit-mask-image: linear-gradient(#000 78%, transparent); mask-image: linear-gradient(#000 78%, transparent); }
+  @media (max-width: 1100px) {
+    .status-grid .rows { grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--spacing-3); }
+    .status-grid .rows li { grid-template-columns: subgrid; row-gap: 4px; padding-block: 18px; }
+    .status-grid .rows .ds { grid-column: 1; grid-row: 2; }
+    .status-grid .rows .chip { grid-column: 2; grid-row: 1; }
+  }
+  @media (max-width: 900px) {
+    .status-grid { grid-template-columns: minmax(0, 1fr); row-gap: var(--spacing-4); }
+    .shot { width: min(100%, 400px); justify-self: center; }
+    #status { padding-bottom: var(--spacing-5); }
+  }
+
   /* ── 05 The ledger ──────────────────────────────────────────────────────── */
   .src { font-family: var(--font-mono); font-size: 11.5px; color: var(--color-ink-50); overflow-wrap: anywhere; margin-top: 10px; }
   .led-head, .ev { display: grid; grid-template-columns: 130px minmax(0, 1fr) minmax(0, 1.3fr) 120px; gap: 18px; align-items: baseline; }
@@ -284,3 +398,4 @@
 
 @keyframes home-ask { 50% { border-color: var(--color-ink); color: var(--color-ink); } }
 @keyframes home-sweep { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(calc(100% - 2px)); } }
+@keyframes home-cue { 0% { transform: translateY(-12px); } 100% { transform: translateY(34px); } }
