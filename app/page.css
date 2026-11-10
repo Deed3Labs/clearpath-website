@@ -45,7 +45,9 @@
      four pieces together (back, core, chip, face), then turns the card to
      its back; scrolling up runs it in reverse. The steps follow along. */
   .cardsec { position: relative; height: calc(100svh - var(--head-h, 94px)); min-height: 600px; background: var(--color-paper); overflow-x: clip; }
-  .cardsec > .wrap { height: 100%; display: grid; grid-template-rows: auto minmax(0, 1fr); padding-top: 4px; padding-bottom: clamp(20px, 3vw, 40px); }
+  /* The label row has the same space above it as below, so pinned under
+     the header it sits centred between the header's line and its own. */
+  .cardsec > .wrap { height: 100%; display: grid; grid-template-rows: auto minmax(0, 1fr); padding-top: var(--spacing-2); padding-bottom: clamp(20px, 3vw, 40px); }
   .card-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding-bottom: var(--spacing-2); border-bottom: 1px solid var(--color-ink-13); }
   .card-count { display: inline-flex; align-items: center; gap: 10px; font-variant-numeric: tabular-nums; }
   .card-count b { font-weight: 400; color: var(--color-live); }
