@@ -396,6 +396,9 @@ html.motion .hero:not([data-intro]) [data-stage] { opacity: 0; }
      number, which not every engine evaluates — see Screen.tsx. */
   transform: scale(var(--s, tan(atan2(100cqw, calc(var(--w) * 1px)))));
 }
+/* A cropped screen (Screen crop): only the top of the canvas shows. */
+.screen[data-crop] { aspect-ratio: var(--w) / var(--ch); }
+@media (max-width: 900px) { .screen[data-crop] { aspect-ratio: var(--w) / var(--chm); } }
 .screen-phone { display: none; }
 @media (max-width: 699px) {
   .screen-desk { display: none; }

@@ -1,8 +1,9 @@
 /* Home. Copy lives here, never inline in JSX. The mockup
-   (reference/redesign/home.html) is the spec: a hero with the member app's
-   Home screen, then five sections, each one crafted figure — the renting
-   comparison paid in by scroll, the three-phase path on one rule, the
-   counter hand-off you can run, what exists today, and the public ledger. */
+   (reference/redesign/home.html) is the spec: a hero, then the Clear Card
+   put together on scroll (docs/card-section), then five sections, each one
+   crafted figure — the renting comparison paid in by scroll, the
+   three-phase path on one rule, the counter hand-off you can run, what
+   exists today (beside the member app on a phone), and the public ledger. */
 
 export const HERO = {
   /* One sentence, set on two lines from 700px up and broken after "kept":
@@ -27,25 +28,59 @@ export const HERO = {
     { k: 'One member, one vote', v: 'Governance' },
     { k: 'Inland Empire, California', v: 'Building' },
   ],
-  stage: { caption: 'The member app', sample: 'Sample account' },
 } as const;
 
-/* The member app's Home screen, drawn as real UI from the live app
-   (demo.useclear.org): the balance first, then the cycle card, the temporary
-   slot, and the four-block slab. A sample account — every figure here is a
-   picture of the product, labelled "Sample account" under the device. The
-   phone canvas leaves out the action buttons under the balance, as the app's
-   phone layout does. */
+/* ── The Clear Card ───────────────────────────────────────────────────────
+   Under the hero, pinned: the card's four pieces (back, core, chip, face)
+   come together as you scroll, then it turns its edge to you, faces you,
+   and turns over. One step per stage; `at` is where a step starts in the
+   scroll (0–1) and `go` where a click on it scrolls to. */
+export const CARD = {
+  label: 'The Clear Card',
+  title: 'Real wood. In your wallet.',
+  line: 'Birch on the outside, a secure chip inside. Nothing else you carry feels like it.',
+  cue: 'Scroll',
+  /* TODO(owner): four product claims to confirm before launch: "Stained,
+     never painted" (01), the key never leaving the chip and "Nothing to
+     skim, nothing to copy" (02), "Sealed against rain, sweat and spills"
+     (03), and "One tap in the app turns the chip off. We send a new card"
+     (04). */
+  steps: [
+    { t: 'Real birch', d: 'Stained, never painted, so the grain shows through. No two cards are alike.', at: 0, go: 0.03 },
+    { t: 'A chip that guards your key', d: 'Your key is made inside the chip and never leaves it. Nothing to skim, nothing to copy.', at: 0.2, go: 0.3 },
+    { t: 'Built for every day', d: 'Sealed against rain, sweat and spills. At 2.5 mm it’s thicker than metal, and still slides into your wallet.', at: 0.4, go: 0.55 },
+    { t: 'Lost it? Switch it off.', d: 'One tap in the app turns the chip off. We send a new card.', at: 0.74, go: 0.97 },
+  ],
+  /* The one callout, on the edge view. */
+  edge: { k: 'Three layers', v: '2.5 mm' },
+  /* Step 04's switch, which turns the chip on the card off and on again. */
+  chip: { on: 'Chip on', off: 'Chip off', hint: 'Try it' },
+  editionsLabel: 'Edition',
+  /* `f` and `c` are the face and core colours on the swatch. The wood's own
+     colours, not brand tokens. */
+  editions: [
+    { id: 'light', label: 'Light', f: '#E2C8A0', c: '#A26C3A' },
+    { id: 'dark', label: 'Dark', f: '#42281A', c: '#A26C3A' },
+    { id: 'contrast', label: 'Contrast', f: '#42281A', c: '#E2C8A0' },
+  ],
+  fallback: 'The Clear Card in the Light edition: natural birch with the Clear mark engraved on the face',
+} as const;
+
+export type CardEdition = (typeof CARD.editions)[number]['id'];
+
+/* The member app's Home screen on a phone, drawn as real UI from the live
+   app (demo.useclear.org): the balance first, then the cycle card, the
+   temporary slot, and the two accounts blocks. A sample account — every
+   figure here is a picture of the product, labelled "Sample account" under
+   the device in 04. */
 export const MEMBER_APP = {
   brand: 'Clear',
-  tabs: ['Home', 'Savings', 'Earn', 'Send', 'Activity', 'Card'],
   phoneTabs: ['Home', 'Savings', 'Earn', 'Card'],
   initials: 'DR',
   balance: {
     label: 'Available to spend',
     value: '$5,718.42',
     sub: '$2,318.42 cash · $0.00 used · $3,400.00 left',
-    actions: ['Add money', 'Send', 'Save', 'Pay'],
   },
   cycle: {
     label: 'To clear this cycle',
@@ -53,8 +88,7 @@ export const MEMBER_APP = {
     days: '9',
     daysLabel: 'days left',
     status: 'Your deposit covers it',
-    detail: 'Rivera Auto Glass, 3 of 4 · clears October 21',
-    phoneDetail: 'Clears October 21',
+    detail: 'Clears October 21',
     action: 'Repay early',
   },
   slot: { label: 'Activate your card', action: 'Activate' },
@@ -62,15 +96,11 @@ export const MEMBER_APP = {
     label: 'Credit used',
     value: '$0',
     of: 'of $3,400',
+    /* The two lines that are drawing. */
     rows: [
       ['Savings (CLRUSD) · free', '$1,500 · not drawn'],
-      ['Assets · 0.75% / cycle', 'not added'],
       ['Income · 1.5% / cycle', '$1,900 · not drawn'],
-      ['Clear Boost™ · 3% / cycle', 'not added'],
     ],
-    /* The phone shows the two lines that are drawing. */
-    phoneRows: [0, 2],
-    action: 'Limit breakdown',
   },
   spendable: {
     label: 'Spendable',
@@ -79,30 +109,6 @@ export const MEMBER_APP = {
       ['Card and payments', '$2,133.43'],
       ['Ready to allocate', '$184.99'],
     ],
-    moves: ['Savings', 'Earn', 'Back to cash'],
-    deposit: 'Direct deposit on',
-    action: 'Details',
-  },
-  plans: {
-    label: 'Term plans',
-    value: '$315.00',
-    of: 'of $3,000.00',
-    open: { name: 'Rivera Auto Glass', value: '$315.00', detail: 'Split in 4 · $157.50 a cycle · ', cleared: '50% cleared', rate: ' · 2% / cycle' },
-    cash: { name: 'Clear Cash™', lock: 'Locked', detail: 'Unlocks after six clean cycles · 2.5% / cycle' },
-    homeRule: 'Your home · outside this limit',
-    home: { name: 'ELPA — buy a home', lock: 'Locked', detail: '1,500 of 15,000 credits' },
-    limit: ['Limit ', '$850.00/cycle'],
-    from: ['Clears from ', 'Chase 4471'],
-  },
-  savings: {
-    label: 'Savings',
-    value: '$3,000.00',
-    rows: [
-      ['Cash (CLRUSD)', '$1,500.00', 'fg'],
-      ['Vested', '$1,000', 'ok'],
-      ['Vesting', '$500', 'warn'],
-    ],
-    credits: '1,500 of 15,000 credits',
   },
 } as const;
 
@@ -289,6 +295,8 @@ export const STATUS = {
     { name: 'First merchant partners', desc: 'Auto repair and tires, Inland Empire', chip: 'Signing', tone: 'underway' },
     { name: 'First homes', desc: 'Twelve detached homes, land first', chip: 'Not yet', tone: 'absent' },
   ],
+  /* The member app's Home on a phone, beside the rows. */
+  shot: { caption: 'The member app', sample: 'Sample account' },
 } as const;
 
 /* ── 05 · The public ledger ───────────────────────────────────────────────

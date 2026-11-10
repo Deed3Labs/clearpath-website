@@ -1,0 +1,687 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Clear Card — section reference</title>
+<!-- REFERENCE ONLY. The Clear Card scroll section, lifted out of the homepage
+     mockup (v20) so it runs on its own. Serve this folder over http (the
+     textures in card/ will not load from file://):  npx serve .  -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+/* ── Tokens and base (copied from the homepage mockup) ─────────────── */
+:root {
+  color-scheme: light;
+  --paper: #DFE3DE;
+  --paper-2: #E9ECE7;
+  --ink: #16211D;
+  --ground: #16211D;
+  --live: #24409E;
+  --settled: #0E6B4E;
+  --underway: #8A5512;
+  --absent: #9B2C22;
+  --sig-deep: #0E6B4E;
+  --sig-light: #6FCB9F;
+  --ink-70: #525B57;
+  --ink-50: #5A635F;
+  --ink-28: #A7ADA8;
+  --ink-13: #C5CAC5;
+
+  --f-display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --f-text: 'Instrument Sans', system-ui, sans-serif;
+  --f-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  --s1: 8px; --s2: 16px; --s3: 24px; --s4: 40px; --s5: 64px; --s6: 96px;
+  --inset: clamp(16px, 4vw, 56px);
+  --max: 1280px;
+  --sec: clamp(80px, 9vw, 144px);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+.band-ink {
+  background: var(--ground); color: var(--paper);
+  --ink: #DFE3DE; --ink-70: #ABB1AC; --ink-50: #939995;
+  --ink-28: rgb(223 227 222 / .32); --ink-13: rgb(223 227 222 / .16);
+  --live: #7C8CC5; --settled: #6FCB9F; --underway: #E3B667; --absent: #E58C7F;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--f-text); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+h1, h2, h3, p, dl, dd, figure { margin: 0; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+a { color: inherit; text-decoration: none; }
+svg { display: block; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--live); outline-offset: 3px; }
+::selection { background: var(--ink); color: var(--paper); }
+
+.wrap { width: 100%; max-width: calc(var(--max) + var(--inset) * 2); margin-inline: auto; padding-inline: var(--inset); }
+.fig { font-family: var(--f-text); font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.label { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-50); }
+
+
+/* Page-level guard: nothing on the homepage may scroll sideways. */
+html, body { overflow-x: clip; overscroll-behavior-x: none; }
+
+/* ── Stand-ins for the real header and neighbours (NOT to port) ────── */
+.ref-head { position: sticky; top: 0; z-index: 30; height: 68px; display: flex; align-items: center; background: color-mix(in srgb, var(--paper) 88%, transparent); backdrop-filter: blur(12px); border-bottom: 1px solid var(--ink-13); }
+.ref-head b { font-family: var(--f-display); font-weight: 800; font-size: 19px; letter-spacing: -0.035em; }
+.ref-fill { padding-block: 120px; }
+.ref-fill h1 { font-family: var(--f-display); font-weight: 800; font-size: min(9.4vw, 120px); line-height: .92; letter-spacing: -0.045em; }
+.ref-fill p { color: var(--ink-70); margin-top: 24px; max-width: 46ch; }
+
+
+
+
+/* ── The Clear Card, put together on scroll ─────────────────────────────
+   The section pins under the header. Scrolling brings the four pieces
+   together (back, core, chip, face), then turns the card to its back.
+   Scrolling up runs it in reverse. The steps on the right follow along. */
+.cardsec { position: relative; height: calc(100svh - 68px); min-height: 600px; background: var(--paper); overflow-x: clip; }
+.cardsec > .wrap { height: 100%; display: grid; grid-template-rows: auto minmax(0, 1fr); padding-top: 4px; padding-bottom: clamp(20px, 3vw, 40px); }
+.card-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding-bottom: var(--s2); border-bottom: 1px solid var(--ink-13); }
+.card-count { display: inline-flex; align-items: center; gap: 10px; font-variant-numeric: tabular-nums; }
+.card-count b { font-weight: 400; color: var(--live); }
+.card-count i { width: 22px; height: 1px; background: var(--ink-28); }
+.card-body { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: clamp(32px, 5vw, 88px); min-height: 0; }
+.card-view { position: relative; min-height: 0; }
+.card-view canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; touch-action: pan-y; opacity: 0; transition: opacity 1200ms var(--ease);
+  /* the shadow never meets a hard canvas edge */
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 7%, #000 86%, transparent), linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+  -webkit-mask-composite: source-in; mask-image: linear-gradient(to bottom, transparent, #000 7%, #000 86%, transparent), linear-gradient(to right, transparent, #000 5%, #000 95%, transparent); mask-composite: intersect; }
+/* Callouts: a dot on the card, a short rule, a name. Positioned every frame. */
+.card-labels { position: absolute; inset: 0; pointer-events: none; }
+.cl { position: absolute; left: 0; top: 0; display: flex; align-items: center; height: 0; font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; opacity: 0; will-change: transform, opacity; }
+.cl::before { content: ''; flex: none; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 999px; background: var(--ink); box-shadow: 0 0 0 3px rgb(223 227 222 / .7); }
+.cl i { flex: none; width: 40px; height: 1px; margin: 0 10px 0 3px; background: var(--ink-50); }
+.cl b { font-weight: 400; color: var(--ink); }
+.cl span { text-shadow: 0 0 3px var(--paper), 0 0 6px var(--paper), 0 0 10px var(--paper); }
+.cl.l { flex-direction: row-reverse; }
+.cl.l::before { margin-left: 0; margin-right: -2.5px; }
+.cl.l i { margin: 0 3px 0 10px; }
+.cl em { font-style: normal; color: var(--ink-50); margin-left: 10px; }
+.cl[data-k="edge"] { flex-direction: column; align-items: flex-start; height: auto; margin-top: -2.5px; }
+.cl[data-k="edge"] i { width: 1px; height: 44px; margin: 3px 0 10px 0; }
+.cl[data-k="edge"] span { display: grid; gap: 2px; }
+.cl[data-k="edge"] em { margin: 0; }
+/* The scroll cue: a word and a short rule that keeps falling. */
+.card-cue { position: absolute; left: 0; bottom: 2%; display: grid; justify-items: start; gap: 10px; transition: opacity 400ms var(--ease); pointer-events: none; }
+.card-cue i { position: relative; width: 1px; height: 34px; background: var(--ink-13); overflow: hidden; }
+.card-cue i::after { content: ''; position: absolute; left: 0; top: 0; width: 1px; height: 12px; background: var(--ink); animation: cue 1.8s cubic-bezier(.65, 0, .35, 1) infinite; }
+@keyframes cue { 0% { transform: translateY(-12px); } 100% { transform: translateY(34px); } }
+@media (prefers-reduced-motion: reduce) { .card-cue { display: none; } }
+.card-view.ready canvas { opacity: 1; }
+.card-fallback { display: none; position: absolute; left: 6%; top: 6%; width: 88%; height: 88%; object-fit: contain; }
+.card-view.nogl .card-fallback { display: block; }
+.card-view.nogl canvas { display: none; }
+.card-side { display: grid; align-content: center; gap: var(--s4); padding-bottom: 6px; }
+/* Desktop: the stage never grows past a comfortable height, and it sits
+   centred in the pinned screen, so the card and the copy share one centre
+   line instead of the copy sinking to the bottom of a tall box. */
+@media (min-width: 1001px) { .card-body { align-self: center; height: min(100%, 720px); } }
+.card-intro { display: grid; gap: 10px; }
+.card-intro h2 { font-family: var(--f-display); font-weight: 800; font-size: clamp(30px, 2.9vw, 44px); line-height: 1; letter-spacing: -0.035em; text-wrap: balance; }
+.card-intro p { color: var(--ink-70); font-size: clamp(16px, 1.25vw, 18px); line-height: 1.5; max-width: 40ch; }
+
+/* Steps: a vertical rule that fills with the scroll; the current step lights. */
+.steps { position: relative; display: grid; border-left: 1px solid var(--ink-13); }
+.steps-fill { position: absolute; left: -1px; top: 0; bottom: 0; width: 2px; background: var(--ink); transform-origin: 50% 0; transform: scaleY(0); pointer-events: none; }
+.step { display: grid; grid-template-columns: 34px minmax(0, 1fr); align-items: baseline; text-align: left; padding: 13px 0 13px 20px; color: var(--ink-50); transition: color 300ms var(--ease); }
+.step .n { font-family: var(--f-mono); font-size: 11px; letter-spacing: .06em; transition: color 300ms var(--ease); }
+.step .t { font-family: var(--f-display); font-weight: 600; font-size: clamp(18px, 1.5vw, 22px); line-height: 1.2; letter-spacing: -0.02em; }
+.step .d { grid-column: 2; display: grid; grid-template-rows: 0fr; opacity: 0; font-size: 14.5px; line-height: 1.45; color: var(--ink-70); transition: grid-template-rows 420ms var(--ease), opacity 300ms var(--ease), margin 420ms var(--ease); }
+.step .d > span { overflow: hidden; }
+.step.on { color: var(--ink); }
+.step.on .n { color: var(--live); }
+.step.on .d { grid-template-rows: 1fr; opacity: 1; margin-top: 6px; }
+.step:hover { color: var(--ink); }
+.steps-seg { display: none; }
+
+/* The off switch: appears with step 04 and drives the chip on the card.
+   Its row always keeps its height, so nothing shifts when it appears. */
+.chipsw-row { display: flex; align-items: center; gap: 14px; min-height: 40px; opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity 300ms var(--ease), transform 420ms var(--ease), visibility 0s linear 420ms; }
+.chipsw-row.show { opacity: 1; visibility: visible; transform: none; transition: opacity 420ms var(--ease), transform 520ms var(--ease), visibility 0s; }
+.chipsw { display: inline-flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 16px 0 6px; border: 1px solid var(--ink); border-radius: 999px; font-size: 14.5px; font-weight: 500; color: var(--ink); transition: border-color 200ms var(--ease), color 200ms var(--ease); }
+.chipsw .track { position: relative; width: 44px; height: 28px; border-radius: 999px; background: var(--ink); transition: background-color 260ms var(--ease); }
+.chipsw .track i { position: absolute; top: 3px; left: 19px; width: 22px; height: 22px; border-radius: 999px; background: var(--paper); box-shadow: 0 0 0 0 rgb(111 203 159 / 0); transition: left 320ms cubic-bezier(.3, 1.4, .5, 1), box-shadow 300ms var(--ease); }
+.chipsw .track i::after { content: ''; position: absolute; inset: 7px; border-radius: 999px; background: var(--sig-light); transition: background-color 260ms var(--ease), transform 260ms var(--ease); }
+.chipsw .off-t { display: none; }
+.chipsw[aria-checked="false"] { border-color: var(--ink-28); color: var(--ink-70); }
+.chipsw[aria-checked="false"] .track { background: var(--ink-28); }
+.chipsw[aria-checked="false"] .track i { left: 3px; }
+.chipsw[aria-checked="false"] .track i::after { background: var(--ink-28); transform: scale(.7); }
+.chipsw[aria-checked="false"] .on-t { display: none; }
+.chipsw[aria-checked="false"] .off-t { display: inline; }
+
+/* Editions: the same card in three stains. */
+.card-controls { display: grid; gap: var(--s3); }
+.editions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.editions .label { margin-right: 6px; }
+.ed { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding-inline: 13px 15px; border: 1px solid var(--ink-28); border-radius: 999px; font-size: 14px; color: var(--ink-70); transition: border-color 200ms var(--ease), color 200ms var(--ease); }
+.ed:hover { color: var(--ink); border-color: var(--ink); }
+.ed[aria-pressed="true"] { color: var(--ink); border-color: var(--ink); }
+.ed i { width: 12px; height: 12px; border-radius: 999px; background: linear-gradient(90deg, var(--f) 0 50%, var(--c) 50% 100%); box-shadow: inset 0 0 0 1px rgb(22 33 29 / .18); }
+
+/* Tablet and phone: the card on top, one step at a time underneath. */
+@media (max-width: 1000px) {
+  .cardsec { min-height: 560px; }
+  .card-body { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; }
+  .card-side { gap: var(--s3); padding-bottom: 0; }
+  .card-intro { display: none; }
+  .steps { border-left: 0; padding-top: 18px; }
+  .steps-fill { display: none; }
+  .steps-seg { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; position: absolute; left: 0; right: 0; top: 0; height: 2px; }
+  .steps-seg i { background: var(--ink-13); position: relative; overflow: hidden; }
+  .steps-seg i::after { content: ''; position: absolute; inset: 0; background: var(--ink); transform-origin: 0 50%; transform: scaleX(var(--k, 0)); }
+  .step { grid-area: 2 / 1; padding: 0; opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity 260ms var(--ease), transform 360ms var(--ease), visibility 0s linear 360ms; }
+  .steps { grid-template-rows: auto auto; }
+  .step.on { opacity: 1; visibility: visible; transform: none; transition: opacity 360ms var(--ease) 80ms, transform 460ms var(--ease) 80ms, visibility 0s; }
+  .step .d { grid-template-rows: 1fr; opacity: 1; margin-top: 6px; }
+  .step .t { font-size: 21px; }
+  /* the switch sits on the editions' line, at the right; the space is kept
+     while it is hidden, so nothing moves when step 04 brings it in */
+  .card-controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .card-controls .editions { order: 1; flex-wrap: nowrap; }
+  .card-controls .chipsw-row { order: 2; min-height: 0; }
+}
+@media (max-width: 560px) {
+  .card-top .card-hint span { display: none; }
+  /* phones: the editions shrink to swatches so the switch fits beside them */
+  .ed { justify-content: center; width: 36px; padding: 0; }
+  .ed .ed-t { display: none; }
+  .ed i { width: 14px; height: 14px; }
+  .chipsw-row .label { display: none; }
+  .chipsw { padding-right: 13px; font-size: 14px; }
+}
+@media (max-height: 640px) and (min-width: 1001px) { .card-intro p { display: none; } .step { padding-block: 9px; } }
+
+</style>
+</head>
+<body>
+<header class="ref-head" id="site-head"><div class="wrap"><b>Clear</b> <span class="label" style="margin-left:16px">stand-in header · 68px</span></div></header>
+
+<main>
+  <section class="ref-fill wrap"><h1>Your money, kept in the neighborhood.</h1><p>Stand-in for the real hero. On the live homepage the card section sits directly after the hero's lede, buttons and facts list, where the member-app screenshot used to be.</p></section>
+
+  <!-- THE CARD — pinned; scrolling puts it together, then turns it over. -->
+  <section class="cardsec" id="card" aria-labelledby="card-h">
+    <div class="wrap">
+      <div class="card-top label"><span>The Clear Card</span><span class="card-count" aria-hidden="true"><b id="card-n">01</b><i></i>04</span></div>
+      <div class="card-body">
+        <div class="card-view" id="card-view">
+          <div class="card-labels" id="card-labels" aria-hidden="true">
+            <span class="cl" data-k="edge"><i></i><span><b>Three layers</b><em>2.5 mm</em></span></span>
+          </div>
+          <span class="card-cue label" id="card-cue" aria-hidden="true">Scroll<i></i></span>
+          <img class="card-fallback" src="card/fallback.webp" alt="The Clear Card in the Light edition: natural birch with the Clear mark engraved on the face">
+        </div>
+        <div class="card-side">
+          <div class="card-intro">
+            <h2 class="h3" id="card-h">Real wood. In your wallet.</h2>
+            <p>Birch on the outside, a secure chip inside. Nothing else you carry feels like it.</p>
+          </div>
+          <div class="steps" id="steps">
+            <span class="steps-fill" id="steps-fill" aria-hidden="true"></span>
+            <span class="steps-seg" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <button type="button" class="step on" data-i="0"><span class="n">01</span><span class="t">Real birch</span><span class="d"><span>Stained, never painted, so the grain shows through. No two cards are alike.</span></span></button>
+            <button type="button" class="step" data-i="1"><span class="n">02</span><span class="t">A chip that guards your key</span><span class="d"><span>Your key is made inside the chip and never leaves it. Nothing to skim, nothing to copy.</span></span></button>
+            <button type="button" class="step" data-i="2"><span class="n">03</span><span class="t">Built for every day</span><span class="d"><span>Sealed against rain, sweat and spills. At 2.5 mm it&rsquo;s thicker than metal, and still slides into your wallet.</span></span></button>
+            <button type="button" class="step" data-i="3"><span class="n">04</span><span class="t">Lost it? Switch it off.</span><span class="d"><span>One tap in the app turns the chip off. We send a new card.</span></span></button>
+          </div>
+          <div class="card-controls">
+            <div class="chipsw-row" id="chipsw-row" aria-hidden="true">
+              <button type="button" class="chipsw" id="chipsw" role="switch" aria-checked="true" tabindex="-1"><span class="track"><i></i></span><span class="on-t">Chip on</span><span class="off-t">Chip off</span></button>
+              <span class="label">Try it</span>
+            </div>
+            <div class="editions" role="group" aria-label="Edition">
+              <span class="label">Edition</span>
+              <button type="button" class="ed" data-ed="light" aria-pressed="true" aria-label="Light"><i style="--f:#E2C8A0;--c:#A26C3A"></i><span class="ed-t">Light</span></button>
+              <button type="button" class="ed" data-ed="dark" aria-pressed="false" aria-label="Dark"><i style="--f:#42281A;--c:#A26C3A"></i><span class="ed-t">Dark</span></button>
+              <button type="button" class="ed" data-ed="contrast" aria-pressed="false" aria-label="Contrast"><i style="--f:#42281A;--c:#E2C8A0"></i><span class="ed-t">Contrast</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="ref-fill wrap"><h1 style="font-size:64px">01 · The next section</h1><p>Stand-in. The pin releases here and the page scrolls on normally.</p></section>
+  <section class="ref-fill wrap" style="height:100vh"></section>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+/* Page side of the card: owns the scroll. It pins the section, turns scroll
+   into progress p (0 → 1) and drives the steps, the counter and the cue.
+   The 3D module below only reads window.clearCard.p and draws it. */
+(() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const G = typeof window.gsap !== 'undefined' && !reduce;
+  const head = $('#site-head');
+
+  const card = window.clearCard = window.clearCard || { p: 0, ed: 'light' };
+  /* AT: where each step starts. GO: where a click on a step scrolls to. */
+  const steps = $$('.step'), AT = [0, .2, .4, .74], GO = [.03, .3, .55, .97];
+  const cardView = $('#card-view');
+  function setCardP(p) {
+    card.p = p;
+    const n = AT.filter(a => p >= a).length - 1;
+    steps.forEach((s, i) => { s.classList.toggle('on', i === n); s.setAttribute('aria-current', i === n ? 'step' : 'false'); });
+    $('#steps-fill').style.transform = `scaleY(${Math.min(1, p / .97)})`;
+    $$('.steps-seg i').forEach((el, i) => el.style.setProperty('--k', Math.max(0, Math.min(1, (p - AT[i]) / ((AT[i + 1] || 1) - AT[i])))));
+    $('#card-n').textContent = '0' + (n + 1);
+    $('#card-cue').style.opacity = p > .03 ? 0 : 1;
+    const sw = n === 3, row = $('#chipsw-row');
+    if (row.classList.contains('show') !== sw) { row.classList.toggle('show', sw); row.setAttribute('aria-hidden', String(!sw)); $('#chipsw').tabIndex = sw ? 0 : -1; }
+  }
+  $$('.ed').forEach(b => b.addEventListener('click', () => {
+    $$('.ed').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    card.ed = b.dataset.ed; if (card.setEdition) card.setEdition(card.ed);
+  }));
+  /* Step 04's switch: turns the chip on the card off and on again. */
+  card.chipOn = true;
+  $('#chipsw').addEventListener('click', e => {
+    e.stopPropagation(); card.chipOn = !card.chipOn;
+    $('#chipsw').setAttribute('aria-checked', String(card.chipOn));
+    if (card.setChip) card.setChip(card.chipOn);
+  });
+  /* If the 3D never arrives, show the rendered card instead. */
+  setTimeout(() => { if (!cardView.classList.contains('ready')) cardView.classList.add('nogl'); }, 9000);
+  let cardST = null;
+  steps.forEach((s, i) => s.addEventListener('click', () => {
+    if (cardST) scrollTo({ top: cardST.start + GO[i] * (cardST.end - cardST.start), behavior: 'smooth' });
+    else setCardP(GO[i]);
+  }));
+
+  /* Without motion: no pin, the card rests assembled; steps still work. */
+  if (!G) { setCardP(.6); return; }
+  gsap.registerPlugin(ScrollTrigger);
+  ScrollTrigger.config({ ignoreMobileResize: true });
+  setCardP(0);
+  /* Pins under the header for 2.2 screens of scroll. refreshPriority 1 so
+     triggers further down the page measure after the pin spacer exists. */
+  cardST = ScrollTrigger.create({ trigger: '#card', start: () => 'top ' + head.offsetHeight + 'px', end: () => '+=' + Math.round(innerHeight * 2.2), pin: true, refreshPriority: 1, anticipatePin: 1, invalidateOnRefresh: true, onUpdate: s => setCardP(s.progress) });
+})();
+</script>
+
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+/* The Clear Card in three.js, built from the Rev C numbers: back, core
+   (with the chip pocket), chip, face. The page script owns the scroll and
+   writes progress into window.clearCard.p. Here, scroll only sets TARGETS;
+   every moving part follows its target on a spring, so the card has weight:
+   it lags a fast scroll, settles, and the sheets land with a small bounce. */
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const C = window.clearCard, view = document.getElementById('card-view');
+const labelsEl = document.getElementById('card-labels');
+let r;
+try { r = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' }); }
+catch (e) { view.classList.add('nogl'); throw e; }
+r.setPixelRatio(Math.min(devicePixelRatio, 2));
+r.outputColorSpace = THREE.SRGBColorSpace;
+r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1.0;
+r.shadowMap.enabled = true; r.shadowMap.type = THREE.VSMShadowMap;
+r.setClearColor(0, 0);
+view.insertBefore(r.domElement, view.firstChild);
+
+const scene = new THREE.Scene();
+scene.environment = new THREE.PMREMGenerator(r).fromScene(new RoomEnvironment(), .04).texture;
+scene.environmentIntensity = .62;
+const key = new THREE.DirectionalLight(0xfff4e6, 2.0); key.position.set(-50, 80, 230); key.castShadow = true;
+key.shadow.mapSize.set(768, 768); key.shadow.radius = 12; key.shadow.blurSamples = 10; key.shadow.bias = -.002;
+Object.assign(key.shadow.camera, { left: -160, right: 160, top: 160, bottom: -160, near: 20, far: 500 });
+scene.add(key);
+const fill = new THREE.DirectionalLight(0xffffff, .6); fill.position.set(80, -160, 80); scene.add(fill);
+const wall = new THREE.Mesh(new THREE.PlaneGeometry(900, 900), new THREE.ShadowMaterial({ opacity: .085 }));
+wall.position.z = -46; wall.receiveShadow = true; scene.add(wall);
+const cam = new THREE.PerspectiveCamera(24, 1, 1, 2000);
+
+/* ── Geometry, in millimetres ───────────────────────────────────────── */
+const W = 85.6, H = 53.98, R = 3.18, T = .8, FILM = .05;
+const CXmm = 85.6 - 3 - 27.2 / 2, CX = CXmm - W / 2, POCKET = 27.2 / 2, CHIP = 27 / 2;
+function outline() {
+  const s = new THREE.Shape(), x = -W / 2, y = -H / 2, P = Math.PI;
+  s.moveTo(x + R, y); s.lineTo(x + W - R, y); s.absarc(x + W - R, y + R, R, -P / 2, 0, false);
+  s.lineTo(x + W, y + H - R); s.absarc(x + W - R, y + H - R, R, 0, P / 2, false);
+  s.lineTo(x + R, y + H); s.absarc(x + R, y + H - R, R, P / 2, P, false);
+  s.lineTo(x, y + R); s.absarc(x + R, y + R, R, P, P * 1.5, false);
+  return s;
+}
+/* One sheet. Groups: 0 its top face, 1 its bottom face, 2 the cut edge. */
+function sheet(hole, mirror) {
+  const s = outline();
+  if (hole) { const h = new THREE.Path(); h.absarc(CX, 0, POCKET, 0, Math.PI * 2, true); s.holes.push(h); }
+  const g = new THREE.ExtrudeGeometry(s, { depth: T, bevelEnabled: false, curveSegments: 32 });
+  const p = g.attributes.position, uv = g.attributes.uv;
+  for (let i = 0; i < p.count; i++) { const u = (p.getX(i) + W / 2) / W; uv.setXY(i, mirror ? 1 - u : u, (p.getY(i) + H / 2) / H); }
+  const n = g.attributes.normal, top = [], bot = [], side = [];
+  for (let i = 0; i < p.count; i += 3) { const z = n.getZ(i); (z > .5 ? top : z < -.5 ? bot : side).push(i, i + 1, i + 2); }
+  g.setIndex([...top, ...bot, ...side]); g.clearGroups();
+  g.addGroup(0, top.length, 0); g.addGroup(top.length, bot.length, 1); g.addGroup(top.length + bot.length, side.length, 2);
+  return g;
+}
+
+/* ── Materials ──────────────────────────────────────────────────────── */
+const loader = new THREE.TextureLoader(), cache = {};
+const aniso = Math.min(8, r.capabilities.getMaxAnisotropy());
+function tex(name, color = true) {
+  if (!cache[name]) cache[name] = loader.loadAsync('card/' + name).then(t => { if (color) t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = aniso; return t; });
+  return cache[name];
+}
+const wood = () => new THREE.MeshPhysicalMaterial({ roughness: .84, metalness: 0, specularIntensity: .35, bumpScale: 1.2 });
+const edge = () => new THREE.MeshStandardMaterial({ roughness: .8 });
+/* The two engraved faces carry two light effects, both drawn in the
+   shader: a sheen that glances across the wood, and a pulse that runs out
+   from the chip through the engraved rings. */
+function engraved(chipMm, name) {
+  const m = wood();
+  m.userData.u = { uSheen: { value: -2 }, uPulse: { value: -99 }, uChip: { value: new THREE.Vector2(...chipMm) }, uPulseCol: { value: new THREE.Color(1, .62, .26) }, uPower: { value: 0 }, uLive: { value: 0 }, uFront: { value: 0 }, uLiveCol: { value: new THREE.Color(1, .62, .26) } };
+  m.onBeforeCompile = sh => {
+    Object.assign(sh.uniforms, m.userData.u);
+    sh.fragmentShader = sh.fragmentShader
+      .replace('#include <common>', '#include <common>\nuniform float uSheen; uniform float uPulse; uniform vec2 uChip; uniform vec3 uPulseCol; uniform float uPower; uniform float uLive; uniform float uFront; uniform vec3 uLiveCol;')
+      .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
+#ifdef USE_MAP
+  float eng = 0.0;
+  #ifdef USE_BUMPMAP
+    eng = 1.0 - texture2D(bumpMap, vBumpMapUv).r;
+  #endif
+  float sd = (vMapUv.x * .86 + vMapUv.y * .5) - uSheen;
+  totalEmissiveRadiance += vec3(1.0, .93, .82) * exp(-sd * sd / .0035) * .16;
+  vec2 mm = vec2(vMapUv.x * 85.6, vMapUv.y * 53.98);
+  float pd = length(mm - uChip) - uPulse;
+  float wave = exp(-pd * pd / 6.0) * smoothstep(-1.0, 6.0, uPulse) * (1.0 - smoothstep(26.0, 44.0, uPulse));
+  totalEmissiveRadiance += uPulseCol * wave * eng * .95;
+  /* the chip's state: its rings light one by one from the chip outward
+     (uPower), carry a bright leading edge while they do (uFront), then
+     breathe while it's on (uLive). Only the rings and the tap dot sit
+     inside 31 mm of the chip, so nothing else on the card lights. */
+  float dc = length(mm - uChip), Rr = uPower * 31.0;
+  float lit = 1.0 - smoothstep(Rr - 2.2, Rr, dc);
+  float zone = 1.0 - smoothstep(27.5, 31.0, dc);
+  float lead = exp(-(dc - Rr) * (dc - Rr) / 3.0) * uFront;
+  totalEmissiveRadiance += uLiveCol * eng * zone * (lit * uLive * 1.7 + lead * 2.4);
+#endif`);
+  };
+  m.customProgramCacheKey = () => name;
+  return m;
+}
+const EDGE = { 'birch': 0xecd6ae, 'birch-caramel': 0xb6844f, 'birch-dark': 0x5e3a20 };
+const ED = { light: { face: 'birch', core: 'birch-caramel' }, dark: { face: 'birch-dark', core: 'birch-caramel' }, contrast: { face: 'birch-dark', core: 'birch' } };
+const M = {
+  face: [engraved([CXmm, H / 2], 'face'), wood(), edge()],
+  core: [wood(), wood(), edge()],
+  back: [wood(), engraved([W - CXmm, H / 2], 'back'), edge()],
+};
+
+const pivot = new THREE.Group(), stack = new THREE.Group();
+pivot.add(stack); scene.add(pivot);
+const mesh = (g, m) => { const o = new THREE.Mesh(g, m); o.castShadow = true; o.receiveShadow = true; stack.add(o); return o; };
+const back = mesh(sheet(false, true), M.back), core = mesh(sheet(true, false), M.core), face = mesh(sheet(false, false), M.face);
+
+/* The chip: a dark disc with its coil, sized to the Arx tag. */
+const chip = new THREE.Group(); stack.add(chip);
+const disc = new THREE.Mesh(new THREE.CylinderGeometry(CHIP, CHIP, T, 96), new THREE.MeshStandardMaterial({ color: 0x121715, roughness: .55, envMapIntensity: .5 }));
+disc.rotation.x = Math.PI / 2; disc.position.set(CX, 0, T / 2); disc.castShadow = true; chip.add(disc);
+const coil = new THREE.MeshStandardMaterial({ color: 0xb08a3e, metalness: .85, roughness: .32, emissive: 0xffa04a, emissiveIntensity: 0 });
+for (let k = 0; k < 6; k++) { const t = new THREE.Mesh(new THREE.TorusGeometry(CHIP - 1.6 - k * .85, .07, 6, 128), coil); t.position.set(CX, 0, T + .01); chip.add(t); }
+const die = new THREE.Mesh(new THREE.BoxGeometry(4.2, 4.2, .12), new THREE.MeshStandardMaterial({ color: 0x1d2420, roughness: .4, metalness: .3 }));
+die.position.set(CX, 0, T + .06); chip.add(die);
+
+/* Security moment: as the chip seats, three cobalt rings close in on it,
+   like a lock turning. Drawn flat in the chip's plane, so they read as part
+   of the card, not as a graphic laid over it. */
+const ringMat = () => new THREE.MeshBasicMaterial({ color: 0x3a5bd0, transparent: true, opacity: 0, depthWrite: false, toneMapped: false, side: THREE.DoubleSide });
+const rings = [0, 1, 2].map(() => { const m = new THREE.Mesh(new THREE.RingGeometry(1, 1.035, 128), ringMat()); m.position.set(CX, 0, T + .08); m.renderOrder = 2; chip.add(m); return m; });
+
+/* Assembly guides: dashed rules at the four outer corners, drawn only in
+   the gaps between sheets (back to core, core to face), like the
+   construction lines on an exploded drawing. They fade as it closes. */
+const guideMat = new THREE.LineDashedMaterial({ color: 0x16211d, dashSize: 1.2, gapSize: 1, transparent: true, opacity: 0, depthWrite: false });
+const K = R * (1 - Math.SQRT1_2);   // the outermost point of each rounded corner
+const CORN = [[1, 1], [1, -1], [-1, 1], [-1, -1]].map(([a, b]) => [a * (W / 2 - K), b * (H / 2 - K)]);
+const guideGeo = new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(CORN.length * 2 * 2 * 3), 3));
+const guides = new THREE.LineSegments(guideGeo, guideMat); stack.add(guides);
+function setGuides(zc, zf) {
+  const a = guideGeo.attributes.position; let i = 0;
+  for (const [x, y] of CORN) for (const [z0, z1] of [[T, zc], [zc + T, zf]]) { a.setXYZ(i++, x, y, z0); a.setXYZ(i++, x, y, z1); }
+  a.needsUpdate = true; guides.computeLineDistances();
+}
+
+async function setEdition(ed) {
+  const e = ED[ed];
+  const [f, b, bf, bb, rf, rc] = await Promise.all([
+    tex(`face-${ed}.jpg`), tex(`back-${ed}.jpg`), tex('bump-face.jpg', false),
+    tex(ed === 'light' ? 'bump-back-light.jpg' : 'bump-back-dark.jpg', false),
+    tex(`core-${e.face}.jpg`), tex(`core-${e.core}.jpg`),
+  ]);
+  if (C.ed !== ed) return;
+  const set = (m, map, bump) => { m.map = map; m.bumpMap = bump || null; m.needsUpdate = true; };
+  set(M.face[0], f, bf); set(M.face[1], rf);
+  set(M.back[1], b, bb); set(M.back[0], rf);
+  set(M.core[0], rc); set(M.core[1], rc);
+  M.face[2].color.setHex(EDGE[e.face]); M.back[2].color.setHex(EDGE[e.face]); M.core[2].color.setHex(EDGE[e.core]);
+  if (!view.classList.contains('ready')) { view.classList.remove('nogl'); view.classList.add('ready'); }
+  else { kick(); sheen(); }
+}
+C.setEdition = ed => { C.ed = ed; setEdition(ed); };
+
+/* ── Choreography: scroll progress → targets ────────────────────────── */
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const io = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;   // in-out
+const span = (p, a, b) => io(clamp((p - a) / (b - a)));
+const drop = (p, a, b) => { const t = clamp((p - a) / (b - a)); return t * t * (3 - 2 * t) * .35 + t * t * .65; }; // leaves gently, lands with speed
+const lerp = (a, b, t) => a + (b - a) * t;
+const Z = { back: 0, core: T + FILM, face: 2 * (T + FILM) };
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const narrow = () => view.clientWidth < 620;
+const PI = Math.PI;
+
+function targets(p) {
+  const n = narrow(), OFF = n ? { core: 13, chip: 24, face: 35 } : { core: 16, chip: 30, face: 44 };
+  const a = clamp((p - .06) / .36);
+  /* sheets: the core lands, then the chip seats, then the face closes */
+  const oc = OFF.core * (1 - drop(a, 0, .42)), oh = OFF.chip * (1 - drop(a, .24, .66)), of = OFF.face * (1 - drop(a, .52, 1));
+  /* the card: lying open → its edge turned to you → its face → its back */
+  const toEdge = span(p, .40, .51), toFront = span(p, .57, .70), toBack = span(p, .74, .94);
+  /* E lying open, G tipped toward you so the long edge faces you, F upright */
+  const E = { x: n ? -1.05 : -1.0, y: 0, z: n ? .38 : .5 }, G = { x: -1.32, y: -.2, z: 0 }, F = { x: -.2, y: -.3, z: .04 };
+  let rx = lerp(lerp(E.x, G.x, toEdge), F.x, toFront), ry = lerp(lerp(E.y, G.y, toEdge), F.y, toFront), rz = lerp(lerp(E.z, G.z, toEdge), F.z, toFront);
+  ry += toBack * PI; rz -= toBack * .08;
+  /* the turn to the back travels in an arc: toward you, and over */
+  const arc = Math.sin(toBack * PI);
+  rx += arc * .16;
+  const edge = toEdge * (1 - toFront);
+  const zoom = lerp(n ? 1 : .82, 1, io(a)) + (n ? .24 : .26) * edge;
+  return { oc, oh, of, rx, ry, rz, lift: arc * 14, zoom, a, edge, sx: 0, ey: 10 * edge };
+}
+
+/* ── Springs ─────────────────────────────────────────────────────────── */
+/* stiffness k, damping ratio z (< 1 overshoots a little) */
+const SP = { sx: [60, .9], ey: [60, .9], oc: [170, .62], oh: [150, .6], of: [140, .62], rx: [70, .82], ry: [62, .78], rz: [70, .82], lift: [70, .8], zoom: [60, .9], px: [30, 1], py: [30, 1], intro: [26, .72], dip: [260, .32] };
+const S = {}, V = {};
+let tg = targets(C.p);
+for (const k in SP) { S[k] = tg[k] ?? 0; V[k] = 0; }
+/* Before it is first seen, the pieces wait further apart and turned. */
+S.intro = 0;
+let introOn = false, tx = 0, ty = 0;
+function step(dt) {
+  tg = targets(C.p);
+  const T_ = { ...tg, px: tx, py: ty, intro: introOn ? 1 : 0, dip: 0 };
+  for (const k in SP) {
+    if (reduce) { S[k] = T_[k]; V[k] = 0; continue; }
+    const [kk, z] = SP[k], c = 2 * Math.sqrt(kk) * z;
+    V[k] += (kk * (T_[k] - S[k]) - c * V[k]) * dt; S[k] += V[k] * dt;
+  }
+  /* A sheet can't pass through the one under it: it lands and bounces. */
+  for (const k of ['oc', 'oh', 'of']) if (S[k] < 0) { if (k === 'of' && (V[k] < -12 || armed)) { armed = false; land(Math.max(20, -V[k])); } S[k] = 0; V[k] = -V[k] * .22; }
+  if (armed && S.of < .25) { armed = false; land(20); }
+}
+function kick() { V.ry += reduce ? 0 : 2.6; }
+
+/* ── Moments: landing, seating, the turn ─────────────────────────────── */
+const fx = { sheen: -1, pulse: -1, glow: 0, lock: -1, cpulse: -1, power: 0, waitRipple: false };
+const WARM = new THREE.Color(1, .62, .26), COOL = new THREE.Color(.5, .62, .95), cpCol = new THREE.Color().copy(WARM);
+let chipOn = true;
+/* The switch. On: the rings light one by one from the chip outward, then a
+   warm ripple runs out and they breathe. Off: one cool ripple, the rings go
+   dark from the outside in, back into the chip. The card flinches either way. */
+C.setChip = on => {
+  chipOn = on;
+  if (reduce) return;
+  V.ry += on ? .9 : -.9; V.dip -= .35;
+  if (on) fx.waitRipple = true;
+  else { fx.cpulse = 0; cpCol.copy(COOL); fx.waitRipple = false; }
+};
+let lastLand = 0, armed = false;
+function sheen() { if (!reduce) fx.sheen = 0; }
+function land(speed) {
+  const now = performance.now(); if (now - lastLand < 900) return; lastLand = now;
+  if (reduce) return;
+  V.dip -= Math.min(1.4, speed / 40);
+  fx.pulse = 0; sheen();
+}
+let prevP = C.p;
+function events() {
+  const p = C.p;
+  if (prevP < .27 && p >= .27) { if (!reduce) fx.lock = 0; }   // the lock closes in
+  if (prevP < .30 && p >= .30) fx.glow = 1;            // the chip seats
+  if (prevP < .42 && p >= .42) armed = true;           // the face is about to close
+  if (prevP < .93 && p >= .93) sheen();                // the back comes round
+  prevP = p;
+}
+
+/* ── Labels: drawn in the page, pinned to points on the card ─────────── */
+const LBL = {};
+labelsEl.querySelectorAll('.cl').forEach(el => { LBL[el.dataset.k] = el; });
+const v3 = new THREE.Vector3();
+const sxOf = (x, y, z, obj) => (v3.set(x, y, z).applyMatrix4(obj.matrixWorld).project(cam).x * .5 + .5) * vw;
+function place(el, x, y, z, op, obj = stack) {
+  if (!el) return;
+  if (op < .01) { if (el._o !== 0) { el.style.opacity = 0; el._o = 0; } return; }
+  v3.set(x, y, z).applyMatrix4(obj.matrixWorld).project(cam);
+  const sx = (v3.x * .5 + .5) * vw, sy = (-v3.y * .5 + .5) * vh;
+  /* a callout that would run past the canvas turns back toward the card */
+  const w = el._w || (el._w = el.offsetWidth), flip = el.dataset.k !== 'edge' && sx + w > vw + 8;
+  if (flip !== el._f) { el.classList.toggle('l', flip); el._f = flip; }
+  el.style.transform = `translate3d(${(flip ? sx - w : sx).toFixed(1)}px,${sy.toFixed(1)}px,0)`;
+  el.style.opacity = op.toFixed(3); el._o = op;
+}
+
+/* ── Frame and camera ───────────────────────────────────────────────── */
+let vw = 1, vh = 1, baseD = 300;
+function frame() {
+  vw = view.clientWidth; vh = view.clientHeight; if (!vw || !vh) return;
+  r.setSize(vw, vh, false);
+  cam.aspect = vw / vh;
+  const n = narrow(), FW = n ? 108 : 118, FH = n ? 96 : 100, tan = Math.tan(cam.fov * PI / 360);
+  baseD = Math.max(FH / 2 / tan, FW / 2 / (tan * cam.aspect));
+  cam.updateProjectionMatrix();
+}
+new ResizeObserver(() => { frame(); Object.values(LBL).forEach(el => { el._w = 0; }); }).observe(view); frame();
+document.fonts && document.fonts.ready.then(() => Object.values(LBL).forEach(el => { el._w = 0; }));
+
+addEventListener('pointermove', e => {
+  if (e.pointerType !== 'mouse' || reduce) return;
+  const b = view.getBoundingClientRect();
+  tx = clamp((e.clientX - b.left) / b.width * 2 - 1, -1.2, 1.2); ty = clamp((e.clientY - b.top) / b.height * 2 - 1, -1.2, 1.2);
+}, { passive: true });
+view.addEventListener('pointerleave', () => { tx = 0; ty = 0; });
+
+let seen = false;
+new IntersectionObserver(es => es.forEach(e => {
+  seen = e.isIntersecting;
+  if (e.intersectionRatio > .25 && !introOn) { introOn = true; }
+}), { threshold: [0, .25] }).observe(view);
+
+let last = performance.now();
+function render(now) {
+  const dt = Math.min(1 / 20, (now - last) / 1000); last = now;
+  /* fixed small steps keep the springs stable at any frame rate */
+  const n = Math.max(1, Math.ceil(dt / (1 / 240)));
+  for (let i = 0; i < n; i++) step(dt / n);
+  events();
+  const t = now / 1000, open = 1 - tg.a, wait = 1 - S.intro;
+
+  /* the sheets, plus a slow breathing while the stack is open */
+  const breathe = reduce ? 0 : open;
+  const spread = 1 + wait * .7;
+  const bob = i => breathe * Math.sin(t * 1.1 + i * 1.3) * .7;
+  back.position.z = Z.back + bob(0) * .4;
+  core.position.z = Z.core + S.oc * spread + bob(1);
+  chip.position.z = Z.core + S.oh * spread + bob(2);
+  chip.rotation.z = S.oh * .012;
+  face.position.z = Z.face + S.of * spread + bob(3);
+  const top = face.position.z + T;
+  stack.position.set(0, 0, -top / 2);
+  guideMat.opacity = clamp((S.of - 4) / 20) * .42 * (1 - wait);
+  setGuides(core.position.z, face.position.z);
+
+  /* the whole card */
+  const dip = S.dip;
+  pivot.rotation.set(S.rx + S.py * .07 + wait * -.25, S.ry + S.px * .1 + wait * -.5, S.rz + wait * .35);
+  pivot.position.set(S.sx, (reduce ? 0 : Math.sin(t * .8) * .5) - wait * 18 + S.ey, S.lift + dip * 6);
+  const sc = 1 + dip * .02; pivot.scale.set(sc, sc, sc);
+  const d = baseD / S.zoom;
+  cam.position.set(0, d * .06, d); cam.lookAt(0, 0, 0);
+
+  /* light effects */
+  const uf = M.face[0].userData.u, ub = M.back[1].userData.u;
+  if (fx.sheen >= 0) { fx.sheen += dt * .9; if (fx.sheen > 1.6) fx.sheen = -1; }
+  uf.uSheen.value = ub.uSheen.value = fx.sheen < 0 ? -2 : fx.sheen * 1.9 - .3;
+  if (fx.pulse >= 0) { fx.pulse += dt; if (fx.pulse > 1.8) fx.pulse = -1; }
+  uf.uPulse.value = fx.pulse < 0 ? -99 : fx.pulse * 30 - 2;
+  fx.glow = Math.max(0, fx.glow - dt * 1.2);
+  coil.emissiveIntensity = fx.glow * fx.glow * 1.6;
+  /* the lock: rings start wide and close onto the chip, one after another */
+  if (fx.lock >= 0) { fx.lock += dt; if (fx.lock > 1.9) fx.lock = -1; }
+  rings.forEach((m, i) => {
+    const k = fx.lock < 0 ? -1 : clamp((fx.lock - i * .18) / 1.1);
+    if (k < 0 || k >= 1 || fx.lock < i * .18) { m.material.opacity = 0; return; }
+    const e = 1 - Math.pow(1 - k, 3), r = lerp(CHIP * 3.1, CHIP * 1.04, e);
+    m.scale.set(r, r, 1); m.material.opacity = Math.sin(k * PI) * .85 * clamp(S.of / 8);   // gone once the face closes over it
+  });
+  /* the back, once it faces you: a live chip pulses warm every few seconds;
+     a switched-off chip gives one cool ripple and goes quiet */
+  /* the chip wakes as the card turns to its back (p .78), on both sides */
+  const want = chipOn && C.p > .78 ? 1 : 0, prevPow = fx.power;
+  if (reduce) fx.power = want;
+  else fx.power = want > fx.power ? Math.min(want, fx.power + dt / 1.1) : Math.max(want, fx.power - dt / .55);
+  const rising = fx.power > prevPow, falling = fx.power < prevPow;
+  if (fx.waitRipple && fx.power >= 1) { fx.waitRipple = false; fx.cpulse = 0; cpCol.copy(WARM); }
+  if (rising && prevPow === 0 && chipOn && C.p > .78 && !reduce) fx.waitRipple = true;
+  if (fx.cpulse >= 0) { fx.cpulse += dt; if (fx.cpulse > 1.6) fx.cpulse = -1; }
+  const breath = reduce ? .5 : .42 + .2 * Math.sin(t * 2.4);
+  for (const u of [uf, ub]) {
+    u.uPower.value = fx.power;
+    u.uLive.value = fx.power * breath;
+    u.uFront.value = rising ? 1 - fx.power * .4 : falling ? .45 : 0;
+    u.uLiveCol.value.copy(chipOn ? WARM : COOL);
+  }
+  ub.uPulse.value = fx.cpulse < 0 ? -99 : fx.cpulse * 34 - 2; ub.uPulseCol.value.copy(cpCol);
+  if (fx.pulse < 0) { uf.uPulse.value = ub.uPulse.value; uf.uPulseCol.value.copy(cpCol); } else uf.uPulseCol.value.copy(WARM);
+
+  r.render(scene, cam);
+
+  /* one callout: the thickness, while the edge faces you */
+  const lo = clamp(1 - Math.abs(S.ry) * 1.6) * (1 - wait), nr = narrow();
+  place(LBL.edge, W * .2, -H / 2, top / 2, clamp((tg.edge - .75) / .25) * clamp(1 - Math.abs(S.rx - (-1.32)) * 4));
+}
+
+function loop(now) {
+  requestAnimationFrame(loop);
+  if (!seen) { last = now; return; }
+  render(now);
+}
+requestAnimationFrame(loop);
+C.setEdition(C.ed);
+</script>
+
+</body>
+</html>

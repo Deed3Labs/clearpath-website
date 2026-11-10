@@ -1,6 +1,7 @@
 import { PageHero, Device, Button, Section, SectionHead, More, Close, Chip, Arrow, Check } from '@/components/system';
 import { int } from '@/lib/format';
 import { MemberHome } from './_home/MemberHome';
+import { ClearCard } from './_home/ClearCard';
 import { GapCompare } from './_home/GapCompare';
 import { PathRail } from './_home/PathRail';
 import { CounterFlow } from './_home/CounterFlow';
@@ -8,9 +9,11 @@ import { LedgerStream } from './_home/LedgerStream';
 import './page.css';
 import { HERO, GAP, PATH, COUNTER, STATUS, LEDGER, CLOSE } from '@/content/home';
 
-/* The home page, ported from reference/redesign/home.html. The hero shows the
-   member app's Home as real UI; then five sections, each one crafted figure,
-   alternating paper and ink. Every animated part is rendered here at its end
+/* The home page, ported from reference/redesign/home.html. The hero, then
+   the Clear Card pinned under the header and put together as you scroll
+   (docs/card-section); then five sections, each one crafted figure,
+   alternating paper and ink. The member app's Home, as real UI, sits beside
+   what exists today. Every animated part is rendered here at its end
    state, so the page reads in full with no JavaScript and under reduced
    motion; the client parts animate from a start state back to it. */
 
@@ -35,19 +38,10 @@ export default function Home() {
           </>
         }
         facts={HERO.facts}
-      >
-        <div className="stage">
-          <div className="stagebox" data-stage="device">
-            <Device trace="hero">
-              <MemberHome />
-            </Device>
-          </div>
-          <div className="stage-cap label">
-            <span>{HERO.stage.caption}</span>
-            <span>{HERO.stage.sample}</span>
-          </div>
-        </div>
-      </PageHero>
+      />
+
+      {/* The Clear Card: pinned, put together by the scroll */}
+      <ClearCard />
 
       {/* 01 · renting against Clear, paid in month by month as you scroll */}
       <Section ink id="gap">
@@ -153,15 +147,26 @@ export default function Home() {
       {/* 04 · what exists today */}
       <Section id="status">
         <SectionHead n={STATUS.n} label={STATUS.label} title={STATUS.title} line={STATUS.line} />
-        <ul className="rows body-gap">
-          {STATUS.rows.map((r) => (
-            <li key={r.name}>
-              <span className="nm">{r.name}</span>
-              <span className="ds">{r.desc}</span>
-              <Chip tone={r.tone}>{r.chip}</Chip>
-            </li>
-          ))}
-        </ul>
+        <div className="status-grid body-gap">
+          <ul className="rows">
+            {STATUS.rows.map((r) => (
+              <li key={r.name}>
+                <span className="nm">{r.name}</span>
+                <span className="ds">{r.desc}</span>
+                <Chip tone={r.tone}>{r.chip}</Chip>
+              </li>
+            ))}
+          </ul>
+          <figure className="shot">
+            <Device trace="inview">
+              <MemberHome />
+            </Device>
+            <figcaption className="stage-cap label">
+              <span>{STATUS.shot.caption}</span>
+              <span>{STATUS.shot.sample}</span>
+            </figcaption>
+          </figure>
+        </div>
       </Section>
 
       {/* 05 · the public ledger */}

@@ -19,7 +19,10 @@ import { useIsoLayoutEffect } from '@/lib/anim/hooks';
    moves once painted.
 
    `variant` pairs a desktop canvas with a phone canvas: the desk one shows
-   from 700px up, the phone one below. */
+   from 700px up, the phone one below.
+
+   `crop` shows only the top of a tall canvas: the screen is `h` canvas
+   pixels tall, or `hm` at 900px and below. The canvas keeps its own size. */
 
 export function Screen({
   w,
@@ -29,6 +32,7 @@ export function Screen({
   canvasClassName,
   canvasStyle,
   label,
+  crop,
   children,
 }: {
   w: number;
@@ -37,6 +41,7 @@ export function Screen({
   className?: string;
   canvasClassName?: string;
   canvasStyle?: CSSProperties;
+  crop?: { h: number; hm?: number };
   /* A screen is a picture of the product. Its text is real and readable, so
      it stays in the accessibility tree unless the page says otherwise. */
   label?: string;
@@ -63,7 +68,8 @@ export function Screen({
     <div
       ref={ref}
       className={['screen', variant && `screen-${variant}`, className].filter(Boolean).join(' ')}
-      style={{ '--w': w, '--h': h } as CSSProperties}
+      style={{ '--w': w, '--h': h, ...(crop && { '--ch': crop.h, '--chm': crop.hm ?? crop.h }) } as CSSProperties}
+      data-crop={crop ? '' : undefined}
       role={label ? 'img' : undefined}
       aria-label={label}
     >
