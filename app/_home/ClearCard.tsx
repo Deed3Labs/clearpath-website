@@ -51,6 +51,9 @@ export function ClearCard() {
       el.style.setProperty('--k', String(k));
     });
     if (cue.current) cue.current.style.opacity = p > 0.03 ? '0' : '1';
+    /* stacked layouts: the headline over the stage lifts away as the sheets
+       start to move */
+    section.current?.style.setProperty('--io', (1 - Math.min(1, Math.max(0, (p - 0.015) / 0.045))).toFixed(3));
   });
 
   /* Where the card starts: assembled without motion, open with it, in the
