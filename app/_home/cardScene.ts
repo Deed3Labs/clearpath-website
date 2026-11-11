@@ -45,6 +45,7 @@ type Uniforms = {
   uLiveCol: { value: THREE.Color };
   uDead: { value: number };
   uWood: { value: THREE.Color };
+  uClear: { value: number };
 };
 
 export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => void {
@@ -149,9 +150,9 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
   /* The two engraved faces carry two light effects, both drawn in the
      shader: a sheen that glances across the wood, and a pulse that runs out
      from the chip through the engraved rings. */
-  function engraved(chipMm: [number, number], name: string) {
-    const m = wood();
-    const u: Uniforms = {
+  function engraved(chipMm: [number, number], name: string, m: Mat = wood(), shared?: Uniforms) {
+    const see = m.transparent;
+    const u: Uniforms = shared ?? {
       uSheen: { value: -2 },
       uPulse: { value: -99 },
       uChip: { value: new THREE.Vector2(...chipMm) },
@@ -162,6 +163,7 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
       uLiveCol: { value: new THREE.Color(1, 0.62, 0.26) },
       uDead: { value: 0 },
       uWood: { value: new THREE.Color(0xecd6ae) },
+      uClear: { value: 0 },
     };
     m.userData.u = u;
     m.onBeforeCompile = (sh) => {
@@ -169,7 +171,7 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
       sh.fragmentShader = sh.fragmentShader
         .replace(
           '#include <common>',
-          '#include <common>\nuniform float uSheen; uniform float uPulse; uniform vec2 uChip; uniform vec3 uPulseCol; uniform float uPower; uniform float uLive; uniform float uFront; uniform vec3 uLiveCol; uniform float uDead; uniform vec3 uWood;',
+          '#include <common>\nuniform float uSheen; uniform float uPulse; uniform vec2 uChip; uniform vec3 uPulseCol; uniform float uPower; uniform float uLive; uniform float uFront; uniform vec3 uLiveCol; uniform float uDead; uniform vec3 uWood; uniform float uClear;',
         )
         .replace(
           '#include <emissivemap_fragment>',
@@ -191,25 +193,36 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
      bright leading edge (uFront), then keep their own colour, deepened to
      a warm copper that breathes (uLive): coloured, never washed out.
      Off: the colour drains out of them, from the chip outward (uDead),
-     until they are the wood around them. */
+     until they are the wood around them.
+     The Clear edition (uClear 1) has no wood to colour: its rings are
+     polished lines in the frost, so on they glow warm through it (the
+     reference's light), and off they are just the polished lines. */
   float dc = length(mm - uChip), Rr = uPower * 31.0;
   float lit = 1.0 - smoothstep(Rr - 2.2, Rr, dc);
   float zone = 1.0 - smoothstep(27.5, 31.0, dc);
   float lead = exp(-(dc - Rr) * (dc - Rr) / 3.0) * uFront;
   float on = eng * zone * lit * uLive;
-  diffuseColor.rgb *= mix(vec3(1.0), vec3(1.1, .72, .42), on);
-  totalEmissiveRadiance += uLiveCol * (on * .35 + eng * zone * lead * 2.4);
+  diffuseColor.rgb *= mix(vec3(1.0), vec3(1.1, .72, .42), on * (1.0 - uClear));
+  totalEmissiveRadiance += uLiveCol * (on * mix(.35, 1.7, uClear) + eng * zone * lead * 2.4);
   float Rd = uDead * 31.0;
   float gone = eng * zone * (1.0 - smoothstep(Rd - 2.2, Rd, dc));
-  diffuseColor.rgb = mix(diffuseColor.rgb, uWood, gone * .85);
+  diffuseColor.rgb = mix(diffuseColor.rgb, uWood, gone * .85 * (1.0 - uClear));
 #endif`,
+        );
+      /* see-through sheets (the Clear edition): the polished art is almost
+         transparent, so anything lit in it raises its own opacity */
+      if (see)
+        sh.fragmentShader = sh.fragmentShader.replace(
+          '#include <opaque_fragment>',
+          `diffuseColor.a = max(diffuseColor.a, clamp(max(max(totalEmissiveRadiance.r, totalEmissiveRadiance.g), totalEmissiveRadiance.b), 0.0, 1.0));
+#include <opaque_fragment>`,
         );
     };
     m.customProgramCacheKey = () => name;
     return m;
   }
   const EDGE: Record<string, number> = { birch: 0xecd6ae, 'birch-caramel': 0xb6844f, 'birch-dark': 0x5e3a20 };
-  const ED: Record<CardEdition, { face: string; core: string }> = {
+  const ED: Record<Exclude<CardEdition, 'clear'>, { face: string; core: string }> = {
     light: { face: 'birch', core: 'birch-caramel' },
     dark: { face: 'birch-dark', core: 'birch-caramel' },
     contrast: { face: 'birch-dark', core: 'birch' },
@@ -218,6 +231,24 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
     face: [engraved([CXmm, H / 2], 'face'), wood(), edge()],
     core: [wood(), wood(), edge()],
     back: [wood(), engraved([W - CXmm, H / 2], 'back'), edge()],
+  };
+  /* The Clear edition: frosted polycarbonate over a smoke-tinted core. One
+     map per sheet (white = frosted, dark = the polished art) sets the haze,
+     the roughness and, through the shader, which parts light up. The core's
+     back side carries the printed code label. Same uniforms as the wood
+     faces, so every light effect runs on both. */
+  const frost = () =>
+    new THREE.MeshPhysicalMaterial({ color: 0xf4f7f5, transparent: true, opacity: 0.6, roughness: 0.55, metalness: 0, specularIntensity: 0.7, envMapIntensity: 0.8, bumpScale: 0 });
+  const gloss = (op: number) =>
+    new THREE.MeshPhysicalMaterial({ color: 0xf4f7f5, transparent: true, opacity: op, roughness: 0.05, clearcoat: 0.4, clearcoatRoughness: 0.1 });
+  const CM: Record<'face' | 'core' | 'back', Mat[]> = {
+    face: [engraved([CXmm, H / 2], 'face-clear', frost(), M.face[0].userData.u as Uniforms), gloss(0.08), gloss(0.55)],
+    core: [
+      new THREE.MeshStandardMaterial({ color: 0x27302c, roughness: 0.6, envMapIntensity: 0.25, transparent: true, opacity: 0.85 }),
+      new THREE.MeshStandardMaterial({ roughness: 0.6, envMapIntensity: 0.25, transparent: true }),
+      new THREE.MeshPhysicalMaterial({ color: 0x27302c, roughness: 0.15, clearcoat: 0.6, transparent: true, opacity: 0.9 }),
+    ],
+    back: [gloss(0.08), engraved([W - CXmm, H / 2], 'back-clear', frost(), M.back[1].userData.u as Uniforms), gloss(0.55)],
   };
 
   const pivot = new THREE.Group(), stack = new THREE.Group();
@@ -231,6 +262,14 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
     return o;
   };
   const back = mesh(sheet(false, true), M.back), core = mesh(sheet(true, false), M.core), face = mesh(sheet(false, false), M.face);
+  function showClear(on: boolean) {
+    face.material = on ? CM.face : M.face;
+    back.material = on ? CM.back : M.back;
+    core.material = on ? CM.core : M.core;
+    face.castShadow = back.castShadow = !on; // clear sheets cast almost no shadow; the tinted core does
+    core.renderOrder = on ? 1 : 0;
+    face.renderOrder = back.renderOrder = on ? 2 : 0; // core first, then the sheets over it
+  }
 
   /* The chip: a dark disc with its coil, sized to the Arx tag. A stand-in,
      not a photo-accurate Arx HaLo. */
@@ -356,6 +395,24 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
 
   let alive = true;
   async function setEdition(ed: CardEdition) {
+    const clear = (M.face[0].userData.u as Uniforms).uClear;
+    if (ed === 'clear') {
+      const [f, b, c] = await Promise.all([tex('clear-face.jpg', false), tex('clear-back.jpg', false), tex('clear-core.png')]);
+      if (!alive || C.ed !== ed) return;
+      for (const [m, map] of [
+        [CM.face[0], f],
+        [CM.back[1], b],
+      ] as const) {
+        m.map = m.alphaMap = m.roughnessMap = m.bumpMap = map;
+        m.needsUpdate = true;
+      }
+      CM.core[1].map = c;
+      CM.core[1].needsUpdate = true;
+      clear.value = 1;
+      showClear(true);
+      ready();
+      return;
+    }
     const e = ED[ed];
     const [f, b, bf, bb, rf, rc] = await Promise.all([
       tex(`face-${ed}.jpg`),
@@ -382,6 +439,11 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
     /* the wood a switched-off chip's rings fade into */
     for (const m of [M.face[0], M.back[1]]) (m.userData.u as Uniforms).uWood.value.setHex(EDGE[e.face]);
     M.core[2].color.setHex(EDGE[e.core]);
+    clear.value = 0;
+    showClear(false);
+    ready();
+  }
+  function ready() {
     if (!view.classList.contains('ready')) {
       view.classList.remove('nogl');
       view.classList.add('ready');
@@ -862,6 +924,8 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
       const mats = Array.isArray(m.material) ? m.material : m.material ? [m.material] : [];
       mats.forEach((x) => x.dispose());
     });
+    /* the edition not on show is not in the scene, so dispose both sets */
+    [...Object.values(M), ...Object.values(CM)].flat().forEach((m) => m.dispose());
     Object.values(cache).forEach((pr) => void pr.then((t) => t.dispose()).catch(() => {}));
     env.dispose();
     pmrem.dispose();

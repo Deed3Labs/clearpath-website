@@ -38,16 +38,18 @@ export const HERO = {
    `go` where a click on it scrolls to. Steps 01–04 share the first 80%. */
 export const CARD = {
   label: 'The Clear Card',
-  title: 'Real wood. In your wallet.',
-  line: 'Birch outside. A secure chip inside. Nothing else you carry feels like it.',
+  title: 'Birch or clear. Built to carry.',
+  line: 'Real wood or frosted clear outside. A secure chip inside. Nothing else you carry feels like it.',
   cue: 'Scroll',
-  /* TODO(owner): product claims to confirm before launch: "Stained, never
-     painted" (01), "made in the chip and never leaves. Nothing to skim.
+  /* TODO(owner): product claims to confirm before launch: "Birch or clear"
+     and "frosted clear" (the headline and 01: the Clear edition is the
+     premium card and isn't built yet), "Stained birch, so no two are alike"
+     (01), "made in the chip and never leaves. Nothing to skim.
      Nothing to copy." (02), "Sealed against rain and spills" (03), "One
      tap in the app. We’ll send a new one." (04), and step 05's "Soon: co-work
      doors, partner discounts, and more." Keep the "Soon" until it is real. */
   steps: [
-    { t: 'Real birch', d: 'Stained, never painted. The grain shows, so no two are alike.', at: 0, go: 0.024 },
+    { t: 'Birch or clear', d: 'Stained birch, so no two are alike. Or frosted clear, with the chip just visible inside.', at: 0, go: 0.024 },
     { t: 'Your key stays inside', d: 'It’s made in the chip and never leaves. Nothing to skim. Nothing to copy.', at: 0.16, go: 0.24 },
     { t: 'Made for real life', d: 'Sealed against rain and spills. Thicker than metal, still fits your wallet.', at: 0.32, go: 0.44 },
     { t: 'Lost it? Switch it off.', d: 'One tap in the app. We’ll send a new one.', at: 0.592, go: 0.776 },
@@ -65,6 +67,8 @@ export const CARD = {
     { id: 'light', label: 'Light', f: '#E2C8A0', c: '#A26C3A' },
     { id: 'dark', label: 'Dark', f: '#42281A', c: '#A26C3A' },
     { id: 'contrast', label: 'Contrast', f: '#42281A', c: '#E2C8A0' },
+    /* frosted polycarbonate over a smoke-tinted core */
+    { id: 'clear', label: 'Clear', f: '#C9CFCB', c: '#27302C' },
   ],
   fallback: 'The Clear Card in the Light edition: natural birch with the Clear mark engraved on the face',
 } as const;
