@@ -427,7 +427,10 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
     zoom = lerp(zoom, n ? 0.8 : 0.88, turn);
     zoom = lerp(zoom, n ? 0.9 : 0.97, reach);
     const lift = arc * 14 + Math.sin(reach * PI) * 9;
-    return { oc, oh, of, rx, ry, rz, lift, zoom, a, edge, sx, ey: 10 * edge, rd: lerp(200, RD.x, turn) };
+    /* small screens show the headline over the stage at first: the open
+       stack sits lower until it fades, then rises to the middle */
+    const intro = n ? 1 - span(pp, 0.015, 0.06) : 0;
+    return { oc, oh, of, rx, ry, rz, lift, zoom, a, edge, sx, ey: 10 * edge - 15 * intro, rd: lerp(200, RD.x, turn) };
   }
 
   /* ── Springs ─────────────────────────────────────────────────────────── */
