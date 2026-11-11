@@ -86,7 +86,13 @@
      centred in the pinned screen, so the card and the copy share one centre
      line instead of the copy sinking to the bottom of a tall box. */
   /* (tall tablets up to 1100px wide, like an iPad Pro held upright, use the stacked layout below) */
-  @media (min-width: 1101px), (min-width: 1001px) and (orientation: landscape) { .card-body { align-self: center; height: min(100%, 720px); } }
+  @media (min-width: 1101px), (min-width: 1001px) and (orientation: landscape) {
+    .card-body { align-self: center; height: min(100%, 720px); }
+    /* the copy column never rides up into the label band's rule: a little
+       room under it always, and if the column is ever taller than the space
+       it runs off the bottom, not the top */
+    .card-side { align-content: safe center; padding-block: 16px; }
+  }
   .card-intro { display: grid; gap: 10px; }
   .card-intro h2 { font-family: var(--font-display); font-weight: 800; font-size: clamp(30px, 2.9vw, 44px); line-height: 1; letter-spacing: -0.035em; text-wrap: balance; }
   .card-intro p { color: var(--color-ink-70); font-size: clamp(16px, 1.25vw, 18px); line-height: 1.5; max-width: 40ch; }
@@ -171,7 +177,10 @@
     .ed { width: 28px; min-height: 28px; }
     .chipsw { gap: 8px; padding-right: 11px; font-size: 13.5px; }
   }
-  @media (max-height: 640px) and (min-width: 1001px) { .card-intro p { display: none; } .step { padding-block: 9px; } }
+  /* shorter laptop screens (1280×720, 1366×768): the column is taller than
+     the stage, so its gaps close up a little */
+  @media (max-height: 820px) and (min-width: 1001px) { .card-side { gap: 24px; } .step { padding-block: 10px; } }
+  @media (max-height: 640px) and (min-width: 1001px) { .card-intro p { display: none; } .card-side { gap: 16px; } .step { padding-block: 8px; } }
 
   /* ── 01 The gap: two columns, one clock ───────────────────────────────── */
   .cmp { --line: var(--color-ink-28); --px: clamp(20px, 2.8vw, 40px); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); border: 1px solid var(--line); }
