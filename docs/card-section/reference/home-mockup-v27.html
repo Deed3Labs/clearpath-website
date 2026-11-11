@@ -591,6 +591,8 @@ html, body { overflow-x: clip; overscroll-behavior-x: none; }
 .step.on .d { grid-template-rows: 1fr; opacity: 1; margin-top: 6px; }
 .step:hover { color: var(--ink); }
 .steps-seg { display: none; }
+/* "Planned": a quiet tag, so step 05 never reads as a feature that ships today. */
+.step .soon { display: inline-flex; align-items: center; margin-left: 10px; padding: 4px 9px 3px; vertical-align: .25em; border: 1px solid color-mix(in srgb, var(--underway) 40%, transparent); border-radius: 999px; background: color-mix(in srgb, var(--underway) 9%, transparent); color: var(--underway); font-family: var(--f-mono); font-size: 9.5px; font-style: normal; font-weight: 400; letter-spacing: .1em; text-transform: uppercase; line-height: 1; }
 
 /* The off switch: appears with step 04 and drives the chip on the card.
    Its row always keeps its height, so nothing shifts when it appears. */
@@ -625,7 +627,7 @@ html, body { overflow-x: clip; overscroll-behavior-x: none; }
   .card-intro { display: none; }
   .steps { border-left: 0; padding-top: 18px; }
   .steps-fill { display: none; }
-  .steps-seg { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; position: absolute; left: 0; right: 0; top: 0; height: 2px; }
+  .steps-seg { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; position: absolute; left: 0; right: 0; top: 0; height: 2px; }
   .steps-seg i { background: var(--ink-13); position: relative; overflow: hidden; }
   .steps-seg i::after { content: ''; position: absolute; inset: 0; background: var(--ink); transform-origin: 0 50%; transform: scaleX(var(--k, 0)); }
   .step { grid-area: 2 / 1; padding: 0; opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity 260ms var(--ease), transform 360ms var(--ease), visibility 0s linear 360ms; }
@@ -760,7 +762,7 @@ html, body { overflow-x: clip; overscroll-behavior-x: none; }
   <!-- THE CARD — pinned; scrolling puts it together, then turns it over. -->
   <section class="cardsec" id="card" aria-labelledby="card-h">
     <div class="wrap">
-      <div class="card-top label"><span>The Clear Card</span><span class="card-count" aria-hidden="true"><b id="card-n">01</b><i></i>04</span></div>
+      <div class="card-top label"><span>The Clear Card</span><span class="card-count" aria-hidden="true"><b id="card-n">01</b><i></i>05</span></div>
       <div class="card-body">
         <div class="card-view" id="card-view">
           <div class="card-labels" id="card-labels" aria-hidden="true">
@@ -772,15 +774,16 @@ html, body { overflow-x: clip; overscroll-behavior-x: none; }
         <div class="card-side">
           <div class="card-intro">
             <h2 class="h3" id="card-h">Real wood. In your wallet.</h2>
-            <p>Birch on the outside, a secure chip inside. Nothing else you carry feels like it.</p>
+            <p>Birch outside. A secure chip inside. Nothing else you carry feels like it.</p>
           </div>
           <div class="steps" id="steps">
             <span class="steps-fill" id="steps-fill" aria-hidden="true"></span>
-            <span class="steps-seg" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-            <button type="button" class="step on" data-i="0"><span class="n">01</span><span class="t">Real birch</span><span class="d"><span>Stained, never painted, so the grain shows through. No two cards are alike.</span></span></button>
-            <button type="button" class="step" data-i="1"><span class="n">02</span><span class="t">A chip that guards your key</span><span class="d"><span>Your key is made inside the chip and never leaves it. Nothing to skim, nothing to copy.</span></span></button>
-            <button type="button" class="step" data-i="2"><span class="n">03</span><span class="t">Built for every day</span><span class="d"><span>Sealed against rain, sweat and spills. At 2.5 mm it&rsquo;s thicker than metal, and still slides into your wallet.</span></span></button>
-            <button type="button" class="step" data-i="3"><span class="n">04</span><span class="t">Lost it? Switch it off.</span><span class="d"><span>One tap in the app turns the chip off. We send a new card.</span></span></button>
+            <span class="steps-seg" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+            <button type="button" class="step on" data-i="0"><span class="n">01</span><span class="t">Real birch</span><span class="d"><span>Stained, never painted. The grain shows, so no two are alike.</span></span></button>
+            <button type="button" class="step" data-i="1"><span class="n">02</span><span class="t">Your key stays inside</span><span class="d"><span>It&rsquo;s made in the chip and never leaves. Nothing to skim. Nothing to copy.</span></span></button>
+            <button type="button" class="step" data-i="2"><span class="n">03</span><span class="t">Made for real life</span><span class="d"><span>Sealed against rain and spills. Thicker than metal, still fits your wallet.</span></span></button>
+            <button type="button" class="step" data-i="3"><span class="n">04</span><span class="t">Lost it? Switch it off.</span><span class="d"><span>One tap in the app. We&rsquo;ll send a new one.</span></span></button>
+            <button type="button" class="step" data-i="4"><span class="n">05</span><span class="t">More than a card</span><span class="d"><span>Soon: co-work doors, partner discounts, and more.</span></span></button>
           </div>
           <div class="card-controls">
             <div class="chipsw-row" id="chipsw-row" aria-hidden="true">
@@ -1094,7 +1097,7 @@ html, body { overflow-x: clip; overscroll-behavior-x: none; }
   </div>
 </footer>
 
-<div class="mock-flag">Mockup v23 · Home</div>
+<div class="mock-flag">Mockup v27 · Home</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
@@ -1139,7 +1142,7 @@ html, body { overflow-x: clip; overscroll-behavior-x: none; }
 
   /* ── The card: scroll progress lives here; the 3D script draws it ──── */
   const card = window.clearCard = window.clearCard || { p: 0, ed: 'light' };
-  const steps = $$('.step'), AT = [0, .2, .4, .74], GO = [.03, .3, .55, .97];
+  const steps = $$('.step'), AT = [0, .16, .32, .592, .8], GO = [.024, .24, .44, .776, .97];
   const cardView = $('#card-view');
   function setCardP(p) {
     card.p = p;
@@ -1149,7 +1152,7 @@ html, body { overflow-x: clip; overscroll-behavior-x: none; }
     $$('.steps-seg i').forEach((el, i) => el.style.setProperty('--k', Math.max(0, Math.min(1, (p - AT[i]) / ((AT[i + 1] || 1) - AT[i])))));
     $('#card-n').textContent = '0' + (n + 1);
     $('#card-cue').style.opacity = p > .03 ? 0 : 1;
-    const sw = n === 3, row = $('#chipsw-row');
+    const sw = n >= 3, row = $('#chipsw-row');
     if (row.classList.contains('show') !== sw) { row.classList.toggle('show', sw); row.setAttribute('aria-hidden', String(!sw)); $('#chipsw').tabIndex = sw ? 0 : -1; }
   }
   $$('.ed').forEach(b => b.addEventListener('click', () => {
@@ -1408,13 +1411,13 @@ html, body { overflow-x: clip; overscroll-behavior-x: none; }
   paint(2, false);
 
   /* Without motion: the card rests assembled; the counter rests mid-flow. */
-  if (!G) { setCardP(.6); reset(); toCode(); setTimeout(toPick, 60); return; }
+  if (!G) { setCardP(.56); reset(); toCode(); setTimeout(toPick, 60); return; }
   gsap.registerPlugin(ScrollTrigger);
   ScrollTrigger.config({ ignoreMobileResize: true });
 
   /* The card pins under the header for a little over two screens of scroll. */
   setCardP(0);
-  cardST = ScrollTrigger.create({ trigger: '#card', start: () => 'top ' + head.offsetHeight + 'px', end: () => '+=' + Math.round(innerHeight * 2.2), pin: true, refreshPriority: 1, anticipatePin: 1, invalidateOnRefresh: true, onUpdate: s => setCardP(s.progress) });
+  cardST = ScrollTrigger.create({ trigger: '#card', start: () => 'top ' + head.offsetHeight + 'px', end: () => '+=' + Math.round(innerHeight * 2.8), pin: true, refreshPriority: 1, anticipatePin: 1, invalidateOnRefresh: true, onUpdate: s => setCardP(s.progress) });
 
   /* The member app, now in 04: light runs around its outline. */
   const appTrace = makeTrace($('#app-device'), (w, h) => rr(.5, .5, w - 1, h - 1, 14, 'left'), { seg: 160, speed: 620 });
@@ -1629,6 +1632,30 @@ async function setEdition(ed) {
 }
 C.setEdition = ed => { C.ed = ed; setEdition(ed); };
 
+/* ── The reader (step 05): a door reader at a Clear branch ─────────── */
+/* An ink slab with a tap ring and a status light. It slides in from the
+   right; the card taps it with its chip; the light answers. */
+const RD = { w: 50, h: 78, r: 7, d: 7, x: 30, front: -6.5 };
+const reader = new THREE.Group(); scene.add(reader);
+{
+  const s = new THREE.Shape(), x = -RD.w / 2, y = -RD.h / 2, r = RD.r, P = Math.PI;
+  s.moveTo(x + r, y); s.lineTo(x + RD.w - r, y); s.absarc(x + RD.w - r, y + r, r, -P / 2, 0, false);
+  s.lineTo(x + RD.w, y + RD.h - r); s.absarc(x + RD.w - r, y + RD.h - r, r, 0, P / 2, false);
+  s.lineTo(x + r, y + RD.h); s.absarc(x + r, y + RD.h - r, r, P / 2, P, false);
+  s.lineTo(x, y + r); s.absarc(x + r, y + r, r, P, P * 1.5, false);
+  const body = new THREE.Mesh(new THREE.ExtrudeGeometry(s, { depth: RD.d, bevelEnabled: true, bevelThickness: .8, bevelSize: .8, bevelSegments: 3, curveSegments: 24 }),
+    new THREE.MeshStandardMaterial({ color: 0x16211d, roughness: .45, metalness: .1 }));
+  body.position.z = -RD.d - .8; body.castShadow = true; reader.add(body);
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(13, .32, 8, 96), new THREE.MeshStandardMaterial({ color: 0x6b7570, roughness: .5 }));
+  ring.position.set(0, 0, .1); reader.add(ring);
+}
+const ledMat = new THREE.MeshBasicMaterial({ color: 0x3a4440, toneMapped: false });
+const led = new THREE.Mesh(new THREE.CircleGeometry(2, 32), ledMat); led.position.set(0, 29, .15); reader.add(led);
+const haloMat = new THREE.MeshBasicMaterial({ color: 0x6fcb9f, transparent: true, opacity: 0, depthWrite: false, toneMapped: false, blending: THREE.AdditiveBlending });
+const halo = new THREE.Mesh(new THREE.CircleGeometry(7, 48), haloMat); halo.position.set(0, 29, .12); reader.add(halo);
+reader.position.set(200, 0, RD.front);
+const LED = { idle: new THREE.Color(0x3a4440), ok: new THREE.Color(0x6fcb9f), no: new THREE.Color(0xe58c7f) };
+
 /* ── Choreography: scroll progress → targets ────────────────────────── */
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 const io = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;   // in-out
@@ -1640,7 +1667,10 @@ const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const narrow = () => view.clientWidth < 620;
 const PI = Math.PI;
 
-function targets(p) {
+/* Steps 01–04 run over the first 80% of the scroll; 05 has the rest. */
+const Q = .8;
+function targets(pp) {
+  const p = clamp(pp / Q);
   const n = narrow(), OFF = n ? { core: 13, chip: 24, face: 35 } : { core: 16, chip: 30, face: 44 };
   const a = clamp((p - .06) / .36);
   /* sheets: the core lands, then the chip seats, then the face closes */
@@ -1655,13 +1685,22 @@ function targets(p) {
   const arc = Math.sin(toBack * PI);
   rx += arc * .16;
   const edge = toEdge * (1 - toFront);
-  const zoom = lerp(n ? 1 : .82, 1, io(a)) + (n ? .24 : .26) * edge;
-  return { oc, oh, of, rx, ry, rz, lift: arc * 14, zoom, a, edge, sx: 0, ey: 10 * edge };
+  let zoom = lerp(n ? 1 : .82, 1, io(a)) + (n ? .24 : .26) * edge;
+  /* 05 · it comes round to its face again, a reader slides in, and the
+     card taps it chip-first, flat against the ring */
+  const turn = span(pp, .80, .87), reach = span(pp, .87, .95);
+  ry += turn * PI + reach * .22;   // ends a touch short of flat, so the chip edge leans off the reader
+  rx = lerp(rx, -.12, turn); rx = lerp(rx, 0, reach);
+  rz = lerp(rz, 0, turn);
+  const sx = lerp(lerp(0, -30, turn), RD.x - CX, reach);
+  zoom = lerp(zoom, n ? .8 : .88, turn); zoom = lerp(zoom, n ? .9 : .97, reach);
+  const lift = arc * 14 + Math.sin(reach * PI) * 9;
+  return { oc, oh, of, rx, ry, rz, lift, zoom, a, edge, sx, ey: 10 * edge, rd: lerp(200, RD.x, turn) };
 }
 
 /* ── Springs ─────────────────────────────────────────────────────────── */
 /* stiffness k, damping ratio z (< 1 overshoots a little) */
-const SP = { sx: [60, .9], ey: [60, .9], oc: [170, .62], oh: [150, .6], of: [140, .62], rx: [70, .82], ry: [62, .78], rz: [70, .82], lift: [70, .8], zoom: [60, .9], px: [30, 1], py: [30, 1], intro: [26, .72], dip: [260, .32] };
+const SP = { rd: [55, .86], sx: [60, .9], ey: [60, .9], oc: [170, .62], oh: [150, .6], of: [140, .62], rx: [70, .82], ry: [62, .78], rz: [70, .82], lift: [70, .8], zoom: [60, .9], px: [30, 1], py: [30, 1], intro: [26, .72], dip: [260, .32] };
 const S = {}, V = {};
 let tg = targets(C.p);
 for (const k in SP) { S[k] = tg[k] ?? 0; V[k] = 0; }
@@ -1683,7 +1722,7 @@ function step(dt) {
 function kick() { V.ry += reduce ? 0 : 2.6; }
 
 /* ── Moments: landing, seating, the turn ─────────────────────────────── */
-const fx = { sheen: -1, pulse: -1, glow: 0, lock: -1, cpulse: -1, power: 0, waitRipple: false };
+const fx = { sheen: -1, pulse: -1, glow: 0, lock: -1, cpulse: -1, power: 0, waitRipple: false, led: 0, shake: -1 };
 const WARM = new THREE.Color(1, .62, .26), COOL = new THREE.Color(.5, .62, .95), cpCol = new THREE.Color().copy(WARM);
 let chipOn = true;
 /* The switch. On: the rings light one by one from the chip outward, then a
@@ -1695,6 +1734,7 @@ C.setChip = on => {
   V.ry += on ? .9 : -.9; V.dip -= .35;
   if (on) fx.waitRipple = true;
   else { fx.cpulse = 0; cpCol.copy(COOL); fx.waitRipple = false; }
+  if (C.p >= .945) setTimeout(tap, on ? 900 : 350);   // at the reader: try the door again
 };
 let lastLand = 0, armed = false;
 function sheen() { if (!reduce) fx.sheen = 0; }
@@ -1706,12 +1746,24 @@ function land(speed) {
 }
 let prevP = C.p;
 function events() {
-  const p = C.p;
-  if (prevP < .27 && p >= .27) { if (!reduce) fx.lock = 0; }   // the lock closes in
-  if (prevP < .30 && p >= .30) fx.glow = 1;            // the chip seats
-  if (prevP < .42 && p >= .42) armed = true;           // the face is about to close
-  if (prevP < .93 && p >= .93) sheen();                // the back comes round
+  const p = C.p, x = v => v * Q;                      // thresholds for 01–04 are in their own 0–1
+  if (prevP < x(.27) && p >= x(.27)) { if (!reduce) fx.lock = 0; }   // the lock closes in
+  if (prevP < x(.30) && p >= x(.30)) fx.glow = 1;     // the chip seats
+  if (prevP < x(.42) && p >= x(.42)) armed = true;    // the face is about to close
+  if (prevP < x(.93) && p >= x(.93)) sheen();         // the back comes round
+  if (prevP < .945 && p >= .945) tap();               // 05: the card meets the reader
+  if (prevP >= .9 && p < .9) { fx.led = 0; ledMat.color.copy(LED.idle); }
   prevP = p;
+}
+/* The tap. A live chip: the light goes green, a warm ripple runs out from
+   the chip and the card settles against the reader. A switched-off chip:
+   the light goes red and the card shakes its head. */
+function tap() {
+  const ok = chipOn;
+  ledMat.color.copy(ok ? LED.ok : LED.no); haloMat.color.copy(ok ? LED.ok : LED.no); fx.led = 1;
+  if (reduce) return;
+  if (ok) { V.dip -= .5; fx.pulse = 0; sheen(); }
+  else { fx.shake = 0; }
 }
 
 /* ── Labels: drawn in the page, pinned to points on the card ─────────── */
@@ -1783,7 +1835,11 @@ function render(now) {
   /* the whole card */
   const dip = S.dip;
   pivot.rotation.set(S.rx + S.py * .07 + wait * -.25, S.ry + S.px * .1 + wait * -.5, S.rz + wait * .35);
-  pivot.position.set(S.sx, (reduce ? 0 : Math.sin(t * .8) * .5) - wait * 18 + S.ey, S.lift + dip * 6);
+  let shake = 0;
+  if (fx.shake >= 0) { fx.shake += dt; shake = Math.sin(fx.shake * 38) * Math.exp(-fx.shake * 5) * 2.2; if (fx.shake > 1) fx.shake = -1; }
+  pivot.position.set(S.sx + shake, (reduce ? 0 : Math.sin(t * .8) * .5) - wait * 18 + S.ey, S.lift + dip * 6);
+  reader.position.x = S.rd; reader.visible = S.rd < 160;
+  haloMat.opacity = fx.led * (.55 + (reduce ? 0 : .2 * Math.sin(t * 3)));
   const sc = 1 + dip * .02; pivot.scale.set(sc, sc, sc);
   const d = baseD / S.zoom;
   cam.position.set(0, d * .06, d); cam.lookAt(0, 0, 0);
@@ -1807,12 +1863,12 @@ function render(now) {
   /* the back, once it faces you: a live chip pulses warm every few seconds;
      a switched-off chip gives one cool ripple and goes quiet */
   /* the chip wakes as the card turns to its back (p .78), on both sides */
-  const want = chipOn && C.p > .78 ? 1 : 0, prevPow = fx.power;
+  const want = chipOn && C.p > .78 * Q ? 1 : 0, prevPow = fx.power;
   if (reduce) fx.power = want;
   else fx.power = want > fx.power ? Math.min(want, fx.power + dt / 1.1) : Math.max(want, fx.power - dt / .55);
   const rising = fx.power > prevPow, falling = fx.power < prevPow;
   if (fx.waitRipple && fx.power >= 1) { fx.waitRipple = false; fx.cpulse = 0; cpCol.copy(WARM); }
-  if (rising && prevPow === 0 && chipOn && C.p > .78 && !reduce) fx.waitRipple = true;
+  if (rising && prevPow === 0 && chipOn && C.p > .78 * Q && !reduce) fx.waitRipple = true;
   if (fx.cpulse >= 0) { fx.cpulse += dt; if (fx.cpulse > 1.6) fx.cpulse = -1; }
   const breath = reduce ? .5 : .42 + .2 * Math.sin(t * 2.4);
   for (const u of [uf, ub]) {
