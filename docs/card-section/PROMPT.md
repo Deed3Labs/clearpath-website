@@ -9,7 +9,7 @@ The homepage redesign is already live in this repo. Make one change to it: **swa
 Everything is in `docs/card-section/`:
 - `reference/card-section.html` is the card section working on its own. Port it as it is: the markup, the CSS, the scroll script and the three.js module. Run it with `npx serve docs/card-section/reference`; it won't work from `file://`.
 - `reference/card/` holds the 13 assets. Copy them to `public/card/`.
-- `reference/home-mockup-v30.html` is the full homepage with both changes in place. It shows where the card section sits, and what the status section looks like with the phone screen (`status-grid`, `#shot`).
+- `reference/home-mockup-v32.html` is the full homepage with both changes in place. It shows where the card section sits, and what the status section looks like with the phone screen (`status-grid`, `#shot`).
 - `screens/` holds the target screenshots at 1440×900 and 390×844.
 
 ## Do
@@ -22,7 +22,10 @@ Everything is in `docs/card-section/`:
 2. **Status section.** Move the member-app phone screen beside the status rows, as in the mockup.
    - Crop the screen to `data-h="600"`, or `data-hm="760"` at 900px and below.
    - Its assemble-in animation and the light running around its outline now start when it scrolls into view.
-3. **ScrollTrigger order.** The pin uses `refreshPriority: 1`. Afterwards, check that the 01 bars, the 02 path rail, the 03 counter flow and the header's ink-band switch still fire in the right places.
+3. **Documentation link (site-wide).** Both of these are shared across every page, so change the shared components:
+   - **Footer:** in "The co-op" column, add "Documentation" (`https://docs.useclear.org`) right after "Structure and governance".
+   - **Mobile full-screen menu:** after the Community tiles and before Join, add a "Resources" section with one tile: "Documentation", note "How Clear works, in full detail", plus a page-with-lines icon (`i-docs` in the mockup). Leave the rest of the menu exactly as it is.
+4. **ScrollTrigger order.** The pin uses `refreshPriority: 1`. Afterwards, check that the 01 bars, the 02 path rail, the 03 counter flow and the header's ink-band switch still fire in the right places.
 
 ## Check, and tell me what you found
 At 390, 768, 1030×800 and 1440×900:
@@ -30,7 +33,7 @@ At 390, 768, 1030×800 and 1440×900:
 - [ ] The pin releases into section 01 without a jump.
 - [ ] No horizontal scroll at any width, before, during or after the pin.
 - [ ] The step buttons, the 01–05 counter, the editions, and the chip switch with its on/off light.
-- [ ] Step 05: the reader slides in and the card taps it. The light goes green with the chip on, and red (the card shakes) with it off.
+- [ ] Step 05: the reader slides in with its light ring breathing; the card taps it, then pulls back. With the chip on, a green light sweeps around the ring; with it off, the ring blinks red and the card shakes. Flipping the switch while at the reader makes the card tap again.
 - [ ] Reduced motion: no pin, the card rests assembled, the steps still work.
 - [ ] WebGL off: `fallback.webp` shows.
 - [ ] Mobile Lighthouse: the hero's Largest Contentful Paint is no worse than before.

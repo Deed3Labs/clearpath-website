@@ -57,5 +57,14 @@ export const COMMUNITY: { label: string; links: (Route & { note: string })[] } =
   ],
 };
 
+/* The reader docs at docs.useclear.org: a separate site, so not in ROUTES.
+   In the footer under The co-op, and in the mobile sheet's Resources. */
+export const DOCS: Route = { href: 'https://docs.useclear.org', label: 'Documentation' };
+
+export const RESOURCES: { label: string; links: (Route & { note: string })[] } = {
+  label: 'Resources',
+  links: [{ ...DOCS, note: 'How Clear works, in full detail' }],
+};
+
 /* Everything with a URL — sitemap, QA sweeps, the ?debug=grid pass. */
 export const ROUTES: readonly Route[] = [...NAV, ...CONTEXTUAL, JOIN, STYLE, SHOP, EVENTS, DIRECTORY];

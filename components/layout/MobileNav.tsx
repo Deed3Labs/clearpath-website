@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
-import { NAV, CONTEXTUAL, HOME, JOIN, COMMUNITY } from '@/content/nav';
+import { NAV, CONTEXTUAL, HOME, JOIN, COMMUNITY, RESOURCES } from '@/content/nav';
 import { Button } from '@/components/primitives/Button';
 import { NavIcon } from './NavIcon';
 import { NavLink } from './NavLink';
@@ -118,6 +118,24 @@ export function MobileNav() {
                       <span className="sheet-tile-label">{r.label}</span>
                       <span className="sheet-tile-note">{r.note}</span>
                     </NavLink>
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            {/* Resources: off-site, so plain links with no current-page state. */}
+            <section className="sheet-community" aria-labelledby="sheet-docs-label">
+              <p className="sheet-section-label" id="sheet-docs-label">
+                {RESOURCES.label}
+              </p>
+              <ul className="sheet-tiles">
+                {RESOURCES.links.map((r) => (
+                  <li key={r.href}>
+                    <a href={r.href} className="sheet-tile" rel="noreferrer noopener">
+                      <NavIcon href={r.href} size={20} />
+                      <span className="sheet-tile-label">{r.label}</span>
+                      <span className="sheet-tile-note">{r.note}</span>
+                    </a>
                   </li>
                 ))}
               </ul>
