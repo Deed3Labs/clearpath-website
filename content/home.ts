@@ -33,27 +33,30 @@ export const HERO = {
 /* ── The Clear Card ───────────────────────────────────────────────────────
    Under the hero, pinned: the card's four pieces (back, core, chip, face)
    come together as you scroll, then it turns its edge to you, faces you,
-   and turns over. One step per stage; `at` is where a step starts in the
-   scroll (0–1) and `go` where a click on it scrolls to. */
+   and turns over; in step 05 it comes round again and taps a door reader.
+   One step per stage; `at` is where a step starts in the scroll (0–1) and
+   `go` where a click on it scrolls to. Steps 01–04 share the first 80%. */
 export const CARD = {
   label: 'The Clear Card',
   title: 'Real wood. In your wallet.',
-  line: 'Birch on the outside, a secure chip inside. Nothing else you carry feels like it.',
+  line: 'Birch outside. A secure chip inside. Nothing else you carry feels like it.',
   cue: 'Scroll',
-  /* TODO(owner): four product claims to confirm before launch: "Stained,
-     never painted" (01), the key never leaving the chip and "Nothing to
-     skim, nothing to copy" (02), "Sealed against rain, sweat and spills"
-     (03), and "One tap in the app turns the chip off. We send a new card"
-     (04). */
+  /* TODO(owner): product claims to confirm before launch: "Stained, never
+     painted" (01), "made in the chip and never leaves. Nothing to skim.
+     Nothing to copy." (02), "Sealed against rain and spills" (03), "One
+     tap in the app. We’ll send a new one." (04), and step 05's "Soon: co-work
+     doors, partner discounts, and more." Keep the "Soon" until it is real. */
   steps: [
-    { t: 'Real birch', d: 'Stained, never painted, so the grain shows through. No two cards are alike.', at: 0, go: 0.03 },
-    { t: 'A chip that guards your key', d: 'Your key is made inside the chip and never leaves it. Nothing to skim, nothing to copy.', at: 0.2, go: 0.3 },
-    { t: 'Built for every day', d: 'Sealed against rain, sweat and spills. At 2.5 mm it’s thicker than metal, and still slides into your wallet.', at: 0.4, go: 0.55 },
-    { t: 'Lost it? Switch it off.', d: 'One tap in the app turns the chip off. We send a new card.', at: 0.74, go: 0.97 },
+    { t: 'Real birch', d: 'Stained, never painted. The grain shows, so no two are alike.', at: 0, go: 0.024 },
+    { t: 'Your key stays inside', d: 'It’s made in the chip and never leaves. Nothing to skim. Nothing to copy.', at: 0.16, go: 0.24 },
+    { t: 'Made for real life', d: 'Sealed against rain and spills. Thicker than metal, still fits your wallet.', at: 0.32, go: 0.44 },
+    { t: 'Lost it? Switch it off.', d: 'One tap in the app. We’ll send a new one.', at: 0.592, go: 0.776 },
+    { t: 'More than a card', d: 'Soon: co-work doors, partner discounts, and more.', at: 0.8, go: 0.97 },
   ],
   /* The one callout, on the edge view. */
   edge: { k: 'Three layers', v: '2.5 mm' },
-  /* Step 04's switch, which turns the chip on the card off and on again. */
+  /* The switch from step 04 on, which turns the chip on the card off and
+     on again; at the reader (05) it decides whether the door opens. */
   chip: { on: 'Chip on', off: 'Chip off', hint: 'Try it' },
   editionsLabel: 'Edition',
   /* `f` and `c` are the face and core colours on the swatch. The wood's own

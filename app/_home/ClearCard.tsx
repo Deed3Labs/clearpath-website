@@ -10,8 +10,9 @@ import type { CardState } from './cardScene';
  *
  * This is the page side: it owns the scroll. It pins the section under the
  * header, turns scroll into progress p (0 → 1), and drives the steps, the
- * counter and the cue, and step 04's switch, which turns the chip on the
- * card off and on. The 3D scene (cardScene.ts) only reads window.clearCard
+ * counter and the cue, and the switch (from step 04 on) that turns the chip
+ * on the card off and on. The pin runs 2.8 screens: 01–04 over the first
+ * 80%, then 05, where the card taps a door reader. The 3D scene (cardScene.ts) only reads window.clearCard
  * (p, ed, chipOn) and draws it; it is imported when the section comes
  * within 600px of the screen and the hero's intro has finished, so three.js
  * and the textures never hold up the hero. The pin does not wait for the
@@ -57,7 +58,7 @@ export function ClearCard() {
      outlives a client-side navigation, and the buttons start over. */
   useIsoLayoutEffect(() => {
     window.clearCard = { p: 0, ed: 'light', chipOn: true };
-    setP.current(motionOK() ? 0 : 0.6);
+    setP.current(motionOK() ? 0 : 0.56);
   }, []);
 
   /* The pin. It needs nothing from three.js, but it does wrap the section in
@@ -79,7 +80,7 @@ export function ClearCard() {
       st.current = ScrollTrigger.create({
         trigger: el,
         start: () => `top ${head()}px`,
-        end: () => `+=${Math.round(innerHeight * 2.2)}`,
+        end: () => `+=${Math.round(innerHeight * 2.8)}`,
         pin: true,
         refreshPriority: 1,
         anticipatePin: 1,
@@ -221,10 +222,10 @@ export function ClearCard() {
               ))}
             </div>
             <div className="card-controls">
-              {/* Step 04's switch. Its row keeps its height while hidden, so
-                  nothing moves when it appears. */}
-              <div className={n === 3 ? 'chipsw-row show' : 'chipsw-row'} aria-hidden={n !== 3}>
-                <button type="button" className="chipsw" role="switch" aria-checked={chipOn} tabIndex={n === 3 ? 0 : -1} onClick={toggleChip}>
+              {/* The switch, from step 04 on. Its row keeps its height while
+                  hidden, so nothing moves when it appears. */}
+              <div className={n >= 3 ? 'chipsw-row show' : 'chipsw-row'} aria-hidden={n < 3}>
+                <button type="button" className="chipsw" role="switch" aria-checked={chipOn} tabIndex={n >= 3 ? 0 : -1} onClick={toggleChip}>
                   <span className="track">
                     <i />
                   </span>

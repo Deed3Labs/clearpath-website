@@ -3,7 +3,8 @@
  * docs/card-section/reference/card-section.html, the "type=module" script.
  *
  * The page side (ClearCard.tsx) owns the scroll and writes progress into
- * window.clearCard.p. Here, scroll only sets TARGETS; every moving part
+ * window.clearCard.p. Steps 01–04 run over the first 80% of it; in 05 the
+ * card comes round to its face and taps a door reader. Here, scroll only sets TARGETS; every moving part
  * follows its target on a spring, so the card has weight: it lags a fast
  * scroll, settles, and the sheets land with a small bounce.
  *
@@ -272,6 +273,45 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
     guides.computeLineDistances();
   }
 
+  /* ── The reader (step 05): a door reader at a Clear branch ─────────── */
+  /* An ink slab with a tap ring and a status light. It slides in from the
+     right; the card taps it with its chip; the light answers. */
+  const RD = { w: 50, h: 78, r: 7, d: 7, x: 30, front: -6.5 };
+  const reader = new THREE.Group();
+  scene.add(reader);
+  {
+    const s = new THREE.Shape(), x = -RD.w / 2, y = -RD.h / 2, r = RD.r, P = Math.PI;
+    s.moveTo(x + r, y);
+    s.lineTo(x + RD.w - r, y);
+    s.absarc(x + RD.w - r, y + r, r, -P / 2, 0, false);
+    s.lineTo(x + RD.w, y + RD.h - r);
+    s.absarc(x + RD.w - r, y + RD.h - r, r, 0, P / 2, false);
+    s.lineTo(x + r, y + RD.h);
+    s.absarc(x + r, y + RD.h - r, r, P / 2, P, false);
+    s.lineTo(x, y + r);
+    s.absarc(x + r, y + r, r, P, P * 1.5, false);
+    const body = new THREE.Mesh(
+      new THREE.ExtrudeGeometry(s, { depth: RD.d, bevelEnabled: true, bevelThickness: 0.8, bevelSize: 0.8, bevelSegments: 3, curveSegments: 24 }),
+      new THREE.MeshStandardMaterial({ color: 0x16211d, roughness: 0.45, metalness: 0.1 }),
+    );
+    body.position.z = -RD.d - 0.8;
+    body.castShadow = true;
+    reader.add(body);
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(13, 0.32, 8, 96), new THREE.MeshStandardMaterial({ color: 0x6b7570, roughness: 0.5 }));
+    ring.position.set(0, 0, 0.1);
+    reader.add(ring);
+  }
+  const ledMat = new THREE.MeshBasicMaterial({ color: 0x3a4440, toneMapped: false });
+  const led = new THREE.Mesh(new THREE.CircleGeometry(2, 32), ledMat);
+  led.position.set(0, 29, 0.15);
+  reader.add(led);
+  const haloMat = new THREE.MeshBasicMaterial({ color: 0x6fcb9f, transparent: true, opacity: 0, depthWrite: false, toneMapped: false, blending: THREE.AdditiveBlending });
+  const halo = new THREE.Mesh(new THREE.CircleGeometry(7, 48), haloMat);
+  halo.position.set(0, 29, 0.12);
+  reader.add(halo);
+  reader.position.set(200, 0, RD.front);
+  const LED = { idle: new THREE.Color(0x3a4440), ok: new THREE.Color(0x6fcb9f), no: new THREE.Color(0xe58c7f) };
+
   let alive = true;
   async function setEdition(ed: CardEdition) {
     const e = ED[ed];
@@ -325,8 +365,25 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
   const narrow = () => view.clientWidth < 620;
   const PI = Math.PI;
 
-  type Targets = { oc: number; oh: number; of: number; rx: number; ry: number; rz: number; lift: number; zoom: number; a: number; edge: number; sx: number; ey: number };
-  function targets(p: number): Targets {
+  type Targets = {
+    oc: number;
+    oh: number;
+    of: number;
+    rx: number;
+    ry: number;
+    rz: number;
+    lift: number;
+    zoom: number;
+    a: number;
+    edge: number;
+    sx: number;
+    ey: number;
+    rd: number;
+  };
+  /* Steps 01–04 run over the first 80% of the scroll; 05 has the rest. */
+  const Q = 0.8;
+  function targets(pp: number): Targets {
+    const p = clamp(pp / Q);
     const n = narrow(), OFF = n ? { core: 13, chip: 24, face: 35 } : { core: 16, chip: 30, face: 44 };
     const a = clamp((p - 0.06) / 0.36);
     /* sheets: the core lands, then the chip seats, then the face closes */
@@ -344,13 +401,25 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
     const arc = Math.sin(toBack * PI);
     rx += arc * 0.16;
     const edge = toEdge * (1 - toFront);
-    const zoom = lerp(n ? 1 : 0.82, 1, io(a)) + (n ? 0.24 : 0.26) * edge;
-    return { oc, oh, of, rx, ry, rz, lift: arc * 14, zoom, a, edge, sx: 0, ey: 10 * edge };
+    let zoom = lerp(n ? 1 : 0.82, 1, io(a)) + (n ? 0.24 : 0.26) * edge;
+    /* 05 · it comes round to its face again, a reader slides in, and the
+       card taps it chip-first, flat against the ring */
+    const turn = span(pp, 0.8, 0.87), reach = span(pp, 0.87, 0.95);
+    ry += turn * PI + reach * 0.22; // ends a touch short of flat, so the chip edge leans off the reader
+    rx = lerp(rx, -0.12, turn);
+    rx = lerp(rx, 0, reach);
+    rz = lerp(rz, 0, turn);
+    const sx = lerp(lerp(0, -30, turn), RD.x - CX, reach);
+    zoom = lerp(zoom, n ? 0.8 : 0.88, turn);
+    zoom = lerp(zoom, n ? 0.9 : 0.97, reach);
+    const lift = arc * 14 + Math.sin(reach * PI) * 9;
+    return { oc, oh, of, rx, ry, rz, lift, zoom, a, edge, sx, ey: 10 * edge, rd: lerp(200, RD.x, turn) };
   }
 
   /* ── Springs ─────────────────────────────────────────────────────────── */
   /* stiffness k, damping ratio z (< 1 overshoots a little) */
   const SP: Record<string, [number, number]> = {
+    rd: [55, 0.86],
     sx: [60, 0.9],
     ey: [60, 0.9],
     oc: [170, 0.62],
@@ -409,7 +478,8 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
   }
 
   /* ── Moments: landing, seating, the turn ─────────────────────────────── */
-  const fx = { sheen: -1, pulse: -1, glow: 0, lock: -1, cpulse: -1, power: 0, waitRipple: false };
+  const fx = { sheen: -1, pulse: -1, glow: 0, lock: -1, cpulse: -1, power: 0, waitRipple: false, led: 0, shake: -1 };
+  let retry = 0;
   const WARM = new THREE.Color(1, 0.62, 0.26), COOL = new THREE.Color(0.5, 0.62, 0.95), cpCol = new THREE.Color().copy(WARM);
   let chipOn = C.chipOn ?? true;
   /* The switch. On: the rings light one by one from the chip outward, then a
@@ -425,6 +495,11 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
       fx.cpulse = 0;
       cpCol.copy(COOL);
       fx.waitRipple = false;
+    }
+    if (C.p >= 0.945) {
+      // at the reader: try the door again
+      clearTimeout(retry);
+      retry = window.setTimeout(tap, on ? 900 : 350);
     }
   };
   let lastLand = 0;
@@ -442,12 +517,33 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
   }
   let prevP = C.p;
   function events() {
-    const p = C.p;
-    if (prevP < 0.27 && p >= 0.27 && !reduce) fx.lock = 0; // the lock closes in
-    if (prevP < 0.3 && p >= 0.3) fx.glow = 1; // the chip seats
-    if (prevP < 0.42 && p >= 0.42) armed = true; // the face is about to close
-    if (prevP < 0.93 && p >= 0.93) sheen(); // the back comes round
+    const p = C.p, x = (v: number) => v * Q; // thresholds for 01–04 are in their own 0–1
+    if (prevP < x(0.27) && p >= x(0.27) && !reduce) fx.lock = 0; // the lock closes in
+    if (prevP < x(0.3) && p >= x(0.3)) fx.glow = 1; // the chip seats
+    if (prevP < x(0.42) && p >= x(0.42)) armed = true; // the face is about to close
+    if (prevP < x(0.93) && p >= x(0.93)) sheen(); // the back comes round
+    if (prevP < 0.945 && p >= 0.945) tap(); // 05: the card meets the reader
+    if (prevP >= 0.9 && p < 0.9) {
+      fx.led = 0;
+      ledMat.color.copy(LED.idle);
+    }
     prevP = p;
+  }
+  /* The tap. A live chip: the light goes green, a warm ripple runs out from
+     the chip and the card settles against the reader. A switched-off chip:
+     the light goes red and the card shakes its head. */
+  function tap() {
+    if (!alive) return;
+    const ok = chipOn;
+    ledMat.color.copy(ok ? LED.ok : LED.no);
+    haloMat.color.copy(ok ? LED.ok : LED.no);
+    fx.led = 1;
+    if (reduce) return;
+    if (ok) {
+      V.dip -= 0.5;
+      fx.pulse = 0;
+      sheen();
+    } else fx.shake = 0;
   }
 
   /* ── Labels: drawn in the page, pinned to points on the card ─────────── */
@@ -556,7 +652,16 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
     /* the whole card */
     const dip = S.dip;
     pivot.rotation.set(S.rx + S.py * 0.07 + wait * -0.25, S.ry + S.px * 0.1 + wait * -0.5, S.rz + wait * 0.35);
-    pivot.position.set(S.sx, (reduce ? 0 : Math.sin(t * 0.8) * 0.5) - wait * 18 + S.ey, S.lift + dip * 6);
+    let shake = 0;
+    if (fx.shake >= 0) {
+      fx.shake += dt;
+      shake = Math.sin(fx.shake * 38) * Math.exp(-fx.shake * 5) * 2.2;
+      if (fx.shake > 1) fx.shake = -1;
+    }
+    pivot.position.set(S.sx + shake, (reduce ? 0 : Math.sin(t * 0.8) * 0.5) - wait * 18 + S.ey, S.lift + dip * 6);
+    reader.position.x = S.rd;
+    reader.visible = S.rd < 160;
+    haloMat.opacity = fx.led * (0.55 + (reduce ? 0 : 0.2 * Math.sin(t * 3)));
     const sc = 1 + dip * 0.02;
     pivot.scale.set(sc, sc, sc);
     const d = baseD / S.zoom;
@@ -595,7 +700,7 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
     /* the back, once it faces you: a live chip pulses warm every few seconds;
        a switched-off chip gives one cool ripple and goes quiet. The chip
        wakes as the card turns to its back (p .78), on both sides. */
-    const want = chipOn && C.p > 0.78 ? 1 : 0, prevPow = fx.power;
+    const want = chipOn && C.p > 0.78 * Q ? 1 : 0, prevPow = fx.power;
     if (reduce) fx.power = want;
     else fx.power = want > fx.power ? Math.min(want, fx.power + dt / 1.1) : Math.max(want, fx.power - dt / 0.55);
     const rising = fx.power > prevPow, falling = fx.power < prevPow;
@@ -604,7 +709,7 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
       fx.cpulse = 0;
       cpCol.copy(WARM);
     }
-    if (rising && prevPow === 0 && chipOn && C.p > 0.78 && !reduce) fx.waitRipple = true;
+    if (rising && prevPow === 0 && chipOn && C.p > 0.78 * Q && !reduce) fx.waitRipple = true;
     if (fx.cpulse >= 0) {
       fx.cpulse += dt;
       if (fx.cpulse > 1.6) fx.cpulse = -1;
@@ -643,6 +748,7 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
 
   return () => {
     alive = false;
+    clearTimeout(retry);
     cancelAnimationFrame(raf);
     ro.disconnect();
     io2.disconnect();

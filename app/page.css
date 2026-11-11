@@ -134,7 +134,7 @@
     .card-intro { display: none; }
     .steps { border-left: 0; padding-top: 18px; }
     .steps-fill { display: none; }
-    .steps-seg { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; position: absolute; left: 0; right: 0; top: 0; height: 2px; }
+    .steps-seg { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; position: absolute; left: 0; right: 0; top: 0; height: 2px; }
     .steps-seg i { background: var(--color-ink-13); position: relative; overflow: hidden; }
     .steps-seg i::after { content: ''; position: absolute; inset: 0; background: var(--color-ink); transform-origin: 0 50%; transform: scaleX(var(--k, 0)); }
     .step { grid-area: 2 / 1; padding: 0; opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity 260ms var(--ease), transform 360ms var(--ease), visibility 0s linear 360ms; }
