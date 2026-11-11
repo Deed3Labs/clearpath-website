@@ -9,7 +9,7 @@ The homepage redesign is already live in this repo. Make one change to it: **swa
 Everything is in `docs/card-section/`:
 - `reference/card-section.html` is the card section working on its own. Port it as it is: the markup, the CSS, the scroll script and the three.js module. Run it with `npx serve docs/card-section/reference`; it won't work from `file://`.
 - `reference/card/` holds the 13 assets. Copy them to `public/card/`.
-- `reference/home-mockup-v27.html` is the full homepage with both changes in place. It shows where the card section sits, and what the status section looks like with the phone screen (`status-grid`, `#shot`).
+- `reference/home-mockup-v30.html` is the full homepage with both changes in place. It shows where the card section sits, and what the status section looks like with the phone screen (`status-grid`, `#shot`).
 - `screens/` holds the target screenshots at 1440×900 and 390×844.
 
 ## Do
