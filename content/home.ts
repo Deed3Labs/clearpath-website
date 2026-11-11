@@ -38,7 +38,7 @@ export const HERO = {
    `go` where a click on it scrolls to. Steps 01–04 share the first 80%. */
 export const CARD = {
   label: 'The Clear Card',
-  title: 'Birch or clear. Built to carry.',
+  title: 'A card worth carrying.',
   line: 'Real wood or frosted clear outside. A secure chip inside. Nothing else you carry feels like it.',
   cue: 'Scroll',
   /* TODO(owner): product claims to confirm before launch: "Birch or clear"
