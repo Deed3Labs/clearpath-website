@@ -285,44 +285,74 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
     guides.computeLineDistances();
   }
 
-  /* ── The reader (step 05): a door reader at a Clear branch ─────────── */
-  /* An ink slab with a tap ring and a status light. It slides in from the
-     right; the card taps it with its chip; the light answers. */
-  const RD = { w: 50, h: 78, r: 7, d: 7, x: 30, front: -6.5 };
+  /* ── The reader (step 05): a door reader at a co-work space ───────── */
+  /* An ink slab with a glass front. The tap zone is a light ring with the
+     contactless mark inside it: it breathes softly while it waits, sweeps
+     green around when a live card taps, and blinks red when it's switched off. */
+  const RD = { w: 54, h: 86, r: 8, d: 7, x: 30, front: -6.5, cy: 4 };
   const reader = new THREE.Group();
   scene.add(reader);
-  {
-    const s = new THREE.Shape(), x = -RD.w / 2, y = -RD.h / 2, r = RD.r, P = Math.PI;
+  const rrect = (w: number, h: number, r: number) => {
+    const s = new THREE.Shape(), x = -w / 2, y = -h / 2, P = Math.PI;
     s.moveTo(x + r, y);
-    s.lineTo(x + RD.w - r, y);
-    s.absarc(x + RD.w - r, y + r, r, -P / 2, 0, false);
-    s.lineTo(x + RD.w, y + RD.h - r);
-    s.absarc(x + RD.w - r, y + RD.h - r, r, 0, P / 2, false);
-    s.lineTo(x + r, y + RD.h);
-    s.absarc(x + r, y + RD.h - r, r, P / 2, P, false);
+    s.lineTo(x + w - r, y);
+    s.absarc(x + w - r, y + r, r, -P / 2, 0, false);
+    s.lineTo(x + w, y + h - r);
+    s.absarc(x + w - r, y + h - r, r, 0, P / 2, false);
+    s.lineTo(x + r, y + h);
+    s.absarc(x + r, y + h - r, r, P / 2, P, false);
     s.lineTo(x, y + r);
     s.absarc(x + r, y + r, r, P, P * 1.5, false);
+    return s;
+  };
+  {
     const body = new THREE.Mesh(
-      new THREE.ExtrudeGeometry(s, { depth: RD.d, bevelEnabled: true, bevelThickness: 0.8, bevelSize: 0.8, bevelSegments: 3, curveSegments: 24 }),
-      new THREE.MeshStandardMaterial({ color: 0x16211d, roughness: 0.45, metalness: 0.1 }),
+      new THREE.ExtrudeGeometry(rrect(RD.w, RD.h, RD.r), { depth: RD.d, bevelEnabled: true, bevelThickness: 1.2, bevelSize: 1.2, bevelSegments: 5, curveSegments: 28 }),
+      new THREE.MeshStandardMaterial({ color: 0x18221e, roughness: 0.62, metalness: 0.05 }),
     );
-    body.position.z = -RD.d - 0.8;
+    body.position.z = -RD.d - 1.2;
     body.castShadow = true;
     reader.add(body);
-    const ring = new THREE.Mesh(new THREE.TorusGeometry(13, 0.32, 8, 96), new THREE.MeshStandardMaterial({ color: 0x6b7570, roughness: 0.5 }));
-    ring.position.set(0, 0, 0.1);
-    reader.add(ring);
+    /* the glass: a darker, glossier panel set into the face */
+    const glass = new THREE.Mesh(
+      new THREE.ExtrudeGeometry(rrect(RD.w - 7, RD.h - 7, RD.r - 3), { depth: 0.3, bevelEnabled: false, curveSegments: 28 }),
+      new THREE.MeshPhysicalMaterial({ color: 0x141d19, roughness: 0.12, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.08, envMapIntensity: 1.1 }),
+    );
+    glass.position.z = 0;
+    reader.add(glass);
+    /* the contactless mark: three arcs opening to the right */
+    const markMat = new THREE.MeshBasicMaterial({ color: 0x6f7a75, toneMapped: false });
+    [2.6, 4.6, 6.6].forEach((r) => {
+      const a = new THREE.Mesh(new THREE.TorusGeometry(r, 0.38, 6, 40, 1.35), markMat);
+      a.rotation.z = -1.35 / 2;
+      a.position.set(-2.6, RD.cy, 0.4);
+      reader.add(a);
+    });
+    /* the track the light runs in */
+    const track = new THREE.Mesh(new THREE.RingGeometry(12.4, 13.9, 128), new THREE.MeshBasicMaterial({ color: 0x26312d, toneMapped: false }));
+    track.position.set(0, RD.cy, 0.35);
+    reader.add(track);
   }
-  const ledMat = new THREE.MeshBasicMaterial({ color: 0x3a4440, toneMapped: false });
-  const led = new THREE.Mesh(new THREE.CircleGeometry(2, 32), ledMat);
-  led.position.set(0, 29, 0.15);
-  reader.add(led);
-  const haloMat = new THREE.MeshBasicMaterial({ color: 0x6fcb9f, transparent: true, opacity: 0, depthWrite: false, toneMapped: false, blending: THREE.AdditiveBlending });
-  const halo = new THREE.Mesh(new THREE.CircleGeometry(7, 48), haloMat);
-  halo.position.set(0, 29, 0.12);
-  reader.add(halo);
+  const ringMatL = new THREE.MeshBasicMaterial({ color: 0x8c9893, toneMapped: false });
+  const ringArc = new THREE.Mesh(new THREE.RingGeometry(12.4, 13.9, 128), ringMatL);
+  ringArc.position.set(0, RD.cy, 0.4);
+  reader.add(ringArc);
+  let arcTheta = Math.PI * 2;
+  function setArc(theta: number) {
+    theta = Math.max(0.001, Math.min(Math.PI * 2, theta));
+    if (Math.abs(theta - arcTheta) < 0.01) return;
+    arcTheta = theta;
+    ringArc.geometry.dispose();
+    /* starts at the top and runs clockwise */
+    ringArc.geometry = new THREE.RingGeometry(12.4, 13.9, 128, 1, Math.PI / 2 - theta, theta);
+  }
+  const glowMat = new THREE.MeshBasicMaterial({ color: 0x6fcb9f, transparent: true, opacity: 0, depthWrite: false, toneMapped: false, blending: THREE.AdditiveBlending });
+  const glow = new THREE.Mesh(new THREE.RingGeometry(9.5, 19, 128), glowMat);
+  glow.position.set(0, RD.cy, 0.38);
+  reader.add(glow);
   reader.position.set(200, 0, RD.front);
-  const LED = { idle: new THREE.Color(0x3a4440), ok: new THREE.Color(0x6fcb9f), no: new THREE.Color(0xe58c7f) };
+  const LITE = { idle: new THREE.Color(0x8c9893), ok: new THREE.Color(0x6fcb9f), no: new THREE.Color(0xe58c7f), off: new THREE.Color(0x26312d) };
+  const _c = new THREE.Color();
 
   let alive = true;
   async function setEdition(ed: CardEdition) {
@@ -394,6 +424,13 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
     ey: number;
     rd: number;
   };
+  /* moment state, shared by the choreography and the render loop */
+  const fx = {
+    sheen: -1, pulse: -1, glow: 0, lock: -1, cpulse: -1, power: 0, dead: 0, waitRipple: false, shake: -1,
+    ring: 'idle' as 'idle' | 'ok' | 'no', rt: 0, retap: -1, retapW: 0, retapFired: false,
+  };
+  /* step 05: where the card touches the reader, and where it waits beside it */
+  const TOUCH = RD.x - CX, AWAY = -33;
   /* Steps 01–04 run over the first 80% of the scroll; 05 has the rest. */
   const Q = 0.8;
   function targets(pp: number): Targets {
@@ -416,17 +453,22 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
     rx += arc * 0.16;
     const edge = toEdge * (1 - toFront);
     let zoom = lerp(n ? 1 : 0.82, 1, io(a)) + (n ? 0.24 : 0.26) * edge;
-    /* 05 · it comes round to its face again, a reader slides in, and the
-       card taps it chip-first, flat against the ring */
-    const turn = span(pp, 0.8, 0.87), reach = span(pp, 0.87, 0.95);
-    ry += turn * PI + reach * 0.22; // ends a touch short of flat, so the chip edge leans off the reader
+    /* 05 · it comes round to its face again and a reader slides in; the card
+       taps it chip-first over the ring, then pulls back so you see it answer */
+    const turn = span(pp, 0.8, 0.86), reach = span(pp, 0.86, 0.92), back = span(pp, 0.935, 0.985);
+    ry += turn * PI + reach * 0.22 - back * 0.3;
     rx = lerp(rx, -0.12, turn);
     rx = lerp(rx, 0, reach);
+    rx = lerp(rx, -0.1, back);
     rz = lerp(rz, 0, turn);
-    const sx = lerp(lerp(0, -30, turn), RD.x - CX, reach);
+    /* a second tap (the switch flipped at the reader) swings the card from
+       wherever it is to the touch point and back. The reference added a fixed
+       offset, right only once the card has fully pulled back (p ≥ .985). */
+    const sx = lerp(lerp(lerp(lerp(0, AWAY, turn), TOUCH, reach), AWAY, back), TOUCH, fx.retapW);
     zoom = lerp(zoom, n ? 0.8 : 0.88, turn);
     zoom = lerp(zoom, n ? 0.9 : 0.97, reach);
-    const lift = arc * 14 + Math.sin(reach * PI) * 9;
+    zoom = lerp(zoom, n ? 0.8 : 0.88, back);
+    const lift = arc * 14 + Math.sin(reach * PI) * 9 + back * 7 + Math.sin(clamp(fx.retap) * PI) * 6;
     /* small screens show the headline over the stage at first: the open
        stack sits lower until it fades, then rises to the middle */
     const intro = n ? 1 - span(pp, 0.015, 0.06) : 0;
@@ -495,8 +537,6 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
   }
 
   /* ── Moments: landing, seating, the turn ─────────────────────────────── */
-  const fx = { sheen: -1, pulse: -1, glow: 0, lock: -1, cpulse: -1, power: 0, dead: 0, waitRipple: false, led: 0, shake: -1 };
-  let retry = 0;
   const WARM = new THREE.Color(1, 0.62, 0.26), COOL = new THREE.Color(0.5, 0.62, 0.95), cpCol = new THREE.Color().copy(WARM);
   let chipOn = C.chipOn ?? true;
   /* The switch. On: the rings light one by one from the chip outward, then a
@@ -513,10 +553,12 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
       cpCol.copy(COOL);
       fx.waitRipple = false;
     }
-    if (C.p >= 0.945) {
-      // at the reader: try the door again
-      clearTimeout(retry);
-      retry = window.setTimeout(tap, on ? 900 : 350);
+    if (C.p >= 0.92) {
+      // at the reader: tap the door again. From .92, where the first tap is:
+      // the reference's .97 sat a hair above step 05's own landing point
+      // (.9698 after the jump), so the button never got a second tap.
+      fx.retap = 0;
+      fx.retapFired = false;
     }
   };
   let lastLand = 0;
@@ -539,10 +581,10 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
     if (prevP < x(0.3) && p >= x(0.3)) fx.glow = 1; // the chip seats
     if (prevP < x(0.42) && p >= x(0.42)) armed = true; // the face is about to close
     if (prevP < x(0.93) && p >= x(0.93)) sheen(); // the back comes round
-    if (prevP < 0.945 && p >= 0.945) tap(); // 05: the card meets the reader
-    if (prevP >= 0.9 && p < 0.9) {
-      fx.led = 0;
-      ledMat.color.copy(LED.idle);
+    if (prevP < 0.92 && p >= 0.92) tap(); // 05: the card meets the reader
+    if (prevP >= 0.88 && p < 0.88) {
+      fx.ring = 'idle';
+      fx.rt = 0;
     }
     prevP = p;
   }
@@ -552,9 +594,8 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
   function tap() {
     if (!alive) return;
     const ok = chipOn;
-    ledMat.color.copy(ok ? LED.ok : LED.no);
-    haloMat.color.copy(ok ? LED.ok : LED.no);
-    fx.led = 1;
+    fx.ring = ok ? 'ok' : 'no';
+    fx.rt = reduce ? 9 : 0;
     if (reduce) return;
     if (ok) {
       V.dip -= 0.5;
@@ -678,7 +719,45 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
     pivot.position.set(S.sx + shake, (reduce ? 0 : Math.sin(t * 0.8) * 0.5) - wait * 18 + S.ey, S.lift + dip * 6);
     reader.position.x = S.rd;
     reader.visible = S.rd < 160;
-    haloMat.opacity = fx.led * (0.55 + (reduce ? 0 : 0.2 * Math.sin(t * 3)));
+    /* the reader's light ring */
+    fx.rt += dt;
+    if (fx.retap >= 0) {
+      fx.retap += dt / 1.1;
+      const k = clamp(fx.retap);
+      fx.retapW = Math.sin(k * PI);
+      if (k >= 0.5 && !fx.retapFired) {
+        fx.retapFired = true;
+        tap();
+      }
+      if (fx.retap >= 1) {
+        fx.retap = -1;
+        fx.retapW = 0;
+      }
+    }
+    const rb = reduce ? 0.7 : 0.6 + 0.25 * Math.sin(t * 2.2); // the ring's idle breath
+    if (fx.ring === 'ok') {
+      const k = clamp(fx.rt / 0.55), e = 1 - Math.pow(1 - k, 3);
+      setArc(e * PI * 2);
+      ringMatL.color.copy(LITE.ok);
+      glowMat.color.copy(LITE.ok);
+      glowMat.opacity = k < 1 ? 0.25 + 0.5 * e : 0.32 + 0.08 * Math.sin(t * 2.4);
+    } else if (fx.ring === 'no') {
+      setArc(PI * 2);
+      // blinks, holds red, fades
+      const on = fx.rt < 1.5 ? (Math.floor(fx.rt / 0.16) % 2 === 0 ? 1 : 0.12) : fx.rt < 2.1 ? 1 : clamp(1 - (fx.rt - 2.1) / 0.5);
+      ringMatL.color.copy(_c.copy(LITE.off).lerp(LITE.no, on));
+      glowMat.color.copy(LITE.no);
+      glowMat.opacity = on * 0.45;
+      if (fx.rt > 2.7) {
+        fx.ring = 'idle';
+        fx.rt = 0;
+      }
+    } else {
+      setArc(PI * 2);
+      ringMatL.color.copy(_c.copy(LITE.off).lerp(LITE.idle, rb * 0.7));
+      glowMat.color.copy(LITE.idle);
+      glowMat.opacity = rb * 0.07;
+    }
     const sc = 1 + dip * 0.02;
     pivot.scale.set(sc, sc, sc);
     const d = baseD / S.zoom;
@@ -770,7 +849,6 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
 
   return () => {
     alive = false;
-    clearTimeout(retry);
     cancelAnimationFrame(raf);
     ro.disconnect();
     io2.disconnect();

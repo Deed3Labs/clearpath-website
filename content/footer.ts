@@ -1,5 +1,7 @@
 /* Footer copy. §7 — "Footer, every page". */
 
+import { DOCS } from './nav';
+
 export const BRAND_LINE = 'A member-owned cooperative, building in Inland Empire, California.';
 
 export type FooterLink = { href: string; label: string; external?: boolean };
@@ -29,6 +31,7 @@ export const FOOTER_COLUMNS: { heading: string; links: FooterLink[] }[] = [
     heading: 'The co-op',
     links: [
       { href: '/coop', label: 'Structure and governance' },
+      { ...DOCS, external: true },
       {
         href: 'https://github.com/Deed3Labs/Protocol-Contracts',
         label: 'Protocol source',
