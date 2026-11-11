@@ -43,6 +43,8 @@ type Uniforms = {
   uLive: { value: number };
   uFront: { value: number };
   uLiveCol: { value: THREE.Color };
+  uDead: { value: number };
+  uWood: { value: THREE.Color };
 };
 
 export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => void {
@@ -158,6 +160,8 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
       uLive: { value: 0 },
       uFront: { value: 0 },
       uLiveCol: { value: new THREE.Color(1, 0.62, 0.26) },
+      uDead: { value: 0 },
+      uWood: { value: new THREE.Color(0xecd6ae) },
     };
     m.userData.u = u;
     m.onBeforeCompile = (sh) => {
@@ -165,7 +169,7 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
       sh.fragmentShader = sh.fragmentShader
         .replace(
           '#include <common>',
-          '#include <common>\nuniform float uSheen; uniform float uPulse; uniform vec2 uChip; uniform vec3 uPulseCol; uniform float uPower; uniform float uLive; uniform float uFront; uniform vec3 uLiveCol;',
+          '#include <common>\nuniform float uSheen; uniform float uPulse; uniform vec2 uChip; uniform vec3 uPulseCol; uniform float uPower; uniform float uLive; uniform float uFront; uniform vec3 uLiveCol; uniform float uDead; uniform vec3 uWood;',
         )
         .replace(
           '#include <emissivemap_fragment>',
@@ -181,15 +185,23 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
   float pd = length(mm - uChip) - uPulse;
   float wave = exp(-pd * pd / 6.0) * smoothstep(-1.0, 6.0, uPulse) * (1.0 - smoothstep(26.0, 44.0, uPulse));
   totalEmissiveRadiance += uPulseCol * wave * eng * .95;
-  /* the chip's state: its rings light one by one from the chip outward
-     (uPower), carry a bright leading edge while they do (uFront), then
-     breathe while it's on (uLive). Only the rings and the tap dot sit
-     inside 31 mm of the chip, so nothing else on the card lights. */
+  /* the chip's state, in its rings. Only the rings and the tap dot sit
+     inside 31 mm of the chip, so nothing else on the card changes.
+     On: the rings wake one by one from the chip outward (uPower) with a
+     bright leading edge (uFront), then keep their own colour, deepened to
+     a warm copper that breathes (uLive): coloured, never washed out.
+     Off: the colour drains out of them, from the chip outward (uDead),
+     until they are the wood around them. */
   float dc = length(mm - uChip), Rr = uPower * 31.0;
   float lit = 1.0 - smoothstep(Rr - 2.2, Rr, dc);
   float zone = 1.0 - smoothstep(27.5, 31.0, dc);
   float lead = exp(-(dc - Rr) * (dc - Rr) / 3.0) * uFront;
-  totalEmissiveRadiance += uLiveCol * eng * zone * (lit * uLive * 1.7 + lead * 2.4);
+  float on = eng * zone * lit * uLive;
+  diffuseColor.rgb *= mix(vec3(1.0), vec3(1.1, .72, .42), on);
+  totalEmissiveRadiance += uLiveCol * (on * .35 + eng * zone * lead * 2.4);
+  float Rd = uDead * 31.0;
+  float gone = eng * zone * (1.0 - smoothstep(Rd - 2.2, Rd, dc));
+  diffuseColor.rgb = mix(diffuseColor.rgb, uWood, gone * .85);
 #endif`,
         );
     };
@@ -337,6 +349,8 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
     set(M.core[1], rc);
     M.face[2].color.setHex(EDGE[e.face]);
     M.back[2].color.setHex(EDGE[e.face]);
+    /* the wood a switched-off chip's rings fade into */
+    for (const m of [M.face[0], M.back[1]]) (m.userData.u as Uniforms).uWood.value.setHex(EDGE[e.face]);
     M.core[2].color.setHex(EDGE[e.core]);
     if (!view.classList.contains('ready')) {
       view.classList.remove('nogl');
@@ -478,7 +492,7 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
   }
 
   /* ── Moments: landing, seating, the turn ─────────────────────────────── */
-  const fx = { sheen: -1, pulse: -1, glow: 0, lock: -1, cpulse: -1, power: 0, waitRipple: false, led: 0, shake: -1 };
+  const fx = { sheen: -1, pulse: -1, glow: 0, lock: -1, cpulse: -1, power: 0, dead: 0, waitRipple: false, led: 0, shake: -1 };
   let retry = 0;
   const WARM = new THREE.Color(1, 0.62, 0.26), COOL = new THREE.Color(0.5, 0.62, 0.95), cpCol = new THREE.Color().copy(WARM);
   let chipOn = C.chipOn ?? true;
@@ -697,9 +711,10 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
       m.scale.set(rr, rr, 1);
       m.material.opacity = Math.sin(k * PI) * 0.85 * clamp(S.of / 8); // gone once the face closes over it
     });
-    /* the back, once it faces you: a live chip pulses warm every few seconds;
-       a switched-off chip gives one cool ripple and goes quiet. The chip
-       wakes as the card turns to its back (p .78), on both sides. */
+    /* the back, once it faces you: a live chip's rings take their colour and
+       pulse warm; a switched-off chip gives one cool ripple and its rings
+       fade into the wood. The chip wakes as the card turns to its back
+       (p .78), on both sides. */
     const want = chipOn && C.p > 0.78 * Q ? 1 : 0, prevPow = fx.power;
     if (reduce) fx.power = want;
     else fx.power = want > fx.power ? Math.min(want, fx.power + dt / 1.1) : Math.max(want, fx.power - dt / 0.55);
@@ -710,6 +725,9 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
       cpCol.copy(WARM);
     }
     if (rising && prevPow === 0 && chipOn && C.p > 0.78 * Q && !reduce) fx.waitRipple = true;
+    const wantDead = !chipOn && C.p > 0.78 * Q ? 1 : 0;
+    if (reduce) fx.dead = wantDead;
+    else fx.dead = wantDead > fx.dead ? Math.min(1, fx.dead + dt / 0.9) : Math.max(0, fx.dead - dt / 0.55);
     if (fx.cpulse >= 0) {
       fx.cpulse += dt;
       if (fx.cpulse > 1.6) fx.cpulse = -1;
@@ -720,6 +738,7 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
       u.uLive.value = fx.power * breath;
       u.uFront.value = rising ? 1 - fx.power * 0.4 : falling ? 0.45 : 0;
       u.uLiveCol.value.copy(chipOn ? WARM : COOL);
+      u.uDead.value = fx.dead;
     }
     ub.uPulse.value = fx.cpulse < 0 ? -99 : fx.cpulse * 34 - 2;
     ub.uPulseCol.value.copy(cpCol);
