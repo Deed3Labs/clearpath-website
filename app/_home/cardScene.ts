@@ -57,7 +57,11 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
     view.classList.add('nogl');
     return () => {};
   }
-  r.setPixelRatio(Math.min(devicePixelRatio, 2));
+  /* Phones and tablets draw at 1.5x, not 2x: about 44% fewer pixels a
+     frame, hard to tell apart at that size, and the scene's fill cost is
+     what made scrolling past it stutter there. */
+  const small = matchMedia('(pointer: coarse), (max-width: 1000px)').matches;
+  r.setPixelRatio(Math.min(devicePixelRatio, small ? 1.5 : 2));
   r.outputColorSpace = THREE.SRGBColorSpace;
   r.toneMapping = THREE.ACESFilmicToneMapping;
   r.toneMappingExposure = 1.0;
@@ -75,9 +79,12 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
   const key = new THREE.DirectionalLight(0xfff4e6, 2.0);
   key.position.set(-50, 80, 230);
   key.castShadow = true;
-  key.shadow.mapSize.set(768, 768);
-  key.shadow.radius = 12;
-  key.shadow.blurSamples = 10;
+  /* the soft shadow is re-blurred every frame; on small screens a smaller
+     map with the radius scaled to match keeps the same softness for under
+     half the work */
+  key.shadow.mapSize.setScalar(small ? 512 : 768);
+  key.shadow.radius = small ? 8 : 12;
+  key.shadow.blurSamples = small ? 8 : 10;
   key.shadow.bias = -0.002;
   Object.assign(key.shadow.camera, { left: -160, right: 160, top: 160, bottom: -160, near: 20, far: 500 });
   scene.add(key);
@@ -444,6 +451,7 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
     ready();
   }
   function ready() {
+    warm();
     if (!view.classList.contains('ready')) {
       view.classList.remove('nogl');
       view.classList.add('ready');
@@ -895,6 +903,47 @@ export function mountCardScene(view: HTMLElement, labelsEl: HTMLElement): () => 
 
     /* one callout: the thickness, while the edge faces you */
     place(LBL.edge, W * 0.2, -H / 2, top / 2, clamp((tg.edge - 0.75) / 0.25) * clamp(1 - Math.abs(S.rx - -1.32) * 4));
+  }
+
+  /* The first frame does everything at once: it compiles every shader
+     (the reader's glass too) and sends the textures to the GPU. The loop
+     only draws while the card is on screen, so left alone that frame lands
+     mid-scroll, as the section arrives: a second-long stall on a phone. So
+     once the first edition's textures are in, draw one frame while the
+     page is idle and the card is still off screen. */
+  let warmed = false;
+  function warm() {
+    if (warmed) return;
+    warmed = true;
+    /* in small steps, one per idle moment, so none of it is a long task:
+       each object's shaders, then each texture, then the frame itself */
+    const idle = window.requestIdleCallback ?? ((f: () => void) => window.setTimeout(f, 60));
+    const meshes: THREE.Mesh[] = [];
+    const maps = new Set<THREE.Texture>();
+    reader.visible = true; // the loop hides it again until step 05
+    scene.traverse((o) => {
+      const m = o as THREE.Mesh;
+      if (!m.isMesh) return;
+      meshes.push(m);
+      (Array.isArray(m.material) ? m.material : [m.material]).forEach((mat) => {
+        const t = mat as THREE.MeshPhysicalMaterial;
+        [t.map, t.bumpMap, t.roughnessMap, t.alphaMap].forEach((x) => x && maps.add(x));
+      });
+    });
+    const steps: (() => void)[] = [
+      ...meshes.map((m) => () => void r.compile(m, cam, scene)),
+      ...[...maps].map((t) => () => r.initTexture(t)),
+      () => r.render(scene, cam),
+    ];
+    const next = () => {
+      if (!alive || seen) return;
+      const s = steps.shift();
+      if (!s) return;
+      reader.visible = true;
+      s();
+      if (steps.length) idle(next);
+    };
+    idle(next);
   }
 
   let raf = 0;

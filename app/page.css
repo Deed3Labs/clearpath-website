@@ -180,6 +180,21 @@
   /* shorter laptop screens (1280×720, 1366×768): the column is taller than
      the stage, so its gaps close up a little */
   @media (max-height: 820px) and (min-width: 1001px) { .card-side { gap: 24px; } .step { padding-block: 10px; } }
+  /* short windows (under ~700px): the section's 600px floor would push the
+     editions below the fold while it is pinned, so the floor drops and the
+     editions and the switch share one line, as swatches, the way phones
+     show them */
+  @media (max-height: 700px) and (min-width: 1001px) {
+    .cardsec { min-height: 420px; }
+    .card-controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .card-controls .editions { order: 1; flex-wrap: nowrap; gap: 6px; }
+    .card-controls .chipsw-row { order: 2; min-height: 0; }
+    .editions .label { margin-right: 2px; }
+    .ed { justify-content: center; width: 32px; min-height: 32px; padding: 0; }
+    .ed .ed-t { display: none; }
+    .ed i { width: 14px; height: 14px; }
+    .chipsw-row .label { display: none; }
+  }
   @media (max-height: 640px) and (min-width: 1001px) { .card-intro p { display: none; } .card-side { gap: 16px; } .step { padding-block: 8px; } }
 
   /* ── 01 The gap: two columns, one clock ───────────────────────────────── */
