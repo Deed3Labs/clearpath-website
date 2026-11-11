@@ -600,7 +600,7 @@ html, body { overflow-x: clip; overscroll-behavior-x: none; }
    Its row always keeps its height, so nothing shifts when it appears. */
 .chipsw-row { display: flex; align-items: center; gap: 14px; min-height: 40px; opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity 300ms var(--ease), transform 420ms var(--ease), visibility 0s linear 420ms; }
 .chipsw-row.show { opacity: 1; visibility: visible; transform: none; transition: opacity 420ms var(--ease), transform 520ms var(--ease), visibility 0s; }
-.chipsw { display: inline-flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 16px 0 6px; border: 1px solid var(--ink); border-radius: 999px; font-size: 14.5px; font-weight: 500; color: var(--ink); transition: border-color 200ms var(--ease), color 200ms var(--ease); }
+.chipsw { display: inline-flex; align-items: center; gap: 10px; white-space: nowrap; min-height: 40px; padding: 0 16px 0 6px; border: 1px solid var(--ink); border-radius: 999px; font-size: 14.5px; font-weight: 500; color: var(--ink); transition: border-color 200ms var(--ease), color 200ms var(--ease); }
 .chipsw .track { position: relative; width: 44px; height: 28px; border-radius: 999px; background: var(--ink); transition: background-color 260ms var(--ease); }
 .chipsw .track i { position: absolute; top: 3px; left: 19px; width: 22px; height: 22px; border-radius: 999px; background: var(--paper); box-shadow: 0 0 0 0 rgb(111 203 159 / 0); transition: left 320ms cubic-bezier(.3, 1.4, .5, 1), box-shadow 300ms var(--ease); }
 .chipsw .track i::after { content: ''; position: absolute; inset: 7px; border-radius: 999px; background: var(--sig-light); transition: background-color 260ms var(--ease), transform 260ms var(--ease); }
@@ -652,12 +652,16 @@ html, body { overflow-x: clip; overscroll-behavior-x: none; }
 @media (max-width: 560px) {
   .card-top .card-hint span { display: none; }
   /* phones: the editions shrink to swatches so the switch fits beside them */
-  .ed { justify-content: center; width: 36px; padding: 0; }
+  .editions { gap: 6px; }
+  .editions .label { margin-right: 2px; }
+  .ed { justify-content: center; width: 32px; min-height: 32px; padding: 0; }
   .ed .ed-t { display: none; }
   .ed i { width: 14px; height: 14px; }
   .chipsw-row .label { display: none; }
   .chipsw { padding-right: 13px; font-size: 14px; }
 }
+/* small phones: four swatches and the switch still share one line */
+@media (max-width: 380px) { .editions { gap: 4px; } .ed { width: 28px; min-height: 28px; } .chipsw { gap: 8px; padding-right: 11px; font-size: 13.5px; } }
 @media (max-height: 640px) and (min-width: 1001px) { .card-intro p { display: none; } .step { padding-block: 9px; } }
 
 @media (max-width: 560px) { .mock-flag { display: none; } }
@@ -788,13 +792,13 @@ html, body { overflow-x: clip; overscroll-behavior-x: none; }
         </div>
         <div class="card-side">
           <div class="card-intro">
-            <h2 class="h3" id="card-h">Real wood. In your wallet.</h2>
-            <p>Birch outside. A secure chip inside. Nothing else you carry feels like it.</p>
+            <h2 class="h3" id="card-h">Birch or clear. Built to carry.</h2>
+            <p>Real wood or frosted clear outside. A secure chip inside. Nothing else you carry feels like it.</p>
           </div>
           <div class="steps" id="steps">
             <span class="steps-fill" id="steps-fill" aria-hidden="true"></span>
             <span class="steps-seg" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
-            <button type="button" class="step on" data-i="0"><span class="n">01</span><span class="t">Real birch</span><span class="d"><span>Stained, never painted. The grain shows, so no two are alike.</span></span></button>
+            <button type="button" class="step on" data-i="0"><span class="n">01</span><span class="t">Birch or clear</span><span class="d"><span>Stained birch, so no two are alike. Or frosted clear, with the chip just visible inside.</span></span></button>
             <button type="button" class="step" data-i="1"><span class="n">02</span><span class="t">Your key stays inside</span><span class="d"><span>It&rsquo;s made in the chip and never leaves. Nothing to skim. Nothing to copy.</span></span></button>
             <button type="button" class="step" data-i="2"><span class="n">03</span><span class="t">Made for real life</span><span class="d"><span>Sealed against rain and spills. Thicker than metal, still fits your wallet.</span></span></button>
             <button type="button" class="step" data-i="3"><span class="n">04</span><span class="t">Lost it? Switch it off.</span><span class="d"><span>One tap in the app. We&rsquo;ll send a new one.</span></span></button>
@@ -810,6 +814,7 @@ html, body { overflow-x: clip; overscroll-behavior-x: none; }
               <button type="button" class="ed" data-ed="light" aria-pressed="true" aria-label="Light"><i style="--f:#E2C8A0;--c:#A26C3A"></i><span class="ed-t">Light</span></button>
               <button type="button" class="ed" data-ed="dark" aria-pressed="false" aria-label="Dark"><i style="--f:#42281A;--c:#A26C3A"></i><span class="ed-t">Dark</span></button>
               <button type="button" class="ed" data-ed="contrast" aria-pressed="false" aria-label="Contrast"><i style="--f:#42281A;--c:#E2C8A0"></i><span class="ed-t">Contrast</span></button>
+              <button type="button" class="ed" data-ed="clear" aria-pressed="false" aria-label="Clear"><i style="--f:#C9CFCB;--c:#27302C"></i><span class="ed-t">Clear</span></button>
             </div>
           </div>
         </div>
@@ -1112,7 +1117,7 @@ html, body { overflow-x: clip; overscroll-behavior-x: none; }
   </div>
 </footer>
 
-<div class="mock-flag">Mockup v32 · Home</div>
+<div class="mock-flag">Mockup v33 · Home</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
@@ -1555,9 +1560,9 @@ const edge = () => new THREE.MeshStandardMaterial({ roughness: .8 });
 /* The two engraved faces carry two light effects, both drawn in the
    shader: a sheen that glances across the wood, and a pulse that runs out
    from the chip through the engraved rings. */
-function engraved(chipMm, name) {
-  const m = wood();
-  m.userData.u = { uSheen: { value: -2 }, uPulse: { value: -99 }, uChip: { value: new THREE.Vector2(...chipMm) }, uPulseCol: { value: new THREE.Color(1, .62, .26) }, uPower: { value: 0 }, uLive: { value: 0 }, uFront: { value: 0 }, uLiveCol: { value: new THREE.Color(1, .62, .26) } };
+function engraved(chipMm, name, m = wood(), u = null) {
+  m.userData.u = u || { uSheen: { value: -2 }, uPulse: { value: -99 }, uChip: { value: new THREE.Vector2(...chipMm) }, uPulseCol: { value: new THREE.Color(1, .62, .26) }, uPower: { value: 0 }, uLive: { value: 0 }, uFront: { value: 0 }, uLiveCol: { value: new THREE.Color(1, .62, .26) } };
+  const see = m.transparent;
   m.onBeforeCompile = sh => {
     Object.assign(sh.uniforms, m.userData.u);
     sh.fragmentShader = sh.fragmentShader
@@ -1584,6 +1589,11 @@ function engraved(chipMm, name) {
   float lead = exp(-(dc - Rr) * (dc - Rr) / 3.0) * uFront;
   totalEmissiveRadiance += uLiveCol * eng * zone * (lit * uLive * 1.7 + lead * 2.4);
 #endif`);
+    /* see-through sheets (the Clear edition): the polished art is almost
+       transparent, so anything lit in it raises its own opacity */
+    if (see) sh.fragmentShader = sh.fragmentShader.replace('#include <opaque_fragment>', `
+  diffuseColor.a = max(diffuseColor.a, clamp(max(max(totalEmissiveRadiance.r, totalEmissiveRadiance.g), totalEmissiveRadiance.b), 0.0, 1.0));
+#include <opaque_fragment>`);
   };
   m.customProgramCacheKey = () => name;
   return m;
@@ -1594,6 +1604,20 @@ const M = {
   face: [engraved([CXmm, H / 2], 'face'), wood(), edge()],
   core: [wood(), wood(), edge()],
   back: [wood(), engraved([W - CXmm, H / 2], 'back'), edge()],
+};
+/* The Clear edition: frosted polycarbonate over a smoke-tinted core. One
+   map per sheet (white = frosted, dark = the polished art) sets the haze,
+   the roughness and, through the shader, which parts light up. The core's
+   back side carries the printed code label. Same uniforms as the wood
+   faces, so every light effect runs on both. */
+const frost = () => new THREE.MeshPhysicalMaterial({ color: 0xf4f7f5, transparent: true, opacity: .6, roughness: .55, metalness: 0, specularIntensity: .7, envMapIntensity: .8, bumpScale: 0 });
+const gloss = op => new THREE.MeshPhysicalMaterial({ color: 0xf4f7f5, transparent: true, opacity: op, roughness: .05, clearcoat: .4, clearcoatRoughness: .1 });
+const CM = {
+  face: [engraved([CXmm, H / 2], 'face-clear', frost(), M.face[0].userData.u), gloss(.08), gloss(.55)],
+  core: [new THREE.MeshStandardMaterial({ color: 0x27302c, roughness: .6, envMapIntensity: .25, transparent: true, opacity: .85 }),
+         new THREE.MeshStandardMaterial({ roughness: .6, envMapIntensity: .25, transparent: true }),
+         new THREE.MeshPhysicalMaterial({ color: 0x27302c, roughness: .15, clearcoat: .6, transparent: true, opacity: .9 })],
+  back: [gloss(.08), engraved([W - CXmm, H / 2], 'back-clear', frost(), M.back[1].userData.u), gloss(.55)],
 };
 
 const pivot = new THREE.Group(), stack = new THREE.Group();
@@ -1630,7 +1654,22 @@ function setGuides(zc, zf) {
   a.needsUpdate = true; guides.computeLineDistances();
 }
 
+function useClear(on) {
+  face.material = on ? CM.face : M.face; back.material = on ? CM.back : M.back; core.material = on ? CM.core : M.core;
+  face.castShadow = back.castShadow = !on;          // clear sheets cast almost no shadow; the tinted core does
+  core.renderOrder = on ? 1 : 0; face.renderOrder = back.renderOrder = on ? 2 : 0;   // core first, then the sheets over it
+}
 async function setEdition(ed) {
+  if (ed === 'clear') {
+    const [f, b, c] = await Promise.all([tex('clear-face.jpg', false), tex('clear-back.jpg', false), tex('clear-core.png')]);
+    if (C.ed !== ed) return;
+    for (const [m, map] of [[CM.face[0], f], [CM.back[1], b]]) { m.map = m.alphaMap = m.roughnessMap = m.bumpMap = map; m.needsUpdate = true; }
+    CM.core[1].map = c; CM.core[1].needsUpdate = true;
+    useClear(true);
+    if (!view.classList.contains('ready')) { view.classList.remove('nogl'); view.classList.add('ready'); }
+    else { kick(); sheen(); }
+    return;
+  }
   const e = ED[ed];
   const [f, b, bf, bb, rf, rc] = await Promise.all([
     tex(`face-${ed}.jpg`), tex(`back-${ed}.jpg`), tex('bump-face.jpg', false),
@@ -1638,6 +1677,7 @@ async function setEdition(ed) {
     tex(`core-${e.face}.jpg`), tex(`core-${e.core}.jpg`),
   ]);
   if (C.ed !== ed) return;
+  useClear(false);
   const set = (m, map, bump) => { m.map = map; m.bumpMap = bump || null; m.needsUpdate = true; };
   set(M.face[0], f, bf); set(M.face[1], rf);
   set(M.back[1], b, bb); set(M.back[0], rf);

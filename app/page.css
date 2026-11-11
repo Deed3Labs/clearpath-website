@@ -107,7 +107,7 @@
      Its row always keeps its height, so nothing shifts when it appears. */
   .chipsw-row { display: flex; align-items: center; gap: 14px; min-height: 40px; opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity 300ms var(--ease), transform 420ms var(--ease), visibility 0s linear 420ms; }
   .chipsw-row.show { opacity: 1; visibility: visible; transform: none; transition: opacity 420ms var(--ease), transform 520ms var(--ease), visibility 0s; }
-  .chipsw { display: inline-flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 16px 0 6px; border: 1px solid var(--color-ink); border-radius: var(--radius-pill); font-size: 14.5px; font-weight: 500; color: var(--color-ink); transition: border-color 200ms var(--ease), color 200ms var(--ease); }
+  .chipsw { display: inline-flex; align-items: center; gap: 10px; white-space: nowrap; min-height: 40px; padding: 0 16px 0 6px; border: 1px solid var(--color-ink); border-radius: var(--radius-pill); font-size: 14.5px; font-weight: 500; color: var(--color-ink); transition: border-color 200ms var(--ease), color 200ms var(--ease); }
   .chipsw .track { position: relative; width: 44px; height: 28px; border-radius: var(--radius-pill); background: var(--color-ink); transition: background-color 260ms var(--ease); }
   .chipsw .track i { position: absolute; top: 3px; left: 19px; width: 22px; height: 22px; border-radius: var(--radius-pill); background: var(--color-paper); box-shadow: 0 0 0 0 transparent; transition: left 320ms cubic-bezier(.3, 1.4, .5, 1), box-shadow 300ms var(--ease); }
   .chipsw .track i::after { content: ''; position: absolute; inset: 7px; border-radius: var(--radius-pill); background: var(--color-signal-light); transition: background-color 260ms var(--ease), transform 260ms var(--ease); }
@@ -157,11 +157,19 @@
   @media (max-width: 560px) {
     .card-top .card-hint span { display: none; }
     /* phones: the editions shrink to swatches so the switch fits beside them */
-    .ed { justify-content: center; width: 36px; padding: 0; }
+    .editions { gap: 6px; }
+    .editions .label { margin-right: 2px; }
+    .ed { justify-content: center; width: 32px; min-height: 32px; padding: 0; }
     .ed .ed-t { display: none; }
     .ed i { width: 14px; height: 14px; }
     .chipsw-row .label { display: none; }
     .chipsw { padding-right: 13px; font-size: 14px; }
+  }
+  /* small phones: four swatches and the switch still share one line */
+  @media (max-width: 380px) {
+    .editions { gap: 4px; }
+    .ed { width: 28px; min-height: 28px; }
+    .chipsw { gap: 8px; padding-right: 11px; font-size: 13.5px; }
   }
   @media (max-height: 640px) and (min-width: 1001px) { .card-intro p { display: none; } .step { padding-block: 9px; } }
 
